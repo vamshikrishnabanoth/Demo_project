@@ -131,6 +131,15 @@ class LLMRouter {
 
     // 2. Try Gemini Provider (Cloud Fallback for Groq 429 / failure)
     if (process.env.DISABLE_GEMINI !== 'true' && preferredProvider !== 'gemini' && (this.geminiApiKey || process.env.GEMINI_API_KEY)) {
+      // Explicit fallback-size check: prevent submitting an unbounded oversized payload
+      const totalPromptBytes = Buffer.byteLength(String(prompt || '') + String(systemPrompt || ''), 'utf8');
+      const MAX_FALLBACK_PAYLOAD_BYTES = 500000; // 500 KB absolute sanity ceiling
+      if (totalPromptBytes > MAX_FALLBACK_PAYLOAD_BYTES) {
+        const payloadFatal = new Error(`FALLBACK_PAYLOAD_TOO_LARGE: Serialized payload size (${totalPromptBytes} bytes) exceeds cloud fallback ceiling (${MAX_FALLBACK_PAYLOAD_BYTES} bytes). Halting dispatch.`);
+        payloadFatal.code = 'FALLBACK_PAYLOAD_TOO_LARGE';
+        throw payloadFatal;
+      }
+
       try {
         return await this._callGemini({
           prompt,
@@ -362,6 +371,8 @@ class LLMRouter {
               const choice = response.data.choices[0];
               const content = choice.message.content;
               if (!content || typeof content !== 'string' || !content.trim()) {
+                // Mark route on temporary cooldown so subsequent attempts do not hammer empty-yielding model
+                this.modelCooldowns.set(`${keyIdx}_${currentModel}`, Date.now() + 60000);
                 throw new Error(`Groq model '${currentModel}' returned empty content.`);
               }
               if (choice.finish_reason === 'length') {
@@ -383,6 +394,14 @@ class LLMRouter {
               this.currentKeyIndex = (keyIdx + 1) % totalKeys;
               keySucceeded = true;
 
+              // Record structured metadata for caller inspection (model that actually succeeded and provider usage)
+              this.lastCompletionMetadata = {
+                model: currentModel,
+                provider: 'groq',
+                usage: response.data.usage || null,
+                requestId: response.data.id || null
+              };
+
               if (sessionId) {
                 try {
                   const telemetryLedger = require('../observability/telemetryLedger');
@@ -402,13 +421,29 @@ class LLMRouter {
               lastErr = err;
               const status = err.response?.status;
               const errorMsg = err.response?.data?.error?.message || err.message || '';
-              const isTPM = errorMsg.includes('on tokens per minute') || errorMsg.includes('on requests per minute');
-              const isTPD = !isTPM && (errorMsg.includes('tokens per day') || errorMsg.includes('requests per day') || (errorMsg.includes('TPD') && !errorMsg.includes('TPM')));
-              const isRateLimit = status === 429 || errorMsg.includes('429') || errorMsg.includes('Rate limit') || isTPD || isTPM;
+              const isPayloadTooLarge = status === 413 ||
+                errorMsg.includes('Request Entity Too Large') ||
+                errorMsg.includes('request entity too large') ||
+                errorMsg.includes('payload too large') ||
+                errorMsg.includes('exceeded maximum context length') ||
+                errorMsg.includes('maximum context length is') ||
+                (status === 413 && (errorMsg.includes('tokens per minute') || errorMsg.includes('TPM')));
+              const isTPM = !isPayloadTooLarge && (errorMsg.includes('on tokens per minute') || errorMsg.includes('on requests per minute'));
+              const isTPD = !isTPM && !isPayloadTooLarge && (errorMsg.includes('tokens per day') || errorMsg.includes('requests per day') || (errorMsg.includes('TPD') && !errorMsg.includes('TPM')));
+              const isRateLimit = !isPayloadTooLarge && (status === 429 || errorMsg.includes('429') || errorMsg.includes('Rate limit') || isTPD || isTPM);
               const isTimeout = err.code === 'ECONNABORTED' || errorMsg.includes('timeout') || err.message?.includes('timeout');
               if (isTimeout) {
                 console.warn(`⏳ [LLMRouter] Groq Key-${keyIdx + 1} model '${currentModel}' client request timed out after ${groqTimeoutMs}ms. Failing over to alternative model or key...`);
                 productionMetrics.inc('provider_timeout_count');
+              }
+
+              if (isPayloadTooLarge) {
+                console.warn(`⚠️ [LLMRouter] Groq request payload exceeded limits (HTTP ${status || 413}): ${errorMsg}. Halting retries on identical oversized payload and failing over to cloud fallback provider immediately.`);
+                productionMetrics.inc('provider_failure_count');
+                const payloadErr = new Error(`Groq request payload too large (${status || 413}): ${errorMsg}`);
+                payloadErr.code = 'PAYLOAD_TOO_LARGE';
+                payloadErr.status = 413;
+                throw payloadErr;
               }
 
               if ((errorMsg.includes('Failed to validate JSON') || errorMsg.includes('Failed to generate JSON')) && attempts === 1) {
@@ -861,6 +896,10 @@ class LLMRouter {
         targetDifficulty: 'Medium'
       }
     });
+  }
+
+  getLastCompletionMetadata() {
+    return this.lastCompletionMetadata || null;
   }
 }
 

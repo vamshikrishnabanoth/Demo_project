@@ -264,22 +264,10 @@ class LectureIntelligence {
         conceptMediumAngles += 1; // Comparative distinction / tradeoff angle (Op 3)
       }
 
-      // Mutual non-redundancy: A concept without separate multi-facet evidence supports at most 1 primary angle.
-      // It supports an additional angle only if it exhibits both an explicit definition AND separate operational/comparative depth.
-      const hasDistinctMultiFacetEvidence = supportsEasy && (hasOperationalDepth || isComparison) && (def.length >= 35 || mech.length >= 25);
-      if (!hasDistinctMultiFacetEvidence) {
-        // Single-facet concept: allocate to its highest qualified cognitive depth
-        if (conceptMediumAngles > 0) {
-          conceptEasyAngles = 0;
-          conceptMediumAngles = Math.min(conceptMediumAngles, 1);
-        } else {
-          conceptEasyAngles = Math.min(conceptEasyAngles, 1);
-        }
-      } else {
-        // Multi-facet concept: supports 1 definition angle and 1 mechanism/comparison angle
-        conceptEasyAngles = Math.min(conceptEasyAngles, 1);
-        conceptMediumAngles = Math.min(conceptMediumAngles, 1);
-      }
+      // Multi-facet capacity: A concept supports Easy recall if it has a clear definition.
+      // It supports Medium operational/comparative reasoning if it has procedural or mechanism depth.
+      conceptEasyAngles = supportsEasy ? 1 : 0;
+      conceptMediumAngles = (hasOperationalDepth || isComparison) ? 1 : 0;
 
       totalEasy += conceptEasyAngles;
       totalMedium += conceptMediumAngles;
@@ -435,14 +423,14 @@ class LectureIntelligence {
 
     if (!isBriefExcerpt && options.curricularEvidenceProfile?.assessmentCapacity) {
       const cepCap = options.curricularEvidenceProfile.assessmentCapacity;
-      if (typeof cepCap.easy === 'number') {
-        totalEasy = Math.min(totalEasy, cepCap.easy);
+      if (typeof cepCap.easy === 'number' && cepCap.easy > 0) {
+        totalEasy = Math.max(totalEasy, cepCap.easy);
       }
-      if (typeof cepCap.medium === 'number') {
-        totalMedium = Math.min(totalMedium, cepCap.medium);
+      if (typeof cepCap.medium === 'number' && cepCap.medium > 0) {
+        totalMedium = Math.max(totalMedium, cepCap.medium);
       }
-      if (typeof cepCap.hard === 'number' && !isHardExplicitlyInfeasible) {
-        totalHard = Math.min(totalHard, cepCap.hard);
+      if (typeof cepCap.hard === 'number' && !isHardExplicitlyInfeasible && cepCap.hard > 0) {
+        totalHard = Math.max(totalHard, cepCap.hard);
       }
     }
 
@@ -1528,23 +1516,23 @@ ${promptEvidence}`;
       return cached;
     }
 
-    // 2. Identify all parents from Hierarchical Store
-    let allParents = [];
+    // 2. Identify all parents from Hierarchical Store and split any oversized parents
+    let rawParents = [];
     if (hierarchicalStore && Array.isArray(hierarchicalStore.parents) && hierarchicalStore.parents.length > 0) {
-      allParents = hierarchicalStore.parents.filter(p => p.sourceType === 'TRANSCRIPT' || (p.parentId && p.parentId.startsWith('P_')));
-      if (allParents.length === 0) {
-        allParents = [...hierarchicalStore.parents];
+      rawParents = hierarchicalStore.parents.filter(p => p.sourceType === 'TRANSCRIPT' || (p.parentId && p.parentId.startsWith('P_')));
+      if (rawParents.length === 0) {
+        rawParents = [...hierarchicalStore.parents];
       }
     }
 
     // Fallback if no parents exist in store but transcript exists
-    if (allParents.length === 0 && voiceTranscript && voiceTranscript.trim().length > 0) {
+    if (rawParents.length === 0 && voiceTranscript && voiceTranscript.trim().length > 0) {
       const words = voiceTranscript.trim().split(/\s+/).filter(Boolean);
       const pSize = 400;
       for (let i = 0; i < words.length; i += pSize) {
         const pWords = words.slice(i, i + pSize);
         const pIdx = Math.floor(i / pSize) + 1;
-        allParents.push({
+        rawParents.push({
           parentId: `P_${String(pIdx).padStart(2, '0')}`,
           evidenceId: `E_PARENT_${String(pIdx).padStart(2, '0')}`,
           title: `Lecture Segment ${pIdx}`,
@@ -1556,36 +1544,110 @@ ${promptEvidence}`;
       }
     }
 
-    if (allParents.length === 0 && (!documentTexts || documentTexts.length === 0)) {
+    if (rawParents.length === 0 && (!documentTexts || documentTexts.length === 0)) {
       throw new Error('R1_EXTRACTION_EMPTY_INPUT: No transcript parents or document text available for extraction.');
     }
 
-    // 3. Build Overlapping Parent Macro-Windows (calibrated for high throughput without rate-limit saturation)
-    const maxMacroWindows = 4;
-    const strideParents = allParents.length <= 3
-      ? 1
-      : Math.max(2, Math.ceil(allParents.length / maxMacroWindows));
-    const windowSizeParents = Math.min(allParents.length, strideParents + 2);
+    // Split any oversized parents (e.g. > 700 words or > 3,200 bytes) into bounded segments preserving all source content
+    const MAX_PARENT_SEGMENT_WORDS = 700;
+    const MAX_PARENT_SEGMENT_BYTES = 3200;
+    const allParents = [];
+
+    for (const p of rawParents) {
+      const pBytes = Buffer.byteLength(p.fullText || '', 'utf8');
+      const pWords = (p.wordCount || (p.fullText || '').split(/\s+/).filter(Boolean).length);
+      if (pWords <= MAX_PARENT_SEGMENT_WORDS && pBytes <= MAX_PARENT_SEGMENT_BYTES) {
+        allParents.push(p);
+      } else {
+        const words = (p.fullText || '').split(/\s+/).filter(Boolean);
+        const children = Array.isArray(p.childIds) ? p.childIds : [];
+        const childrenPerSeg = Math.max(1, Math.ceil(children.length / Math.max(1, Math.ceil(words.length / MAX_PARENT_SEGMENT_WORDS))));
+        let segIdx = 1;
+        for (let wIdx = 0; wIdx < words.length; wIdx += MAX_PARENT_SEGMENT_WORDS) {
+          const segWords = words.slice(wIdx, wIdx + MAX_PARENT_SEGMENT_WORDS);
+          const childStart = (segIdx - 1) * childrenPerSeg;
+          const segChildren = children.slice(childStart, childStart + childrenPerSeg);
+          allParents.push({
+            parentId: `${p.parentId}_s${segIdx}`,
+            evidenceId: `${p.evidenceId || p.parentId}_s${segIdx}`,
+            title: `${p.title || 'Segment'} (Part ${segIdx})`,
+            sourceType: p.sourceType || 'TRANSCRIPT',
+            fullText: segWords.join(' '),
+            wordCount: segWords.length,
+            childIds: segChildren.length > 0 ? segChildren : children,
+            isSegment: true,
+            originalParentId: p.parentId
+          });
+          segIdx++;
+        }
+      }
+    }
+
+    // 3. Build Overlapping Bounded Parent Windows enforcing a strict serialized prompt ceiling
+    let docSection = '';
+    if (Array.isArray(documentTexts) && documentTexts.length > 0) {
+      docSection = '\n\n--- DOCUMENT / SLIDE EVIDENCE CONTEXT ---\n' +
+        documentTexts.map((d, i) => `[SLIDE/DOC ${i + 1}]:\n${typeof d === 'string' ? d.substring(0, 500) : JSON.stringify(d).substring(0, 500)}`).join('\n\n');
+    }
+    const templateBytes = 1500 + Buffer.byteLength(docSection, 'utf8');
+
+    function calculateSerializedPromptBytes(winParents) {
+      let evidenceBytes = 0;
+      for (const p of winParents) {
+        let childBytes = 0;
+        for (const cid of (p.childIds || [])) {
+          const c = hierarchicalStore?.childMap?.[cid];
+          if (c && c.text) childBytes += Buffer.byteLength(`  [CHILD ${cid}]: ${c.text}\n`, 'utf8');
+        }
+        evidenceBytes += Buffer.byteLength(`--- PARENT CHUNK ${p.evidenceId || p.parentId} (${p.title || ''}) ---\n`, 'utf8') + (childBytes || Buffer.byteLength(p.fullText || '', 'utf8')) + 2;
+      }
+      return templateBytes + evidenceBytes;
+    }
+
+    const MAX_SERIALIZED_PROMPT_BYTES = 7680; // 7.5 KB strict serialized request ceiling
+    const MAX_WINDOW_PARENTS = 4;
     const windows = [];
     const coveredParentIndices = new Set();
 
     let startIdx = 0;
     while (startIdx < allParents.length) {
-      const endIdx = Math.min(startIdx + windowSizeParents, allParents.length);
+      let endIdx = startIdx;
+
+      while (endIdx < allParents.length && (endIdx - startIdx) < MAX_WINDOW_PARENTS) {
+        const candidateParents = allParents.slice(startIdx, endIdx + 1);
+        const promptBytes = calculateSerializedPromptBytes(candidateParents);
+        if (promptBytes > MAX_SERIALIZED_PROMPT_BYTES && endIdx > startIdx) {
+          break; // Stop: adding this parent would breach the 7.5 KB serialized request ceiling
+        }
+        endIdx++;
+      }
+
+      // Ensure at least 1 parent/segment is included per window
+      if (endIdx === startIdx) {
+        endIdx = startIdx + 1;
+      }
+
       const winParents = allParents.slice(startIdx, endIdx);
+      const winPromptBytes = calculateSerializedPromptBytes(winParents);
       windows.push({
         windowIndex: windows.length,
         startParentIdx: startIdx,
         endParentIdx: endIdx - 1,
-        parents: winParents
+        parents: winParents,
+        promptBytes: winPromptBytes
       });
+
       for (let i = startIdx; i < endIdx; i++) {
         coveredParentIndices.add(i);
       }
+
       if (endIdx >= allParents.length) {
         break;
       }
-      startIdx += strideParents;
+
+      // Overlap by 1 parent for contextual continuity between windows, advancing by at least 1 parent
+      const stride = Math.max(1, (endIdx - startIdx) > 1 ? (endIdx - startIdx - 1) : 1);
+      startIdx += stride;
     }
 
     // Mandatory Invariant 1: Complete coverage assertion including the final parent
@@ -1599,9 +1661,18 @@ ${promptEvidence}`;
       throw new Error(`FINAL_PARENT_COVERAGE_ASSERTION_FAILED: Final parent ${allParents[finalParentIdx].evidenceId || allParents[finalParentIdx].parentId} was not covered.`);
     }
 
-    console.log(`[LectureIntelligence] Generic R1 Extraction: ${allParents.length} parents mapped to ${windows.length} overlapping windows (windowSize=${windowSizeParents}, stride=${strideParents}). 100% parent coverage verified.`);
+    console.log(`[LectureIntelligence] Generic R1 Extraction: ${allParents.length} parents/segments mapped to ${windows.length} bounded windows (maxPromptBytes=${MAX_SERIALIZED_PROMPT_BYTES}). 100% parent coverage verified.`);
 
-    // 4. Overlapping Window Extraction (Bounded concurrency = 2)
+    // 4. Overlapping Window Extraction (Bounded concurrency = 1)
+    let activeExtractionModel = model;
+    const extractionTelemetry = {
+      windowCount: windows.length,
+      maxSerializedPromptBytes: MAX_SERIALIZED_PROMPT_BYTES,
+      emptyResponseCount: 0,
+      fallbackPromotions: 0,
+      actualTokensRecorded: 0,
+      windows: []
+    };
     const allExtractedUnits = [];
     const quarantinedUnits = [];
     const extractSingleWindow = async (win) => {
@@ -1665,18 +1736,49 @@ Respond with a JSON object in this format:
             systemPrompt,
             temperature: 0.1,
             responseFormat: 'json',
-            maxTokens: 4096,
-            model,
+            maxTokens: 2048,
+            model: activeExtractionModel,
             sessionId,
             operation: 'TEACHING_UNIT_EXTRACTION'
           });
+
+          if (typeof llmRouter.getLastCompletionMetadata === 'function') {
+            const meta = llmRouter.getLastCompletionMetadata();
+            if (meta && meta.model && meta.model !== activeExtractionModel) {
+              console.log(`⚡ [LectureIntelligence] Fallback model promoted for subsequent extraction windows: '${activeExtractionModel}' -> '${meta.model}'`);
+              activeExtractionModel = meta.model;
+              extractionTelemetry.fallbackPromotions++;
+            }
+            if (meta?.usage) {
+              extractionTelemetry.actualTokensRecorded += (meta.usage.total_tokens || ((meta.usage.prompt_tokens || 0) + (meta.usage.completion_tokens || 0)));
+            }
+          }
         } catch (winErr) {
           console.warn(`[LectureIntelligence] Window ${win.windowIndex + 1} extraction attempt ${attempts} error: ${winErr.message}.`);
+          if (winErr.message && winErr.message.includes('returned empty content')) {
+            extractionTelemetry.emptyResponseCount++;
+            const verifiedFallback = (activeExtractionModel !== 'qwen/qwen3.8-27b')
+              ? 'qwen/qwen3.8-27b'
+              : (process.env.GROQ_FALLBACK_MODEL && process.env.GROQ_FALLBACK_MODEL !== activeExtractionModel ? process.env.GROQ_FALLBACK_MODEL : 'openai/gpt-oss-120b');
+            if (activeExtractionModel !== verifiedFallback) {
+              console.log(`⚡ [LectureIntelligence] Switching active extraction model away from empty-yielding model '${activeExtractionModel}' to verified fallback '${verifiedFallback}'`);
+              activeExtractionModel = verifiedFallback;
+              extractionTelemetry.fallbackPromotions++;
+            }
+          }
           if (attempts < 2) {
             await new Promise(r => setTimeout(r, 2000));
           }
         }
       }
+
+      extractionTelemetry.windows.push({
+        windowIndex: win.windowIndex,
+        parentCount: win.parents.length,
+        promptBytes: win.promptBytes,
+        modelUsed: activeExtractionModel,
+        deliveredUnits: responseStr ? true : false
+      });
 
       if (!responseStr || typeof responseStr !== 'string' || responseStr.trim().length === 0) {
         console.warn(`[LectureIntelligence] Window ${win.windowIndex + 1} returned empty content. Continuing with neighboring windows.`);
@@ -1722,7 +1824,8 @@ Respond with a JSON object in this format:
         allExtractedUnits.push(...resList);
       }
       if (i + concurrency < windows.length) {
-        await new Promise(r => setTimeout(r, 1500));
+        const sleepMs = process.env.NODE_ENV === 'test' ? 10 : 1500;
+        await new Promise(r => setTimeout(r, sleepMs));
       }
     }
 
@@ -1946,8 +2049,11 @@ Respond with a JSON object in this format:
         voiceOnly: reconciledUnits.filter(u => u.provenance === 'VOICE_ONLY').length,
         documentOnly: reconciledUnits.filter(u => u.provenance === 'DOCUMENT_ONLY').length
       },
+      extractionTelemetry,
       timestamp: new Date().toISOString()
     };
+
+    this.lastExtractionTelemetry = extractionTelemetry;
 
     const result = {
       teachingUnits: reconciledUnits,

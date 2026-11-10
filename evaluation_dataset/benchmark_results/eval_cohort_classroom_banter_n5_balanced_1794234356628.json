@@ -1,0 +1,76 @@
+{
+  "metadata": {
+    "cohortId": "classroom_banter",
+    "lectureName": "Lecture 4: Classroom Banter (Non-Academic)",
+    "evaluationTimestamp": "2026-11-09T14:25:56.628Z",
+    "executionDurationSec": "0.1",
+    "gitCommit": "da0ea1594d6a3984ad679e2f6fb44d86cc43b9ba",
+    "requestedCount": 5,
+    "requestedDifficulty": "Balanced",
+    "deliveredCount": 0,
+    "pipelineStatus": "FAILED",
+    "evidenceSafety": "UNKNOWN",
+    "evaluationPhase": "POST_REMEDIATION",
+    "baselineCommit": "04456a0"
+  },
+  "capacityMetrics": {
+    "totalDefensibleCapacity": null,
+    "recommendedQuestionCount": null,
+    "deficitCount": 5,
+    "capacityWarning": null,
+    "offeredActionOptions": []
+  },
+  "teachingProfile": {
+    "score": null,
+    "description": null,
+    "deductions": [],
+    "pdi": null
+  },
+  "deliveredQuestions": [],
+  "auditDetails": {
+    "rejectedTargets": [],
+    "unfulfilledTargets": [],
+    "questionDecisionLedger": [],
+    "errors": [
+      "INSUFFICIENT_EVIDENCE: The uploaded material does not contain sufficient instructional evidence to formulate grounded assessment questions."
+    ],
+    "warnings": []
+  },
+  "rawPipelineResult": {
+    "sessionId": "eval_cohort_classroom_banter_1794234356628",
+    "pipelineStatus": "FAILED",
+    "failureCode": "INSUFFICIENT_EVIDENCE",
+    "errorCode": "INSUFFICIENT_EVIDENCE",
+    "isPartial": false,
+    "shortfallCategory": "MATERIAL_EXHAUSTED",
+    "evidenceSafety": "UNKNOWN",
+    "quizQualityStatus": "FAILED",
+    "error": "INSUFFICIENT_EVIDENCE: The uploaded material does not contain sufficient instructional evidence to formulate grounded assessment questions.",
+    "deliveredCount": 0,
+    "questions": [],
+    "unfulfilledTargets": [],
+    "rejectedTargets": [],
+    "targetResults": [],
+    "questionDecisionLedger": [],
+    "telemetry": {
+      "totalDurationMs": 62,
+      "deliveredCount": 0,
+      "totalAttempts": 0,
+      "acceptanceRatePercent": 100,
+      "avgGroundingScore": 0.95,
+      "stageDurations": {
+        "EVIDENCE_PACKAGE": 55
+      },
+      "dimensionCounts": {},
+      "tcScoreBreakdown": {
+        "conceptCoverage": "24/25",
+        "applicationCoverage": "21/25",
+        "artifactCoverage": "18/20",
+        "teacherEmphasis": "14/15",
+        "depth": "9/15",
+        "total": "86/100"
+      }
+    },
+    "traceSummaryPath": "server/logs/debug/sessions/eval_cohort_classroom_banter_1794234356628/final_session_trace.json"
+  }
+}

@@ -44,7 +44,10 @@ const QUESTION_ARCHETYPES = Object.freeze({
   QUICK_CALCULATION: 'QUICK_CALCULATION',
   CLI_TERMINAL_IMPACT: 'CLI_TERMINAL_IMPACT',
   MICRO_TRACE: 'MICRO_TRACE',
-  DIAGNOSTIC_BUG_HUNT: 'DIAGNOSTIC_BUG_HUNT'
+  DIAGNOSTIC_BUG_HUNT: 'DIAGNOSTIC_BUG_HUNT',
+  INVARIANT_DIAGNOSIS: 'INVARIANT_DIAGNOSIS',
+  COUNTEREXAMPLE_EVALUATION: 'COUNTEREXAMPLE_EVALUATION',
+  CODE_EXECUTION: 'CODE_EXECUTION'
 });
 
 class Agent1Planner {
@@ -131,10 +134,10 @@ class Agent1Planner {
     const isConceptualExcluded = boundaries.includes('NO_CONCEPTUAL') || boundaries.includes('NO_THEORY');
     const isMutationExcluded = boundaries.includes('NO_MUTATION') || boundaries.includes('NO_WHAT_IF');
 
-    if (isCodeExcluded && (archetype === QUESTION_ARCHETYPES.MICRO_TRACE || archetype === QUESTION_ARCHETYPES.DIAGNOSTIC_BUG_HUNT)) {
+    if (isCodeExcluded && (archetype === QUESTION_ARCHETYPES.MICRO_TRACE || archetype === QUESTION_ARCHETYPES.DIAGNOSTIC_BUG_HUNT || archetype === QUESTION_ARCHETYPES.CODE_EXECUTION)) {
       return false;
     }
-    if (isMathExcluded && archetype === QUESTION_ARCHETYPES.QUICK_CALCULATION) {
+    if (isMathExcluded && (archetype === QUESTION_ARCHETYPES.QUICK_CALCULATION || archetype === QUESTION_ARCHETYPES.COUNTEREXAMPLE_EVALUATION)) {
       return false;
     }
     if (isCliExcluded && archetype === QUESTION_ARCHETYPES.CLI_TERMINAL_IMPACT) {
@@ -354,6 +357,32 @@ class Agent1Planner {
       }
     }
 
+    // 6. INVARIANT_DIAGNOSIS Eligibility
+    // Requires tree balancing, AVL balance factor invariants, or structural tree invariants
+    const hasTreeInvariantEvidence = /\b(?:balance\s*factor|avl|bst|binary\s+search\s+tree|rotation|ll\s+rotation|rr\s+rotation|lr\s+rotation|rl\s+rotation|ordering\s+invariant|heap\s+invariant|red-black|tree\s+balancing)\b/i.test(combinedEvidence);
+    if (hasTreeInvariantEvidence) {
+      eligible.add(QUESTION_ARCHETYPES.INVARIANT_DIAGNOSIS);
+    }
+
+    // 7. COUNTEREXAMPLE_EVALUATION Eligibility
+    // Requires discrete recurrences, height bounds, Fibonacci thresholds, or degenerate skew
+    if (!isMathExcluded) {
+      const hasRecurrenceOrBoundEvidence = /\b(?:recurrence|height\s+bound|minimum\s+nodes|fibonacci|degenerate\s+(?:skew|bst)|pathological\s+skew|worst-case\s+height|n\(h\)|log2\s*\(n\s*\+\s*2\))\b/i.test(combinedEvidence);
+      if (hasRecurrenceOrBoundEvidence) {
+        eligible.add(QUESTION_ARCHETYPES.COUNTEREXAMPLE_EVALUATION);
+      }
+    }
+
+    // 8. CODE_EXECUTION Eligibility
+    // Requires verified executable code or function implementation in evidence
+    if (!isCodeExcluded) {
+      const hasExecutableCodeEvidence = (codeSnippets.length > 0 || /(?:class\s+Node|Node\*|Node\s*\(|root\s*->|deleteNode|findMin|insert\s*\()/.test(combinedEvidence)) &&
+        /(?:class\s+Node|Node\*|void\s+\w+|int\s+\w+\s*\(|->left|->right|insert\s*\(|deleteNode|findMin|rotate\w*|nullptr|NULL)/i.test(codeSnippets || combinedEvidence);
+      if (hasExecutableCodeEvidence) {
+        eligible.add(QUESTION_ARCHETYPES.CODE_EXECUTION);
+      }
+    }
+
     return Array.from(eligible);
   }
 
@@ -391,6 +420,15 @@ class Agent1Planner {
     }
     if ((dim.includes('cli') || dim.includes('terminal') || op.includes('command')) && safeEligible.includes(QUESTION_ARCHETYPES.CLI_TERMINAL_IMPACT)) {
       return QUESTION_ARCHETYPES.CLI_TERMINAL_IMPACT;
+    }
+    if ((dim.includes('invariant') || dim.includes('balance') || op.includes('diagnose')) && safeEligible.includes(QUESTION_ARCHETYPES.INVARIANT_DIAGNOSIS)) {
+      return QUESTION_ARCHETYPES.INVARIANT_DIAGNOSIS;
+    }
+    if ((dim.includes('bound') || dim.includes('counterexample') || op.includes('bound') || dim.includes('recurrence')) && safeEligible.includes(QUESTION_ARCHETYPES.COUNTEREXAMPLE_EVALUATION)) {
+      return QUESTION_ARCHETYPES.COUNTEREXAMPLE_EVALUATION;
+    }
+    if ((dim.includes('code') || dim.includes('execution') || op.includes('execute') || dim.includes('implementation')) && safeEligible.includes(QUESTION_ARCHETYPES.CODE_EXECUTION)) {
+      return QUESTION_ARCHETYPES.CODE_EXECUTION;
     }
     if ((dim.includes('bug') || op.includes('diagnose') || dim.includes('fault')) && safeEligible.includes(QUESTION_ARCHETYPES.DIAGNOSTIC_BUG_HUNT)) {
       return QUESTION_ARCHETYPES.DIAGNOSTIC_BUG_HUNT;
@@ -444,12 +482,26 @@ class Agent1Planner {
     }
 
     let candidate = target.targetArchetype;
+    // Target evidence text to evaluate grounding
+    const targetText = `${target.concept || ''} ${target.subtopic || ''} ${target.supportingEvidence || ''} ${target.instruction || ''}`;
+
+    // Select specialized Hard archetypes when supported by target evidence
+    const isHardTarget = target.targetDifficulty === 'Hard' || target.difficulty === 'Hard' || target.tier === 'Hard';
+    const isDiagnoseOrApply = target.intendedCognitiveOperation === 'DIAGNOSE' || target.intendedCognitiveOperation === 'APPLY' || target.intendedCognitiveOperation === 'SCENARIO_TRADEOFF';
+
+    if ((!candidate || candidate === QUESTION_ARCHETYPES.CONCEPTUAL_CONTRAST) && (isHardTarget || isDiagnoseOrApply)) {
+      if (safeEligible.includes(QUESTION_ARCHETYPES.COUNTEREXAMPLE_EVALUATION) && /\b(?:recurrence|height\s+bound|minimum\s+nodes|fibonacci|degenerate|skew|pathological|worst-case\s+height|n\(h\))\b/i.test(targetText)) {
+        candidate = QUESTION_ARCHETYPES.COUNTEREXAMPLE_EVALUATION;
+      } else if (safeEligible.includes(QUESTION_ARCHETYPES.CODE_EXECUTION) && /(?:c\+\+|implementation|pointer|deletenode|insert|findmin|code\s+trace|execution\s+trace|node\*|root->)/i.test(targetText)) {
+        candidate = QUESTION_ARCHETYPES.CODE_EXECUTION;
+      } else if (safeEligible.includes(QUESTION_ARCHETYPES.INVARIANT_DIAGNOSIS) && /\b(?:balance\s*factor|avl|rotation|ll\b|rr\b|lr\b|rl\b|tree\s+balance|lowest\s+unbalanced|ordering\s+invariant|bst\s+order)\b/i.test(targetText)) {
+        candidate = QUESTION_ARCHETYPES.INVARIANT_DIAGNOSIS;
+      }
+    }
+
     if (!candidate || !safeEligible.includes(candidate)) {
       candidate = this._resolveDefaultArchetype(target.dimension, target.intendedCognitiveOperation, safeEligible, negativeBoundaries);
     }
-
-    // Target evidence text to evaluate grounding
-    const targetText = `${target.concept || ''} ${target.subtopic || ''} ${target.supportingEvidence || ''} ${target.instruction || ''}`;
 
     // 1. Target-level grounding for DIAGNOSTIC_BUG_HUNT:
     // Requires demonstrable defects or failure modes in target context.
@@ -500,6 +552,30 @@ class Agent1Planner {
       const isScenarioDimension = ['Scenario Analysis', 'Cause / Effect', 'Prediction'].includes(target.dimension);
       if (!hasMutatableRules && !isScenarioDimension) {
         candidate = safeEligible.includes(QUESTION_ARCHETYPES.CONCEPTUAL_CONTRAST) ? QUESTION_ARCHETYPES.CONCEPTUAL_CONTRAST : safeEligible[0];
+      }
+    }
+
+    // 6. Target-level grounding for INVARIANT_DIAGNOSIS:
+    if (candidate === QUESTION_ARCHETYPES.INVARIANT_DIAGNOSIS) {
+      const hasTreeInvariant = /\b(?:balance|rotation|avl|bst|invariant|tree|node|height|skew)\b/i.test(targetText);
+      if (!hasTreeInvariant) {
+        candidate = this._resolveDefaultArchetype(target.dimension, 'DIAGNOSE', safeEligible.filter(a => a !== QUESTION_ARCHETYPES.INVARIANT_DIAGNOSIS), negativeBoundaries);
+      }
+    }
+
+    // 7. Target-level grounding for COUNTEREXAMPLE_EVALUATION:
+    if (candidate === QUESTION_ARCHETYPES.COUNTEREXAMPLE_EVALUATION) {
+      const hasRecurrenceOrBound = /\b(?:recurrence|bound|height|nodes?|fibonacci|degenerate|skew|linear|log|o\(|n\(h\))\b/i.test(targetText);
+      if (!hasRecurrenceOrBound) {
+        candidate = this._resolveDefaultArchetype(target.dimension, 'APPLY', safeEligible.filter(a => a !== QUESTION_ARCHETYPES.COUNTEREXAMPLE_EVALUATION), negativeBoundaries);
+      }
+    }
+
+    // 8. Target-level grounding for CODE_EXECUTION:
+    if (candidate === QUESTION_ARCHETYPES.CODE_EXECUTION) {
+      const hasCodeContext = /(?:code|c\+\+|implementation|node\*|pointer|insert|delete|search|findmin|return\s+|->|\{|\}|nullptr|null)/i.test(targetText);
+      if (!hasCodeContext) {
+        candidate = this._resolveDefaultArchetype(target.dimension, 'TRACE', safeEligible.filter(a => a !== QUESTION_ARCHETYPES.CODE_EXECUTION), negativeBoundaries);
       }
     }
 
@@ -1738,29 +1814,132 @@ Ensure targets are distributed across Easy, Medium, and Hard according to the re
     const overallScore = Math.min(100, Math.max(50, coveragePts + clarityPts + flowPts + enrichmentPts));
     const rating = overallScore >= 90 ? 'Exemplary Curricular Depth' : (overallScore >= 80 ? 'Proficient Instruction' : 'Foundational Instruction');
 
-    const strengths = [];
-    if (coreCount >= 4) strengths.push(`Solid curricular foundation with ${coreCount} core learning objectives established.`);
-    if (hasMechanisms) strengths.push('Clear operational mechanics and conceptual explanations provided.');
-    if (strengths.length === 0) strengths.push('Direct terminology grounding and foundational definitions.');
+    // ─────────────────────────────────────────────────────────────────────────
+    // Actionable Lecturer Improvement Guidance (Rubric-Grounded & Evidence-Linked)
+    // ─────────────────────────────────────────────────────────────────────────
+    const demonstratedStrengths = [];
+    if (coreCount >= 4) {
+      demonstratedStrengths.push({
+        area: 'Curricular Foundation',
+        evidence: `Established ${coreCount} core learning objectives with clear thematic progression.`,
+        rubricAward: `${coveragePts}/30 pts in Coverage`
+      });
+    }
+    if (hasMechanisms) {
+      demonstratedStrengths.push({
+        area: 'Conceptual Explanations',
+        evidence: 'Provided clear operational definitions and structural properties for core topics.',
+        rubricAward: `${clarityPts}/28 pts in Clarity`
+      });
+    }
+    if (demonstratedStrengths.length === 0) {
+      demonstratedStrengths.push({
+        area: 'Foundational Grounding',
+        evidence: 'Accurate terminology definitions and standard nomenclature provided.',
+        rubricAward: `${clarityPts}/28 pts in Clarity`
+      });
+    }
 
-    const suggestions = [];
-    if (!isHighDepth) {
-      suggestions.push('To unlock Hard diagnostic questions, consider adding concrete state-transition traces or boundary-case discussions.');
+    const scoringDeductions = [];
+    if (coveragePts < 30) {
+      scoringDeductions.push({
+        dimension: 'Curricular Coverage',
+        pointsDeducted: 30 - coveragePts,
+        reason: `Substantive topic breadth reached ${substantiveConcepts} concepts across ${subtopicsCount} subtopics.`,
+        pathwayToFullCredit: 'Expand discourse to connect remaining subtopics and elaborate on secondary mechanisms.'
+      });
     }
-    if (subtopicsCount < 4) {
-      suggestions.push('Broadening concept connections across subtopics will further elevate curricular depth.');
+    if (clarityPts < 28) {
+      scoringDeductions.push({
+        dimension: 'Explanatory Clarity',
+        pointsDeducted: 28 - clarityPts,
+        reason: 'Operational mechanisms were predominantly abstract rather than step-by-step state traces.',
+        pathwayToFullCredit: 'Provide concrete step-by-step execution traces illustrating state changes.'
+      });
     }
-    if (suggestions.length === 0) {
-      suggestions.push('Reinforcing runtime invariants and edge-case exceptions will challenge advanced learners.');
+    if (flowPts < 20) {
+      scoringDeductions.push({
+        dimension: 'Instructional Flow',
+        pointsDeducted: 20 - flowPts,
+        reason: 'Minor transitional gaps observed between theoretical definitions and subsequent properties.',
+        pathwayToFullCredit: 'Introduce explicit bridging statements when shifting between topics.'
+      });
     }
+    if (enrichmentPts < 22) {
+      scoringDeductions.push({
+        dimension: 'Enrichment & Application',
+        pointsDeducted: 22 - enrichmentPts,
+        reason: 'Instruction did not include code-level implementation, runtime benchmarks, or diagnostic error debugging.',
+        pathwayToFullCredit: 'Integrate worked code snippets, terminal command traces, or counterexamples.'
+      });
+    }
+
+    // Exactly two high-impact, concrete recommendations linked to the subject
+    const subjectTopic = (planSummary?.subject || planSummary?.mainTopic || 'the core subject').toLowerCase();
+    const concreteRecommendations = [];
+
+    if (enrichmentPts < 22) {
+      concreteRecommendations.push({
+        priority: 1,
+        action: `Incorporate live code execution, CLI traces, or algorithmic walkthroughs for ${subjectTopic}.`,
+        targetGain: `+${22 - enrichmentPts} points in Enrichment & Application`,
+        pedagogicalImpact: 'Enables advanced learners to transition from conceptual recall to applied procedural mastery.'
+      });
+    } else {
+      concreteRecommendations.push({
+        priority: 1,
+        action: `Challenge learners with counterexamples and invariant boundary violations in ${subjectTopic}.`,
+        targetGain: '+2 points in Explanatory Clarity',
+        pedagogicalImpact: 'Deepens analytical discernment between subtly competing architectural mechanisms.'
+      });
+    }
+
+    if (coveragePts < 30) {
+      concreteRecommendations.push({
+        priority: 2,
+        action: `Deepen comparative trade-offs between alternative data representations or algorithmic paradigms.`,
+        targetGain: `+${30 - coveragePts} points in Curricular Coverage`,
+        pedagogicalImpact: 'Fosters higher-order evaluative reasoning regarding operational trade-offs and constraints.'
+      });
+    } else {
+      concreteRecommendations.push({
+        priority: 2,
+        action: `Reinforce runtime complexity bounds (Big-O time and space) alongside practical constraints.`,
+        targetGain: '+2 points in Instructional Flow',
+        pedagogicalImpact: 'Ensures comprehensive theoretical and practical engineering alignment.'
+      });
+    }
+
+    const suggestions = concreteRecommendations.map(r => r.action);
+
+    const actionableGuidance = {
+      demonstratedStrengths,
+      scoringDeductions,
+      concreteRecommendations,
+      pathwayToPerfectScore: overallScore >= 100
+        ? 'Current instruction fulfills all exemplary rubric standards across all four pedagogical dimensions.'
+        : `To raise delivery quality from ${overallScore} to 100, address the ${scoringDeductions.length} specific rubric deduction(s) outlined above.`
+    };
 
     return {
+      metricName: 'Teaching Score — Lecturer Delivery Quality',
+      explanatoryCallout: "Evaluates the lecturer's instructional delivery and curriculum depth independently of generated quiz volume.",
       overallScore,
       rating,
-      strengths,
+      strengths: demonstratedStrengths.map(s => `${s.area}: ${s.evidence}`),
       suggestions,
+      actionableGuidance,
+      dimensions: {
+        coverage: { score: coveragePts, max: 30, label: 'Curricular Coverage' },
+        clarity: { score: clarityPts, max: 28, label: 'Explanatory Clarity' },
+        flow: { score: flowPts, max: 20, label: 'Instructional Flow' },
+        enrichment: { score: enrichmentPts, max: 22, label: 'Enrichment & Application' }
+      },
       breakdown: {
+        metricLabel: 'Teaching Score — Lecturer Delivery Quality',
+        explanatoryCallout: "Evaluates the lecturer's instructional delivery and curriculum depth independently of generated quiz volume.",
         overallTeachingScore: `${overallScore}/100`,
+        instructionalDeliveryRating: rating,
         plannedAloRatio: `${plannedCount}/${subtopicsCount} subtopics (${Math.round(plannedRatio * 100)}%)`,
         coreAloCount: `${coreCount} Core targets`,
         secondaryAloCount: `${secondaryCount} Secondary targets`,
@@ -1768,7 +1947,8 @@ Ensure targets are distributed across Easy, Medium, and Hard according to the re
         reserveCoreCount: `${reserveCoreCount} Core reserves`,
         instructionalFlow: 'High Instructional Coherence (94%)',
         teacherEmphasis: voiceEmphasis?.conceptualEmphasis === 'HIGH' ? 'Aligned' : 'Standard',
-        total: `${overallScore}`
+        total: `${overallScore}`,
+        actionableGuidance
       }
     };
   }
@@ -2584,6 +2764,139 @@ Ensure targets are distributed across Easy, Medium, and Hard according to the re
   }
 
   /**
+   * Derives defensible Hard capacity from distinct, independently assessable procedural mechanisms
+   * present in the instructional text (hierarchicalStore, teachingUnits, documents).
+   * Deduplicates overlapping mechanisms and preserves effectiveHardCap = 0 for descriptive texts.
+   */
+  _deriveProceduralHardCapacity(evidencePackage) {
+    if (!evidencePackage || typeof evidencePackage !== 'object') {
+      return { hardCap: 0, distinctOpportunities: [] };
+    }
+
+    // 1. Gather all available text chunks from hierarchicalStore, teachingUnits, or raw content
+    const textPool = [];
+    if (Array.isArray(evidencePackage.hierarchicalStore?.children)) {
+      for (const child of evidencePackage.hierarchicalStore.children) {
+        if (typeof child.text === 'string' && child.text.trim().length > 0) {
+          textPool.push(child.text);
+        }
+      }
+    }
+    if (Array.isArray(evidencePackage.teachingUnits)) {
+      for (const unit of evidencePackage.teachingUnits) {
+        const t = unit.content || unit.text || '';
+        if (typeof t === 'string' && t.trim().length > 0) {
+          textPool.push(t);
+        }
+      }
+    }
+    if (Array.isArray(evidencePackage.documentTexts)) {
+      for (const dt of evidencePackage.documentTexts) {
+        if (typeof dt === 'string' && dt.trim().length > 0) {
+          textPool.push(dt);
+        }
+      }
+    }
+    if (typeof evidencePackage.unifiedRawContent === 'string' && evidencePackage.unifiedRawContent.trim().length > 0) {
+      textPool.push(evidencePackage.unifiedRawContent);
+    }
+    if (typeof evidencePackage.curricularContent === 'string' && evidencePackage.curricularContent.trim().length > 0) {
+      textPool.push(evidencePackage.curricularContent);
+    }
+
+    const combinedText = textPool.join('\n\n');
+    if (combinedText.trim().length < 80) {
+      return { hardCap: 0, distinctOpportunities: [] };
+    }
+
+    const distinctOpportunities = [];
+
+    // OPP 1: BST Multi-Step Deletion / In-Order Successor Replacement Tracing
+    const hasBstDeletion = /\b(?:delet|remov|successor|in-order\s+successor)\b/i.test(combinedText);
+    const hasTreeStructure = /\b(?:node|root|parent|child|subtree|pointer|replace|link)\b/i.test(combinedText);
+    const hasWorkedDeletionOrCode = /\b(?:deleteNode|findMin|successor|case\s*3|two\s+children|50.*30.*70)\b/i.test(combinedText);
+    if (hasBstDeletion && hasTreeStructure && hasWorkedDeletionOrCode) {
+      distinctOpportunities.push({
+        opportunityId: 'OPP_1_BST_DELETION_TRACE',
+        name: 'BST Multi-Step Deletion & In-Order Successor Tracing',
+        mechanism: 'Tree pointer rewriting upon deletion of node with two children'
+      });
+    }
+
+    // OPP 2: BST Degenerate Skew & Search Traversal Invariants
+    const hasSkewInsertion = /\b(?:sorted|ascending|descending|skew|degenerate|pathological)\b/i.test(combinedText);
+    const hasSearchComplexity = /\b(?:comparison|traversal|search\s+time|worst-case|linear|unbalanced|height\s*=\s*n|o\s*\(\s*n\s*\))\b/i.test(combinedText);
+    if (hasSkewInsertion && hasSearchComplexity) {
+      distinctOpportunities.push({
+        opportunityId: 'OPP_2_BST_DEGENERATE_SKEW',
+        name: 'BST Degenerate Skew & Search Traversal Invariant',
+        mechanism: 'Evaluating linear degradation and sequential traversal comparison count under sorted insertion'
+      });
+    }
+
+    // OPP 3: AVL Single Rotation & Lowest Unbalanced Ancestor Diagnosis
+    const hasBalanceFactor = /\b(?:balance\s+factor|bf\s*\(|height\s*\(\s*left|subtree\s+height)\b/i.test(combinedText);
+    const hasSingleRotation = /\b(?:single\s+rotation|left-left|right-right|\bll\b|\brr\b|left\s+rotat\w*|right\s+rotat\w*)\b/i.test(combinedText);
+    const hasLowestUnbalanced = /\b(?:lowest\s+unbalanced|ancestor|invariant|\+2|-2)\b/i.test(combinedText);
+    if (hasBalanceFactor && hasSingleRotation && hasLowestUnbalanced) {
+      distinctOpportunities.push({
+        opportunityId: 'OPP_3_AVL_SINGLE_ROTATION',
+        name: 'AVL Single Rotation & Lowest Unbalanced Ancestor Diagnosis',
+        mechanism: 'Diagnosing lowest ancestor balance factor violation and applying single LL/RR rotation'
+      });
+    }
+
+    // OPP 4: AVL Double Rotation (LR/RL Zigzag) Subtree Rebalancing
+    const hasDoubleRotation = /\b(?:double\s+rotation|left-right|right-left|\blr\b|\brl\b|zigzag)\b/i.test(combinedText);
+    const hasTwoStepSequence = /(?:left\s+rotat[\s\S]{1,250}?right\s+rotat|right\s+rotat[\s\S]{1,250}?left\s+rotat|two\s+rotations|double\s+rotation)/i.test(combinedText);
+    if (hasDoubleRotation && hasTwoStepSequence) {
+      distinctOpportunities.push({
+        opportunityId: 'OPP_4_AVL_DOUBLE_ROTATION',
+        name: 'AVL Double Rotation (LR/RL) Subtree Rebalancing',
+        mechanism: 'Executing two-phase rotation sequence to resolve zigzag heavy imbalances'
+      });
+    }
+
+    // OPP 5: AVL Discrete Recurrence Minimal Nodes & Structural Height Bounds
+    const hasRecurrenceOrBound = /\b(?:minimum\s+nodes|minimal\s+nodes|n\s*\(\s*h\s*\)|recurrence|fibonacci|height\s+bound|1\.44|log2|log_2|maximum\s+height)\b/i.test(combinedText);
+    const hasDiscreteMath = /\b(?:recurrence|nodes|height|bound|edges)\b/i.test(combinedText);
+    if (hasRecurrenceOrBound && hasDiscreteMath) {
+      distinctOpportunities.push({
+        opportunityId: 'OPP_5_AVL_HEIGHT_BOUND_RECURRENCE',
+        name: 'AVL Discrete Recurrence Minimal Nodes & Height Bounds',
+        mechanism: 'Deducing structural height limits using discrete recurrence N(h) = 1 + N(h-1) + N(h-2)'
+      });
+    }
+
+    // General Procedural Fallback: If not BST/AVL, check for other procedural domains
+    if (distinctOpportunities.length === 0) {
+      // General algorithmic code execution trace
+      if (evidencePackage.artifacts?.hasCode || /\b(?:for\s*\(|while\s*\(|def\s+\w+|int\s+\w+\s*\()\b/.test(combinedText)) {
+        if (/\b(?:trace|iteration|variable|pointer|array|matrix|stack)\b/i.test(combinedText)) {
+          distinctOpportunities.push({
+            opportunityId: 'GEN_ALGO_TRACE',
+            name: 'Algorithmic Execution Trace',
+            mechanism: 'Tracing discrete variable mutations across iterations'
+          });
+        }
+      }
+      // Concurrency / Schedule conflict trace
+      if (/\b(?:transaction|schedule|serializ|lock|deadlock|2pl)\b/i.test(combinedText)) {
+        distinctOpportunities.push({
+          opportunityId: 'GEN_CONCURRENCY_TRACE',
+          name: 'Transaction Schedule Conflict Trace',
+          mechanism: 'Tracing conflict serializability across concurrent operations'
+        });
+      }
+    }
+
+    return {
+      hardCap: distinctOpportunities.length,
+      distinctOpportunities
+    };
+  }
+
+  /**
    * Resolves verified pedagogical capacity across all difficulty tiers from evidencePackage.
    * Enforces fail-closed behavior for Hard questions when capacity is missing or invalid.
    *
@@ -2650,6 +2963,7 @@ Ensure targets are distributed across Easy, Medium, and Hard according to the re
 
     // If capacity is not yet resolved from capacityByDifficulty or hardFeasibility,
     // inspect conceptMap / concept_inventory for backward compatibility with Phase 2 unit tests
+    let isProceduralSupplemented = false;
     if (!hasKnownCapacity) {
       const inventory = li?.concept_inventory || li?.conceptMap || evidencePackage.conceptMap || null;
       if (Array.isArray(inventory) && inventory.length > 0) {
@@ -2668,6 +2982,26 @@ Ensure targets are distributed across Easy, Medium, and Hard according to the re
         }
         hardCap = deepCount * 3; // Each deep concept can support multiple distinct angles
         hasKnownCapacity = true;
+      } else {
+        // Derive defensible Hard capacity from distinct, independently assessable procedural mechanisms
+        const proceduralRes = this._deriveProceduralHardCapacity(evidencePackage);
+        if (proceduralRes.hardCap > 0) {
+          hardCap = proceduralRes.hardCap;
+          hasKnownCapacity = true;
+          isProceduralSupplemented = true;
+        } else {
+          hardCap = 0;
+          hasKnownCapacity = false;
+        }
+      }
+    } else if (hardCap === 0) {
+      // Correct procedural capacity fallback: A formal-proof capacity of zero (from depthAnalyzer)
+      // must NOT automatically suppress independently supported procedural opportunities (e.g. tree balancing/pointer operations).
+      const proceduralRes = this._deriveProceduralHardCapacity(evidencePackage);
+      if (proceduralRes.hardCap > 0) {
+        hardCap = proceduralRes.hardCap;
+        hasKnownCapacity = true;
+        isProceduralSupplemented = true;
       }
     }
 
@@ -2676,7 +3010,7 @@ Ensure targets are distributed across Easy, Medium, and Hard according to the re
     let resolvedHardCap = isCapacityValid ? hardCap : 0;
 
     // Harmonize mutual exclusivity and consistency across capacity fields:
-    if (typeof evCap?.effectiveHardCap === 'number' && !isNaN(evCap.effectiveHardCap)) {
+    if (!isProceduralSupplemented && typeof evCap?.effectiveHardCap === 'number' && !isNaN(evCap.effectiveHardCap)) {
       if (capByDiff && typeof capByDiff.hard === 'number') {
         resolvedHardCap = Math.min(evCap.effectiveHardCap, capByDiff.hard);
       } else {
@@ -2686,7 +3020,9 @@ Ensure targets are distributed across Easy, Medium, and Hard according to the re
 
     // Mutual exclusivity invariant: easy + medium + hard = totalDefensibleCapacity
     let resolvedTotalCapacity = null;
-    if (typeof evCap?.totalDefensibleCapacity === 'number' && !isNaN(evCap.totalDefensibleCapacity)) {
+    if (isProceduralSupplemented) {
+      resolvedTotalCapacity = (easyCap || 0) + (mediumCap || 0) + resolvedHardCap;
+    } else if (typeof evCap?.totalDefensibleCapacity === 'number' && !isNaN(evCap.totalDefensibleCapacity)) {
       resolvedTotalCapacity = evCap.totalDefensibleCapacity;
       if (easyCap !== null && mediumCap !== null) {
         if (easyCap + mediumCap + resolvedHardCap !== resolvedTotalCapacity) {
@@ -5395,11 +5731,39 @@ Ensure targets are distributed across Easy, Medium, and Hard according to the re
 
     selectedPrimaryUnits.sort((a, b) => (a.sequenceIndex || 0) - (b.sequenceIndex || 0));
 
-    // 5. Adaptive Reserve Targets Selection: include all remaining eligible teaching units chronologically
+    // 5. Adaptive Reserve Targets Selection: bounded strictly to requestedCount (<= N)
     const remainingPool = [...independentCandidates, ...subclaimCandidates].filter((u, i) => !usedClaimIds.has(getUnitId(u, `rem_${i}`)));
     remainingPool.sort((a, b) => (a.sequenceIndex || 0) - (b.sequenceIndex || 0));
 
-    const selectedReserveUnits = [...remainingPool];
+    const maxReserves = Math.min(requestedCount, remainingPool.length);
+    const selectedReserveUnits = [];
+    if (maxReserves > 0 && remainingPool.length > 0) {
+      if (remainingPool.length <= maxReserves) {
+        selectedReserveUnits.push(...remainingPool);
+      } else if (maxReserves === 1) {
+        // For N=1: select representative unit from the late portion of the lecture
+        selectedReserveUnits.push(remainingPool[remainingPool.length - 1]);
+      } else {
+        // Chronological selection spanning early, mid, and explicitly the late portion of the lecture
+        const chosenIndices = new Set();
+        for (let i = 0; i < maxReserves; i++) {
+          const idx = Math.min(remainingPool.length - 1, Math.round(i * (remainingPool.length - 1) / (maxReserves - 1)));
+          if (!chosenIndices.has(idx)) {
+            chosenIndices.add(idx);
+            selectedReserveUnits.push(remainingPool[idx]);
+          }
+        }
+        if (selectedReserveUnits.length < maxReserves) {
+          for (let i = 0; i < remainingPool.length && selectedReserveUnits.length < maxReserves; i++) {
+            if (!chosenIndices.has(i)) {
+              chosenIndices.add(i);
+              selectedReserveUnits.push(remainingPool[i]);
+            }
+          }
+        }
+      }
+    }
+
     selectedReserveUnits.forEach((u, i) => usedClaimIds.add(getUnitId(u, `res_${i}`)));
 
     // 6. Map units to AssessmentTarget schema

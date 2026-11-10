@@ -1,0 +1,3438 @@
+{
+  "metadata": {
+    "cohortId": "bst_dsa",
+    "lectureName": "Lecture 3: BST / DSA (Document-Only)",
+    "evaluationTimestamp": "2026-11-09T14:23:57.188Z",
+    "executionDurationSec": "111.3",
+    "gitCommit": "da0ea1594d6a3984ad679e2f6fb44d86cc43b9ba",
+    "requestedCount": 5,
+    "requestedDifficulty": "Balanced",
+    "deliveredCount": 0,
+    "pipelineStatus": "FAILED",
+    "evidenceSafety": "FOREIGN_CONTAMINATED",
+    "evaluationPhase": "POST_REMEDIATION",
+    "baselineCommit": "04456a0"
+  },
+  "capacityMetrics": {
+    "totalDefensibleCapacity": 8,
+    "recommendedQuestionCount": 5,
+    "deficitCount": 5,
+    "capacityWarning": "This lecture supports up to 8 distinct evidence-grounded questions. Insufficient evidence for 5 Hard question(s). Recommended quiz size: 5 questions. One requested Hard questions could not be supported by the lecture evidence. They were reallocated to Medium. No Hard questions were generated.",
+    "offeredActionOptions": [
+      {
+        "action": "ACCEPT_FEASIBLE_COUNT",
+        "label": "Accept 0 Balanced Questions"
+      },
+      {
+        "action": "FILL_WITH_MEDIUM",
+        "label": "Fill Remaining 1 with Deep Medium Questions"
+      },
+      {
+        "action": "ACCEPT_RECOMMENDED_COUNT",
+        "label": "Accept recommended quiz size (5 questions)"
+      },
+      {
+        "action": "ADD_MATERIALS",
+        "label": "Provide additional lecture materials"
+      },
+      {
+        "action": "EXPAND_SCOPE",
+        "label": "Expand lecture scope"
+      },
+      {
+        "action": "CANCEL",
+        "label": "Cancel / Adjust Request"
+      }
+    ]
+  },
+  "teachingProfile": {
+    "score": null,
+    "description": {
+      "explanatoryDepth": [
+        "DEFINITION_AND_TERMINOLOGY",
+        "OPERATIONAL_MECHANISM"
+      ],
+      "reasoningDepth": [
+        "INVARIANT_AND_CAUSAL"
+      ],
+      "practicalDemonstrations": [
+        "NOT_OBSERVED_IN_EXCERPT"
+      ],
+      "discourseStyle": [
+        "MONOLOGUE_LECTURE"
+      ],
+      "evidenceQuotes": [],
+      "negativeBoundaries": [],
+      "limitationsOfExcerpt": "Automated fallback generated via deterministic evidence analysis."
+    },
+    "deductions": [],
+    "pdi": null
+  },
+  "deliveredQuestions": [],
+  "auditDetails": {
+    "rejectedTargets": [],
+    "unfulfilledTargets": [
+      {
+        "targetId": "T03",
+        "concept": "BST Deletion Algorithm",
+        "subtopic": "BST Deletion Algorithm",
+        "targetDifficulty": "Medium",
+        "intendedCognitiveOperation": "COMPARE",
+        "status": "UNFULFILLED_PROVIDER_FAILURE",
+        "reason": "LLM generation error on target \"BST Deletion Algorithm\": NO_LLM_PROVIDER_AVAILABLE: All AI providers failed [Groq (Configured Groq models failed across all available keys in pool)]. Please verify your API key or try again in a few moments.",
+        "attempts": 1,
+        "repairAttempted": false,
+        "repairSuccessful": false,
+        "mcq": {
+          "targetId": "T03",
+          "fulfillmentStatus": "UNFULFILLED_PROVIDER_FAILURE",
+          "isUnfulfilled": true,
+          "unfulfilledReason": "PROVIDER_UNAVAILABLE",
+          "message": "LLM generation error on target \"BST Deletion Algorithm\": NO_LLM_PROVIDER_AVAILABLE: All AI providers failed [Groq (Configured Groq models failed across all available keys in pool)]. Please verify your API key or try again in a few moments.",
+          "metadata": {
+            "targetDifficulty": "Medium",
+            "achievedDifficulty": null,
+            "intendedCognitiveOperation": "COMPARE",
+            "achievedCognitiveOperation": null,
+            "concept": "BST Deletion Algorithm",
+            "isCapacityLimited": false
+          }
+        }
+      },
+      {
+        "targetId": "T04",
+        "concept": "In‑order Traversal Property",
+        "subtopic": "In‑order Traversal Property",
+        "targetDifficulty": "Medium",
+        "intendedCognitiveOperation": "COMPARE",
+        "status": "UNFULFILLED_PROVIDER_FAILURE",
+        "reason": "LLM generation error on target \"In‑order Traversal Property\": NO_LLM_PROVIDER_AVAILABLE: All AI providers failed [Groq (Configured Groq models failed across all available keys in pool)]. Please verify your API key or try again in a few moments.",
+        "attempts": 1,
+        "repairAttempted": false,
+        "repairSuccessful": false,
+        "mcq": {
+          "targetId": "T04",
+          "fulfillmentStatus": "UNFULFILLED_PROVIDER_FAILURE",
+          "isUnfulfilled": true,
+          "unfulfilledReason": "PROVIDER_UNAVAILABLE",
+          "message": "LLM generation error on target \"In‑order Traversal Property\": NO_LLM_PROVIDER_AVAILABLE: All AI providers failed [Groq (Configured Groq models failed across all available keys in pool)]. Please verify your API key or try again in a few moments.",
+          "metadata": {
+            "targetDifficulty": "Medium",
+            "achievedDifficulty": null,
+            "intendedCognitiveOperation": "COMPARE",
+            "achievedCognitiveOperation": null,
+            "concept": "In‑order Traversal Property",
+            "isCapacityLimited": false
+          }
+        }
+      },
+      {
+        "targetId": "T05",
+        "concept": "Worst‑case Height of Unbalanced BST",
+        "subtopic": "Worst‑case Height of Unbalanced BST",
+        "targetDifficulty": "Medium",
+        "intendedCognitiveOperation": "COMPARE",
+        "status": "UNFULFILLED_PROVIDER_FAILURE",
+        "reason": "LLM generation error on target \"Worst‑case Height of Unbalanced BST\": NO_LLM_PROVIDER_AVAILABLE: All AI providers failed [Groq (Configured Groq models failed across all available keys in pool)]. Please verify your API key or try again in a few moments.",
+        "attempts": 1,
+        "repairAttempted": false,
+        "repairSuccessful": false,
+        "mcq": {
+          "targetId": "T05",
+          "fulfillmentStatus": "UNFULFILLED_PROVIDER_FAILURE",
+          "isUnfulfilled": true,
+          "unfulfilledReason": "PROVIDER_UNAVAILABLE",
+          "message": "LLM generation error on target \"Worst‑case Height of Unbalanced BST\": NO_LLM_PROVIDER_AVAILABLE: All AI providers failed [Groq (Configured Groq models failed across all available keys in pool)]. Please verify your API key or try again in a few moments.",
+          "metadata": {
+            "targetDifficulty": "Medium",
+            "achievedDifficulty": null,
+            "intendedCognitiveOperation": "COMPARE",
+            "achievedCognitiveOperation": null,
+            "concept": "Worst‑case Height of Unbalanced BST",
+            "isCapacityLimited": false
+          }
+        }
+      },
+      {
+        "targetId": "R01",
+        "concept": "Balanced BST Complexity",
+        "subtopic": "Balanced BST Complexity",
+        "targetDifficulty": "Medium",
+        "intendedCognitiveOperation": "RECALL",
+        "status": "UNFULFILLED_PROVIDER_FAILURE",
+        "reason": "LLM generation error on target \"Balanced BST Complexity\": NO_LLM_PROVIDER_AVAILABLE: All AI providers failed [Groq (Configured Groq models failed across all available keys in pool)]. Please verify your API key or try again in a few moments.",
+        "attempts": 1,
+        "repairAttempted": false,
+        "repairSuccessful": false,
+        "mcq": {
+          "targetId": "R01",
+          "fulfillmentStatus": "UNFULFILLED_PROVIDER_FAILURE",
+          "isUnfulfilled": true,
+          "unfulfilledReason": "PROVIDER_UNAVAILABLE",
+          "message": "LLM generation error on target \"Balanced BST Complexity\": NO_LLM_PROVIDER_AVAILABLE: All AI providers failed [Groq (Configured Groq models failed across all available keys in pool)]. Please verify your API key or try again in a few moments.",
+          "metadata": {
+            "targetDifficulty": "Medium",
+            "achievedDifficulty": null,
+            "intendedCognitiveOperation": "RECALL",
+            "achievedCognitiveOperation": null,
+            "concept": "Balanced BST Complexity",
+            "isCapacityLimited": false
+          }
+        }
+      },
+      {
+        "targetId": "R02",
+        "concept": "AVL Balance Factor Invariant",
+        "subtopic": "AVL Balance Factor Invariant",
+        "targetDifficulty": "Medium",
+        "intendedCognitiveOperation": "COMPARE",
+        "status": "UNFULFILLED_PROVIDER_FAILURE",
+        "reason": "LLM generation error on target \"AVL Balance Factor Invariant\": NO_LLM_PROVIDER_AVAILABLE: All AI providers failed [Groq (Configured Groq models failed across all available keys in pool)]. Please verify your API key or try again in a few moments.",
+        "attempts": 1,
+        "repairAttempted": false,
+        "repairSuccessful": false,
+        "mcq": {
+          "targetId": "R02",
+          "fulfillmentStatus": "UNFULFILLED_PROVIDER_FAILURE",
+          "isUnfulfilled": true,
+          "unfulfilledReason": "PROVIDER_UNAVAILABLE",
+          "message": "LLM generation error on target \"AVL Balance Factor Invariant\": NO_LLM_PROVIDER_AVAILABLE: All AI providers failed [Groq (Configured Groq models failed across all available keys in pool)]. Please verify your API key or try again in a few moments.",
+          "metadata": {
+            "targetDifficulty": "Medium",
+            "achievedDifficulty": null,
+            "intendedCognitiveOperation": "COMPARE",
+            "achievedCognitiveOperation": null,
+            "concept": "AVL Balance Factor Invariant",
+            "isCapacityLimited": false
+          }
+        }
+      },
+      {
+        "targetId": "R03",
+        "concept": "AVL Rotations",
+        "subtopic": "AVL Rotations",
+        "targetDifficulty": "Easy",
+        "intendedCognitiveOperation": "COMPARE",
+        "status": "UNFULFILLED_PROVIDER_FAILURE",
+        "reason": "LLM generation error on target \"AVL Rotations\": NO_LLM_PROVIDER_AVAILABLE: All AI providers failed [Groq (Configured Groq models failed across all available keys in pool)]. Please verify your API key or try again in a few moments.",
+        "attempts": 1,
+        "repairAttempted": false,
+        "repairSuccessful": false,
+        "mcq": {
+          "targetId": "R03",
+          "fulfillmentStatus": "UNFULFILLED_PROVIDER_FAILURE",
+          "isUnfulfilled": true,
+          "unfulfilledReason": "PROVIDER_UNAVAILABLE",
+          "message": "LLM generation error on target \"AVL Rotations\": NO_LLM_PROVIDER_AVAILABLE: All AI providers failed [Groq (Configured Groq models failed across all available keys in pool)]. Please verify your API key or try again in a few moments.",
+          "metadata": {
+            "targetDifficulty": "Easy",
+            "achievedDifficulty": null,
+            "intendedCognitiveOperation": "COMPARE",
+            "achievedCognitiveOperation": null,
+            "concept": "AVL Rotations",
+            "isCapacityLimited": false
+          }
+        }
+      },
+      {
+        "targetId": "R04",
+        "concept": "AVL Height Bound",
+        "subtopic": "AVL Height Bound",
+        "targetDifficulty": "Medium",
+        "intendedCognitiveOperation": "COMPARE",
+        "status": "UNFULFILLED_PROVIDER_FAILURE",
+        "reason": "LLM generation error on target \"AVL Height Bound\": NO_LLM_PROVIDER_AVAILABLE: All AI providers failed [Groq (Configured Groq models failed across all available keys in pool)]. Please verify your API key or try again in a few moments.",
+        "attempts": 1,
+        "repairAttempted": false,
+        "repairSuccessful": false,
+        "mcq": {
+          "targetId": "R04",
+          "fulfillmentStatus": "UNFULFILLED_PROVIDER_FAILURE",
+          "isUnfulfilled": true,
+          "unfulfilledReason": "PROVIDER_UNAVAILABLE",
+          "message": "LLM generation error on target \"AVL Height Bound\": NO_LLM_PROVIDER_AVAILABLE: All AI providers failed [Groq (Configured Groq models failed across all available keys in pool)]. Please verify your API key or try again in a few moments.",
+          "metadata": {
+            "targetDifficulty": "Medium",
+            "achievedDifficulty": null,
+            "intendedCognitiveOperation": "COMPARE",
+            "achievedCognitiveOperation": null,
+            "concept": "AVL Height Bound",
+            "isCapacityLimited": false
+          }
+        }
+      }
+    ],
+    "questionDecisionLedger": [],
+    "errors": [
+      "No grounded questions could be generated. 7 target(s) unfulfilled: LLM generation error on target \"BST Deletion Algorithm\": NO_LLM_PROVIDER_AVAILABLE: All AI providers failed [Groq (Configured Groq models failed across all available keys in pool)]. Please verify your API key or try again in a few moments.; LLM generation error on target \"In‑order Traversal Property\": NO_LLM_PROVIDER_AVAILABLE: All AI providers failed [Groq (Configured Groq models failed across all available keys in pool)]. Please verify your API key or try again in a few moments.; LLM generation error on target \"Worst‑case Height of Unbalanced BST\": NO_LLM_PROVIDER_AVAILABLE: All AI providers failed [Groq (Configured Groq models failed across all available keys in pool)]. Please verify your API key or try again in a few moments.; LLM generation error on target \"Balanced BST Complexity\": NO_LLM_PROVIDER_AVAILABLE: All AI providers failed [Groq (Configured Groq models failed across all available keys in pool)]. Please verify your API key or try again in a few moments.; LLM generation error on target \"AVL Balance Factor Invariant\": NO_LLM_PROVIDER_AVAILABLE: All AI providers failed [Groq (Configured Groq models failed across all available keys in pool)]. Please verify your API key or try again in a few moments.; LLM generation error on target \"AVL Rotations\": NO_LLM_PROVIDER_AVAILABLE: All AI providers failed [Groq (Configured Groq models failed across all available keys in pool)]. Please verify your API key or try again in a few moments.; LLM generation error on target \"AVL Height Bound\": NO_LLM_PROVIDER_AVAILABLE: All AI providers failed [Groq (Configured Groq models failed across all available keys in pool)]. Please verify your API key or try again in a few moments."
+    ],
+    "warnings": []
+  },
+  "rawPipelineResult": {
+    "sessionId": "eval_cohort_bst_dsa_1794234237188",
+    "pipelineStatus": "FAILED",
+    "isPartial": false,
+    "shortfallCategory": "PROVIDER_ERROR",
+    "evidenceSafety": "FOREIGN_CONTAMINATED",
+    "quizQualityStatus": "NOT_EVALUATED",
+    "quizTitle": "Data Structures and Algorithms",
+    "subject": "Algorithms",
+    "recommendedCount": 5,
+    "requestedCount": 5,
+    "deliveredCount": 0,
+    "groundedCount": 0,
+    "supplementaryCount": 0,
+    "distinctTargetCount": 0,
+    "repeatedTargetCount": 0,
+    "difficultyDeficits": {
+      "Hard": 1,
+      "Medium": 0,
+      "Easy": 0
+    },
+    "capacityPolicy": "ALLOW_SCOPE_SUPPLEMENTARY",
+    "notice": "No grounded questions could be generated. 7 target(s) unfulfilled: LLM generation error on target \"BST Deletion Algorithm\": NO_LLM_PROVIDER_AVAILABLE: All AI providers failed [Groq (Configured Groq models failed across all available keys in pool)]. Please verify your API key or try again in a few moments.; LLM generation error on target \"In‑order Traversal Property\": NO_LLM_PROVIDER_AVAILABLE: All AI providers failed [Groq (Configured Groq models failed across all available keys in pool)]. Please verify your API key or try again in a few moments.; LLM generation error on target \"Worst‑case Height of Unbalanced BST\": NO_LLM_PROVIDER_AVAILABLE: All AI providers failed [Groq (Configured Groq models failed across all available keys in pool)]. Please verify your API key or try again in a few moments.; LLM generation error on target \"Balanced BST Complexity\": NO_LLM_PROVIDER_AVAILABLE: All AI providers failed [Groq (Configured Groq models failed across all available keys in pool)]. Please verify your API key or try again in a few moments.; LLM generation error on target \"AVL Balance Factor Invariant\": NO_LLM_PROVIDER_AVAILABLE: All AI providers failed [Groq (Configured Groq models failed across all available keys in pool)]. Please verify your API key or try again in a few moments.; LLM generation error on target \"AVL Rotations\": NO_LLM_PROVIDER_AVAILABLE: All AI providers failed [Groq (Configured Groq models failed across all available keys in pool)]. Please verify your API key or try again in a few moments.; LLM generation error on target \"AVL Height Bound\": NO_LLM_PROVIDER_AVAILABLE: All AI providers failed [Groq (Configured Groq models failed across all available keys in pool)]. Please verify your API key or try again in a few moments.",
+    "error": "No grounded questions could be generated. 7 target(s) unfulfilled: LLM generation error on target \"BST Deletion Algorithm\": NO_LLM_PROVIDER_AVAILABLE: All AI providers failed [Groq (Configured Groq models failed across all available keys in pool)]. Please verify your API key or try again in a few moments.; LLM generation error on target \"In‑order Traversal Property\": NO_LLM_PROVIDER_AVAILABLE: All AI providers failed [Groq (Configured Groq models failed across all available keys in pool)]. Please verify your API key or try again in a few moments.; LLM generation error on target \"Worst‑case Height of Unbalanced BST\": NO_LLM_PROVIDER_AVAILABLE: All AI providers failed [Groq (Configured Groq models failed across all available keys in pool)]. Please verify your API key or try again in a few moments.; LLM generation error on target \"Balanced BST Complexity\": NO_LLM_PROVIDER_AVAILABLE: All AI providers failed [Groq (Configured Groq models failed across all available keys in pool)]. Please verify your API key or try again in a few moments.; LLM generation error on target \"AVL Balance Factor Invariant\": NO_LLM_PROVIDER_AVAILABLE: All AI providers failed [Groq (Configured Groq models failed across all available keys in pool)]. Please verify your API key or try again in a few moments.; LLM generation error on target \"AVL Rotations\": NO_LLM_PROVIDER_AVAILABLE: All AI providers failed [Groq (Configured Groq models failed across all available keys in pool)]. Please verify your API key or try again in a few moments.; LLM generation error on target \"AVL Height Bound\": NO_LLM_PROVIDER_AVAILABLE: All AI providers failed [Groq (Configured Groq models failed across all available keys in pool)]. Please verify your API key or try again in a few moments.",
+    "alignmentWarning": null,
+    "unalignedDocuments": [],
+    "lectureDepth": {
+      "curricularEvidenceProfile": {
+        "schemaVersion": "2.0.0",
+        "evaluationTimestamp": "2026-11-09T14:23:57.241Z",
+        "disclaimer": "Automated software estimate derived strictly from transcript text and uploaded materials. Evaluates internal evidence density and assessment capacity. Does NOT measure teacher pedagogical efficacy, delivery quality, or student learning outcomes.",
+        "prerequisiteGates": {
+          "academicContentGate": {
+            "status": "PASS",
+            "primaryDiscourse": "ACADEMIC",
+            "evidenceAnchor": "Verified academic concepts: Binary Search Trees, Data Structures, Avl Trees, BST",
+            "failureReason": null
+          },
+          "evidenceSufficiency": {
+            "status": "SUFFICIENT",
+            "distinctConceptCount": 42,
+            "assessableEvidenceVolume": "SUBSTANTIVE",
+            "supportedQuestionTiers": [
+              "Easy",
+              "Medium"
+            ],
+            "reason": "Evidence supports up to 8 questions across assessable tiers."
+          }
+        },
+        "observableEvidence": {
+          "distinctConcepts": [
+            "Binary Search Trees",
+            "Data Structures",
+            "Avl Trees",
+            "BST",
+            "Log N",
+            "Algorithms",
+            "Hierarchical Node",
+            "Based Binary Tree",
+            "Right Subtree",
+            "Left Subtree",
+            "Each Node",
+            "All Keys",
+            "Root Comparing Values",
+            "Insertion Traverses",
+            "Null Child",
+            "Recursively Delete That Node",
+            "Order Successor",
+            "Leaf Node",
+            "Order Traversal",
+            "Strictly Sorted",
+            "Ascending Order",
+            "Linear Worst-case Time Complexity",
+            "Strictly Sorted Ascending Order",
+            "Bst Height Collapses",
+            "Insertion Operations",
+            "Degrading Search",
+            "Keys Arrive",
+            "Balanced Binary Search Tree",
+            "Deletion Operations",
+            "Time Complexity",
+            "Binary Search Tree",
+            "Data Structure",
+            "Prevent Worst-case Linear Skew",
+            "Every Node",
+            "Invariant",
+            "Insertion Violates Balance",
+            "Rotations Restore Height",
+            "Fix Zigzag Imbalances",
+            "Double Rotations",
+            "Guaranteeing Logarithmic Lookup",
+            "Mechanism Bounds Tree",
+            "Deletion Complexity"
+          ],
+          "formalDefinitions": [],
+          "workedTraces": [],
+          "algorithmicCodeSequencing": {
+            "detected": true,
+            "modality": "PROGRAMMING_CODE",
+            "evidenceLines": [
+              "Syntax-verified programming constructs or function signatures present in evidence",
+              "Multi-step chronological transitions with algorithmic operations observed"
+            ]
+          },
+          "comparativeReasoning": {
+            "detected": false,
+            "contrast": null
+          }
+        },
+        "assessmentCapacity": {
+          "easy": 3,
+          "medium": 5,
+          "hard": 0,
+          "totalRecommended": 8,
+          "unsupportedHardDeficit": 0,
+          "capacityWarning": null
+        },
+        "quizAlignment": {
+          "eligibleConceptCount": 42,
+          "plannedConceptCount": null,
+          "deliveredConceptCount": null,
+          "deliveredCoverageRatio": null,
+          "plannedCoverageRatio": null,
+          "coverageBreakdown": "42 eligible distinct concepts identified; quiz delivery pending",
+          "conceptDistribution": {}
+        }
+      },
+      "label": "Pedagogical Coverage & Depth Score — Internal Assessment",
+      "assessmentType": "INTERNAL_CURRICULAR_ANALYSIS",
+      "disclaimer": "Automated software estimate derived strictly from transcript text and uploaded materials. Evaluates internal evidence density and assessment capacity. Does NOT measure teacher pedagogical efficacy, delivery quality, or student learning outcomes.",
+      "rating": "Developing",
+      "score": null,
+      "isDeprecated": true,
+      "characteristics": {
+        "conceptExplanation": "Strong",
+        "reasoning": "Moderate",
+        "examples": "Present",
+        "procedures": "Strong"
+      },
+      "breakdown": {
+        "earnedRubric": [
+          {
+            "category": "Baseline Curricular Substance",
+            "earned": 40,
+            "max": 40,
+            "status": "Earned",
+            "description": "Verified assessable curriculum concepts with substantive instructional predicate.",
+            "identifiableEvidence": "Detected 30 distinct instructional focus topics: Binary Search Trees, Data Structures, Avl Trees, BST, Log N..."
+          },
+          {
+            "category": "Concept Definition & Explanation",
+            "earned": 15,
+            "max": 15,
+            "status": "Strong",
+            "description": "Comprehensive conceptual definitions and operational mechanisms.",
+            "identifiableEvidence": "Formal definition constructs and operational mechanics observed in curricular discourse."
+          },
+          {
+            "category": "Causal Reasoning & Invariants",
+            "earned": 8,
+            "max": 15,
+            "status": "Moderate",
+            "description": "Basic causal reasoning detected.",
+            "identifiableEvidence": "1 causal/deductive markers observed (explaining operational rationale, constraints, and error prevention)."
+          },
+          {
+            "category": "Concrete Examples & Traces",
+            "earned": 15,
+            "max": 15,
+            "status": "Present",
+            "description": "Practical examples, worked traces, or demonstrations.",
+            "identifiableEvidence": "Execution traces, sample input/output datasets, or worked code demonstrations identified in evidence."
+          },
+          {
+            "category": "Procedural Sequencing",
+            "earned": 15,
+            "max": 15,
+            "status": "Strong",
+            "description": "Detailed multi-step algorithmic or procedural progression.",
+            "identifiableEvidence": "3 chronological and procedural execution transitions observed across lecture stages."
+          }
+        ],
+        "deductions": [
+          {
+            "factor": "Causal Reasoning & Invariants",
+            "lostPoints": 7,
+            "maxPoints": 15,
+            "earnedPoints": 8,
+            "reason": "Causal justification was brief. Only 1 causal connector was detected.",
+            "actionableTip": "Use explicit causal connectors (\"because\", \"therefore\", \"so that\", \"prevents\") to explain why mechanisms exist."
+          }
+        ],
+        "totalLostPoints": 7,
+        "coveredAspects": [
+          "Clear concept definitions and foundational terminology",
+          "Detailed operational mechanisms and functional processes",
+          "Algorithmic execution trace and step-by-step state transitions",
+          "Explicit invariants, boundary conditions, and operational rules",
+          "Concrete practical examples and worked walkthroughs",
+          "Structured procedural workflow and algorithmic sequencing",
+          "Foundational causal explanations"
+        ],
+        "missingAspects": [
+          "Causal depth: deeper explanation of why mechanisms behave as they do"
+        ],
+        "actionableTips": [
+          "Use explicit causal connectors (\"because\", \"therefore\", \"so that\", \"prevents\") to explain why mechanisms exist."
+        ],
+        "recommendedQuestionCount": 8,
+        "recommendedQuestionsRationale": "8 Questions: Optimal for this substantive lecture. Thoroughly assesses concepts, procedural traces, and causal reasoning."
+      }
+    },
+    "representationMode": "SUMMARY",
+    "routerReason": "[Adaptive PDI Router: PDI=0.300] PDI=0.300 < 0.60: Material is predominantly static, code-dense, or monologue exposition. Routed to Technical Summary.",
+    "questions": [],
+    "unfulfilledTargets": [
+      {
+        "targetId": "T03",
+        "concept": "BST Deletion Algorithm",
+        "subtopic": "BST Deletion Algorithm",
+        "targetDifficulty": "Medium",
+        "intendedCognitiveOperation": "COMPARE",
+        "status": "UNFULFILLED_PROVIDER_FAILURE",
+        "reason": "LLM generation error on target \"BST Deletion Algorithm\": NO_LLM_PROVIDER_AVAILABLE: All AI providers failed [Groq (Configured Groq models failed across all available keys in pool)]. Please verify your API key or try again in a few moments.",
+        "attempts": 1,
+        "repairAttempted": false,
+        "repairSuccessful": false,
+        "mcq": {
+          "targetId": "T03",
+          "fulfillmentStatus": "UNFULFILLED_PROVIDER_FAILURE",
+          "isUnfulfilled": true,
+          "unfulfilledReason": "PROVIDER_UNAVAILABLE",
+          "message": "LLM generation error on target \"BST Deletion Algorithm\": NO_LLM_PROVIDER_AVAILABLE: All AI providers failed [Groq (Configured Groq models failed across all available keys in pool)]. Please verify your API key or try again in a few moments.",
+          "metadata": {
+            "targetDifficulty": "Medium",
+            "achievedDifficulty": null,
+            "intendedCognitiveOperation": "COMPARE",
+            "achievedCognitiveOperation": null,
+            "concept": "BST Deletion Algorithm",
+            "isCapacityLimited": false
+          }
+        }
+      },
+      {
+        "targetId": "T04",
+        "concept": "In‑order Traversal Property",
+        "subtopic": "In‑order Traversal Property",
+        "targetDifficulty": "Medium",
+        "intendedCognitiveOperation": "COMPARE",
+        "status": "UNFULFILLED_PROVIDER_FAILURE",
+        "reason": "LLM generation error on target \"In‑order Traversal Property\": NO_LLM_PROVIDER_AVAILABLE: All AI providers failed [Groq (Configured Groq models failed across all available keys in pool)]. Please verify your API key or try again in a few moments.",
+        "attempts": 1,
+        "repairAttempted": false,
+        "repairSuccessful": false,
+        "mcq": {
+          "targetId": "T04",
+          "fulfillmentStatus": "UNFULFILLED_PROVIDER_FAILURE",
+          "isUnfulfilled": true,
+          "unfulfilledReason": "PROVIDER_UNAVAILABLE",
+          "message": "LLM generation error on target \"In‑order Traversal Property\": NO_LLM_PROVIDER_AVAILABLE: All AI providers failed [Groq (Configured Groq models failed across all available keys in pool)]. Please verify your API key or try again in a few moments.",
+          "metadata": {
+            "targetDifficulty": "Medium",
+            "achievedDifficulty": null,
+            "intendedCognitiveOperation": "COMPARE",
+            "achievedCognitiveOperation": null,
+            "concept": "In‑order Traversal Property",
+            "isCapacityLimited": false
+          }
+        }
+      },
+      {
+        "targetId": "T05",
+        "concept": "Worst‑case Height of Unbalanced BST",
+        "subtopic": "Worst‑case Height of Unbalanced BST",
+        "targetDifficulty": "Medium",
+        "intendedCognitiveOperation": "COMPARE",
+        "status": "UNFULFILLED_PROVIDER_FAILURE",
+        "reason": "LLM generation error on target \"Worst‑case Height of Unbalanced BST\": NO_LLM_PROVIDER_AVAILABLE: All AI providers failed [Groq (Configured Groq models failed across all available keys in pool)]. Please verify your API key or try again in a few moments.",
+        "attempts": 1,
+        "repairAttempted": false,
+        "repairSuccessful": false,
+        "mcq": {
+          "targetId": "T05",
+          "fulfillmentStatus": "UNFULFILLED_PROVIDER_FAILURE",
+          "isUnfulfilled": true,
+          "unfulfilledReason": "PROVIDER_UNAVAILABLE",
+          "message": "LLM generation error on target \"Worst‑case Height of Unbalanced BST\": NO_LLM_PROVIDER_AVAILABLE: All AI providers failed [Groq (Configured Groq models failed across all available keys in pool)]. Please verify your API key or try again in a few moments.",
+          "metadata": {
+            "targetDifficulty": "Medium",
+            "achievedDifficulty": null,
+            "intendedCognitiveOperation": "COMPARE",
+            "achievedCognitiveOperation": null,
+            "concept": "Worst‑case Height of Unbalanced BST",
+            "isCapacityLimited": false
+          }
+        }
+      },
+      {
+        "targetId": "R01",
+        "concept": "Balanced BST Complexity",
+        "subtopic": "Balanced BST Complexity",
+        "targetDifficulty": "Medium",
+        "intendedCognitiveOperation": "RECALL",
+        "status": "UNFULFILLED_PROVIDER_FAILURE",
+        "reason": "LLM generation error on target \"Balanced BST Complexity\": NO_LLM_PROVIDER_AVAILABLE: All AI providers failed [Groq (Configured Groq models failed across all available keys in pool)]. Please verify your API key or try again in a few moments.",
+        "attempts": 1,
+        "repairAttempted": false,
+        "repairSuccessful": false,
+        "mcq": {
+          "targetId": "R01",
+          "fulfillmentStatus": "UNFULFILLED_PROVIDER_FAILURE",
+          "isUnfulfilled": true,
+          "unfulfilledReason": "PROVIDER_UNAVAILABLE",
+          "message": "LLM generation error on target \"Balanced BST Complexity\": NO_LLM_PROVIDER_AVAILABLE: All AI providers failed [Groq (Configured Groq models failed across all available keys in pool)]. Please verify your API key or try again in a few moments.",
+          "metadata": {
+            "targetDifficulty": "Medium",
+            "achievedDifficulty": null,
+            "intendedCognitiveOperation": "RECALL",
+            "achievedCognitiveOperation": null,
+            "concept": "Balanced BST Complexity",
+            "isCapacityLimited": false
+          }
+        }
+      },
+      {
+        "targetId": "R02",
+        "concept": "AVL Balance Factor Invariant",
+        "subtopic": "AVL Balance Factor Invariant",
+        "targetDifficulty": "Medium",
+        "intendedCognitiveOperation": "COMPARE",
+        "status": "UNFULFILLED_PROVIDER_FAILURE",
+        "reason": "LLM generation error on target \"AVL Balance Factor Invariant\": NO_LLM_PROVIDER_AVAILABLE: All AI providers failed [Groq (Configured Groq models failed across all available keys in pool)]. Please verify your API key or try again in a few moments.",
+        "attempts": 1,
+        "repairAttempted": false,
+        "repairSuccessful": false,
+        "mcq": {
+          "targetId": "R02",
+          "fulfillmentStatus": "UNFULFILLED_PROVIDER_FAILURE",
+          "isUnfulfilled": true,
+          "unfulfilledReason": "PROVIDER_UNAVAILABLE",
+          "message": "LLM generation error on target \"AVL Balance Factor Invariant\": NO_LLM_PROVIDER_AVAILABLE: All AI providers failed [Groq (Configured Groq models failed across all available keys in pool)]. Please verify your API key or try again in a few moments.",
+          "metadata": {
+            "targetDifficulty": "Medium",
+            "achievedDifficulty": null,
+            "intendedCognitiveOperation": "COMPARE",
+            "achievedCognitiveOperation": null,
+            "concept": "AVL Balance Factor Invariant",
+            "isCapacityLimited": false
+          }
+        }
+      },
+      {
+        "targetId": "R03",
+        "concept": "AVL Rotations",
+        "subtopic": "AVL Rotations",
+        "targetDifficulty": "Easy",
+        "intendedCognitiveOperation": "COMPARE",
+        "status": "UNFULFILLED_PROVIDER_FAILURE",
+        "reason": "LLM generation error on target \"AVL Rotations\": NO_LLM_PROVIDER_AVAILABLE: All AI providers failed [Groq (Configured Groq models failed across all available keys in pool)]. Please verify your API key or try again in a few moments.",
+        "attempts": 1,
+        "repairAttempted": false,
+        "repairSuccessful": false,
+        "mcq": {
+          "targetId": "R03",
+          "fulfillmentStatus": "UNFULFILLED_PROVIDER_FAILURE",
+          "isUnfulfilled": true,
+          "unfulfilledReason": "PROVIDER_UNAVAILABLE",
+          "message": "LLM generation error on target \"AVL Rotations\": NO_LLM_PROVIDER_AVAILABLE: All AI providers failed [Groq (Configured Groq models failed across all available keys in pool)]. Please verify your API key or try again in a few moments.",
+          "metadata": {
+            "targetDifficulty": "Easy",
+            "achievedDifficulty": null,
+            "intendedCognitiveOperation": "COMPARE",
+            "achievedCognitiveOperation": null,
+            "concept": "AVL Rotations",
+            "isCapacityLimited": false
+          }
+        }
+      },
+      {
+        "targetId": "R04",
+        "concept": "AVL Height Bound",
+        "subtopic": "AVL Height Bound",
+        "targetDifficulty": "Medium",
+        "intendedCognitiveOperation": "COMPARE",
+        "status": "UNFULFILLED_PROVIDER_FAILURE",
+        "reason": "LLM generation error on target \"AVL Height Bound\": NO_LLM_PROVIDER_AVAILABLE: All AI providers failed [Groq (Configured Groq models failed across all available keys in pool)]. Please verify your API key or try again in a few moments.",
+        "attempts": 1,
+        "repairAttempted": false,
+        "repairSuccessful": false,
+        "mcq": {
+          "targetId": "R04",
+          "fulfillmentStatus": "UNFULFILLED_PROVIDER_FAILURE",
+          "isUnfulfilled": true,
+          "unfulfilledReason": "PROVIDER_UNAVAILABLE",
+          "message": "LLM generation error on target \"AVL Height Bound\": NO_LLM_PROVIDER_AVAILABLE: All AI providers failed [Groq (Configured Groq models failed across all available keys in pool)]. Please verify your API key or try again in a few moments.",
+          "metadata": {
+            "targetDifficulty": "Medium",
+            "achievedDifficulty": null,
+            "intendedCognitiveOperation": "COMPARE",
+            "achievedCognitiveOperation": null,
+            "concept": "AVL Height Bound",
+            "isCapacityLimited": false
+          }
+        }
+      }
+    ],
+    "rejectedTargets": [],
+    "targetResults": [
+      {
+        "targetId": "T03",
+        "concept": "BST Deletion Algorithm",
+        "subtopic": "BST Deletion Algorithm",
+        "targetDifficulty": "Medium",
+        "intendedCognitiveOperation": "COMPARE",
+        "status": "UNFULFILLED_PROVIDER_FAILURE",
+        "reason": "LLM generation error on target \"BST Deletion Algorithm\": NO_LLM_PROVIDER_AVAILABLE: All AI providers failed [Groq (Configured Groq models failed across all available keys in pool)]. Please verify your API key or try again in a few moments.",
+        "attempts": 1,
+        "repairAttempted": false,
+        "repairSuccessful": false,
+        "mcq": {
+          "targetId": "T03",
+          "fulfillmentStatus": "UNFULFILLED_PROVIDER_FAILURE",
+          "isUnfulfilled": true,
+          "unfulfilledReason": "PROVIDER_UNAVAILABLE",
+          "message": "LLM generation error on target \"BST Deletion Algorithm\": NO_LLM_PROVIDER_AVAILABLE: All AI providers failed [Groq (Configured Groq models failed across all available keys in pool)]. Please verify your API key or try again in a few moments.",
+          "metadata": {
+            "targetDifficulty": "Medium",
+            "achievedDifficulty": null,
+            "intendedCognitiveOperation": "COMPARE",
+            "achievedCognitiveOperation": null,
+            "concept": "BST Deletion Algorithm",
+            "isCapacityLimited": false
+          }
+        }
+      },
+      {
+        "targetId": "T04",
+        "concept": "In‑order Traversal Property",
+        "subtopic": "In‑order Traversal Property",
+        "targetDifficulty": "Medium",
+        "intendedCognitiveOperation": "COMPARE",
+        "status": "UNFULFILLED_PROVIDER_FAILURE",
+        "reason": "LLM generation error on target \"In‑order Traversal Property\": NO_LLM_PROVIDER_AVAILABLE: All AI providers failed [Groq (Configured Groq models failed across all available keys in pool)]. Please verify your API key or try again in a few moments.",
+        "attempts": 1,
+        "repairAttempted": false,
+        "repairSuccessful": false,
+        "mcq": {
+          "targetId": "T04",
+          "fulfillmentStatus": "UNFULFILLED_PROVIDER_FAILURE",
+          "isUnfulfilled": true,
+          "unfulfilledReason": "PROVIDER_UNAVAILABLE",
+          "message": "LLM generation error on target \"In‑order Traversal Property\": NO_LLM_PROVIDER_AVAILABLE: All AI providers failed [Groq (Configured Groq models failed across all available keys in pool)]. Please verify your API key or try again in a few moments.",
+          "metadata": {
+            "targetDifficulty": "Medium",
+            "achievedDifficulty": null,
+            "intendedCognitiveOperation": "COMPARE",
+            "achievedCognitiveOperation": null,
+            "concept": "In‑order Traversal Property",
+            "isCapacityLimited": false
+          }
+        }
+      },
+      {
+        "targetId": "T05",
+        "concept": "Worst‑case Height of Unbalanced BST",
+        "subtopic": "Worst‑case Height of Unbalanced BST",
+        "targetDifficulty": "Medium",
+        "intendedCognitiveOperation": "COMPARE",
+        "status": "UNFULFILLED_PROVIDER_FAILURE",
+        "reason": "LLM generation error on target \"Worst‑case Height of Unbalanced BST\": NO_LLM_PROVIDER_AVAILABLE: All AI providers failed [Groq (Configured Groq models failed across all available keys in pool)]. Please verify your API key or try again in a few moments.",
+        "attempts": 1,
+        "repairAttempted": false,
+        "repairSuccessful": false,
+        "mcq": {
+          "targetId": "T05",
+          "fulfillmentStatus": "UNFULFILLED_PROVIDER_FAILURE",
+          "isUnfulfilled": true,
+          "unfulfilledReason": "PROVIDER_UNAVAILABLE",
+          "message": "LLM generation error on target \"Worst‑case Height of Unbalanced BST\": NO_LLM_PROVIDER_AVAILABLE: All AI providers failed [Groq (Configured Groq models failed across all available keys in pool)]. Please verify your API key or try again in a few moments.",
+          "metadata": {
+            "targetDifficulty": "Medium",
+            "achievedDifficulty": null,
+            "intendedCognitiveOperation": "COMPARE",
+            "achievedCognitiveOperation": null,
+            "concept": "Worst‑case Height of Unbalanced BST",
+            "isCapacityLimited": false
+          }
+        }
+      },
+      {
+        "targetId": "R01",
+        "concept": "Balanced BST Complexity",
+        "subtopic": "Balanced BST Complexity",
+        "targetDifficulty": "Medium",
+        "intendedCognitiveOperation": "RECALL",
+        "status": "UNFULFILLED_PROVIDER_FAILURE",
+        "reason": "LLM generation error on target \"Balanced BST Complexity\": NO_LLM_PROVIDER_AVAILABLE: All AI providers failed [Groq (Configured Groq models failed across all available keys in pool)]. Please verify your API key or try again in a few moments.",
+        "attempts": 1,
+        "repairAttempted": false,
+        "repairSuccessful": false,
+        "mcq": {
+          "targetId": "R01",
+          "fulfillmentStatus": "UNFULFILLED_PROVIDER_FAILURE",
+          "isUnfulfilled": true,
+          "unfulfilledReason": "PROVIDER_UNAVAILABLE",
+          "message": "LLM generation error on target \"Balanced BST Complexity\": NO_LLM_PROVIDER_AVAILABLE: All AI providers failed [Groq (Configured Groq models failed across all available keys in pool)]. Please verify your API key or try again in a few moments.",
+          "metadata": {
+            "targetDifficulty": "Medium",
+            "achievedDifficulty": null,
+            "intendedCognitiveOperation": "RECALL",
+            "achievedCognitiveOperation": null,
+            "concept": "Balanced BST Complexity",
+            "isCapacityLimited": false
+          }
+        }
+      },
+      {
+        "targetId": "R02",
+        "concept": "AVL Balance Factor Invariant",
+        "subtopic": "AVL Balance Factor Invariant",
+        "targetDifficulty": "Medium",
+        "intendedCognitiveOperation": "COMPARE",
+        "status": "UNFULFILLED_PROVIDER_FAILURE",
+        "reason": "LLM generation error on target \"AVL Balance Factor Invariant\": NO_LLM_PROVIDER_AVAILABLE: All AI providers failed [Groq (Configured Groq models failed across all available keys in pool)]. Please verify your API key or try again in a few moments.",
+        "attempts": 1,
+        "repairAttempted": false,
+        "repairSuccessful": false,
+        "mcq": {
+          "targetId": "R02",
+          "fulfillmentStatus": "UNFULFILLED_PROVIDER_FAILURE",
+          "isUnfulfilled": true,
+          "unfulfilledReason": "PROVIDER_UNAVAILABLE",
+          "message": "LLM generation error on target \"AVL Balance Factor Invariant\": NO_LLM_PROVIDER_AVAILABLE: All AI providers failed [Groq (Configured Groq models failed across all available keys in pool)]. Please verify your API key or try again in a few moments.",
+          "metadata": {
+            "targetDifficulty": "Medium",
+            "achievedDifficulty": null,
+            "intendedCognitiveOperation": "COMPARE",
+            "achievedCognitiveOperation": null,
+            "concept": "AVL Balance Factor Invariant",
+            "isCapacityLimited": false
+          }
+        }
+      },
+      {
+        "targetId": "R03",
+        "concept": "AVL Rotations",
+        "subtopic": "AVL Rotations",
+        "targetDifficulty": "Easy",
+        "intendedCognitiveOperation": "COMPARE",
+        "status": "UNFULFILLED_PROVIDER_FAILURE",
+        "reason": "LLM generation error on target \"AVL Rotations\": NO_LLM_PROVIDER_AVAILABLE: All AI providers failed [Groq (Configured Groq models failed across all available keys in pool)]. Please verify your API key or try again in a few moments.",
+        "attempts": 1,
+        "repairAttempted": false,
+        "repairSuccessful": false,
+        "mcq": {
+          "targetId": "R03",
+          "fulfillmentStatus": "UNFULFILLED_PROVIDER_FAILURE",
+          "isUnfulfilled": true,
+          "unfulfilledReason": "PROVIDER_UNAVAILABLE",
+          "message": "LLM generation error on target \"AVL Rotations\": NO_LLM_PROVIDER_AVAILABLE: All AI providers failed [Groq (Configured Groq models failed across all available keys in pool)]. Please verify your API key or try again in a few moments.",
+          "metadata": {
+            "targetDifficulty": "Easy",
+            "achievedDifficulty": null,
+            "intendedCognitiveOperation": "COMPARE",
+            "achievedCognitiveOperation": null,
+            "concept": "AVL Rotations",
+            "isCapacityLimited": false
+          }
+        }
+      },
+      {
+        "targetId": "R04",
+        "concept": "AVL Height Bound",
+        "subtopic": "AVL Height Bound",
+        "targetDifficulty": "Medium",
+        "intendedCognitiveOperation": "COMPARE",
+        "status": "UNFULFILLED_PROVIDER_FAILURE",
+        "reason": "LLM generation error on target \"AVL Height Bound\": NO_LLM_PROVIDER_AVAILABLE: All AI providers failed [Groq (Configured Groq models failed across all available keys in pool)]. Please verify your API key or try again in a few moments.",
+        "attempts": 1,
+        "repairAttempted": false,
+        "repairSuccessful": false,
+        "mcq": {
+          "targetId": "R04",
+          "fulfillmentStatus": "UNFULFILLED_PROVIDER_FAILURE",
+          "isUnfulfilled": true,
+          "unfulfilledReason": "PROVIDER_UNAVAILABLE",
+          "message": "LLM generation error on target \"AVL Height Bound\": NO_LLM_PROVIDER_AVAILABLE: All AI providers failed [Groq (Configured Groq models failed across all available keys in pool)]. Please verify your API key or try again in a few moments.",
+          "metadata": {
+            "targetDifficulty": "Medium",
+            "achievedDifficulty": null,
+            "intendedCognitiveOperation": "COMPARE",
+            "achievedCognitiveOperation": null,
+            "concept": "AVL Height Bound",
+            "isCapacityLimited": false
+          }
+        }
+      }
+    ],
+    "difficultyReport": {
+      "requestedDifficulty": "Balanced",
+      "requestedDistribution": {
+        "Easy": 1,
+        "Medium": 3,
+        "Hard": 1
+      },
+      "allocatedDistribution": {
+        "Easy": 1,
+        "Medium": 4,
+        "Hard": 0
+      },
+      "achievedDistribution": {
+        "Easy": 0,
+        "Medium": 0,
+        "Hard": 0
+      },
+      "conformance": {
+        "isFullyConformant": false,
+        "totalCountFulfillment": "UNFULFILLED",
+        "difficultyCapacityFulfillment": "UNFULFILLED",
+        "totalRecommended": 5,
+        "totalRequested": 5,
+        "totalDelivered": 0,
+        "deficitCount": 5,
+        "hardCapacityDeficit": 1,
+        "reallocatedCount": 1
+      },
+      "capacityAudit": {
+        "mode": "v4_lcacm_2d_matrix",
+        "requestedDifficulty": "Balanced",
+        "requestedCount": 5,
+        "requestedDistribution": {
+          "Easy": 1,
+          "Medium": 3,
+          "Hard": 1
+        },
+        "allocatedDistribution": {
+          "Easy": 1,
+          "Medium": 4,
+          "Hard": 0
+        },
+        "requestedHardCount": 1,
+        "allocatedHardCount": 0,
+        "reallocatedCount": 1,
+        "reallocatedTo": "Medium",
+        "reason": "Lecture evidence supports 0 Hard target(s) (cap: 0). Reallocated 1 slot(s) to Medium.",
+        "deficitStatus": "INSUFFICIENT_EVIDENCE_FOR_HARD"
+      },
+      "capacityDeficitReport": {
+        "status": "CAPACITY_DEFICIT",
+        "requestedCount": 5,
+        "generatedCount": 0,
+        "deliveredCount": 0,
+        "groundedCount": 0,
+        "supplementaryCount": 0,
+        "distinctTargetCount": 0,
+        "repeatedTargetCount": 0,
+        "estimatedDefensibleCapacity": 8,
+        "totalDefensibleCapacity": 8,
+        "distinctTargetCapacity": 8,
+        "primaryTargetsCovered": 5,
+        "recommendedQuestionCount": 5,
+        "requestedDifficulty": "Balanced",
+        "capacityPolicy": "ALLOW_SCOPE_SUPPLEMENTARY",
+        "fulfilledDifficulty": "Balanced (No Hard supported)",
+        "capacityDeficit": 5,
+        "unfulfilledDeficitCount": 5,
+        "hasDeficit": true,
+        "hasCoverageLimitation": false,
+        "capacityWarning": "This lecture supports up to 8 distinct evidence-grounded questions. Insufficient evidence for 5 Hard question(s). Recommended quiz size: 5 questions. One requested Hard questions could not be supported by the lecture evidence. They were reallocated to Medium. No Hard questions were generated.",
+        "instructorApprovalRequired": true,
+        "isApprovedByInstructor": false,
+        "deficitPolicyApplied": null,
+        "deficitReason": null,
+        "teacherActionRequired": true,
+        "options": [
+          {
+            "action": "ACCEPT_FEASIBLE_COUNT",
+            "label": "Accept 0 Balanced Questions"
+          },
+          {
+            "action": "FILL_WITH_MEDIUM",
+            "label": "Fill Remaining 1 with Deep Medium Questions"
+          },
+          {
+            "action": "ACCEPT_RECOMMENDED_COUNT",
+            "label": "Accept recommended quiz size (5 questions)"
+          },
+          {
+            "action": "ADD_MATERIALS",
+            "label": "Provide additional lecture materials"
+          },
+          {
+            "action": "EXPAND_SCOPE",
+            "label": "Expand lecture scope"
+          },
+          {
+            "action": "CANCEL",
+            "label": "Cancel / Adjust Request"
+          }
+        ],
+        "totalCountFulfillment": "UNFULFILLED",
+        "difficultyCapacityFulfillment": "UNFULFILLED",
+        "hardCapacityDeficit": 1,
+        "reallocatedCount": 1,
+        "reallocatedTo": "Medium",
+        "reallocationWarning": "One requested Hard questions could not be supported by the lecture evidence. They were reallocated to Medium. No Hard questions were generated.",
+        "deficitsByTier": {
+          "Hard": 1,
+          "Medium": 0,
+          "Easy": 0
+        },
+        "capacityAudit": {
+          "mode": "v4_lcacm_2d_matrix",
+          "requestedDifficulty": "Balanced",
+          "requestedCount": 5,
+          "requestedDistribution": {
+            "Easy": 1,
+            "Medium": 3,
+            "Hard": 1
+          },
+          "allocatedDistribution": {
+            "Easy": 1,
+            "Medium": 4,
+            "Hard": 0
+          },
+          "requestedHardCount": 1,
+          "allocatedHardCount": 0,
+          "reallocatedCount": 1,
+          "reallocatedTo": "Medium",
+          "reason": "Lecture evidence supports 0 Hard target(s) (cap: 0). Reallocated 1 slot(s) to Medium.",
+          "deficitStatus": "INSUFFICIENT_EVIDENCE_FOR_HARD"
+        },
+        "isPartial": false,
+        "shortfallCategory": "PROVIDER_ERROR"
+      }
+    },
+    "capacityDeficitReport": {
+      "status": "CAPACITY_DEFICIT",
+      "requestedCount": 5,
+      "generatedCount": 0,
+      "deliveredCount": 0,
+      "groundedCount": 0,
+      "supplementaryCount": 0,
+      "distinctTargetCount": 0,
+      "repeatedTargetCount": 0,
+      "estimatedDefensibleCapacity": 8,
+      "totalDefensibleCapacity": 8,
+      "distinctTargetCapacity": 8,
+      "primaryTargetsCovered": 5,
+      "recommendedQuestionCount": 5,
+      "requestedDifficulty": "Balanced",
+      "capacityPolicy": "ALLOW_SCOPE_SUPPLEMENTARY",
+      "fulfilledDifficulty": "Balanced (No Hard supported)",
+      "capacityDeficit": 5,
+      "unfulfilledDeficitCount": 5,
+      "hasDeficit": true,
+      "hasCoverageLimitation": false,
+      "capacityWarning": "This lecture supports up to 8 distinct evidence-grounded questions. Insufficient evidence for 5 Hard question(s). Recommended quiz size: 5 questions. One requested Hard questions could not be supported by the lecture evidence. They were reallocated to Medium. No Hard questions were generated.",
+      "instructorApprovalRequired": true,
+      "isApprovedByInstructor": false,
+      "deficitPolicyApplied": null,
+      "deficitReason": null,
+      "teacherActionRequired": true,
+      "options": [
+        {
+          "action": "ACCEPT_FEASIBLE_COUNT",
+          "label": "Accept 0 Balanced Questions"
+        },
+        {
+          "action": "FILL_WITH_MEDIUM",
+          "label": "Fill Remaining 1 with Deep Medium Questions"
+        },
+        {
+          "action": "ACCEPT_RECOMMENDED_COUNT",
+          "label": "Accept recommended quiz size (5 questions)"
+        },
+        {
+          "action": "ADD_MATERIALS",
+          "label": "Provide additional lecture materials"
+        },
+        {
+          "action": "EXPAND_SCOPE",
+          "label": "Expand lecture scope"
+        },
+        {
+          "action": "CANCEL",
+          "label": "Cancel / Adjust Request"
+        }
+      ],
+      "totalCountFulfillment": "UNFULFILLED",
+      "difficultyCapacityFulfillment": "UNFULFILLED",
+      "hardCapacityDeficit": 1,
+      "reallocatedCount": 1,
+      "reallocatedTo": "Medium",
+      "reallocationWarning": "One requested Hard questions could not be supported by the lecture evidence. They were reallocated to Medium. No Hard questions were generated.",
+      "deficitsByTier": {
+        "Hard": 1,
+        "Medium": 0,
+        "Easy": 0
+      },
+      "capacityAudit": {
+        "mode": "v4_lcacm_2d_matrix",
+        "requestedDifficulty": "Balanced",
+        "requestedCount": 5,
+        "requestedDistribution": {
+          "Easy": 1,
+          "Medium": 3,
+          "Hard": 1
+        },
+        "allocatedDistribution": {
+          "Easy": 1,
+          "Medium": 4,
+          "Hard": 0
+        },
+        "requestedHardCount": 1,
+        "allocatedHardCount": 0,
+        "reallocatedCount": 1,
+        "reallocatedTo": "Medium",
+        "reason": "Lecture evidence supports 0 Hard target(s) (cap: 0). Reallocated 1 slot(s) to Medium.",
+        "deficitStatus": "INSUFFICIENT_EVIDENCE_FOR_HARD"
+      },
+      "isPartial": false,
+      "shortfallCategory": "PROVIDER_ERROR"
+    },
+    "metrics": {
+      "requestedCount": 5,
+      "generatedCount": 11,
+      "acceptedCount": 0,
+      "rejectedCount": 0,
+      "unfulfilledCount": 7,
+      "byTier": {
+        "Easy": {
+          "requested": 1,
+          "generated": 2,
+          "accepted": 0,
+          "rejected": 0,
+          "unfulfilled": 1
+        },
+        "Medium": {
+          "requested": 4,
+          "generated": 7,
+          "accepted": 0,
+          "rejected": 0,
+          "unfulfilled": 6
+        },
+        "Hard": {
+          "requested": 0,
+          "generated": 0,
+          "accepted": 0,
+          "rejected": 0,
+          "unfulfilled": 0
+        }
+      },
+      "repairs": {
+        "totalAttempted": 2,
+        "successfulRepairs": 0,
+        "failedRepairs": 2
+      },
+      "rejectionReasons": {},
+      "capacityDeficits": [
+        {
+          "concept": "BST Deletion Algorithm",
+          "targetDifficulty": "Medium",
+          "reason": "LLM generation error on target \"BST Deletion Algorithm\": NO_LLM_PROVIDER_AVAILABLE: All AI providers failed [Groq (Configured Groq models failed across all available keys in pool)]. Please verify your API key or try again in a few moments."
+        },
+        {
+          "concept": "In‑order Traversal Property",
+          "targetDifficulty": "Medium",
+          "reason": "LLM generation error on target \"In‑order Traversal Property\": NO_LLM_PROVIDER_AVAILABLE: All AI providers failed [Groq (Configured Groq models failed across all available keys in pool)]. Please verify your API key or try again in a few moments."
+        },
+        {
+          "concept": "Worst‑case Height of Unbalanced BST",
+          "targetDifficulty": "Medium",
+          "reason": "LLM generation error on target \"Worst‑case Height of Unbalanced BST\": NO_LLM_PROVIDER_AVAILABLE: All AI providers failed [Groq (Configured Groq models failed across all available keys in pool)]. Please verify your API key or try again in a few moments."
+        },
+        {
+          "concept": "Balanced BST Complexity",
+          "targetDifficulty": "Medium",
+          "reason": "LLM generation error on target \"Balanced BST Complexity\": NO_LLM_PROVIDER_AVAILABLE: All AI providers failed [Groq (Configured Groq models failed across all available keys in pool)]. Please verify your API key or try again in a few moments."
+        },
+        {
+          "concept": "AVL Balance Factor Invariant",
+          "targetDifficulty": "Medium",
+          "reason": "LLM generation error on target \"AVL Balance Factor Invariant\": NO_LLM_PROVIDER_AVAILABLE: All AI providers failed [Groq (Configured Groq models failed across all available keys in pool)]. Please verify your API key or try again in a few moments."
+        },
+        {
+          "concept": "AVL Rotations",
+          "targetDifficulty": "Easy",
+          "reason": "LLM generation error on target \"AVL Rotations\": NO_LLM_PROVIDER_AVAILABLE: All AI providers failed [Groq (Configured Groq models failed across all available keys in pool)]. Please verify your API key or try again in a few moments."
+        },
+        {
+          "concept": "AVL Height Bound",
+          "targetDifficulty": "Medium",
+          "reason": "LLM generation error on target \"AVL Height Bound\": NO_LLM_PROVIDER_AVAILABLE: All AI providers failed [Groq (Configured Groq models failed across all available keys in pool)]. Please verify your API key or try again in a few moments."
+        }
+      ],
+      "isPartial": false,
+      "shortfallCategory": "PROVIDER_ERROR"
+    },
+    "questionDecisionLedger": [],
+    "curricularEvidenceProfile": {
+      "schemaVersion": "2.0.0",
+      "evaluationTimestamp": "2026-11-09T14:23:57.241Z",
+      "disclaimer": "Automated software estimate derived strictly from transcript text and uploaded materials. Evaluates internal evidence density and assessment capacity. Does NOT measure teacher pedagogical efficacy, delivery quality, or student learning outcomes.",
+      "prerequisiteGates": {
+        "academicContentGate": {
+          "status": "PASS",
+          "primaryDiscourse": "ACADEMIC",
+          "evidenceAnchor": "Verified academic concepts: Binary Search Trees, Data Structures, Avl Trees, BST",
+          "failureReason": null
+        },
+        "evidenceSufficiency": {
+          "status": "SUFFICIENT",
+          "distinctConceptCount": 42,
+          "assessableEvidenceVolume": "SUBSTANTIVE",
+          "supportedQuestionTiers": [
+            "Easy",
+            "Medium"
+          ],
+          "reason": "Evidence supports up to 8 questions across assessable tiers."
+        }
+      },
+      "observableEvidence": {
+        "distinctConcepts": [
+          "Binary Search Trees",
+          "Data Structures",
+          "Avl Trees",
+          "BST",
+          "Log N",
+          "Algorithms",
+          "Hierarchical Node",
+          "Based Binary Tree",
+          "Right Subtree",
+          "Left Subtree",
+          "Each Node",
+          "All Keys",
+          "Root Comparing Values",
+          "Insertion Traverses",
+          "Null Child",
+          "Recursively Delete That Node",
+          "Order Successor",
+          "Leaf Node",
+          "Order Traversal",
+          "Strictly Sorted",
+          "Ascending Order",
+          "Linear Worst-case Time Complexity",
+          "Strictly Sorted Ascending Order",
+          "Bst Height Collapses",
+          "Insertion Operations",
+          "Degrading Search",
+          "Keys Arrive",
+          "Balanced Binary Search Tree",
+          "Deletion Operations",
+          "Time Complexity",
+          "Binary Search Tree",
+          "Data Structure",
+          "Prevent Worst-case Linear Skew",
+          "Every Node",
+          "Invariant",
+          "Insertion Violates Balance",
+          "Rotations Restore Height",
+          "Fix Zigzag Imbalances",
+          "Double Rotations",
+          "Guaranteeing Logarithmic Lookup",
+          "Mechanism Bounds Tree",
+          "Deletion Complexity"
+        ],
+        "formalDefinitions": [],
+        "workedTraces": [],
+        "algorithmicCodeSequencing": {
+          "detected": true,
+          "modality": "PROGRAMMING_CODE",
+          "evidenceLines": [
+            "Syntax-verified programming constructs or function signatures present in evidence",
+            "Multi-step chronological transitions with algorithmic operations observed"
+          ]
+        },
+        "comparativeReasoning": {
+          "detected": false,
+          "contrast": null
+        }
+      },
+      "assessmentCapacity": {
+        "easy": 3,
+        "medium": 5,
+        "hard": 0,
+        "totalRecommended": 8,
+        "unsupportedHardDeficit": 0,
+        "capacityWarning": null
+      },
+      "quizAlignment": {
+        "eligibleConceptCount": 42,
+        "plannedConceptCount": 0,
+        "deliveredConceptCount": 0,
+        "deliveredCoverageRatio": 0,
+        "plannedCoverageRatio": 0,
+        "coverageBreakdown": "0 delivered distinct concepts out of 42 eligible (0%)",
+        "conceptDistribution": {}
+      }
+    },
+    "tcScore": null,
+    "pdi": null,
+    "teacherAnalysis": {
+      "score": null,
+      "isDeprecated": true,
+      "rating": "Developing",
+      "characteristics": {
+        "conceptExplanation": "Strong",
+        "reasoning": "Moderate",
+        "examples": "Present",
+        "procedures": "Strong"
+      },
+      "deductions": [],
+      "breakdown": {
+        "earnedRubric": [
+          {
+            "category": "Baseline Curricular Substance",
+            "earned": 40,
+            "max": 40,
+            "status": "Earned",
+            "description": "Verified assessable curriculum concepts with substantive instructional predicate.",
+            "identifiableEvidence": "Detected 30 distinct instructional focus topics: Binary Search Trees, Data Structures, Avl Trees, BST, Log N..."
+          },
+          {
+            "category": "Concept Definition & Explanation",
+            "earned": 15,
+            "max": 15,
+            "status": "Strong",
+            "description": "Comprehensive conceptual definitions and operational mechanisms.",
+            "identifiableEvidence": "Formal definition constructs and operational mechanics observed in curricular discourse."
+          },
+          {
+            "category": "Causal Reasoning & Invariants",
+            "earned": 8,
+            "max": 15,
+            "status": "Moderate",
+            "description": "Basic causal reasoning detected.",
+            "identifiableEvidence": "1 causal/deductive markers observed (explaining operational rationale, constraints, and error prevention)."
+          },
+          {
+            "category": "Concrete Examples & Traces",
+            "earned": 15,
+            "max": 15,
+            "status": "Present",
+            "description": "Practical examples, worked traces, or demonstrations.",
+            "identifiableEvidence": "Execution traces, sample input/output datasets, or worked code demonstrations identified in evidence."
+          },
+          {
+            "category": "Procedural Sequencing",
+            "earned": 15,
+            "max": 15,
+            "status": "Strong",
+            "description": "Detailed multi-step algorithmic or procedural progression.",
+            "identifiableEvidence": "3 chronological and procedural execution transitions observed across lecture stages."
+          }
+        ],
+        "deductions": [
+          {
+            "factor": "Causal Reasoning & Invariants",
+            "lostPoints": 7,
+            "maxPoints": 15,
+            "earnedPoints": 8,
+            "reason": "Causal justification was brief. Only 1 causal connector was detected.",
+            "actionableTip": "Use explicit causal connectors (\"because\", \"therefore\", \"so that\", \"prevents\") to explain why mechanisms exist."
+          }
+        ],
+        "totalLostPoints": 7,
+        "coveredAspects": [
+          "Clear concept definitions and foundational terminology",
+          "Detailed operational mechanisms and functional processes",
+          "Algorithmic execution trace and step-by-step state transitions",
+          "Explicit invariants, boundary conditions, and operational rules",
+          "Concrete practical examples and worked walkthroughs",
+          "Structured procedural workflow and algorithmic sequencing",
+          "Foundational causal explanations"
+        ],
+        "missingAspects": [
+          "Causal depth: deeper explanation of why mechanisms behave as they do"
+        ],
+        "actionableTips": [
+          "Use explicit causal connectors (\"because\", \"therefore\", \"so that\", \"prevents\") to explain why mechanisms exist."
+        ],
+        "recommendedQuestionCount": 8,
+        "recommendedQuestionsRationale": "8 Questions: Optimal for this substantive lecture. Thoroughly assesses concepts, procedural traces, and causal reasoning."
+      },
+      "pedagogicalCritique": {
+        "explanatoryDepth": [
+          "DEFINITION_AND_TERMINOLOGY",
+          "OPERATIONAL_MECHANISM"
+        ],
+        "reasoningDepth": [
+          "INVARIANT_AND_CAUSAL"
+        ],
+        "practicalDemonstrations": [
+          "NOT_OBSERVED_IN_EXCERPT"
+        ],
+        "discourseStyle": [
+          "MONOLOGUE_LECTURE"
+        ],
+        "evidenceQuotes": [],
+        "negativeBoundaries": [],
+        "limitationsOfExcerpt": "Automated fallback generated via deterministic evidence analysis."
+      },
+      "chapters": [
+        {
+          "id": "ch_01",
+          "title": "Binary Search Trees Analysis",
+          "summary": "Introduces core nomenclature, problem motivation, and governing definitions regarding Binary Search Trees.",
+          "timestamp_start": null,
+          "timestamp_end": null,
+          "start_seconds": null,
+          "end_seconds": null,
+          "slide_range": null,
+          "evidence_anchor": "[VOICE TRANSCRIPT]\n\n\n[DOCUMENT CONTENT]\n\nData Structures and Algorithms: Binary Search Trees and AVL Trees.\n\nA Binary Search Tree (BST) is a hierarchical node-based binary tree data structure where fo",
+          "key_concepts": [
+            "Binary Search Trees",
+            "Data Structures"
+          ]
+        },
+        {
+          "id": "ch_02",
+          "title": "Data Structures Analysis",
+          "summary": "Explains step-by-step algorithms, primary execution cases, and state transitions regarding Data Structures.",
+          "timestamp_start": null,
+          "timestamp_end": null,
+          "start_seconds": null,
+          "end_seconds": null,
+          "slide_range": null,
+          "evidence_anchor": "ing a node with one child (replace with its child), and deleting a node with two children (replace with its in-order successor or predecessor, then recursively delete that node).\nThe in-order traversa",
+          "key_concepts": [
+            "Data Structures",
+            "Avl Trees"
+          ]
+        },
+        {
+          "id": "ch_03",
+          "title": "Avl Trees Analysis",
+          "summary": "Addresses multi-node transitions, boundary constraints, and preserving invariants regarding Avl Trees.",
+          "timestamp_start": null,
+          "timestamp_end": null,
+          "start_seconds": null,
+          "end_seconds": null,
+          "slide_range": null,
+          "evidence_anchor": "ons is O(log n).\nTo prevent worst-case linear skew, AVL trees enforce a balance factor invariant: for every node, |height(left) - height(right)| <= 1.\nWhen insertion violates balance, rotations restor",
+          "key_concepts": [
+            "Avl Trees",
+            "BST"
+          ]
+        }
+      ],
+      "conceptMap": [
+        {
+          "id": "C01",
+          "name": "Binary Search Trees",
+          "definition": "To prevent worst-case linear skew, AVL trees enforce a balance factor invariant: for every node, |height(left) - height(right)| <= 1.",
+          "mechanism_or_rule": null,
+          "substanceType": "FOUNDATIONAL_CONTEXT",
+          "sourceAnchors": [
+            "seg_1",
+            "seg_8"
+          ],
+          "prerequisites": []
+        },
+        {
+          "id": "C02",
+          "name": "BST",
+          "definition": "Deletion in a BST involves three cases: deleting a leaf node (simply remove), deleting a node with one child (replace with its child), and deleting a node with two children (replace with its in-order successor or predecessor, then recursively delete that node).",
+          "mechanism_or_rule": "When keys arrive in strictly sorted ascending order, BST height collapses to N, degrading search and insertion operations to O(N) linear worst-case time complexity.",
+          "substanceType": "RULE_OR_CONDITION",
+          "sourceAnchors": [
+            "seg_2",
+            "seg_4",
+            "seg_6"
+          ],
+          "prerequisites": []
+        },
+        {
+          "id": "C03",
+          "name": "Root Comparing Values",
+          "definition": "Insertion traverses from root comparing values: go left if smaller, right if greater, until a null child is reached.",
+          "mechanism_or_rule": null,
+          "substanceType": "ALGORITHMIC_TRACE",
+          "sourceAnchors": [
+            "seg_3"
+          ],
+          "prerequisites": []
+        },
+        {
+          "id": "C04",
+          "name": "Order Traversal",
+          "definition": "The in-order traversal of a binary search tree yields the keys in strictly sorted, ascending order.",
+          "mechanism_or_rule": null,
+          "substanceType": "FOUNDATIONAL_CONTEXT",
+          "sourceAnchors": [
+            "seg_5"
+          ],
+          "prerequisites": []
+        },
+        {
+          "id": "C05",
+          "name": "Log N",
+          "definition": "This rotation mechanism bounds tree height to O(log N), guaranteeing logarithmic lookup, insertion, and deletion complexity.",
+          "mechanism_or_rule": null,
+          "substanceType": "FOUNDATIONAL_CONTEXT",
+          "sourceAnchors": [
+            "seg_7",
+            "seg_10"
+          ],
+          "prerequisites": []
+        },
+        {
+          "id": "C06",
+          "name": "Insertion Violates Balance",
+          "definition": "When insertion violates balance, rotations restore height: a single Left Rotation fixes Right-Right heavy skew, a single Right Rotation fixes Left-Left heavy skew, and double rotations (Left-Right or Right-Left) fix zigzag imbalances.",
+          "mechanism_or_rule": "When insertion violates balance, rotations restore height: a single Left Rotation fixes Right-Right heavy skew, a single Right Rotation fixes Left-Left heavy skew, and double rotations (Left-Right or Right-Left) fix zigzag imbalances.",
+          "substanceType": "MECHANISM",
+          "sourceAnchors": [
+            "seg_9"
+          ],
+          "prerequisites": []
+        }
+      ],
+      "evidenceCapacity": {
+        "distinctConceptCount": 6,
+        "recommendedQuestionCount": 5,
+        "recommendedByDifficulty": {
+          "easy": 3,
+          "medium": 4,
+          "hard": 0,
+          "balanced": 5
+        },
+        "capacityByDifficulty": {
+          "easy": 3,
+          "medium": 5,
+          "hard": 0,
+          "balanced": 8
+        },
+        "totalDefensibleCapacity": 8,
+        "advisoryRationale": "Defensible assessment capacity of 8 questions across 6 substantive concepts (Easy: 3, Medium: 5, Hard: 0, Balanced: 5). Recommended counts per difficulty: Easy=3, Medium=4, Hard=0, Balanced=5.",
+        "yieldNarrative": "Your lecture focused on 6 core topics with direct explanations. Because advanced tradeoffs were covered selectively, question counts across Easy, Medium, and Hard (3 Easy, 4 Medium, 0 Hard) stay closely calibrated so questions strictly test what was taught without guessing.",
+        "variationNote": "Calibrated pedagogical variation: Question tiers stay closely aligned to keep all questions 100% faithful to your direct explanations.",
+        "easyExplanation": "Derived from the 3 distinct definitions and foundational terms introduced in your lecture.",
+        "mediumExplanation": "Derived from the 5 operational mechanisms, workflows, and practical examples explained in class.",
+        "hardExplanation": "Your lecture focused on core definitions without causal tradeoffs; Hard is evidence-limited to prevent AI guessing.",
+        "operationEvidenceTrail": [
+          {
+            "operationId": "OP_1_INVARIANT_BOUNDARY",
+            "conceptName": "Binary Search Trees",
+            "substanceType": "FOUNDATIONAL_CONTEXT",
+            "transcriptAnchors": [
+              "seg_1",
+              "seg_8"
+            ],
+            "decision": "CREDITED_HARD_CAPACITY"
+          },
+          {
+            "operationId": "OP_5_CAUSAL_CHAIN",
+            "conceptName": "BST",
+            "substanceType": "RULE_OR_CONDITION",
+            "transcriptAnchors": [
+              "seg_2",
+              "seg_4",
+              "seg_6"
+            ],
+            "decision": "CREDITED_HARD_CAPACITY"
+          },
+          {
+            "operationId": "OP_1_INVARIANT_BOUNDARY",
+            "conceptName": "BST",
+            "substanceType": "RULE_OR_CONDITION",
+            "transcriptAnchors": [
+              "seg_2",
+              "seg_4",
+              "seg_6"
+            ],
+            "decision": "CREDITED_HARD_CAPACITY"
+          },
+          {
+            "operationId": "OP_1_INVARIANT_BOUNDARY",
+            "conceptName": "Log N",
+            "substanceType": "FOUNDATIONAL_CONTEXT",
+            "transcriptAnchors": [
+              "seg_7",
+              "seg_10"
+            ],
+            "decision": "CREDITED_HARD_CAPACITY"
+          },
+          {
+            "operationId": "OP_1_INVARIANT_BOUNDARY",
+            "conceptName": "Insertion Violates Balance",
+            "substanceType": "MECHANISM",
+            "transcriptAnchors": [
+              "seg_9"
+            ],
+            "decision": "CREDITED_HARD_CAPACITY"
+          }
+        ]
+      },
+      "pdi": null,
+      "tcScore": null
+    },
+    "quizEvaluation": {
+      "quizQualityStatus": "NOT_EVALUATED",
+      "isBalanced": false,
+      "totalQuestions": 0,
+      "coverageScore": null
+    },
+    "capacityReport": {
+      "status": "CAPACITY_DEFICIT",
+      "hasDeficit": true,
+      "totalCountFulfillment": "UNFULFILLED",
+      "difficultyCapacityFulfillment": "UNFULFILLED",
+      "requestedCount": 5,
+      "estimatedDefensibleCapacity": 8,
+      "totalDefensibleCapacity": 8,
+      "recommendedQuestionCount": 5,
+      "finalRecommendedCount": 5,
+      "candidatesGenerated": 11,
+      "candidatesRejected": 0,
+      "validatedCount": 0,
+      "deliveredCount": 0,
+      "unfulfilledDeficitCount": 5,
+      "unfulfilledCount": 5,
+      "capacityDeficit": 5,
+      "hardCapacityDeficit": 1,
+      "reallocatedCount": 1,
+      "reallocatedTo": "Medium",
+      "capacityWarning": "This lecture supports up to 8 distinct evidence-grounded questions. Insufficient evidence for 5 Hard question(s). Recommended quiz size: 5 questions. One requested Hard questions could not be supported by the lecture evidence. They were reallocated to Medium. No Hard questions were generated.",
+      "reallocationWarning": "One requested Hard questions could not be supported by the lecture evidence. They were reallocated to Medium. No Hard questions were generated.",
+      "capacityAudit": {
+        "mode": "v4_lcacm_2d_matrix",
+        "requestedDifficulty": "Balanced",
+        "requestedCount": 5,
+        "requestedDistribution": {
+          "Easy": 1,
+          "Medium": 3,
+          "Hard": 1
+        },
+        "allocatedDistribution": {
+          "Easy": 1,
+          "Medium": 4,
+          "Hard": 0
+        },
+        "requestedHardCount": 1,
+        "allocatedHardCount": 0,
+        "reallocatedCount": 1,
+        "reallocatedTo": "Medium",
+        "reason": "Lecture evidence supports 0 Hard target(s) (cap: 0). Reallocated 1 slot(s) to Medium.",
+        "deficitStatus": "INSUFFICIENT_EVIDENCE_FOR_HARD"
+      },
+      "instructorApprovalRequired": true,
+      "isApprovedByInstructor": false,
+      "options": [
+        {
+          "action": "ACCEPT_FEASIBLE_COUNT",
+          "label": "Accept 0 Balanced Questions"
+        },
+        {
+          "action": "FILL_WITH_MEDIUM",
+          "label": "Fill Remaining 1 with Deep Medium Questions"
+        },
+        {
+          "action": "ACCEPT_RECOMMENDED_COUNT",
+          "label": "Accept recommended quiz size (5 questions)"
+        },
+        {
+          "action": "ADD_MATERIALS",
+          "label": "Provide additional lecture materials"
+        },
+        {
+          "action": "EXPAND_SCOPE",
+          "label": "Expand lecture scope"
+        },
+        {
+          "action": "CANCEL",
+          "label": "Cancel / Adjust Request"
+        }
+      ],
+      "topicDifficultyMatrix": {
+        "subtopics": [
+          {
+            "name": "Data Structures and Algorithms",
+            "instructionalScore": 0.235,
+            "signals": {
+              "T": 0.244,
+              "E": 0.333,
+              "D": 0.35,
+              "P": 0.05,
+              "O": 0.05,
+              "composite": 0.235
+            },
+            "budget": 5,
+            "capacities": {
+              "Easy": 3,
+              "Medium": 5,
+              "Hard": 0,
+              "difficultyEvidence": {
+                "easyBasis": "Direct definitions and terminology verified in evidence",
+                "mediumBasis": "Operational mechanisms and sequential state transitions observed",
+                "hardBasis": "Insufficient mechanisms for Hard cognitive demand"
+              }
+            },
+            "allocated": {
+              "Easy": 1,
+              "Medium": 4,
+              "Hard": 0,
+              "DEFICIT": 0,
+              "total": 5
+            }
+          }
+        ],
+        "globalRequested": "Balanced",
+        "substitutions": {
+          "hardToMedium": 1,
+          "hardToEasy": 0,
+          "easyToMedium": 0,
+          "easyToHard": 0,
+          "mediumToEasy": 0,
+          "mediumToHard": 0,
+          "reasons": [
+            "Lecture evidence supports 0 Hard target(s) (cap: 0). Reallocated 1 slot(s) to Medium."
+          ]
+        },
+        "globalAllocated": {
+          "Easy": 1,
+          "Medium": 4,
+          "Hard": 0,
+          "Deficit": 0,
+          "TotalDefensible": 5
+        }
+      }
+    },
+    "telemetry": {
+      "totalDurationMs": 111281,
+      "deliveredCount": 0,
+      "totalAttempts": 11,
+      "acceptanceRatePercent": 0,
+      "avgGroundingScore": 0.95,
+      "stageDurations": {
+        "EVIDENCE_PACKAGE": 3898,
+        "AGENT_1_PLANNING": 15
+      },
+      "dimensionCounts": {},
+      "tcScoreBreakdown": {
+        "plannedAloRatio": "5/1 subtopics (100%)",
+        "coreAloCount": "5 Core targets",
+        "secondaryAloCount": "0 Secondary targets",
+        "peripheralAloCount": "0 Peripheral targets",
+        "reserveCoreCount": "4 Core reserves",
+        "lectureDepthScore": "Deprecated (retained as null)",
+        "teacherEmphasis": "Aligned",
+        "total": "null"
+      }
+    },
+    "stages": [
+      {
+        "stage": "INGESTION",
+        "stageOrder": "01",
+        "timestamp": "2026-11-09T14:23:57.190Z",
+        "durationMs": 0,
+        "model": null,
+        "evidenceCitations": [
+          "Uploaded voice audio",
+          "Document texts",
+          "Code snippet"
+        ],
+        "input": {
+          "voiceLengthChars": 0,
+          "documentCount": 1,
+          "hasCode": false,
+          "requestedCount": 5,
+          "requestedDifficulty": "Balanced"
+        },
+        "processing": {
+          "operations": [
+            "Receive multi-modal payload",
+            "Validate input types",
+            "Initialize Session Trace"
+          ]
+        },
+        "calculations": {
+          "totalCharactersReceived": 1553
+        },
+        "decisions": {
+          "justifications": [
+            "Accepted session inputs: Voice (0 chars), Docs (1), Code (false)",
+            "Target configuration: count=5, difficulty=Balanced"
+          ],
+          "rulesApplied": [
+            "Multi-modal payload schema validation rule"
+          ],
+          "evidenceUsed": [
+            "Uploaded voice audio",
+            "Document texts",
+            "Code snippet"
+          ]
+        },
+        "output": {
+          "status": "RECEIVED",
+          "sessionId": "eval_cohort_bst_dsa_1794234237188"
+        },
+        "validation": {
+          "status": "PASS",
+          "checks": [
+            "Input format valid",
+            "Count > 0"
+          ],
+          "errors": []
+        }
+      },
+      {
+        "stage": "EVIDENCE_PACKAGE",
+        "stageOrder": "02",
+        "timestamp": "2026-11-09T14:24:01.092Z",
+        "durationMs": 3898,
+        "model": null,
+        "evidenceCitations": [
+          "voice_transcript_01",
+          "document_chunk_01"
+        ],
+        "input": {
+          "voiceTranscriptSnippet": "",
+          "docsSnippet": "\nData Structures and Algorithms: Binary Search Trees and AVL Trees.\n\nA Binary Search Tree (BST) is a hierarchical node-based binary tree data structur"
+        },
+        "processing": {
+          "operations": [
+            "Apply Dual-Source Authority Division",
+            "Extract verbal emphasis cues from Voice transcript",
+            "Extract exact artifacts & formulas from Code/PPT/PDF",
+            "PDI Router path selection: SUMMARY",
+            "Construct Dual-Level Hierarchical Evidence Store (75-word child / 400-word parent)",
+            "Build Bidirectional Cross-Material Alignment Graph"
+          ]
+        },
+        "calculations": {
+          "voiceCharCount": 0,
+          "formulasDetectedCount": 0,
+          "explicitInstructionsCount": 0,
+          "hierarchicalChildrenCount": 1,
+          "hierarchicalParentsCount": 1,
+          "crossMaterialLinksCount": 0,
+          "teachingUnitsCount": 9,
+          "teachingUnitsQuarantined": 0
+        },
+        "decisions": {
+          "justifications": [
+            "Voice Authority applied: Syntax emphasis = MEDIUM, Conceptual emphasis = HIGH",
+            "Material Authority applied: 0 formulas detected, Code presence = false",
+            "PDI Representation Path selected: SUMMARY",
+            "Hierarchical RAG: 1 children mapped to 1 parent windows",
+            "Single-Modality Authority: 100% Spoken Lecture Authority (0 cross-material links)"
+          ],
+          "rulesApplied": [
+            "Dual-Source Authority Division Rule: Voice rules intent/emphasis, Materials rule exact artifacts",
+            "PDI Representation Routing Rule: Map modal inputs to SUMMARY / BLUEPRINT / UNIFIED",
+            "Hierarchical Evidence Framing Rule: Precision micro-citation with macro-narrative expansion",
+            "Cross-Material Alignment Rule: Bidirectional semantic graph linking spoken concepts to formal slides/code"
+          ],
+          "evidenceUsed": [
+            "voice_transcript_01",
+            "document_chunk_01"
+          ]
+        },
+        "output": {
+          "voiceEmphasis": {
+            "syntaxEmphasis": "MEDIUM",
+            "conceptualEmphasis": "HIGH",
+            "explicitInstructions": [],
+            "perceivedDifficultyCues": "BALANCED"
+          },
+          "artifactsSummary": {
+            "hasCode": false,
+            "codeSnippets": [],
+            "formulasDetected": [],
+            "keyTerms": []
+          },
+          "isAcademic": true,
+          "lectureDepth": {
+            "curricularEvidenceProfile": {
+              "schemaVersion": "2.0.0",
+              "evaluationTimestamp": "2026-11-09T14:23:57.241Z",
+              "disclaimer": "Automated software estimate derived strictly from transcript text and uploaded materials. Evaluates internal evidence density and assessment capacity. Does NOT measure teacher pedagogical efficacy, delivery quality, or student learning outcomes.",
+              "prerequisiteGates": {
+                "academicContentGate": {
+                  "status": "PASS",
+                  "primaryDiscourse": "ACADEMIC",
+                  "evidenceAnchor": "Verified academic concepts: Binary Search Trees, Data Structures, Avl Trees, BST",
+                  "failureReason": null
+                },
+                "evidenceSufficiency": {
+                  "status": "SUFFICIENT",
+                  "distinctConceptCount": 42,
+                  "assessableEvidenceVolume": "SUBSTANTIVE",
+                  "supportedQuestionTiers": [
+                    "Easy",
+                    "Medium"
+                  ],
+                  "reason": "Evidence supports up to 8 questions across assessable tiers."
+                }
+              },
+              "observableEvidence": {
+                "distinctConcepts": [
+                  "Binary Search Trees",
+                  "Data Structures",
+                  "Avl Trees",
+                  "BST",
+                  "Log N",
+                  "Algorithms",
+                  "Hierarchical Node",
+                  "Based Binary Tree",
+                  "Right Subtree",
+                  "Left Subtree",
+                  "Each Node",
+                  "All Keys",
+                  "Root Comparing Values",
+                  "Insertion Traverses",
+                  "Null Child",
+                  "Recursively Delete That Node",
+                  "Order Successor",
+                  "Leaf Node",
+                  "Order Traversal",
+                  "Strictly Sorted",
+                  "Ascending Order",
+                  "Linear Worst-case Time Complexity",
+                  "Strictly Sorted Ascending Order",
+                  "Bst Height Collapses",
+                  "Insertion Operations",
+                  "Degrading Search",
+                  "Keys Arrive",
+                  "Balanced Binary Search Tree",
+                  "Deletion Operations",
+                  "Time Complexity",
+                  "Binary Search Tree",
+                  "Data Structure",
+                  "Prevent Worst-case Linear Skew",
+                  "Every Node",
+                  "Invariant",
+                  "Insertion Violates Balance",
+                  "Rotations Restore Height",
+                  "Fix Zigzag Imbalances",
+                  "Double Rotations",
+                  "Guaranteeing Logarithmic Lookup",
+                  "Mechanism Bounds Tree",
+                  "Deletion Complexity"
+                ],
+                "formalDefinitions": [],
+                "workedTraces": [],
+                "algorithmicCodeSequencing": {
+                  "detected": true,
+                  "modality": "PROGRAMMING_CODE",
+                  "evidenceLines": [
+                    "Syntax-verified programming constructs or function signatures present in evidence",
+                    "Multi-step chronological transitions with algorithmic operations observed"
+                  ]
+                },
+                "comparativeReasoning": {
+                  "detected": false,
+                  "contrast": null
+                }
+              },
+              "assessmentCapacity": {
+                "easy": 3,
+                "medium": 5,
+                "hard": 0,
+                "totalRecommended": 8,
+                "unsupportedHardDeficit": 0,
+                "capacityWarning": null
+              },
+              "quizAlignment": {
+                "eligibleConceptCount": 42,
+                "plannedConceptCount": null,
+                "deliveredConceptCount": null,
+                "deliveredCoverageRatio": null,
+                "plannedCoverageRatio": null,
+                "coverageBreakdown": "42 eligible distinct concepts identified; quiz delivery pending",
+                "conceptDistribution": {}
+              }
+            },
+            "label": "Pedagogical Coverage & Depth Score — Internal Assessment",
+            "assessmentType": "INTERNAL_CURRICULAR_ANALYSIS",
+            "disclaimer": "Automated software estimate derived strictly from transcript text and uploaded materials. Evaluates internal evidence density and assessment capacity. Does NOT measure teacher pedagogical efficacy, delivery quality, or student learning outcomes.",
+            "rating": "Developing",
+            "score": null,
+            "isDeprecated": true,
+            "characteristics": {
+              "conceptExplanation": "Strong",
+              "reasoning": "Moderate",
+              "examples": "Present",
+              "procedures": "Strong"
+            },
+            "breakdown": {
+              "earnedRubric": [
+                {
+                  "category": "Baseline Curricular Substance",
+                  "earned": 40,
+                  "max": 40,
+                  "status": "Earned",
+                  "description": "Verified assessable curriculum concepts with substantive instructional predicate.",
+                  "identifiableEvidence": "Detected 30 distinct instructional focus topics: Binary Search Trees, Data Structures, Avl Trees, BST, Log N..."
+                },
+                {
+                  "category": "Concept Definition & Explanation",
+                  "earned": 15,
+                  "max": 15,
+                  "status": "Strong",
+                  "description": "Comprehensive conceptual definitions and operational mechanisms.",
+                  "identifiableEvidence": "Formal definition constructs and operational mechanics observed in curricular discourse."
+                },
+                {
+                  "category": "Causal Reasoning & Invariants",
+                  "earned": 8,
+                  "max": 15,
+                  "status": "Moderate",
+                  "description": "Basic causal reasoning detected.",
+                  "identifiableEvidence": "1 causal/deductive markers observed (explaining operational rationale, constraints, and error prevention)."
+                },
+                {
+                  "category": "Concrete Examples & Traces",
+                  "earned": 15,
+                  "max": 15,
+                  "status": "Present",
+                  "description": "Practical examples, worked traces, or demonstrations.",
+                  "identifiableEvidence": "Execution traces, sample input/output datasets, or worked code demonstrations identified in evidence."
+                },
+                {
+                  "category": "Procedural Sequencing",
+                  "earned": 15,
+                  "max": 15,
+                  "status": "Strong",
+                  "description": "Detailed multi-step algorithmic or procedural progression.",
+                  "identifiableEvidence": "3 chronological and procedural execution transitions observed across lecture stages."
+                }
+              ],
+              "deductions": [
+                {
+                  "factor": "Causal Reasoning & Invariants",
+                  "lostPoints": 7,
+                  "maxPoints": 15,
+                  "earnedPoints": 8,
+                  "reason": "Causal justification was brief. Only 1 causal connector was detected.",
+                  "actionableTip": "Use explicit causal connectors (\"because\", \"therefore\", \"so that\", \"prevents\") to explain why mechanisms exist."
+                }
+              ],
+              "totalLostPoints": 7,
+              "coveredAspects": [
+                "Clear concept definitions and foundational terminology",
+                "Detailed operational mechanisms and functional processes",
+                "Algorithmic execution trace and step-by-step state transitions",
+                "Explicit invariants, boundary conditions, and operational rules",
+                "Concrete practical examples and worked walkthroughs",
+                "Structured procedural workflow and algorithmic sequencing",
+                "Foundational causal explanations"
+              ],
+              "missingAspects": [
+                "Causal depth: deeper explanation of why mechanisms behave as they do"
+              ],
+              "actionableTips": [
+                "Use explicit causal connectors (\"because\", \"therefore\", \"so that\", \"prevents\") to explain why mechanisms exist."
+              ],
+              "recommendedQuestionCount": 8,
+              "recommendedQuestionsRationale": "8 Questions: Optimal for this substantive lecture. Thoroughly assesses concepts, procedural traces, and causal reasoning."
+            }
+          },
+          "unifiedLength": 1625,
+          "representationMode": "SUMMARY",
+          "routerReason": "[Adaptive PDI Router: PDI=0.300] PDI=0.300 < 0.60: Material is predominantly static, code-dense, or monologue exposition. Routed to Technical Summary.",
+          "teachingUnitsCount": 9,
+          "teachingUnitAudit": {
+            "schemaVersion": "1.0.0",
+            "promptVersion": "v1.0.0-overlapping-parents",
+            "provider": "groq",
+            "model": "openai/gpt-oss-20b",
+            "temperature": 0.1,
+            "totalParents": 1,
+            "windowsProcessed": 1,
+            "windowCoverage": "100%_COMPLETE",
+            "extractedCount": 9,
+            "verifiedCount": 9,
+            "reconciledCount": 9,
+            "quarantinedCount": 0,
+            "quarantinedUnits": [],
+            "provenanceBreakdown": {
+              "shared": 0,
+              "voiceOnly": 9,
+              "documentOnly": 0
+            },
+            "timestamp": "2026-11-09T14:24:01.092Z"
+          }
+        },
+        "validation": {
+          "status": "PASS",
+          "checks": [
+            "Evidence package assembled",
+            "Artifacts extracted"
+          ],
+          "errors": []
+        }
+      },
+      {
+        "stage": "AGENT_1_PLANNING",
+        "stageOrder": "03",
+        "timestamp": "2026-11-09T14:24:01.108Z",
+        "durationMs": 15,
+        "model": "openai/gpt-oss-120b",
+        "evidenceCitations": [
+          "Teaching Evidence Package",
+          "Voice emphasis signals"
+        ],
+        "input": {
+          "requestedCount": 5,
+          "requestedDifficulty": "Balanced",
+          "voiceEmphasis": {
+            "syntaxEmphasis": "MEDIUM",
+            "conceptualEmphasis": "HIGH",
+            "explicitInstructions": [],
+            "perceivedDifficultyCues": "BALANCED"
+          }
+        },
+        "processing": {
+          "operations": [
+            "Analyze topic hierarchy",
+            "Calibrate difficulty relative to teaching depth",
+            "Generate N primary targets + M reserve targets",
+            "Evaluate curricular evidence profile and coverage"
+          ]
+        },
+        "calculations": {
+          "plannedAloRatio": "5/1 subtopics (100%)",
+          "coreAloCount": "5 Core targets",
+          "secondaryAloCount": "0 Secondary targets",
+          "peripheralAloCount": "0 Peripheral targets",
+          "reserveCoreCount": "4 Core reserves",
+          "lectureDepthScore": "Deprecated (retained as null)",
+          "teacherEmphasis": "Aligned",
+          "total": "null"
+        },
+        "decisions": {
+          "justifications": [
+            "Identified Subject: \"Algorithms\" | Main Topic: \"Data Structures and Algorithms\"",
+            "Planned 5 primary targets + 4 reserve targets",
+            "Curricular evidence profile: 0 planned concepts targeted across 42 eligible concepts"
+          ],
+          "rulesApplied": [
+            "Target Reserve Rule: Generate N primary targets + M reserve targets upfront",
+            "Relative Difficulty Calibration Rule: Calibrate cognitive challenge against session depth"
+          ],
+          "evidenceUsed": [
+            "Teaching Evidence Package",
+            "Voice emphasis signals"
+          ]
+        },
+        "output": {
+          "subject": "Algorithms",
+          "mainTopic": "Data Structures and Algorithms",
+          "trajectoryDistribution": {
+            "early": 2,
+            "mid": 2,
+            "late": 1
+          },
+          "primaryTargetsSummary": [
+            {
+              "id": "T01",
+              "concept": "Binary Search Tree Definition",
+              "dimension": "Conceptual",
+              "phase": "EARLY"
+            },
+            {
+              "id": "T02",
+              "concept": "BST Insertion Algorithm",
+              "dimension": "Conceptual",
+              "phase": "EARLY"
+            },
+            {
+              "id": "T03",
+              "concept": "BST Deletion Algorithm",
+              "dimension": "Conceptual",
+              "phase": "MID"
+            },
+            {
+              "id": "T04",
+              "concept": "In‑order Traversal Property",
+              "dimension": "Conceptual",
+              "phase": "MID"
+            },
+            {
+              "id": "T05",
+              "concept": "Worst‑case Height of Unbalanced BST",
+              "dimension": "Calculation",
+              "phase": "LATE"
+            }
+          ],
+          "reserveTargetsSummary": [
+            {
+              "id": "R01",
+              "concept": "Balanced BST Complexity"
+            },
+            {
+              "id": "R02",
+              "concept": "AVL Balance Factor Invariant"
+            },
+            {
+              "id": "R03",
+              "concept": "AVL Rotations"
+            },
+            {
+              "id": "R04",
+              "concept": "AVL Height Bound"
+            }
+          ]
+        },
+        "validation": {
+          "status": "PASS",
+          "checks": [
+            "AssessmentPlan schema valid",
+            "Reserve targets generated"
+          ],
+          "errors": []
+        }
+      },
+      {
+        "stage": "QUESTION_GENERATION",
+        "stageOrder": "04_TT01_gen",
+        "timestamp": "2026-11-09T14:24:01.110Z",
+        "durationMs": 0,
+        "model": null,
+        "evidenceCitations": [
+          "T01"
+        ],
+        "input": {
+          "targetId": "T01",
+          "concept": "Binary Search Tree Definition",
+          "difficulty": "Easy"
+        },
+        "processing": {
+          "operations": [
+            "Prompt formulation",
+            "Adaptive distractor selection",
+            "Single-key exclusivity verification"
+          ]
+        },
+        "calculations": null,
+        "decisions": {
+          "justifications": [
+            "Generating candidate MCQ for Question 1/5 (\"Binary Search Tree Definition\") at tier Easy"
+          ],
+          "rulesApplied": [
+            "Difficulty Scaffolding & Tiered Distractor Invariant"
+          ],
+          "evidenceUsed": [
+            "T01"
+          ]
+        },
+        "output": {
+          "targetId": "T01"
+        },
+        "validation": {
+          "status": "PASS",
+          "checks": [],
+          "errors": []
+        }
+      },
+      {
+        "stage": "QUESTION_GENERATION",
+        "stageOrder": "04_TT02_gen",
+        "timestamp": "2026-11-09T14:25:28.738Z",
+        "durationMs": 0,
+        "model": null,
+        "evidenceCitations": [
+          "T02"
+        ],
+        "input": {
+          "targetId": "T02",
+          "concept": "BST Insertion Algorithm",
+          "difficulty": "Medium"
+        },
+        "processing": {
+          "operations": [
+            "Prompt formulation",
+            "Adaptive distractor selection",
+            "Single-key exclusivity verification"
+          ]
+        },
+        "calculations": null,
+        "decisions": {
+          "justifications": [
+            "Generating candidate MCQ for Question 1/5 (\"BST Insertion Algorithm\") at tier Medium"
+          ],
+          "rulesApplied": [
+            "Difficulty Scaffolding & Tiered Distractor Invariant"
+          ],
+          "evidenceUsed": [
+            "T02"
+          ]
+        },
+        "output": {
+          "targetId": "T02"
+        },
+        "validation": {
+          "status": "PASS",
+          "checks": [],
+          "errors": []
+        }
+      },
+      {
+        "stage": "QUESTION_GENERATION",
+        "stageOrder": "04_TT03_gen",
+        "timestamp": "2026-11-09T14:25:48.453Z",
+        "durationMs": 0,
+        "model": null,
+        "evidenceCitations": [
+          "T03"
+        ],
+        "input": {
+          "targetId": "T03",
+          "concept": "BST Deletion Algorithm",
+          "difficulty": "Medium"
+        },
+        "processing": {
+          "operations": [
+            "Prompt formulation",
+            "Adaptive distractor selection",
+            "Single-key exclusivity verification"
+          ]
+        },
+        "calculations": null,
+        "decisions": {
+          "justifications": [
+            "Generating candidate MCQ for Question 1/5 (\"BST Deletion Algorithm\") at tier Medium"
+          ],
+          "rulesApplied": [
+            "Difficulty Scaffolding & Tiered Distractor Invariant"
+          ],
+          "evidenceUsed": [
+            "T03"
+          ]
+        },
+        "output": {
+          "targetId": "T03"
+        },
+        "validation": {
+          "status": "PASS",
+          "checks": [],
+          "errors": []
+        }
+      },
+      {
+        "stage": "QUESTION_GENERATION",
+        "stageOrder": "04_TT04_gen",
+        "timestamp": "2026-11-09T14:25:48.456Z",
+        "durationMs": 0,
+        "model": null,
+        "evidenceCitations": [
+          "T04"
+        ],
+        "input": {
+          "targetId": "T04",
+          "concept": "In‑order Traversal Property",
+          "difficulty": "Medium"
+        },
+        "processing": {
+          "operations": [
+            "Prompt formulation",
+            "Adaptive distractor selection",
+            "Single-key exclusivity verification"
+          ]
+        },
+        "calculations": null,
+        "decisions": {
+          "justifications": [
+            "Generating candidate MCQ for Question 1/5 (\"In‑order Traversal Property\") at tier Medium"
+          ],
+          "rulesApplied": [
+            "Difficulty Scaffolding & Tiered Distractor Invariant"
+          ],
+          "evidenceUsed": [
+            "T04"
+          ]
+        },
+        "output": {
+          "targetId": "T04"
+        },
+        "validation": {
+          "status": "PASS",
+          "checks": [],
+          "errors": []
+        }
+      },
+      {
+        "stage": "QUESTION_GENERATION",
+        "stageOrder": "04_TT05_gen",
+        "timestamp": "2026-11-09T14:25:48.459Z",
+        "durationMs": 0,
+        "model": null,
+        "evidenceCitations": [
+          "T05"
+        ],
+        "input": {
+          "targetId": "T05",
+          "concept": "Worst‑case Height of Unbalanced BST",
+          "difficulty": "Medium"
+        },
+        "processing": {
+          "operations": [
+            "Prompt formulation",
+            "Adaptive distractor selection",
+            "Single-key exclusivity verification"
+          ]
+        },
+        "calculations": null,
+        "decisions": {
+          "justifications": [
+            "Generating candidate MCQ for Question 1/5 (\"Worst‑case Height of Unbalanced BST\") at tier Medium"
+          ],
+          "rulesApplied": [
+            "Difficulty Scaffolding & Tiered Distractor Invariant"
+          ],
+          "evidenceUsed": [
+            "T05"
+          ]
+        },
+        "output": {
+          "targetId": "T05"
+        },
+        "validation": {
+          "status": "PASS",
+          "checks": [],
+          "errors": []
+        }
+      },
+      {
+        "stage": "QUESTION_GENERATION",
+        "stageOrder": "04_TR01_gen",
+        "timestamp": "2026-11-09T14:25:48.461Z",
+        "durationMs": 0,
+        "model": null,
+        "evidenceCitations": [
+          "R01"
+        ],
+        "input": {
+          "targetId": "R01",
+          "concept": "Balanced BST Complexity",
+          "difficulty": "Medium"
+        },
+        "processing": {
+          "operations": [
+            "Prompt formulation",
+            "Adaptive distractor selection",
+            "Single-key exclusivity verification"
+          ]
+        },
+        "calculations": null,
+        "decisions": {
+          "justifications": [
+            "Generating candidate MCQ for Question 1/5 (\"Balanced BST Complexity\") at tier Medium"
+          ],
+          "rulesApplied": [
+            "Difficulty Scaffolding & Tiered Distractor Invariant"
+          ],
+          "evidenceUsed": [
+            "R01"
+          ]
+        },
+        "output": {
+          "targetId": "R01"
+        },
+        "validation": {
+          "status": "PASS",
+          "checks": [],
+          "errors": []
+        }
+      },
+      {
+        "stage": "QUESTION_GENERATION",
+        "stageOrder": "04_TR02_gen",
+        "timestamp": "2026-11-09T14:25:48.463Z",
+        "durationMs": 0,
+        "model": null,
+        "evidenceCitations": [
+          "R02"
+        ],
+        "input": {
+          "targetId": "R02",
+          "concept": "AVL Balance Factor Invariant",
+          "difficulty": "Medium"
+        },
+        "processing": {
+          "operations": [
+            "Prompt formulation",
+            "Adaptive distractor selection",
+            "Single-key exclusivity verification"
+          ]
+        },
+        "calculations": null,
+        "decisions": {
+          "justifications": [
+            "Generating candidate MCQ for Question 1/5 (\"AVL Balance Factor Invariant\") at tier Medium"
+          ],
+          "rulesApplied": [
+            "Difficulty Scaffolding & Tiered Distractor Invariant"
+          ],
+          "evidenceUsed": [
+            "R02"
+          ]
+        },
+        "output": {
+          "targetId": "R02"
+        },
+        "validation": {
+          "status": "PASS",
+          "checks": [],
+          "errors": []
+        }
+      },
+      {
+        "stage": "QUESTION_GENERATION",
+        "stageOrder": "04_TR03_gen",
+        "timestamp": "2026-11-09T14:25:48.466Z",
+        "durationMs": 0,
+        "model": null,
+        "evidenceCitations": [
+          "R03"
+        ],
+        "input": {
+          "targetId": "R03",
+          "concept": "AVL Rotations",
+          "difficulty": "Easy"
+        },
+        "processing": {
+          "operations": [
+            "Prompt formulation",
+            "Adaptive distractor selection",
+            "Single-key exclusivity verification"
+          ]
+        },
+        "calculations": null,
+        "decisions": {
+          "justifications": [
+            "Generating candidate MCQ for Question 1/5 (\"AVL Rotations\") at tier Easy"
+          ],
+          "rulesApplied": [
+            "Difficulty Scaffolding & Tiered Distractor Invariant"
+          ],
+          "evidenceUsed": [
+            "R03"
+          ]
+        },
+        "output": {
+          "targetId": "R03"
+        },
+        "validation": {
+          "status": "PASS",
+          "checks": [],
+          "errors": []
+        }
+      },
+      {
+        "stage": "QUESTION_GENERATION",
+        "stageOrder": "04_TR04_gen",
+        "timestamp": "2026-11-09T14:25:48.467Z",
+        "durationMs": 0,
+        "model": null,
+        "evidenceCitations": [
+          "R04"
+        ],
+        "input": {
+          "targetId": "R04",
+          "concept": "AVL Height Bound",
+          "difficulty": "Medium"
+        },
+        "processing": {
+          "operations": [
+            "Prompt formulation",
+            "Adaptive distractor selection",
+            "Single-key exclusivity verification"
+          ]
+        },
+        "calculations": null,
+        "decisions": {
+          "justifications": [
+            "Generating candidate MCQ for Question 1/5 (\"AVL Height Bound\") at tier Medium"
+          ],
+          "rulesApplied": [
+            "Difficulty Scaffolding & Tiered Distractor Invariant"
+          ],
+          "evidenceUsed": [
+            "R04"
+          ]
+        },
+        "output": {
+          "targetId": "R04"
+        },
+        "validation": {
+          "status": "PASS",
+          "checks": [],
+          "errors": []
+        }
+      },
+      {
+        "stage": "VALIDATING_QUESTIONS",
+        "stageOrder": "04_VALIDATE",
+        "timestamp": "2026-11-09T14:25:48.469Z",
+        "durationMs": 0,
+        "model": null,
+        "evidenceCitations": [],
+        "input": {},
+        "processing": {},
+        "calculations": null,
+        "decisions": {
+          "justifications": [
+            "Validated 0 questions against 4-option schema and deterministic consistency"
+          ],
+          "rulesApplied": [],
+          "evidenceUsed": []
+        },
+        "output": {},
+        "validation": {
+          "status": "PASS",
+          "checks": [
+            "Delivered candidate questions valid"
+          ],
+          "errors": []
+        }
+      },
+      {
+        "stage": "AUDITING_QUALITY",
+        "stageOrder": "04_AUDIT",
+        "timestamp": "2026-11-09T14:25:48.469Z",
+        "durationMs": 0,
+        "model": null,
+        "evidenceCitations": [],
+        "input": {},
+        "processing": {},
+        "calculations": null,
+        "decisions": {
+          "justifications": [
+            "Audited pedagogical derivability and student answerability for 0 questions"
+          ],
+          "rulesApplied": [],
+          "evidenceUsed": []
+        },
+        "output": {},
+        "validation": {
+          "status": "PASS",
+          "checks": [
+            "Audit complete"
+          ],
+          "errors": []
+        }
+      },
+      {
+        "stage": "AGENT_3_QUIZ_EVAL",
+        "stageOrder": "05",
+        "timestamp": "2026-11-09T14:25:48.469Z",
+        "durationMs": 0,
+        "model": null,
+        "evidenceCitations": [
+          "All passing candidate MCQs"
+        ],
+        "input": {
+          "passingCount": 0,
+          "requestedCount": 5
+        },
+        "processing": {
+          "operations": [
+            "Coverage analysis",
+            "Cognitive dimension diversity analysis",
+            "Subtopic concentration analysis"
+          ]
+        },
+        "calculations": null,
+        "decisions": {
+          "justifications": [
+            "Quiz coverage evaluated at 0%",
+            "Delivered questions: 0/5",
+            "Unfulfilled capacity deficits: 7",
+            "Rejected targets: 0"
+          ],
+          "rulesApplied": [
+            "Whole-Quiz Pedagogical Balance & Diversity Rule"
+          ],
+          "evidenceUsed": [
+            "All passing candidate MCQs"
+          ]
+        },
+        "output": {
+          "quizQualityStatus": "NOT_EVALUATED",
+          "isBalanced": false,
+          "totalQuestions": 0,
+          "coverageScore": null
+        },
+        "validation": {
+          "status": "WARNING",
+          "checks": [
+            "Quality Status: NOT_EVALUATED"
+          ],
+          "errors": []
+        }
+      },
+      {
+        "stage": "DETERMINISTIC_POSTCHECKS",
+        "stageOrder": "06",
+        "timestamp": "2026-11-09T14:25:48.470Z",
+        "durationMs": 0,
+        "model": null,
+        "evidenceCitations": [
+          "Passing MCQs"
+        ],
+        "input": {},
+        "processing": {
+          "operations": [
+            "Verify payload integrity",
+            "Verify answer-key slot alignment across A/B/C/D"
+          ]
+        },
+        "calculations": null,
+        "decisions": {
+          "justifications": [
+            "All passing MCQs verified for 100% key reference integrity and single-correct exclusivity",
+            "Option diversity verified (0 distinct distractors across 0 questions, 0 flagged)"
+          ],
+          "rulesApplied": [
+            "Cryptographic Option Placement & Key Integrity Rule"
+          ],
+          "evidenceUsed": [
+            "Passing MCQs"
+          ]
+        },
+        "output": {
+          "postCheckedCount": 0
+        },
+        "validation": {
+          "status": "PASS",
+          "checks": [
+            "Key integrity verified",
+            "4 options verified"
+          ],
+          "errors": []
+        }
+      },
+      {
+        "stage": "FINAL_GROUNDING_GATE",
+        "stageOrder": "07",
+        "timestamp": "2026-11-09T14:25:48.470Z",
+        "durationMs": 0,
+        "model": null,
+        "evidenceCitations": [
+          "session_evidence_package",
+          "final_candidate_mcqs"
+        ],
+        "input": {
+          "totalCandidateMCQs": 0
+        },
+        "processing": {
+          "operations": [
+            "Verify keyword overlap",
+            "Verify factual justification against session content",
+            "Foreign domain boundary check"
+          ]
+        },
+        "calculations": {
+          "justifiedCount": 0,
+          "rejectedCount": 0,
+          "evidenceSafety": "FOREIGN_CONTAMINATED"
+        },
+        "decisions": {
+          "justifications": [
+            "Final Grounding Gate status: FAILED | Evidence Safety: FOREIGN_CONTAMINATED",
+            "Verified 0/0 questions strictly supported by session evidence"
+          ],
+          "rulesApplied": [
+            "Final Grounding Verification Rule: Reject un-grounded questions before delivery"
+          ],
+          "evidenceUsed": [
+            "session_evidence_package",
+            "final_candidate_mcqs"
+          ]
+        },
+        "output": {
+          "status": "FAILED",
+          "evidenceSafety": "FOREIGN_CONTAMINATED",
+          "finalCount": 0
+        },
+        "validation": {
+          "status": "FAIL",
+          "checks": [
+            "0 questions justified"
+          ],
+          "errors": []
+        }
+      }
+    ],
+    "plan": {
+      "subject": "Algorithms",
+      "mainTopic": "Data Structures and Algorithms",
+      "requestedDistribution": {
+        "Easy": 1,
+        "Medium": 3,
+        "Hard": 1
+      },
+      "allocatedDistribution": {
+        "Easy": 1,
+        "Medium": 4,
+        "Hard": 0
+      },
+      "assessmentTargets": [
+        {
+          "targetId": "T01",
+          "claimId": "TU_01",
+          "sequenceIndex": 1,
+          "macroTopic": "Data Structures and Algorithms",
+          "subtopic": "Binary Search Tree Definition",
+          "concept": "Binary Search Tree Definition",
+          "learningObjective": "A Binary Search Tree (BST) is a hierarchical node‑based binary tree where each node’s left subtree contains keys strictly less than the node’s key and the right subtree contains keys strictly greater.",
+          "instruction": "Assess direct factual recall, terminology definition, or explicit concept recognition. Prohibit multi-variable calculation, hypothetical scenarios, or multi-step tracing. Focus: A Binary Search Tree (BST) is a hierarchical node‑based binary tree where each node’s left subtree contains keys strictly less than the node’s key and the right subtree contains keys strictly greater..",
+          "specificReasoningTask": "A Binary Search Tree (BST) is a hierarchical node‑based binary tree where each node’s left subtree contains keys strictly less than the node’s key and the right subtree contains keys strictly greater.",
+          "statement": "A Binary Search Tree (BST) is a hierarchical node‑based binary tree where each node’s left subtree contains keys strictly less than the node’s key and the right subtree contains keys strictly greater.",
+          "parentEnvelopeId": null,
+          "formatRecommendation": "PROSE_MULTIPLE_CHOICE",
+          "assessmentAngle": "CONCEPTUAL",
+          "trajectoryPhase": "EARLY",
+          "timestamp": null,
+          "tier": "Core",
+          "dimension": "Conceptual",
+          "cognitiveLevel": "Understand",
+          "targetDifficulty": "Easy",
+          "intendedCognitiveOperation": "RECALL",
+          "distractorStrategy": "Curricular Invariant & Mechanism Misconceptions for Binary Search Tree Definition",
+          "distractorMisconceptions": [
+            {
+              "concept": "Operational Role Inversion",
+              "description": "Confusing the primary operational role of Binary Search Tree Definition with its secondary or opposing constraint."
+            },
+            {
+              "concept": "Precondition Scope Error",
+              "description": "Applying mechanism rules under conditions where the necessary preconditions are not satisfied."
+            },
+            {
+              "concept": "Invariant Boundary Violation",
+              "description": "Violating the core algorithmic boundary or invariant specified in the lecture evidence."
+            }
+          ],
+          "operationalGuidance": "Assess direct factual recall, terminology definition, or explicit concept recognition. Prohibit multi-variable calculation, hypothetical scenarios, or multi-step tracing.",
+          "evidenceType": "VOICE",
+          "provenance": "VOICE_ONLY",
+          "supportingEvidence": "A Binary Search Tree (BST) is a hierarchical node-based binary tree data structure where for each node X, all keys in its left subtree are strictly less than X.key, and all keys in its right subtree are strictly greater than X.key.",
+          "confidence": "HIGH",
+          "sourceChunks": [
+            "E_SLIDE_1"
+          ],
+          "requiresExactArtifact": false,
+          "isCapacityLimited": false,
+          "structureType": "INDEPENDENT_UNIT",
+          "bloomLevel": "Remember",
+          "negativeBoundaries": [],
+          "targetArchetype": "CONCEPTUAL_CONTRAST",
+          "isSupplementary": false
+        },
+        {
+          "targetId": "T02",
+          "claimId": "TU_02",
+          "sequenceIndex": 2,
+          "macroTopic": "Data Structures and Algorithms",
+          "subtopic": "BST Insertion Algorithm",
+          "concept": "BST Insertion Algorithm",
+          "learningObjective": "Insertion into a BST proceeds from the root, comparing the key to be inserted with each node’s key and moving left if smaller or right if larger until a null child is found, where the new node is attached.",
+          "instruction": "Assess operational mechanisms, cause-and-effect relationships, sequential state transitions, or comparative tradeoffs between taught alternatives. Require reasoning beyond keyword recognition. Focus: Insertion into a BST proceeds from the root, comparing the key to be inserted with each node’s key and moving left if smaller or right if larger until a null child is found, where the new node is attached..",
+          "specificReasoningTask": "Insertion into a BST proceeds from the root, comparing the key to be inserted with each node’s key and moving left if smaller or right if larger until a null child is found, where the new node is attached.",
+          "statement": "Insertion into a BST proceeds from the root, comparing the key to be inserted with each node’s key and moving left if smaller or right if larger until a null child is found, where the new node is attached.",
+          "parentEnvelopeId": null,
+          "formatRecommendation": "PROSE_MULTIPLE_CHOICE",
+          "assessmentAngle": "CONCEPTUAL",
+          "trajectoryPhase": "EARLY",
+          "timestamp": null,
+          "tier": "Core",
+          "dimension": "Conceptual",
+          "cognitiveLevel": "Understand",
+          "targetDifficulty": "Medium",
+          "intendedCognitiveOperation": "COMPARE",
+          "distractorStrategy": "Curricular Invariant & Mechanism Misconceptions for BST Insertion Algorithm",
+          "distractorMisconceptions": [
+            {
+              "concept": "Operational Role Inversion",
+              "description": "Confusing the primary operational role of BST Insertion Algorithm with its secondary or opposing constraint."
+            },
+            {
+              "concept": "Precondition Scope Error",
+              "description": "Applying mechanism rules under conditions where the necessary preconditions are not satisfied."
+            },
+            {
+              "concept": "Invariant Boundary Violation",
+              "description": "Violating the core algorithmic boundary or invariant specified in the lecture evidence."
+            }
+          ],
+          "operationalGuidance": "Assess operational mechanisms, cause-and-effect relationships, sequential state transitions, or comparative tradeoffs between taught alternatives. Require reasoning beyond keyword recognition.",
+          "evidenceType": "VOICE",
+          "provenance": "VOICE_ONLY",
+          "supportingEvidence": "Insertion traverses from root comparing values: go left if smaller, right if greater, until a null child is reached.",
+          "confidence": "HIGH",
+          "sourceChunks": [
+            "E_SLIDE_1"
+          ],
+          "requiresExactArtifact": false,
+          "isCapacityLimited": false,
+          "structureType": "INDEPENDENT_UNIT",
+          "bloomLevel": "Understand / Analyze",
+          "negativeBoundaries": [],
+          "targetArchetype": "CONCEPTUAL_CONTRAST",
+          "isSupplementary": false
+        },
+        {
+          "targetId": "T03",
+          "claimId": "TU_03",
+          "sequenceIndex": 3,
+          "macroTopic": "Data Structures and Algorithms",
+          "subtopic": "BST Deletion Algorithm",
+          "concept": "BST Deletion Algorithm",
+          "learningObjective": "Deletion in a BST has three cases: removing a leaf node, replacing a node with one child by that child, or replacing a node with two children by its in‑order successor or predecessor and then deleting that replacement node.",
+          "instruction": "Assess operational mechanisms, cause-and-effect relationships, sequential state transitions, or comparative tradeoffs between taught alternatives. Require reasoning beyond keyword recognition. Focus: Deletion in a BST has three cases: removing a leaf node, replacing a node with one child by that child, or replacing a node with two children by its in‑order successor or predecessor and then deleting that replacement node..",
+          "specificReasoningTask": "Deletion in a BST has three cases: removing a leaf node, replacing a node with one child by that child, or replacing a node with two children by its in‑order successor or predecessor and then deleting that replacement node.",
+          "statement": "Deletion in a BST has three cases: removing a leaf node, replacing a node with one child by that child, or replacing a node with two children by its in‑order successor or predecessor and then deleting that replacement node.",
+          "parentEnvelopeId": null,
+          "formatRecommendation": "PROSE_MULTIPLE_CHOICE",
+          "assessmentAngle": "CONCEPTUAL",
+          "trajectoryPhase": "MID",
+          "timestamp": null,
+          "tier": "Core",
+          "dimension": "Conceptual",
+          "cognitiveLevel": "Understand",
+          "targetDifficulty": "Medium",
+          "intendedCognitiveOperation": "COMPARE",
+          "distractorStrategy": "Curricular Invariant & Mechanism Misconceptions for BST Deletion Algorithm",
+          "distractorMisconceptions": [
+            {
+              "concept": "Operational Role Inversion",
+              "description": "Confusing the primary operational role of BST Deletion Algorithm with its secondary or opposing constraint."
+            },
+            {
+              "concept": "Precondition Scope Error",
+              "description": "Applying mechanism rules under conditions where the necessary preconditions are not satisfied."
+            },
+            {
+              "concept": "Invariant Boundary Violation",
+              "description": "Violating the core algorithmic boundary or invariant specified in the lecture evidence."
+            }
+          ],
+          "operationalGuidance": "Assess operational mechanisms, cause-and-effect relationships, sequential state transitions, or comparative tradeoffs between taught alternatives. Require reasoning beyond keyword recognition.",
+          "evidenceType": "VOICE",
+          "provenance": "VOICE_ONLY",
+          "supportingEvidence": "Deletion in a BST involves three cases: deleting a leaf node (simply remove), deleting a node with one child (replace with its child), and deleting a node with two children (replace with its in-order successor or predecessor, then recursively delete that node).",
+          "confidence": "HIGH",
+          "sourceChunks": [
+            "E_SLIDE_1"
+          ],
+          "requiresExactArtifact": false,
+          "isCapacityLimited": false,
+          "structureType": "INDEPENDENT_UNIT",
+          "bloomLevel": "Understand / Analyze",
+          "negativeBoundaries": [],
+          "targetArchetype": "CONCEPTUAL_CONTRAST",
+          "isSupplementary": false
+        },
+        {
+          "targetId": "T04",
+          "claimId": "TU_04",
+          "sequenceIndex": 4,
+          "macroTopic": "Data Structures and Algorithms",
+          "subtopic": "In‑order Traversal Property",
+          "concept": "In‑order Traversal Property",
+          "learningObjective": "An in‑order traversal of a BST visits nodes in strictly ascending key order, producing a sorted sequence of keys.",
+          "instruction": "Assess operational mechanisms, cause-and-effect relationships, sequential state transitions, or comparative tradeoffs between taught alternatives. Require reasoning beyond keyword recognition. Focus: An in‑order traversal of a BST visits nodes in strictly ascending key order, producing a sorted sequence of keys..",
+          "specificReasoningTask": "An in‑order traversal of a BST visits nodes in strictly ascending key order, producing a sorted sequence of keys.",
+          "statement": "An in‑order traversal of a BST visits nodes in strictly ascending key order, producing a sorted sequence of keys.",
+          "parentEnvelopeId": null,
+          "formatRecommendation": "PROSE_MULTIPLE_CHOICE",
+          "assessmentAngle": "CONCEPTUAL",
+          "trajectoryPhase": "MID",
+          "timestamp": null,
+          "tier": "Core",
+          "dimension": "Conceptual",
+          "cognitiveLevel": "Understand",
+          "targetDifficulty": "Medium",
+          "intendedCognitiveOperation": "COMPARE",
+          "distractorStrategy": "Curricular Invariant & Mechanism Misconceptions for In‑order Traversal Property",
+          "distractorMisconceptions": [
+            {
+              "concept": "Operational Role Inversion",
+              "description": "Confusing the primary operational role of In‑order Traversal Property with its secondary or opposing constraint."
+            },
+            {
+              "concept": "Precondition Scope Error",
+              "description": "Applying mechanism rules under conditions where the necessary preconditions are not satisfied."
+            },
+            {
+              "concept": "Invariant Boundary Violation",
+              "description": "Violating the core algorithmic boundary or invariant specified in the lecture evidence."
+            }
+          ],
+          "operationalGuidance": "Assess operational mechanisms, cause-and-effect relationships, sequential state transitions, or comparative tradeoffs between taught alternatives. Require reasoning beyond keyword recognition.",
+          "evidenceType": "VOICE",
+          "provenance": "VOICE_ONLY",
+          "supportingEvidence": "The in-order traversal of a binary search tree yields the keys in strictly sorted, ascending order.",
+          "confidence": "HIGH",
+          "sourceChunks": [
+            "E_SLIDE_1"
+          ],
+          "requiresExactArtifact": false,
+          "isCapacityLimited": false,
+          "structureType": "INDEPENDENT_UNIT",
+          "bloomLevel": "Understand / Analyze",
+          "negativeBoundaries": [],
+          "targetArchetype": "CONCEPTUAL_CONTRAST",
+          "isSupplementary": false
+        },
+        {
+          "targetId": "T05",
+          "claimId": "TU_05",
+          "sequenceIndex": 5,
+          "macroTopic": "Data Structures and Algorithms",
+          "subtopic": "Worst‑case Height of Unbalanced BST",
+          "concept": "Worst‑case Height of Unbalanced BST",
+          "learningObjective": "If keys are inserted in strictly sorted order, a BST degenerates into a linked list of height N, causing search and insertion to run in O(N) time.",
+          "instruction": "Assess operational mechanisms, cause-and-effect relationships, sequential state transitions, or comparative tradeoffs between taught alternatives. Require reasoning beyond keyword recognition. Focus: If keys are inserted in strictly sorted order, a BST degenerates into a linked list of height N, causing search and insertion to run in O(N) time..",
+          "specificReasoningTask": "If keys are inserted in strictly sorted order, a BST degenerates into a linked list of height N, causing search and insertion to run in O(N) time.",
+          "statement": "If keys are inserted in strictly sorted order, a BST degenerates into a linked list of height N, causing search and insertion to run in O(N) time.",
+          "parentEnvelopeId": null,
+          "formatRecommendation": "PROSE_MULTIPLE_CHOICE",
+          "assessmentAngle": "CALCULATION",
+          "trajectoryPhase": "LATE",
+          "timestamp": null,
+          "tier": "Core",
+          "dimension": "Calculation",
+          "cognitiveLevel": "Understand",
+          "targetDifficulty": "Medium",
+          "intendedCognitiveOperation": "COMPARE",
+          "distractorStrategy": "Curricular Invariant & Mechanism Misconceptions for Worst‑case Height of Unbalanced BST",
+          "distractorMisconceptions": [
+            {
+              "concept": "Operational Role Inversion",
+              "description": "Confusing the primary operational role of Worst‑case Height of Unbalanced BST with its secondary or opposing constraint."
+            },
+            {
+              "concept": "Precondition Scope Error",
+              "description": "Applying mechanism rules under conditions where the necessary preconditions are not satisfied."
+            },
+            {
+              "concept": "Invariant Boundary Violation",
+              "description": "Violating the core algorithmic boundary or invariant specified in the lecture evidence."
+            }
+          ],
+          "operationalGuidance": "Assess operational mechanisms, cause-and-effect relationships, sequential state transitions, or comparative tradeoffs between taught alternatives. Require reasoning beyond keyword recognition.",
+          "evidenceType": "VOICE",
+          "provenance": "VOICE_ONLY",
+          "supportingEvidence": "When keys arrive in strictly sorted ascending order, BST height collapses to N, degrading search and insertion operations to O(N) linear worst-case time complexity.",
+          "confidence": "HIGH",
+          "sourceChunks": [
+            "E_SLIDE_1"
+          ],
+          "requiresExactArtifact": true,
+          "isCapacityLimited": false,
+          "structureType": "INDEPENDENT_UNIT",
+          "bloomLevel": "Understand / Analyze",
+          "negativeBoundaries": [],
+          "targetArchetype": "CONCEPTUAL_CONTRAST",
+          "isSupplementary": false
+        }
+      ],
+      "reserveTargets": [
+        {
+          "targetId": "R01",
+          "claimId": "TU_06",
+          "sequenceIndex": 6,
+          "macroTopic": "Data Structures and Algorithms",
+          "subtopic": "Balanced BST Complexity",
+          "concept": "Balanced BST Complexity",
+          "learningObjective": "In a balanced BST, search, insertion, and deletion operations all run in O(log n) time due to the logarithmic height of the tree.",
+          "instruction": "Assess direct factual recall, terminology definition, or explicit concept recognition. Prohibit multi-variable calculation, hypothetical scenarios, or multi-step tracing. Test concept: Balanced BST Complexity.",
+          "specificReasoningTask": "In a balanced BST, search, insertion, and deletion operations all run in O(log n) time due to the logarithmic height of the tree.",
+          "statement": "In a balanced BST, search, insertion, and deletion operations all run in O(log n) time due to the logarithmic height of the tree.",
+          "parentEnvelopeId": null,
+          "formatRecommendation": "PROSE_MULTIPLE_CHOICE",
+          "assessmentAngle": "CALCULATION",
+          "trajectoryPhase": "MID",
+          "timestamp": null,
+          "tier": "Core",
+          "dimension": "Calculation",
+          "cognitiveLevel": "Understand",
+          "targetDifficulty": "Medium",
+          "intendedCognitiveOperation": "RECALL",
+          "distractorStrategy": "Curricular Invariant & Mechanism Misconceptions for Balanced BST Complexity",
+          "distractorMisconceptions": [
+            {
+              "concept": "Operational Role Inversion",
+              "description": "Confusing the primary operational role of Balanced BST Complexity with its secondary or opposing constraint."
+            },
+            {
+              "concept": "Precondition Scope Error",
+              "description": "Applying mechanism rules under conditions where the necessary preconditions are not satisfied."
+            },
+            {
+              "concept": "Invariant Boundary Violation",
+              "description": "Violating the core algorithmic boundary or invariant specified in the lecture evidence."
+            }
+          ],
+          "operationalGuidance": "Assess direct factual recall, terminology definition, or explicit concept recognition. Prohibit multi-variable calculation, hypothetical scenarios, or multi-step tracing.",
+          "evidenceType": "VOICE",
+          "provenance": "VOICE_ONLY",
+          "supportingEvidence": "In a balanced binary search tree, the time complexity for search, insertion, and deletion operations is O(log n).",
+          "confidence": "HIGH",
+          "sourceChunks": [
+            "E_SLIDE_1"
+          ],
+          "requiresExactArtifact": true,
+          "isCapacityLimited": false,
+          "structureType": "INDEPENDENT_UNIT",
+          "bloomLevel": "Remember",
+          "originalDifficulty": "Medium",
+          "negativeBoundaries": [],
+          "targetArchetype": "CONCEPTUAL_CONTRAST"
+        },
+        {
+          "targetId": "R02",
+          "claimId": "TU_07",
+          "sequenceIndex": 7,
+          "macroTopic": "Data Structures and Algorithms",
+          "subtopic": "AVL Balance Factor Invariant",
+          "concept": "AVL Balance Factor Invariant",
+          "learningObjective": "An AVL tree maintains the invariant that for every node, the absolute difference between the heights of its left and right subtrees is at most one.",
+          "instruction": "Assess operational mechanisms, cause-and-effect relationships, sequential state transitions, or comparative tradeoffs between taught alternatives. Require reasoning beyond keyword recognition. Test concept: AVL Balance Factor Invariant.",
+          "specificReasoningTask": "An AVL tree maintains the invariant that for every node, the absolute difference between the heights of its left and right subtrees is at most one.",
+          "statement": "An AVL tree maintains the invariant that for every node, the absolute difference between the heights of its left and right subtrees is at most one.",
+          "parentEnvelopeId": null,
+          "formatRecommendation": "PROSE_MULTIPLE_CHOICE",
+          "assessmentAngle": "CALCULATION",
+          "trajectoryPhase": "LATE",
+          "timestamp": null,
+          "tier": "Core",
+          "dimension": "Calculation",
+          "cognitiveLevel": "Understand",
+          "targetDifficulty": "Medium",
+          "intendedCognitiveOperation": "COMPARE",
+          "distractorStrategy": "Curricular Invariant & Mechanism Misconceptions for AVL Balance Factor Invariant",
+          "distractorMisconceptions": [
+            {
+              "concept": "Operational Role Inversion",
+              "description": "Confusing the primary operational role of AVL Balance Factor Invariant with its secondary or opposing constraint."
+            },
+            {
+              "concept": "Precondition Scope Error",
+              "description": "Applying mechanism rules under conditions where the necessary preconditions are not satisfied."
+            },
+            {
+              "concept": "Invariant Boundary Violation",
+              "description": "Violating the core algorithmic boundary or invariant specified in the lecture evidence."
+            }
+          ],
+          "operationalGuidance": "Assess operational mechanisms, cause-and-effect relationships, sequential state transitions, or comparative tradeoffs between taught alternatives. Require reasoning beyond keyword recognition.",
+          "evidenceType": "VOICE",
+          "provenance": "VOICE_ONLY",
+          "supportingEvidence": "To prevent worst‑case linear skew, AVL trees enforce a balance factor invariant: for every node, |height(left) - height(right)| <= 1.",
+          "confidence": "HIGH",
+          "sourceChunks": [
+            "E_SLIDE_1"
+          ],
+          "requiresExactArtifact": true,
+          "isCapacityLimited": false,
+          "structureType": "INDEPENDENT_UNIT",
+          "bloomLevel": "Understand / Analyze",
+          "originalDifficulty": "Hard",
+          "negativeBoundaries": [],
+          "targetArchetype": "CONCEPTUAL_CONTRAST"
+        },
+        {
+          "targetId": "R03",
+          "claimId": "TU_08",
+          "sequenceIndex": 8,
+          "macroTopic": "Data Structures and Algorithms",
+          "subtopic": "AVL Rotations",
+          "concept": "AVL Rotations",
+          "learningObjective": "When an AVL insertion violates balance, rotations restore height: a single left rotation fixes a right‑right imbalance, a single right rotation fixes a left‑left imbalance, and double rotations (left‑right or right‑left) fix zig‑zag imbalances.",
+          "instruction": "Assess operational mechanisms, cause-and-effect relationships, sequential state transitions, or comparative tradeoffs between taught alternatives. Require reasoning beyond keyword recognition. Test concept: AVL Rotations.",
+          "specificReasoningTask": "When an AVL insertion violates balance, rotations restore height: a single left rotation fixes a right‑right imbalance, a single right rotation fixes a left‑left imbalance, and double rotations (left‑right or right‑left) fix zig‑zag imbalances.",
+          "statement": "When an AVL insertion violates balance, rotations restore height: a single left rotation fixes a right‑right imbalance, a single right rotation fixes a left‑left imbalance, and double rotations (left‑right or right‑left) fix zig‑zag imbalances.",
+          "parentEnvelopeId": null,
+          "formatRecommendation": "PROSE_MULTIPLE_CHOICE",
+          "assessmentAngle": "CONCEPTUAL",
+          "trajectoryPhase": "LATE",
+          "timestamp": null,
+          "tier": "Core",
+          "dimension": "Conceptual",
+          "cognitiveLevel": "Understand",
+          "targetDifficulty": "Easy",
+          "intendedCognitiveOperation": "COMPARE",
+          "distractorStrategy": "Curricular Invariant & Mechanism Misconceptions for AVL Rotations",
+          "distractorMisconceptions": [
+            {
+              "concept": "Operational Role Inversion",
+              "description": "Confusing the primary operational role of AVL Rotations with its secondary or opposing constraint."
+            },
+            {
+              "concept": "Precondition Scope Error",
+              "description": "Applying mechanism rules under conditions where the necessary preconditions are not satisfied."
+            },
+            {
+              "concept": "Invariant Boundary Violation",
+              "description": "Violating the core algorithmic boundary or invariant specified in the lecture evidence."
+            }
+          ],
+          "operationalGuidance": "Assess operational mechanisms, cause-and-effect relationships, sequential state transitions, or comparative tradeoffs between taught alternatives. Require reasoning beyond keyword recognition.",
+          "evidenceType": "VOICE",
+          "provenance": "VOICE_ONLY",
+          "supportingEvidence": "When insertion violates balance, rotations restore height: a single Left Rotation fixes Right-Right heavy skew, a single Right Rotation fixes Left-Left heavy skew, and double rotations (Left-Right or Right-Left) fix zigzag imbalances.",
+          "confidence": "HIGH",
+          "sourceChunks": [
+            "E_SLIDE_1"
+          ],
+          "requiresExactArtifact": false,
+          "isCapacityLimited": false,
+          "structureType": "INDEPENDENT_UNIT",
+          "bloomLevel": "Understand / Analyze",
+          "originalDifficulty": "Easy",
+          "negativeBoundaries": [],
+          "targetArchetype": "CONCEPTUAL_CONTRAST"
+        },
+        {
+          "targetId": "R04",
+          "claimId": "TU_09",
+          "sequenceIndex": 9,
+          "macroTopic": "Data Structures and Algorithms",
+          "subtopic": "AVL Height Bound",
+          "concept": "AVL Height Bound",
+          "learningObjective": "The rotation mechanism in AVL trees guarantees that the tree height remains O(log N), ensuring logarithmic lookup, insertion, and deletion complexity.",
+          "instruction": "Assess operational mechanisms, cause-and-effect relationships, sequential state transitions, or comparative tradeoffs between taught alternatives. Require reasoning beyond keyword recognition. Test concept: AVL Height Bound.",
+          "specificReasoningTask": "The rotation mechanism in AVL trees guarantees that the tree height remains O(log N), ensuring logarithmic lookup, insertion, and deletion complexity.",
+          "statement": "The rotation mechanism in AVL trees guarantees that the tree height remains O(log N), ensuring logarithmic lookup, insertion, and deletion complexity.",
+          "parentEnvelopeId": null,
+          "formatRecommendation": "PROSE_MULTIPLE_CHOICE",
+          "assessmentAngle": "CALCULATION",
+          "trajectoryPhase": "LATE",
+          "timestamp": null,
+          "tier": "Core",
+          "dimension": "Calculation",
+          "cognitiveLevel": "Understand",
+          "targetDifficulty": "Medium",
+          "intendedCognitiveOperation": "COMPARE",
+          "distractorStrategy": "Curricular Invariant & Mechanism Misconceptions for AVL Height Bound",
+          "distractorMisconceptions": [
+            {
+              "concept": "Operational Role Inversion",
+              "description": "Confusing the primary operational role of AVL Height Bound with its secondary or opposing constraint."
+            },
+            {
+              "concept": "Precondition Scope Error",
+              "description": "Applying mechanism rules under conditions where the necessary preconditions are not satisfied."
+            },
+            {
+              "concept": "Invariant Boundary Violation",
+              "description": "Violating the core algorithmic boundary or invariant specified in the lecture evidence."
+            }
+          ],
+          "operationalGuidance": "Assess operational mechanisms, cause-and-effect relationships, sequential state transitions, or comparative tradeoffs between taught alternatives. Require reasoning beyond keyword recognition.",
+          "evidenceType": "VOICE",
+          "provenance": "VOICE_ONLY",
+          "supportingEvidence": "This rotation mechanism bounds tree height to O(log N), guaranteeing logarithmic lookup, insertion, and deletion complexity.",
+          "confidence": "HIGH",
+          "sourceChunks": [
+            "E_SLIDE_1"
+          ],
+          "requiresExactArtifact": true,
+          "isCapacityLimited": false,
+          "structureType": "INDEPENDENT_UNIT",
+          "bloomLevel": "Understand / Analyze",
+          "originalDifficulty": "Medium",
+          "negativeBoundaries": [],
+          "targetArchetype": "CONCEPTUAL_CONTRAST"
+        }
+      ],
+      "tcScore": {
+        "overallScore": null,
+        "isDeprecated": true,
+        "disclaimer": "Composite percentage retired under CurricularEvidenceProfile contract. Does not measure teaching quality.",
+        "rating": "Developing",
+        "breakdown": {
+          "plannedAloRatio": "5/1 subtopics (100%)",
+          "coreAloCount": "5 Core targets",
+          "secondaryAloCount": "0 Secondary targets",
+          "peripheralAloCount": "0 Peripheral targets",
+          "reserveCoreCount": "4 Core reserves",
+          "lectureDepthScore": "Deprecated (retained as null)",
+          "teacherEmphasis": "Aligned",
+          "total": "null"
+        }
+      },
+      "capacityAudit": {
+        "mode": "v4_lcacm_2d_matrix",
+        "requestedDifficulty": "Balanced",
+        "requestedCount": 5,
+        "requestedDistribution": {
+          "Easy": 1,
+          "Medium": 3,
+          "Hard": 1
+        },
+        "allocatedDistribution": {
+          "Easy": 1,
+          "Medium": 4,
+          "Hard": 0
+        },
+        "requestedHardCount": 1,
+        "allocatedHardCount": 0,
+        "reallocatedCount": 1,
+        "reallocatedTo": "Medium",
+        "reason": "Lecture evidence supports 0 Hard target(s) (cap: 0). Reallocated 1 slot(s) to Medium.",
+        "deficitStatus": "INSUFFICIENT_EVIDENCE_FOR_HARD"
+      },
+      "topicDifficultyMatrix": {
+        "subtopics": [
+          {
+            "name": "Data Structures and Algorithms",
+            "instructionalScore": 0.235,
+            "signals": {
+              "T": 0.244,
+              "E": 0.333,
+              "D": 0.35,
+              "P": 0.05,
+              "O": 0.05,
+              "composite": 0.235
+            },
+            "budget": 5,
+            "capacities": {
+              "Easy": 3,
+              "Medium": 5,
+              "Hard": 0,
+              "difficultyEvidence": {
+                "easyBasis": "Direct definitions and terminology verified in evidence",
+                "mediumBasis": "Operational mechanisms and sequential state transitions observed",
+                "hardBasis": "Insufficient mechanisms for Hard cognitive demand"
+              }
+            },
+            "allocated": {
+              "Easy": 1,
+              "Medium": 4,
+              "Hard": 0,
+              "DEFICIT": 0,
+              "total": 5
+            }
+          }
+        ],
+        "globalRequested": "Balanced",
+        "substitutions": {
+          "hardToMedium": 1,
+          "hardToEasy": 0,
+          "easyToMedium": 0,
+          "easyToHard": 0,
+          "mediumToEasy": 0,
+          "mediumToHard": 0,
+          "reasons": [
+            "Lecture evidence supports 0 Hard target(s) (cap: 0). Reallocated 1 slot(s) to Medium."
+          ]
+        },
+        "globalAllocated": {
+          "Easy": 1,
+          "Medium": 4,
+          "Hard": 0,
+          "Deficit": 0,
+          "TotalDefensible": 5
+        }
+      }
+    },
+    "evidencePackage": {
+      "representationMode": "SUMMARY",
+      "routerReason": "[Adaptive PDI Router: PDI=0.300] PDI=0.300 < 0.60: Material is predominantly static, code-dense, or monologue exposition. Routed to Technical Summary.",
+      "isAcademic": true,
+      "hierarchicalStore": {
+        "inputId": "eval_cohort_bst_dsa_1794234237188",
+        "title": "Educational Session",
+        "parents": [
+          {
+            "parentId": "P_SLIDE_1",
+            "evidenceId": "E_PARENT_SLIDE_1",
+            "title": "Slide 1 Full Context",
+            "sourceType": "SLIDE",
+            "pageNumber": 1,
+            "fullText": "Data Structures and Algorithms: Binary Search Trees and AVL Trees.\n\nA Binary Search Tree (BST) is a hierarchical node-based binary tree data structure where for each node X, all keys in its left subtree are strictly less than X.key, and all keys in its right subtree are strictly greater than X.key.\nInsertion traverses from root comparing values: go left if smaller, right if greater, until a null child is reached.\nDeletion in a BST involves three cases: deleting a leaf node (simply remove), deleting a node with one child (replace with its child), and deleting a node with two children (replace with its in-order successor or predecessor, then recursively delete that node).\nThe in-order traversal of a binary search tree yields the keys in strictly sorted, ascending order.\nWhen keys arrive in strictly sorted ascending order, BST height collapses to N, degrading search and insertion operations to O(N) linear worst-case time complexity.\nIn a balanced binary search tree, the time complexity for search, insertion, and deletion operations is O(log n).\nTo prevent worst-case linear skew, AVL trees enforce a balance factor invariant: for every node, |height(left) - height(right)| <= 1.\nWhen insertion violates balance, rotations restore height: a single Left Rotation fixes Right-Right heavy skew, a single Right Rotation fixes Left-Left heavy skew, and double rotations (Left-Right or Right-Left) fix zigzag imbalances.\nThis rotation mechanism bounds tree height to O(log N), guaranteeing logarithmic lookup, insertion, and deletion complexity.",
+            "wordCount": 238,
+            "childIds": [
+              "E_SLIDE_1"
+            ]
+          }
+        ],
+        "children": [
+          {
+            "childId": "C_SLIDE_1",
+            "evidenceId": "E_SLIDE_1",
+            "parentId": "E_PARENT_SLIDE_1",
+            "sourceType": "SLIDE",
+            "pageNumber": 1,
+            "text": "Data Structures and Algorithms: Binary Search Trees and AVL Trees.\n\nA Binary Search Tree (BST) is a hierarchical node-based binary tree data structure where for each node X, all keys in its left subtree are strictly less than X.key, and all keys in its right subtree are strictly greater than X.key.\nInsertion traverses from root comparing values: go left if smaller, right if greater, until a null child is reached.\nDeletion in a BST involves three cases: deleting a leaf node (simply remove), deleting a node with one child (replace with its child), and deleting a node with two children (replace with its in-order successor or predecessor, then recursively delete that node).\nThe in-order traversal of a binary search tree yields the keys in strictly sorted, ascending order.\nWhen keys arrive in strictly sorted ascending order, BST height collapses to N, degrading search and insertion operations to O(N) linear worst-case time complexity.\nIn a balanced binary search tree, the time complexity for search, insertion, and deletion operations is O(log n).\nTo prevent worst-case linear skew, AVL trees enforce a balance factor invariant: for every node, |height(left) - height(right)| <= 1.\nWhen insertion violates balance, rotations restore height: a single Left Rotation fixes Right-Right heavy skew, a single Right Rotation fixes Left-Left heavy skew, and double rotations (Left-Right or Right-Left) fix zigzag imbalances.\nThis rotation mechanism bounds tree height to O(log N), guaranteeing logarithmic lookup, insertion, and deletion complexity.",
+            "wordCount": 238,
+            "keywords": [
+              "data",
+              "structures",
+              "algorithms",
+              "binary",
+              "search",
+              "trees",
+              "tree",
+              "hierarchical",
+              "node",
+              "based"
+            ]
+          }
+        ],
+        "parentMap": {
+          "E_PARENT_SLIDE_1": {
+            "parentId": "P_SLIDE_1",
+            "evidenceId": "E_PARENT_SLIDE_1",
+            "title": "Slide 1 Full Context",
+            "sourceType": "SLIDE",
+            "pageNumber": 1,
+            "fullText": "Data Structures and Algorithms: Binary Search Trees and AVL Trees.\n\nA Binary Search Tree (BST) is a hierarchical node-based binary tree data structure where for each node X, all keys in its left subtree are strictly less than X.key, and all keys in its right subtree are strictly greater than X.key.\nInsertion traverses from root comparing values: go left if smaller, right if greater, until a null child is reached.\nDeletion in a BST involves three cases: deleting a leaf node (simply remove), deleting a node with one child (replace with its child), and deleting a node with two children (replace with its in-order successor or predecessor, then recursively delete that node).\nThe in-order traversal of a binary search tree yields the keys in strictly sorted, ascending order.\nWhen keys arrive in strictly sorted ascending order, BST height collapses to N, degrading search and insertion operations to O(N) linear worst-case time complexity.\nIn a balanced binary search tree, the time complexity for search, insertion, and deletion operations is O(log n).\nTo prevent worst-case linear skew, AVL trees enforce a balance factor invariant: for every node, |height(left) - height(right)| <= 1.\nWhen insertion violates balance, rotations restore height: a single Left Rotation fixes Right-Right heavy skew, a single Right Rotation fixes Left-Left heavy skew, and double rotations (Left-Right or Right-Left) fix zigzag imbalances.\nThis rotation mechanism bounds tree height to O(log N), guaranteeing logarithmic lookup, insertion, and deletion complexity.",
+            "wordCount": 238,
+            "childIds": [
+              "E_SLIDE_1"
+            ]
+          }
+        },
+        "childMap": {
+          "E_SLIDE_1": {
+            "childId": "C_SLIDE_1",
+            "evidenceId": "E_SLIDE_1",
+            "parentId": "E_PARENT_SLIDE_1",
+            "sourceType": "SLIDE",
+            "pageNumber": 1,
+            "text": "Data Structures and Algorithms: Binary Search Trees and AVL Trees.\n\nA Binary Search Tree (BST) is a hierarchical node-based binary tree data structure where for each node X, all keys in its left subtree are strictly less than X.key, and all keys in its right subtree are strictly greater than X.key.\nInsertion traverses from root comparing values: go left if smaller, right if greater, until a null child is reached.\nDeletion in a BST involves three cases: deleting a leaf node (simply remove), deleting a node with one child (replace with its child), and deleting a node with two children (replace with its in-order successor or predecessor, then recursively delete that node).\nThe in-order traversal of a binary search tree yields the keys in strictly sorted, ascending order.\nWhen keys arrive in strictly sorted ascending order, BST height collapses to N, degrading search and insertion operations to O(N) linear worst-case time complexity.\nIn a balanced binary search tree, the time complexity for search, insertion, and deletion operations is O(log n).\nTo prevent worst-case linear skew, AVL trees enforce a balance factor invariant: for every node, |height(left) - height(right)| <= 1.\nWhen insertion violates balance, rotations restore height: a single Left Rotation fixes Right-Right heavy skew, a single Right Rotation fixes Left-Left heavy skew, and double rotations (Left-Right or Right-Left) fix zigzag imbalances.\nThis rotation mechanism bounds tree height to O(log N), guaranteeing logarithmic lookup, insertion, and deletion complexity.",
+            "wordCount": 238,
+            "keywords": [
+              "data",
+              "structures",
+              "algorithms",
+              "binary",
+              "search",
+              "trees",
+              "tree",
+              "hierarchical",
+              "node",
+              "based"
+            ]
+          }
+        }
+      },
+      "alignmentGraph": {},
+      "voiceEmphasis": {
+        "syntaxEmphasis": "MEDIUM",
+        "conceptualEmphasis": "HIGH",
+        "explicitInstructions": [],
+        "perceivedDifficultyCues": "BALANCED"
+      },
+      "artifacts": {
+        "hasCode": false,
+        "codeSnippets": [],
+        "formulasDetected": [],
+        "keyTerms": []
+      },
+      "unalignedDocuments": [],
+      "alignmentWarning": null
+    },
+    "traceSummaryPath": "server/logs/debug/sessions/eval_cohort_bst_dsa_1794234237188/final_session_trace.json"
+  }
+}

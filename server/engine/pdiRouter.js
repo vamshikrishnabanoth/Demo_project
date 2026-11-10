@@ -26,7 +26,9 @@ class PdiRouter {
     this.CODE_PATTERNS = [
       /def\s+\w+\(/, /function\s+\w+\(/, /#include\s*</, /import\s+\w+/,
       /for\s*\([^)]*\)/, /while\s*\([^)]*\)/, /console\.log\(/, /printf\(/,
-      /return\s+[^;]+;/, /db\.\w+\./, /public\s+class\s+\w+/
+      /return\s+[^;]+;/, /db\.\w+\./, /public\s+class\s+\w+/,
+      /(?:^|\s)(?:\$|>|#)\s+[a-z_]/i,
+      /\b(?:chmod|chown|grep|mkdir|tar|docker|git\s+[a-z]+|curl|sudo|ps\s+-|kill\s+-|cat\s+|ls\s+-|export\s+[A-Z_]+)\b/i
     ];
   }
 

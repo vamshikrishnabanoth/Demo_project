@@ -1,0 +1,74 @@
+{
+  "metadata": {
+    "cohortId": "deep_gans",
+    "lectureName": "Lecture 1: Deep Architecture & GANs",
+    "evaluationTimestamp": "2026-11-09T18:40:19.344Z",
+    "executionDurationSec": "153.2",
+    "gitCommit": "04456a0",
+    "requestedCount": 10,
+    "requestedDifficulty": "Balanced",
+    "deliveredCount": 0,
+    "pipelineStatus": "FAILED",
+    "evidenceSafety": "UNKNOWN"
+  },
+  "capacityMetrics": {
+    "totalDefensibleCapacity": null,
+    "recommendedQuestionCount": null,
+    "deficitCount": 10,
+    "capacityWarning": null,
+    "offeredActionOptions": []
+  },
+  "teachingProfile": {
+    "score": null,
+    "description": null,
+    "deductions": [],
+    "pdi": null
+  },
+  "deliveredQuestions": [],
+  "auditDetails": {
+    "rejectedTargets": [],
+    "unfulfilledTargets": [],
+    "questionDecisionLedger": [],
+    "errors": [
+      "R1_GENERIC_EXTRACTION_FAILURE: Stage 02 halted. Cannot proceed to Agent 1 planning without verified pedagogical units. Underlying error: TEACHING_UNIT_EXTRACTION_EMPTY_RESPONSE: All 4 extraction windows returned zero units."
+    ],
+    "warnings": []
+  },
+  "rawPipelineResult": {
+    "sessionId": "eval_cohort_deep_gans_1794249619344",
+    "pipelineStatus": "FAILED",
+    "failureCode": "R1_GENERIC_EXTRACTION_FAILURE",
+    "errorCode": "R1_GENERIC_EXTRACTION_FAILURE",
+    "isPartial": false,
+    "shortfallCategory": "MATERIAL_EXHAUSTED",
+    "evidenceSafety": "UNKNOWN",
+    "quizQualityStatus": "FAILED",
+    "error": "R1_GENERIC_EXTRACTION_FAILURE: Stage 02 halted. Cannot proceed to Agent 1 planning without verified pedagogical units. Underlying error: TEACHING_UNIT_EXTRACTION_EMPTY_RESPONSE: All 4 extraction windows returned zero units.",
+    "deliveredCount": 0,
+    "questions": [],
+    "unfulfilledTargets": [],
+    "rejectedTargets": [],
+    "targetResults": [],
+    "questionDecisionLedger": [],
+    "telemetry": {
+      "totalDurationMs": 153158,
+      "deliveredCount": 0,
+      "totalAttempts": 0,
+      "acceptanceRatePercent": 100,
+      "avgGroundingScore": 0.95,
+      "stageDurations": {
+        "EVIDENCE_PACKAGE": 153152
+      },
+      "dimensionCounts": {},
+      "tcScoreBreakdown": {
+        "conceptCoverage": "24/25",
+        "applicationCoverage": "21/25",
+        "artifactCoverage": "18/20",
+        "teacherEmphasis": "14/15",
+        "depth": "9/15",
+        "total": "86/100"
+      }
+    },
+    "traceSummaryPath": "server/logs/debug/sessions/eval_cohort_deep_gans_1794249619344/final_session_trace.json"
+  }
+}
