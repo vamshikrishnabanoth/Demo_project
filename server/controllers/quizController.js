@@ -22,6 +22,7 @@ const { hashQuiz, verifyQuizIntegrity } = require('../lib/quizintegrity');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 const { YoutubeTranscript } = require('youtube-transcript');
 const { logPipelineStep } = require('../utils/logger');
+const { isTopicLike, classifyTextBlock } = require('../utils/inputKind');
 const { resolveCorrectOptionText } = require('../utils/grading');
 const cacheManager = require('../utils/cacheManager');
 const { toUserFriendlyError } = require('../utils/friendlyErrorMapper');
@@ -995,15 +996,12 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
                         sanitized = sanitized.replace(/\n\s*\n\s*\n/g, '\n\n').trim();
                     }
 
-                    // Auto-detect code/queries (e.g. pasted DBMS queries, WT code, shell commands)
-                    const isCodeOrQuery = /\b(SELECT\s+.+\s+FROM|INSERT\s+INTO|CREATE\s+TABLE|ALTER\s+TABLE|DROP\s+TABLE|WHERE\s+.+\s+=|GROUP\s+BY|ORDER\s+BY)\b/i.test(sanitized) ||
-                        /\b(db\.[a-zA-Z0-9_]+\.(find|aggregate|insertOne|insertMany|updateOne|deleteMany))\b/.test(sanitized) ||
-                        /\b(function\s*\(|def\s+[a-zA-Z0-9_]+\s*\(|class\s+[a-zA-Z0-9_]+|import\s+[a-zA-Z0-9_]+|#include\s*<)/.test(sanitized) ||
-                        /([{};]\s*\n){2,}/.test(sanitized);
-
-                    if (isCodeOrQuery && sanitized.length > 0) {
-                        console.log('💻 [DocketFilter] Auto-detected DBMS/programming queries in text box -> routed to codeSnippets');
-                        codeSnippets += (sanitized + '\n\n');
+                    // Classify pasted text: code / SQL and terminal sessions are artifacts; prose is notes.
+                    // (Previously one `class X` or `SELECT` anywhere sent the whole text to code.)
+                    const textKind = classifyTextBlock(sanitized);
+                    if ((textKind === 'code' || textKind === 'terminal') && sanitized.length > 0) {
+                        console.log(`💻 [DocketFilter] Pasted text classified as ${textKind} -> routed to code/command artifacts`);
+                        codeSnippets += (textKind === 'terminal' ? `[TERMINAL SESSION]\n${sanitized}` : sanitized) + '\n\n';
                     } else if (sanitized.length > 0) {
                         docTexts.push(sanitized);
                         docNames.push(inp.name || inp.filename || inp.source_name || inp.title || `Supporting Material ${idx + 1}`);
@@ -1021,9 +1019,11 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
             }
         }
 
-        const isTopicMode = inputModality === 'TOPIC_SYNTHESIS' ||
-            type === 'topic' ||
-            (voiceText.trim().length === 0 && (!codeSnippets || codeSnippets.trim().length === 0) && docTexts.length <= 1 && (docTexts[0] || '').trim().length < 500);
+        // Topic synthesis only when the sole input is a short topic name (see utils/inputKind).
+        const isTopicMode = voiceText.trim().length === 0 &&
+            (!codeSnippets || codeSnippets.trim().length === 0) &&
+            docTexts.length <= 1 &&
+            isTopicLike(docTexts[0] || (type === 'topic' ? content : ''));
 
         const sessionInputs = {
             sessionId: taskId || undefined,
@@ -3867,9 +3867,14 @@ exports.generateQuizQuestions = async (req, res) => {
 
             const callbackUrl = `${req.protocol}://${req.get('host')}/api/quiz/generate/callback/${taskId}`;
 
-            const isTopicModeRequest = req.body.input_modality === 'TOPIC_SYNTHESIS' ||
-                ((!allUploadedFiles || allUploadedFiles.length === 0) && (!fileConfigs || fileConfigs.length === 0) && parsedInputs && parsedInputs.every(inp => inp.type === 'text') && (topic || parsedInputs[0]?.content));
-            const explicitModality = isTopicModeRequest ? 'TOPIC_SYNTHESIS' : (req.body.input_modality || null);
+            // Topic mode only for a short topic name. Pasted notes, code, SQL or terminal output are
+            // teaching material and go through lecture extraction, whatever the client requested.
+            const noFiles = (!allUploadedFiles || allUploadedFiles.length === 0) && (!fileConfigs || fileConfigs.length === 0);
+            const textInputsAreTopicLike = Array.isArray(parsedInputs) && parsedInputs.length > 0 &&
+                parsedInputs.every(inp => inp.type === 'text' && isTopicLike(inp.content));
+            const isTopicModeRequest = noFiles && (textInputsAreTopicLike || ((!parsedInputs || parsedInputs.length === 0) && isTopicLike(topic)));
+            const requestedModality = req.body.input_modality === 'TOPIC_SYNTHESIS' ? null : (req.body.input_modality || null);
+            const explicitModality = isTopicModeRequest ? 'TOPIC_SYNTHESIS' : requestedModality;
             const reqCapacityPolicy = req.body.capacityPolicy || req.body.capacity_policy || 'ALLOW_SCOPE_SUPPLEMENTARY';
 
             let finalQuestions = [];
@@ -3893,7 +3898,9 @@ exports.generateQuizQuestions = async (req, res) => {
                 extractedTitle = req.file.originalname.replace(/\.[^/.]+$/, '');
                 try { fs.unlinkSync(absolutePath); } catch (_) {}
             } else if (topic) {
-                finalQuestions = await generateQuestions('topic', topic, questionCount, difficulty, source_material_id, blendedRatios, null, null, taskId, callbackUrl, parsedIsolatedNarratives, derivedStyle, deficitPolicy, 'TOPIC_SYNTHESIS');
+                // A video transcript or long text arriving in `topic` is material, not a topic name.
+                const topicIsName = isTopicLike(topic);
+                finalQuestions = await generateQuestions(topicIsName ? 'topic' : 'text', topic, questionCount, difficulty, source_material_id, blendedRatios, null, null, taskId, callbackUrl, parsedIsolatedNarratives, derivedStyle, deficitPolicy, topicIsName ? 'TOPIC_SYNTHESIS' : null);
             }
 
             if (finalQuestions === 'ACCEPTED') {

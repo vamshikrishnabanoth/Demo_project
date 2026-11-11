@@ -12,6 +12,7 @@
 'use strict';
 
 const depthAnalyzer = require('./depthAnalyzer');
+const { isTopicLike } = require('../../utils/inputKind');
 const { HierarchicalChunker } = require('./hierarchicalChunker');
 const { CrossMaterialAligner } = require('./crossMaterialAligner');
 const evidenceCache = require('./evidenceCache');
@@ -115,8 +116,8 @@ class EvidencePackager {
     }
 
     let docAnalysis = null;
-    const isTopicSynthesisEarly = sessionInputs.inputModality === 'TOPIC_SYNTHESIS' ||
-      (!hasVoice && (!codeText || codeText.trim().length === 0) && docTexts.length <= 1 && (cleanDocsText.trim().length < 500));
+    const isTopicSynthesisEarly = !hasVoice && (!codeText || codeText.trim().length === 0) && docTexts.length <= 1 &&
+      isTopicLike(cleanDocsText.trim() || (sessionInputs.inputModality === 'TOPIC_SYNTHESIS' ? sessionInputs.topic : ''));
     const hasDocs = Boolean(cleanDocsText && (isTopicSynthesisEarly ? cleanDocsText.trim().length > 0 : cleanDocsText.trim().length > 30));
     if (hasDocs) {
       docAnalysis = depthAnalyzer.analyzeLecture(cleanDocsText, { sourceModality: isTopicSynthesisEarly ? 'TOPIC' : 'DOCUMENT' });
@@ -216,8 +217,7 @@ class EvidencePackager {
       pedagogicalReconstruction: sessionInputs.pedagogicalReconstruction || sessionInputs.teachingUnits || null
     };
 
-    const isTopicSynthesis = sessionInputs.inputModality === 'TOPIC_SYNTHESIS' ||
-      (!hasVoice && (!codeText || codeText.trim().length === 0) && docTexts.length <= 1 && (cleanDocsText.trim().length < 500));
+    const isTopicSynthesis = isTopicSynthesisEarly;
 
     if (hasVoice && voiceAnalysis && !voiceAnalysis.isAcademic) {
       packageData.isAcademic = false;

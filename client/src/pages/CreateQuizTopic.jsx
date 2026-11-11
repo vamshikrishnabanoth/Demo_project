@@ -1378,7 +1378,14 @@ export default function CreateQuizTopic() {
         }
         formData.append('topic', resolvedTopic || 'Academic Topic Assessment');
 
-        if (!hasAudio && !hasDocFiles && textOnlyInputs.length > 0) {
+        // Only a short topic name is a topic. Pasted notes, code, SQL or terminal output are teaching
+        // material (the server applies the same rule in server/utils/inputKind.js).
+        const isShortTopicName = (t) => {
+            const text = String(t || '').trim();
+            return text.length > 0 && !/\n/.test(text) && text.split(/\s+/).length <= 25 &&
+                !/[;{}]|^\s*(?:\$|#|>)\s|\b(?:SELECT|INSERT|UPDATE|CREATE)\b/i.test(text);
+        };
+        if (!hasAudio && !hasDocFiles && textOnlyInputs.length > 0 && textOnlyInputs.every(i => isShortTopicName(i.content))) {
             formData.append('input_modality', 'TOPIC_SYNTHESIS');
         }
 
