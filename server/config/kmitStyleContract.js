@@ -395,7 +395,14 @@ const KMIT_STYLE_CONTRACT = {
     }
 
     // 2. Check stem length runaway boundary (excluding fenced code blocks) (Fatal)
-    const proseStem = qText.replace(/```[\s\S]*?```/g, '').trim();
+    // Code, commands and data the question legitimately needs (unfenced code lines, drawn trees,
+    // list states, tables) do not count towards the prose word limit.
+    const looksLikeCodeOrData = (line) => /[;{}]|^\s{2,}\S|\b\w+\s*\(.*\)\s*$|<->|->|=>|\[[^\]]*\]|^\s*[\/\\|]|^\s*\$\s|^\s*(?:root|left|right|node|stack|queue|input|output)\b.*:/i.test(line);
+    const proseStem = qText.replace(/```[\s\S]*?```/g, '')
+      .split('\n')
+      .filter((line, idx, all) => idx === all.length - 1 || !looksLikeCodeOrData(line))
+      .join(' ')
+      .trim();
     const stemWords = proseStem.split(/\s+/).filter(Boolean).length;
     if (stemWords > enforceable.stemHardWordLimit) {
       issues.push('STEM_LENGTH_EXCEEDED');
@@ -447,8 +454,17 @@ const KMIT_STYLE_CONTRACT = {
       if (maxWords > enforceable.optionMaxWords) {
         issues.push('OPTION_EXCESSIVE_LENGTH');
       }
+      // Length asymmetry is a giveaway only when the KEY is the conspicuous outlier.
       if (minWords > 0 && (maxWords / minWords) > enforceable.optionLengthRatioCeiling) {
-        issues.push('OPTION_LENGTH_ASYMMETRY');
+        const keyIdx = options.findIndex(o => String(o).trim() === String(candidateMCQ.correctAnswer || '').trim());
+        const keyWords = keyIdx >= 0 ? wordCounts[keyIdx] : null;
+        const keyIsUniqueOutlier = keyWords !== null && (
+          (keyWords === maxWords && wordCounts.filter(w => w === maxWords).length === 1) ||
+          (keyWords === minWords && wordCounts.filter(w => w === minWords).length === 1)
+        );
+        if (keyIsUniqueOutlier || keyIdx < 0) {
+          issues.push('OPTION_LENGTH_ASYMMETRY');
+        }
       }
 
       // 6. Check for high vocabulary overlap and word-order permutations (Advisory Warnings Only)

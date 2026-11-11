@@ -678,26 +678,22 @@ async function runTests() {
   console.log('\n--- Suite 5: Count-Fulfillment & Replenishment Invariants ---');
 
   // Test 5.1: Attempt ceiling computation for N=10, 20, 25, 40, 5
-  test('5.1 Attempt ceiling scales with requested count and primary+reserve pools (N=10->20, N=20->40, N=25->50)', () => {
-    // For N=10 (primary 10, reserves 5): targetAttemptBudget = 15, ceil(10*2) = 20 -> 20
+  test('5.1 Attempt ceiling scales with requested count and primary+reserve pools (3x headroom, capped at 60)', () => {
+    // Live runs reject roughly half of candidates on quality grounds, so the budget allows 3x the request.
     const ceilingN10 = pipelineOrchestrator.calculateAttemptCeiling(10, 10, 5);
-    assert.strictEqual(ceilingN10, 20, `Ceiling for N=10 must be 20 (got ${ceilingN10})`);
+    assert.strictEqual(ceilingN10, 30, `Ceiling for N=10 must be 30 (got ${ceilingN10})`);
 
-    // For N=20 (primary 20, reserves 10): targetAttemptBudget = 30, ceil(20*2) = 40 -> 40 (previously capped at 24!)
     const ceilingN20 = pipelineOrchestrator.calculateAttemptCeiling(20, 20, 10);
-    assert.strictEqual(ceilingN20, 40, `Ceiling for N=20 must be 40, exceeding old 24 ceiling (got ${ceilingN20})`);
+    assert.strictEqual(ceilingN20, 60, `Ceiling for N=20 must be 60 (got ${ceilingN20})`);
 
-    // For N=25 (primary 25, reserves 13): targetAttemptBudget = 38, ceil(25*2) = 50 -> 50 (previously capped at 24!)
     const ceilingN25 = pipelineOrchestrator.calculateAttemptCeiling(25, 25, 13);
-    assert.strictEqual(ceilingN25, 50, `Ceiling for N=25 must be 50, exceeding old 24 ceiling (got ${ceilingN25})`);
+    assert.strictEqual(ceilingN25, 60, `Ceiling for N=25 must be capped at 60 (got ${ceilingN25})`);
 
-    // For N=40 (large request): bounded by safety ceiling 60
     const ceilingN40 = pipelineOrchestrator.calculateAttemptCeiling(40, 40, 20);
     assert.strictEqual(ceilingN40, 60, `Ceiling for N=40 must be capped at 60 (got ${ceilingN40})`);
 
-    // For N=5: targetAttemptBudget = 8, ceil(5*2) = 10 -> 10
     const ceilingN5 = pipelineOrchestrator.calculateAttemptCeiling(5, 5, 3);
-    assert.strictEqual(ceilingN5, 10, `Ceiling for N=5 must be 10 (got ${ceilingN5})`);
+    assert.strictEqual(ceilingN5, 15, `Ceiling for N=5 must be 15 (got ${ceilingN5})`);
   });
 
   // Helper function to simulate Stage 07b Bounded Post-Pass Replenishment

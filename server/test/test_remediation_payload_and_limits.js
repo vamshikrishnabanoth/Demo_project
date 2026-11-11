@@ -66,12 +66,12 @@ console.log('\n--- TEST 2: Provider Call & Repair Limits ---');
 // 2.1: calculateAttemptCeiling is bounded relative to the request (no thrashing),
 // but never below the request itself (a fixed ceiling of 12 made N > 12 impossible).
 const ceilingN5 = pipelineOrchestrator.calculateAttemptCeiling(5, 5, 3);
-assert.ok(ceilingN5 <= 10, `Ceiling for N=5 must be <= 2N attempts (actual: ${ceilingN5})`);
+assert.ok(ceilingN5 <= 15, `Ceiling for N=5 must be <= 3N attempts (actual: ${ceilingN5})`);
 assert.ok(ceilingN5 >= 5, `Ceiling for N=5 must be >= 5 attempts (actual: ${ceilingN5})`);
 console.log(`  ✅ PASS: 2.1 calculateAttemptCeiling for N=5 is bounded to ${ceilingN5} attempts`);
 
 const ceilingN10 = pipelineOrchestrator.calculateAttemptCeiling(10, 10, 5);
-assert.ok(ceilingN10 >= 10 && ceilingN10 <= 20, `Ceiling for N=10 must be within [N, 2N] (actual: ${ceilingN10})`);
+assert.ok(ceilingN10 >= 10 && ceilingN10 <= 30, `Ceiling for N=10 must be within [N, 3N] (actual: ${ceilingN10})`);
 const ceilingN30 = pipelineOrchestrator.calculateAttemptCeiling(30, 30, 15);
 assert.ok(ceilingN30 >= 30 && ceilingN30 <= 60, `Ceiling for N=30 must be within [N, 60] (actual: ${ceilingN30})`);
 console.log(`  ✅ PASS: 2.2 calculateAttemptCeiling for N=10 is ${ceilingN10} and for N=30 is ${ceilingN30} (bounded, never below the request)`);

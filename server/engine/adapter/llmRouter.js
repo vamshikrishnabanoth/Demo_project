@@ -20,6 +20,27 @@ const axios = require('axios');
 const providerConfig = require('../../config/providerConfig');
 const productionMetrics = require('../../utils/productionMetrics');
 
+// Total time a single call may spend waiting for provider rate limits to reset before giving up.
+const RATE_LIMIT_WAIT_BUDGET_MS = parseInt(process.env.LLM_RATE_LIMIT_WAIT_BUDGET_MS, 10) || 90000;
+// Reasoning effort for reasoning models (gpt-oss). 'low' avoids empty answers caused by the
+// completion budget being consumed by hidden reasoning, and roughly halves token use.
+const GPT_OSS_REASONING_EFFORT = process.env.GPT_OSS_REASONING_EFFORT || 'low';
+
+/** Parse Groq reset values such as "1.5s", "2m3.2s", "250ms" into seconds. */
+function parseResetSeconds(val) {
+  if (val === undefined || val === null) return null;
+  const str = String(val).trim();
+  if (/^\d+(\.\d+)?$/.test(str)) return parseFloat(str);
+  let sec = 0;
+  const ms = str.match(/(\d+(?:\.\d+)?)\s*ms/);
+  if (ms) return parseFloat(ms[1]) / 1000;
+  const m = str.match(/(\d+)\s*m(?!s)/);
+  if (m) sec += parseInt(m[1], 10) * 60;
+  const sMatch = str.match(/(\d+(?:\.\d+)?)\s*s/);
+  if (sMatch) sec += parseFloat(sMatch[1]);
+  return sec > 0 ? sec : null;
+}
+
 class LLMRouter {
   constructor() {
     this.groqApiKey = process.env.GROQ_API_KEY || null;
@@ -37,6 +58,47 @@ class LLMRouter {
     this.tpdExhaustedRoutes = new Map();
     this.invalidKeys = new Set();
     this.currentKeyIndex = 0;
+    // Per key+model token budget learned from x-ratelimit-* response headers:
+    // { remaining, resetAt }. Used to pace requests instead of firing into a 429.
+    this.routeTokenBudget = new Map();
+  }
+
+  /** Estimate tokens a request will consume (prompt ~3.5 chars/token + a realistic completion share). */
+  _estimateRequestTokens(systemPrompt, prompt, maxTokens) {
+    const chars = String(systemPrompt || '').length + String(prompt || '').length;
+    return Math.ceil(chars / 3.5) + Math.min(maxTokens || 1000, 1500);
+  }
+
+  /** Record the remaining-token budget reported by Groq for a route. */
+  _recordRouteBudget(routeKey, headers) {
+    if (!headers) return;
+    const remaining = parseInt(headers['x-ratelimit-remaining-tokens'], 10);
+    const resetSec = parseResetSeconds(headers['x-ratelimit-reset-tokens']);
+    if (!isNaN(remaining)) {
+      this.routeTokenBudget.set(routeKey, {
+        remaining,
+        resetAt: Date.now() + Math.ceil((resetSec || 0) * 1000)
+      });
+    }
+  }
+
+  /**
+   * If the route's known remaining budget cannot cover this request, return how long to wait (ms);
+   * otherwise reserve the estimate locally (so concurrent callers do not overshoot) and return 0.
+   */
+  _reserveRouteBudget(routeKey, estimate) {
+    const state = this.routeTokenBudget.get(routeKey);
+    if (!state) return 0;
+    const now = Date.now();
+    if (now >= state.resetAt) {
+      this.routeTokenBudget.delete(routeKey);
+      return 0;
+    }
+    if (state.remaining < estimate) {
+      return state.resetAt - now + 250;
+    }
+    state.remaining -= estimate;
+    return 0;
   }
 
   /** Sleep helper for exponential backoff on rate limits */
@@ -77,7 +139,7 @@ class LLMRouter {
     }
 
     const errors = [];
-    const groqSleepBudget = { spent: 0, max: 30000 };
+    const groqSleepBudget = { spent: 0, max: RATE_LIMIT_WAIT_BUDGET_MS };
 
     // Resolve model cleanly: use active models on user key
     let primaryModel = process.env.GROQ_MODEL || 'qwen/qwen3.8-27b';
@@ -164,7 +226,7 @@ class LLMRouter {
             if (minWait <= 30000 && remainingAllowance > 0) {
               const waitMs = Math.min(minWait, remainingAllowance);
               groqSleepBudget.spent += waitMs;
-              console.warn(`⏳ [LLMRouter] Waiting ${Math.round(waitMs / 1000)}s (cumulative: ${Math.round(groqSleepBudget.spent / 1000)}s/30s) for Groq rolling reset after Gemini failure...`);
+              console.warn(`⏳ [LLMRouter] Waiting ${Math.round(waitMs / 1000)}s (cumulative: ${Math.round(groqSleepBudget.spent / 1000)}s/${Math.round(groqSleepBudget.max / 1000)}s) for Groq rolling reset after Gemini failure...`);
               await this._sleep(waitMs, effectiveSignal);
               try {
                 return await this._callGroqWithRetry({
@@ -251,7 +313,7 @@ class LLMRouter {
   async _callGroqWithRetry({ prompt, userPrompt, systemPrompt, temperature, primaryModel, fallbackModel, sessionId = null, maxTokens = null, operation = null, signal = null, abortSignal = null, groqSleepBudget = null }) {
     prompt = prompt || userPrompt || '';
     const effectiveSignal = signal || abortSignal;
-    const sleepBudget = groqSleepBudget || { spent: 0, max: 30000 };
+    const sleepBudget = groqSleepBudget || { spent: 0, max: RATE_LIMIT_WAIT_BUDGET_MS };
     let resolvedMaxTokens = parseInt(maxTokens, 10);
     if (isNaN(resolvedMaxTokens) || resolvedMaxTokens <= 0) {
       if (operation === 'LECTURE_INTELLIGENCE') {
@@ -336,9 +398,22 @@ class LLMRouter {
             const sanitizedSystemPrompt = systemPrompt
               ? (hasJsonWord ? systemPrompt : `${systemPrompt}\nOutput valid JSON format.`)
               : 'Output valid JSON format.';
+            const wantsArray = /json array/i.test(`${systemPrompt || ''} ${prompt}`);
             const finalUserPrompt = prompt.toLowerCase().includes('strictly a valid json')
               ? prompt
-              : `${prompt}\n\nTask: Output strictly a single valid JSON object matching the required schema. Do not include markdown code fences or text outside JSON.`;
+              : (wantsArray
+                ? `${prompt}\n\nTask: Output strictly a single valid JSON array matching the required schema. Do not include markdown code fences or text outside JSON.`
+                : `${prompt}\n\nTask: Output strictly a single valid JSON object matching the required schema. Do not include markdown code fences or text outside JSON.`);
+
+            const routeKey = `${keyIdx}_${currentModel}`;
+            const paceWaitMs = this._reserveRouteBudget(routeKey, this._estimateRequestTokens(sanitizedSystemPrompt, finalUserPrompt, resolvedMaxTokens));
+            if (paceWaitMs > 0) {
+              // Not enough token budget left on this route right now: treat as a short cooldown so the
+              // pool tries another model first and otherwise waits for the reset.
+              this.modelCooldowns.set(routeKey, Date.now() + paceWaitMs);
+              lastErr = new Error(`Groq route ${currentModel} paced: waiting ${Math.round(paceWaitMs / 1000)}s for token budget reset`);
+              break;
+            }
 
             const requestPayload = {
               model: currentModel,
@@ -349,6 +424,9 @@ class LLMRouter {
               temperature: temperature,
               max_tokens: resolvedMaxTokens || 2500
             };
+            if (currentModel.startsWith('openai/gpt-oss')) {
+              requestPayload.reasoning_effort = GPT_OSS_REASONING_EFFORT;
+            }
             // Groq json_object is only officially supported on llama models; qwen and gpt-oss models fail validation if response_format is passed
             if (currentModel.includes('llama')) {
               requestPayload.response_format = { type: 'json_object' };
@@ -368,6 +446,7 @@ class LLMRouter {
                 }
               );
 
+              this._recordRouteBudget(routeKey, response.headers);
               const choice = response.data.choices[0];
               const content = choice.message.content;
               if (!content || typeof content !== 'string' || !content.trim()) {
@@ -529,11 +608,12 @@ class LLMRouter {
                   continue; // Fail over immediately to next model in cascade on this key
                 } else {
                   // Short-term RPM/TPM limit: apply bounded dynamic backoff to key and route
-                  const cooldownMs = parsedWaitMs ? Math.min(Math.max(parsedWaitMs, 2500), 60000) : 3000;
-                  this.keyCooldowns.set(keyIdx, Date.now() + cooldownMs);
+                  // Groq TPM/RPM limits are per model: cool down only this model and try the next one.
+                  const cooldownMs = parsedWaitMs ? Math.min(Math.max(parsedWaitMs, 1000), 60000) : 3000;
                   this.modelCooldowns.set(`${keyIdx}_${currentModel}`, Date.now() + cooldownMs);
-                  console.warn(`⚠️ [LLMRouter] Groq Key-${keyIdx + 1} hit temporary rate limit (${extractedWaitSec !== null ? extractedWaitSec : 'N/A'}s). Immediate failover to next key in pool...`);
-                  break; // Advance to next key in pool for organization-level RPM/TPM limits
+                  this.routeTokenBudget.set(`${keyIdx}_${currentModel}`, { remaining: 0, resetAt: Date.now() + cooldownMs });
+                  console.warn(`⚠️ [LLMRouter] Groq Key-${keyIdx + 1} model '${currentModel}' rate-limited (${extractedWaitSec !== null ? extractedWaitSec : 'N/A'}s). Trying next model...`);
+                  continue;
                 }
               } else if (status === 413) {
                 console.warn(`⚠️ [LLMRouter] Groq Key-${keyIdx + 1} request payload exceeded limits (413). Failing over to cloud fallback provider immediately.`);
@@ -595,12 +675,12 @@ class LLMRouter {
         if (minWaitMs > 0 && minWaitMs <= 30000 && poolAttempt < 18) {
           const remainingAllowance = Math.max(0, sleepBudget.max - sleepBudget.spent);
           if (remainingAllowance <= 0) {
-            console.warn('⚡ [LLMRouter] Cumulative retry wait reached 30s limit across attempts. Breaking retry loop.');
+            console.warn('⚡ [LLMRouter] Cumulative rate-limit wait budget exhausted. Breaking retry loop.');
             break;
           }
           const waitMs = Math.min(Math.max(minWaitMs, 2000), remainingAllowance);
           sleepBudget.spent += waitMs;
-          console.warn(`⏳ [LLMRouter] Groq rolling token reset in ${Math.round(minWaitMs / 1000)}s. Waiting ${Math.round(waitMs / 1000)}s (cumulative: ${Math.round(sleepBudget.spent / 1000)}s/30s) before retry pass ${poolAttempt + 2}...`);
+          console.warn(`⏳ [LLMRouter] Groq rolling token reset in ${Math.round(minWaitMs / 1000)}s. Waiting ${Math.round(waitMs / 1000)}s (cumulative: ${Math.round(sleepBudget.spent / 1000)}s/${Math.round(sleepBudget.max / 1000)}s) before retry pass ${poolAttempt + 2}...`);
           await this._sleep(waitMs, effectiveSignal);
           continue;
         }
@@ -611,12 +691,12 @@ class LLMRouter {
         if (poolAttempt < 18 && tpdCooldowns.length > 0) {
           const remainingAllowance = Math.max(0, sleepBudget.max - sleepBudget.spent);
           if (remainingAllowance <= 0) {
-            console.warn('⚡ [LLMRouter] Cumulative retry wait reached 30s limit across attempts. Breaking retry loop.');
+            console.warn('⚡ [LLMRouter] Cumulative rate-limit wait budget exhausted. Breaking retry loop.');
             break;
           }
           const waitMs = Math.min(Math.max(minWaitMs, 3000), remainingAllowance);
           sleepBudget.spent += waitMs;
-          console.warn(`⏳ [LLMRouter] Groq rolling token reset in ${Math.round(minWaitMs / 1000)}s. Waiting ${Math.round(waitMs / 1000)}s (cumulative: ${Math.round(sleepBudget.spent / 1000)}s/30s) before retry pass ${poolAttempt + 2}...`);
+          console.warn(`⏳ [LLMRouter] Groq rolling token reset in ${Math.round(minWaitMs / 1000)}s. Waiting ${Math.round(waitMs / 1000)}s (cumulative: ${Math.round(sleepBudget.spent / 1000)}s/${Math.round(sleepBudget.max / 1000)}s) before retry pass ${poolAttempt + 2}...`);
           await this._sleep(waitMs, effectiveSignal);
           continue;
         }
@@ -629,7 +709,7 @@ class LLMRouter {
       }
 
       // 3. TRANSIENT TPM COOLDOWNS -> SLEEP SHORTEST TPM AND RETRY
-      if (poolAttempt < 4 && tpmBackoffCount > 0) {
+      if (tpmBackoffCount > 0) {
         if (process.env.ALLOW_MOCK_FALLBACK === 'true' && process.env.NODE_ENV !== 'production') {
           break;
         }
@@ -638,16 +718,16 @@ class LLMRouter {
           break;
         }
         const now = Date.now();
-        const shortCooldowns = Array.from(this.modelCooldowns.values()).filter(t => t - now <= 20000 && t - now > 0);
-        const rawWaitMs = shortCooldowns.length > 0 ? Math.min(Math.max(...shortCooldowns) - now + 300, 15000) : 3000;
+        const pendingCooldowns = Array.from(this.modelCooldowns.values()).filter(t => t - now > 0);
+        const rawWaitMs = pendingCooldowns.length > 0 ? Math.min(Math.min(...pendingCooldowns) - now + 300, 60000) : 3000;
         const remainingAllowance = Math.max(0, sleepBudget.max - sleepBudget.spent);
         if (remainingAllowance <= 0) {
-          console.warn('⚡ [LLMRouter] Cumulative retry wait reached 30s limit across attempts. Breaking retry loop.');
+          console.warn('⚡ [LLMRouter] Cumulative rate-limit wait budget exhausted. Breaking retry loop.');
           break;
         }
         const waitMs = Math.min(rawWaitMs, remainingAllowance);
         sleepBudget.spent += waitMs;
-        console.warn(`⏳ [LLMRouter] Transient TPM rate limit. Provider-aware wait ${waitMs}ms (cumulative: ${Math.round(sleepBudget.spent / 1000)}s/30s) before pool pass ${poolAttempt + 2}...`);
+        console.warn(`⏳ [LLMRouter] Transient TPM rate limit. Provider-aware wait ${waitMs}ms (cumulative: ${Math.round(sleepBudget.spent / 1000)}s/${Math.round(sleepBudget.max / 1000)}s) before pool pass ${poolAttempt + 2}...`);
         await this._sleep(waitMs, effectiveSignal);
       }
     }

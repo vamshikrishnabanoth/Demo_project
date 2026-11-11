@@ -30,6 +30,21 @@ const SCHEMA_PLACEHOLDER_OPTIONS = new Set([
   'identical to questiontext'
 ]);
 
+// Technical terms whose substitution changes an answer's meaning (used to recognise near-miss
+// distractors that differ from the key in exactly one slot).
+const CONTRASTIVE_TERMS = new Set([
+  'null', 'nil', 'none', 'head', 'tail', 'next', 'prev', 'previous', 'left', 'right', 'root', 'parent', 'child', 'leaf',
+  'true', 'false', 'before', 'after', 'first', 'last', 'front', 'rear', 'top', 'bottom', 'min', 'max', 'minimum', 'maximum',
+  'less', 'greater', 'smaller', 'larger', 'higher', 'lower', 'increment', 'decrement', 'increase', 'decrease',
+  'push', 'pop', 'enqueue', 'dequeue', 'insert', 'delete', 'add', 'remove', 'read', 'write', 'start', 'end', 'begin',
+  'local', 'remote', 'staged', 'unstaged', 'committed', 'tracked', 'untracked', 'sorted', 'unsorted', 'ascending', 'descending',
+  'inner', 'outer', 'upper', 'odd', 'even', 'positive', 'negative', 'zero', 'empty', 'full', 'iterative', 'recursive',
+  'static', 'dynamic', 'private', 'public', 'protected', 'stack', 'queue', 'heap', 'array', 'list', 'tree', 'graph',
+  'parent', 'subclass', 'superclass', 'overload', 'override', 'overloading', 'overriding', 'compile', 'runtime',
+  'commit', 'stage', 'branch', 'merge', 'rebase', 'clone', 'fetch', 'pull', 'inner', 'outer', 'natural', 'cross',
+  'primary', 'foreign', 'unique', 'encoder', 'decoder', 'generator', 'discriminator', 'input', 'output', 'hidden'
+]);
+
 class DeterministicValidator {
   constructor() {
     this.OPTION_SET_CONTRACT = OPTION_SET_CONTRACT;
@@ -223,7 +238,13 @@ class DeterministicValidator {
             const unionSize = new Set([...t1, ...t2]).size;
             const jaccard = unionSize > 0 ? (intersection / unionSize) : 0;
 
-            if (isExactWordPermutation) {
+            // Order-sensitive options (step sequences) that use the same words in a different order are
+            // different answers, not duplicates.
+            const stemAsksForOrder = /\b(?:sequence|order|steps?|state|contents?|printed|visited|output)\b/i.test(String(stem || ''));
+            const orderMatters = stemAsksForOrder || (this._describesSequence(options[i]) && this._describesSequence(options[j]));
+            const sequenceSimilarity = this._sequenceSimilarity(options[i], options[j]);
+
+            if (isExactWordPermutation && !(orderMatters && sequenceSimilarity < 0.85) && !this._hasDistinguishingOperands(options[i], options[j])) {
               const isDistinctOps = this._isDistinctOperationalPair(options[i], options[j], stem);
               if (!isDistinctOps) {
                 errors.push({
@@ -238,15 +259,38 @@ class DeterministicValidator {
                 (intersection >= 3 && (intersection / Math.min(t1.size, t2.size)) >= 0.65) ||
                 (hasSharedComplexity && intersection >= 3 && (intersection / Math.min(t1.size, t2.size)) >= 0.50);
 
-              if (isSynonymousThreshold) {
+              // Exception: two step-sequence options ("do X, then Y") that order or choose the steps
+              // differently are distinct answers (a classic near-miss distractor), even though they
+              // necessarily share vocabulary. Everything else keeps the vocabulary-overlap rule.
+              const isDistinctSequence = orderMatters && sequenceSimilarity < 0.85;
+              const hasDistinctOperands = this._hasDistinguishingOperands(options[i], options[j]);
+              if (isSynonymousThreshold && !isDistinctSequence && !hasDistinctOperands) {
                 const isDistinctOps = this._isDistinctOperationalPair(options[i], options[j], stem);
                 if (!isDistinctOps) {
                   const containment = intersection / Math.min(t1.size, t2.size);
-                  errors.push({
+                  // Shared vocabulary cannot tell a synonym ("primitive that controls" / "mechanism that
+                  // manages") from a deliberate one-word near-miss ("higher or equal" / "strictly higher").
+                  // Hard-reject only when the sentences are nearly identical; otherwise flag the pair so the
+                  // semantic evaluator must check that only one of the two options is correct.
+                  const orderedContainment = this._sequenceSimilarity(options[i], options[j], 'min');
+                  // A content word swapped on both sides (new->old, strictly->or equal) is a near-miss;
+                  // one option merely adding words to the other ("... in memory") restates the same claim.
+                  const FUNCTION_WORDS = new Set(['a', 'an', 'the', 'to', 'onto', 'into', 'in', 'of', 'on', 'at', 'by', 'for', 'with', 'from', 'is', 'are', 'be', 'been', 'it', 'its', 'that', 'this', 'which', 'as', 'and']);
+                  const contentWords = (text) => new Set(String(text).toLowerCase().replace(/[^a-z0-9_\s]/g, ' ').split(/\s+/).filter(w => w && !FUNCTION_WORDS.has(w)));
+                  const ca = contentWords(options[i]);
+                  const cb = contentWords(options[j]);
+                  const isSubstitution = [...ca].some(w => !cb.has(w)) && [...cb].some(w => !ca.has(w));
+                  const isNearIdenticalSentence = !isSubstitution && (sequenceSimilarity >= 0.85 || orderedContainment >= 0.8);
+                  const finding = {
                     code: this.OPTION_SET_CONTRACT.hardRejectionCodes.SYNONYMOUS_DISTRACTOR_OPTION || 'SYNONYMOUS_DISTRACTOR_OPTION',
                     message: `Synonymous duplicate option choices detected: "${options[i]}" and "${options[j]}" share ${(containment * 100).toFixed(0)}% core vocabulary`,
-                    details: { indexA: i, indexB: j, optionA: options[i], optionB: options[j], jaccard, containment }
-                  });
+                    details: { indexA: i, indexB: j, optionA: options[i], optionB: options[j], jaccard, containment, sequenceSimilarity }
+                  };
+                  if (isNearIdenticalSentence) {
+                    errors.push(finding);
+                  } else {
+                    warnings.push({ ...finding, code: 'POSSIBLE_SYNONYM_PAIR', message: `Options "${options[i]}" and "${options[j]}" share most vocabulary; verify they are not both correct.` });
+                  }
                 }
               }
             }
@@ -272,7 +316,13 @@ class DeterministicValidator {
     const charDiff = maxLen - minLen;
     const ratio = minLen > 0 ? Number((maxLen / minLen).toFixed(2)) : Infinity;
 
-    if (charDiff >= this.OPTION_SET_CONTRACT.lengthDisparityAbsoluteCharMin && ratio > this.OPTION_SET_CONTRACT.lengthDisparityRatioThreshold) {
+    // A length difference is a giveaway only when the key is the unique longest/shortest option.
+    const keyIndexForLength = options.findIndex(o => typeof o === 'string' && o.trim() === String(correctAnswer || '').trim());
+    const keyIsLengthOutlier = keyIndexForLength < 0 || (
+      (lengths[keyIndexForLength] === maxLen && lengths.filter(l => l === maxLen).length === 1) ||
+      (lengths[keyIndexForLength] === minLen && lengths.filter(l => l === minLen).length === 1)
+    );
+    if (charDiff >= this.OPTION_SET_CONTRACT.lengthDisparityAbsoluteCharMin && ratio > this.OPTION_SET_CONTRACT.lengthDisparityRatioThreshold && keyIsLengthOutlier) {
       errors.push({
         code: this.OPTION_SET_CONTRACT.hardRejectionCodes.EXTREME_LENGTH_IMBALANCE,
         message: `Extreme option length imbalance: longest option (${maxLen} chars) is ${ratio}x shortest option (${minLen} chars, diff: ${charDiff} chars >= ${this.OPTION_SET_CONTRACT.lengthDisparityAbsoluteCharMin})`,
@@ -716,6 +766,72 @@ class DeterministicValidator {
   /**
    * Tokenize text into meaningful content words with basic stemming.
    */
+  /**
+   * Word-order similarity of two options: longest common subsequence of their content tokens
+   * divided by the longer length. Options that share vocabulary but describe a different order
+   * of steps (a classic near-miss distractor) score low; near-identical sentences score high.
+   */
+  _sequenceSimilarity(a = '', b = '', denominator = 'max') {
+    const seq = (text) => this._normalizeNumberWords(String(text || ''))
+      .toLowerCase()
+      .replace(/[^a-z0-9_\s]/g, ' ')
+      .split(/\s+/)
+      .filter(w => w.length > 1);
+    const x = seq(a);
+    const y = seq(b);
+    if (x.length === 0 || y.length === 0) return 0;
+    const dp = Array(y.length + 1).fill(0);
+    for (let i = 1; i <= x.length; i++) {
+      let prev = 0;
+      for (let j = 1; j <= y.length; j++) {
+        const tmp = dp[j];
+        dp[j] = x[i - 1] === y[j - 1] ? prev + 1 : Math.max(dp[j], dp[j - 1]);
+        prev = tmp;
+      }
+    }
+    const base = denominator === 'min' ? Math.min(x.length, y.length) : Math.max(x.length, y.length);
+    return dp[y.length] / base;
+  }
+
+  /**
+   * True when two options differ in a concrete operand: an identifier with digits (Stack1/Stack2),
+   * a number, a quoted literal, or an operator/symbol ('+' vs '('). Such options are distinct
+   * answers even when they share almost all words.
+   */
+  _hasDistinguishingOperands(a = '', b = '') {
+    const prepare = (text) => String(text)
+      .replace(/\bO\s*\([^)]*\)/gi, ' ')           // big-O handled by the vocabulary rule
+      .replace(/([A-Za-z0-9])-(?=[A-Za-z])/g, '$1 '); // hyphenated words are not minus signs
+    // Quoted literals and digit-bearing identifiers keep their order (their roles in the sentence
+    // matter: "'+' remains, '(' discarded" vs "'(' remains, '+' popped").
+    const named = (text) => (prepare(text).match(/'[^']*'|"[^"]*"|`[^`]*`|\b[A-Za-z_]\w*(?:\.[A-Za-z_]\w*)+\b|\b[A-Za-z]+_[A-Za-z0-9_]+\b|\b[A-Za-z_]+\d+[A-Za-z0-9_]*\b/g) || [])
+      .map(t => t.toLowerCase()).join(' ');
+    // Bare numbers and operators are compared as a multiset (N + 2 and 2 + N are the same).
+    const bare = (text) => (prepare(text).replace(/'[^']*'|"[^"]*"|`[^`]*`/g, ' ').match(/\b\d+(?:\.\d+)?\b|[+\-*\/%^=<>!&|]+/g) || [])
+      .map(t => t.toLowerCase()).sort().join(' ');
+    const na = named(a), nb = named(b), ba = bare(a), bb = bare(b);
+    if (((na.length > 0 || nb.length > 0) && na !== nb) || ((ba.length > 0 || bb.length > 0) && ba !== bb)) {
+      return true;
+    }
+    // Same sentence with one slot swapped for a contrastive technical term (head/null, left/right,
+    // push/pop, before/after, min/max ...): a near-miss distractor, not a synonym. Restated rules
+    // ("left keys are less than the node" vs "the node is greater than left keys") reorder the
+    // sentence, so they fail the sequence-similarity requirement and stay duplicates.
+    if (this._sequenceSimilarity(a, b) >= 0.7) {
+      const words = (text) => new Set(String(text).toLowerCase().replace(/[^a-z0-9_\s]/g, ' ').split(/\s+/).filter(Boolean));
+      const wa = words(a), wb = words(b);
+      for (const w of [...wa].filter(x => !wb.has(x)).concat([...wb].filter(x => !wa.has(x)))) {
+        if (CONTRASTIVE_TERMS.has(w)) return true;
+      }
+    }
+    return false;
+  }
+
+  /** True when an option describes an ordered procedure, so word order carries the meaning. */
+  _describesSequence(text = '') {
+    return /\b(then|before|after|first|next|finally|followed by|subsequently|until)\b|->|→|=>/i.test(String(text));
+  }
+
   _tokenize(text = '') {
     const stopwords = new Set([
       'the', 'and', 'for', 'which', 'what', 'that', 'with', 'this', 'from',

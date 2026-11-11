@@ -32,9 +32,10 @@ class PipelineOrchestrator {
     const pCount = (typeof primaryTargetsCount === 'number') ? primaryTargetsCount : requestedCount;
     const rCount = (typeof reserveTargetsCount === 'number') ? reserveTargetsCount : Math.ceil(requestedCount / 2);
     // Attempt budget scales with the request: every primary and reserve target may be tried once,
-    // with at least 2x headroom for replacements, bounded by an absolute ceiling of 60.
-    // (A fixed ceiling of 12 made requests above ~12-15 questions impossible to satisfy.)
-    return Math.min(Math.max(pCount + rCount, Math.ceil(requestedCount * 2)), 60);
+    // with 3x headroom for replacements (live runs reject roughly half of candidates on quality
+    // grounds), bounded by an absolute ceiling of 60. A fixed ceiling of 12 made requests above
+    // ~12-15 questions impossible to satisfy.
+    return Math.min(Math.max(pCount + rCount, Math.ceil(requestedCount * 3)), 60);
   }
 
   /**
@@ -1766,7 +1767,7 @@ class PipelineOrchestrator {
         const failureReason = unfulfilledTargets.length > 0
           ? `No grounded questions could be generated. ${unfulfilledTargets.length} target(s) unfulfilled: ${unfulfilledTargets.filter(Boolean).map(u => u?.reason || u?.concept || 'Target unfulfilled').join('; ')}`
           : (rejectedTargets.length > 0
-            ? `No grounded questions could be generated. All candidate questions were rejected during quality audit.`
+            ? `No grounded questions could be generated. All ${rejectedTargets.length} candidate questions failed quality checks (${rejectionCodeSummary || 'quality audit'}).${attemptBudgetExhausted ? ` Generation stopped at the attempt limit (${MAX_TOTAL_ITERATIONS}); retrying may deliver questions.` : ''}`
             : `No grounded questions could be generated from the provided material.`);
         notice = failureReason;
       } else if (deliveredCount < requestedCount) {

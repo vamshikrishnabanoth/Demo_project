@@ -254,6 +254,29 @@ class Agent2Generator {
         mcq.correctAnswer = optAtIndex;
         return;
       }
+
+      // Index given and the key text is a near-verbatim copy of that same option (e.g. a dropped
+      // article or trailing clause): both signals agree, so accept the indexed option.
+      const words = (t) => t.split(/\s+/).filter(Boolean);
+      const a = words(normAns);
+      const b = words(normOptAtIndex);
+      if (a.length > 0 && b.length > 0) {
+        const dp = Array(b.length + 1).fill(0);
+        for (let i = 1; i <= a.length; i++) {
+          let prev = 0;
+          for (let j = 1; j <= b.length; j++) {
+            const tmp = dp[j];
+            dp[j] = a[i - 1] === b[j - 1] ? prev + 1 : Math.max(dp[j], dp[j - 1]);
+            prev = tmp;
+          }
+        }
+        const similarity = dp[b.length] / Math.max(a.length, b.length);
+        const bestOther = mcq.options.some((o, idx) => idx !== mcq.correctAnswerIndex && cleanPunctuationAndCase(o) === normAns);
+        if (similarity >= 0.9 && !bestOther) {
+          mcq.correctAnswer = optAtIndex;
+          return;
+        }
+      }
     }
 
     // 5. Zero match: leave correctAnswer unchanged.
@@ -1702,6 +1725,13 @@ ${target.distractorMisconceptions.map(m => `- ${m.concept}: ${m.description}`).j
     );
 
     // Build evidence context per target (bounded to ~1200 chars per target to avoid prompt bloat)
+    const TIER_DEMAND = {
+      Easy: 'Easy — one-step understanding: recognise a correct definition, property or direct fact that was taught. The student still has to think; no trick wording.',
+      Medium: 'Medium — the student must apply or trace something: follow the steps of a procedure, predict the state or output after an operation, compare two taught mechanisms, or explain why a rule holds. A pure definition is NOT Medium.',
+      Hard: 'Hard — multi-step reasoning on a NEW concrete situation built only from taught material: an edge case, a what-if change, diagnosing a bug or wrong result, or combining two taught ideas. Length or vocabulary does not make a question Hard.'
+    };
+
+    // Build evidence context per target (bounded to ~1200 chars per target to avoid prompt bloat)
     const targetsBlock = validTargets.map((t, idx) => {
       const tier = t.targetDifficulty || 'Medium';
       const op = t.intendedCognitiveOperation || (tier === 'Easy' ? 'RECALL' : (tier === 'Medium' ? 'COMPARE' : 'DIAGNOSE'));
@@ -1709,47 +1739,50 @@ ${target.distractorMisconceptions.map(m => `- ${m.concept}: ${m.description}`).j
       if (!ctx || ctx.length < 20) {
         ctx = t.supportingEvidence || (typeof evidencePackage === 'string' ? evidencePackage : (evidencePackage?.unifiedRawContent || ''));
       }
+      const misconceptions = Array.isArray(t.distractorMisconceptions) && t.distractorMisconceptions.length > 0
+        ? `Likely misconceptions to use for distractors:\n${t.distractorMisconceptions.map(m => `- ${m.concept}: ${m.description}`).join('\n')}\n`
+        : '';
       return `--- TARGET ${idx + 1} ---
 Target ID: ${t.targetId}
 Concept: ${t.concept}
-Difficulty: ${tier}
-Operation: ${op}
-Pedagogical Instruction: ${t.instruction || t.operationalGuidance || 'Test conceptual and applied understanding.'}
-Evidence Context:
+Required difficulty: ${TIER_DEMAND[tier] || TIER_DEMAND.Medium}
+Cognitive operation: ${op}
+Learning objective: ${t.instruction || t.operationalGuidance || 'Test conceptual and applied understanding.'}
+${misconceptions}Evidence (the ONLY source of truth for this question):
 ${(ctx || '').slice(0, 1200).trim()}
 `;
     }).join('\n');
 
-    const systemPrompt = `You are Agent 2: Expert Multi-Choice Assessment Generator.
-Generate exactly ${validTargets.length} university-grade multiple-choice questions (one per target) in valid JSON format.
-Your output MUST be a valid JSON array of objects: [ { ... }, { ... } ]
+    const systemPrompt = `You are an expert university examiner writing multiple-choice questions for a daily class quiz.
+Write exactly ${validTargets.length} questions, one per target, as a JSON array.
 
-EACH OBJECT SCHEMA:
+For EACH target, work in this order:
+1. Read the evidence and decide the single correct answer. It must be directly supported by the evidence and technically correct.
+2. Write the question so that this answer is the only defensible one.
+3. Write three distractors. Each must be a specific, plausible mistake a student who studied the topic could make:
+   wrong order of steps, wrong operand or boundary value, an off-by-one or near-miss calculation, confusing a closely related taught concept, or a logical inversion.
+   Distractors must be clearly wrong on reflection, must not be paraphrases of the answer or of each other, and must stay within the subject of the evidence.
+
+Rules:
+- The question must be self-contained (passes the "cover the options" test). If it refers to code, a command, a table or data, include that code/command/data inside "questionText" (use \\n for line breaks). Never write "the snippet above" without including it.
+- Keep stems direct and short (normally 12-35 words plus any code). No "in the lecture", "as discussed", "according to the slides". Never list the answer options (A), B), ...) inside "questionText".
+- All four options parallel in form and similar in length (each at most about 15 words; the correct option must not be the longest or shortest); no "all/none of the above", no absolute words used as giveaways.
+- If you include code, keep it to the few lines the question needs (at most about 12).
+- "correctAnswer" must be copied character-for-character from "options", and "correctAnswerIndex" must point to it. Vary the position of the correct answer across questions.
+- Match the required difficulty exactly as described for each target.
+
+Output ONLY a JSON array (no markdown fences, no commentary) of objects with this schema:
 {
-  "targetId": "string matching Target ID",
-  "questionText": "Direct, problem-first question (12-30 words)${isCodeOrCli ? ', with concrete code snippet or CLI command when applicable' : ''}",
-  "options": [
-    "Plausible technical distractor / near-miss mechanism",
-    "Contrasting misconception or boundary condition",
-    "Technically precise, correct formulation",
-    "Alternative distinct mechanism from the same domain"
-  ],
-  "correctAnswerIndex": 2,
-  "correctAnswer": "Technically precise, correct formulation",
-  "explanation": "Concise factual justification of key and refutation of distractors.",
+  "targetId": "the Target ID",
+  "answerReasoning": "one or two sentences: why the answer is correct according to the evidence",
+  "questionText": "the question${isCodeOrCli ? ' (include any code or command it refers to)' : ''}",
+  "options": ["option text", "option text", "option text", "option text"],
+  "correctAnswerIndex": 0,
+  "correctAnswer": "exact copy of the correct option",
+  "distractorRationale": ["for each wrong option, the misconception it represents"],
+  "explanation": "short explanation shown to students after answering",
   "questionArchetype": "${isCodeOrCli ? 'CODE_EXECUTION' : 'CONCEPTUAL_CONTRAST'}"
-}
-
-STRICT STANDARDS:
-1. OUTPUT: Output ONLY the raw JSON array starting with [ and ending with ]. Zero markdown fences, zero commentary.
-2. STANDALONE PROBLEM STEMS: Passes the "Cover The Options" test. Never say "in the lecture", "as discussed", or "according to slides".
-3. FOUR PARALLEL OPTIONS: All 4 options roughly equal in length, mutually exclusive, zero giveaways ("always", "never", "all of the above").
-4. ONE UNAMBIGUOUS CORRECT ANSWER: Exactly one option is unequivocally true.
-5. DIFFICULTY CALIBRATION:
-   - Easy: Direct definitions and fundamental terminology.
-   - Medium: Operational mechanisms, state transitions, algorithm procedures.
-   - Hard: Boundary conditions, code tracing, invariants, counterexamples, or diagnostic bug analysis.
-6. ZERO DISFLUENCY: Never include spoken speech artifacts ('um', 'uh', 'you know').`;
+}`;
 
     const userPrompt = `[BATCH GENERATION REQUEST - ${validTargets.length} TARGETS]
 
@@ -1761,7 +1794,7 @@ Generate a JSON array of exactly ${validTargets.length} distinct, rigorous MCQs 
     let responseText = null;
 
     try {
-      const maxTokens = Math.min(4096, Math.max(1500, validTargets.length * 600));
+      const maxTokens = Math.min(6000, Math.max(1800, validTargets.length * 900));
       responseText = await llmRouter.complete({
         prompt: userPrompt,
         systemPrompt: systemPrompt,

@@ -51,10 +51,10 @@ console.log('🧪 Running Stage 1 Targeted Tests: Validator Semantic Distinction
     "Keys may be equal to the node key."
   ];
   const res = validator.validateOptionSet(options, "Which statement is true?", options[0]);
-  assert.strictEqual(res.isValid, false, 'Inverted relational statements must be rejected as duplicates');
   const hasDupError = res.errors.some(e => e.code === 'SYNONYMOUS_DISTRACTOR_OPTION' || e.code === 'PERMUTED_DUPLICATE_OPTION');
-  assert.strictEqual(hasDupError, true, 'Must flag SYNONYMOUS_DISTRACTOR_OPTION or PERMUTED_DUPLICATE_OPTION');
-  console.log('  ✅ [PASS] 4. Inverted relational statements correctly rejected as duplicate distractors');
+  const hasDupFlag = (res.warnings || []).some(w => w.code === 'POSSIBLE_SYNONYM_PAIR');
+  assert.strictEqual(hasDupError || hasDupFlag, true, 'Inverted relational statements must be rejected or flagged for semantic review');
+  console.log('  ✅ [PASS] 4. Inverted relational statements rejected or flagged for semantic review');
 }
 
 // Test 5: Negative Case - Commutative Formula Equivalence (N + 2 vs 2 + N)
@@ -79,8 +79,25 @@ console.log('🧪 Running Stage 1 Targeted Tests: Validator Semantic Distinction
     "Search operations require O(1) constant time."
   ];
   const res = validator.validateOptionSet(options, "What is the search complexity?", options[0]);
-  assert.strictEqual(res.isValid, false, 'Paraphrased mathematical statements must be rejected as duplicates');
-  console.log('  ✅ [PASS] 6. Paraphrased complexity statements correctly rejected as duplicates');
+  const flagged = !res.isValid || (res.warnings || []).some(w => w.code === 'POSSIBLE_SYNONYM_PAIR');
+  assert.strictEqual(flagged, true, 'Paraphrased mathematical statements must be rejected or flagged for semantic review');
+  console.log('  ✅ [PASS] 6. Paraphrased complexity statements rejected or flagged for semantic review');
+}
+
+// Test 7: Near-miss distractors from real generated questions must NOT be hard-rejected
+{
+  const nearMissSets = [
+    ["Set new_node.next to head, then set head to new_node", "Set head to new_node, then set new_node.next to the old head", "Set new_node.next to null, then set head to new_node", "Set new_node.next to head, then set head.next to new_node"],
+    ["The new head's next pointer is set to NULL", "The old head's next pointer is set to NULL", "The tail's next pointer is set to the new head", "The list is left unchanged by the operation"],
+    ["Operators with higher or equal precedence", "Operators with strictly higher precedence", "Operators with lower precedence only", "Only opening parentheses"],
+    ["Stack1, because elements are pushed onto it during enqueue.", "Stack2, because elements are pushed onto it during enqueue.", "Neither stack; enqueue writes to an array.", "Both stacks receive each enqueued element."]
+  ];
+  for (const options of nearMissSets) {
+    const res = validator.validateOptionSet(options, "Which is correct?", options[0]);
+    const dupErrors = res.errors.filter(e => ['SYNONYMOUS_DISTRACTOR_OPTION', 'PERMUTED_DUPLICATE_OPTION'].includes(e.code));
+    assert.strictEqual(dupErrors.length, 0, `Near-miss distractors must not be rejected as duplicates: ${JSON.stringify(dupErrors.map(e => e.message))}`);
+  }
+  console.log('  ✅ [PASS] 7. Near-miss distractors (step order, operand, boundary, identifier) are not rejected as duplicates');
 }
 
 console.log('🎉 All Stage 1 Targeted Tests Passed Cleanly!');

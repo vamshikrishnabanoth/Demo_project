@@ -1011,7 +1011,7 @@ Ensure targets are distributed across Easy, Medium, and Hard according to the re
 
     let planData;
     try {
-      const planTimeoutMs = 45000;
+      const planTimeoutMs = parseInt(process.env.AGENT1_TIMEOUT_MS, 10) || 150000;
       const dynamicMaxTokens = Math.min(8000, Math.max(4000, requestedCount * 280));
       const llmPromise = llmRouter.complete({
         prompt: userPrompt,
@@ -1023,7 +1023,7 @@ Ensure targets are distributed across Easy, Medium, and Hard according to the re
         signal: evidencePackage?.abortSignal
       });
       const timeoutPromise = new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Agent 1 LLM planning timed out after 45s')), planTimeoutMs)
+        setTimeout(() => reject(new Error(`Agent 1 LLM planning timed out after ${Math.round(planTimeoutMs / 1000)}s`)), planTimeoutMs)
       );
       const responseText = await Promise.race([llmPromise, timeoutPromise]);
 

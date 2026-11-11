@@ -48,11 +48,14 @@ const q2Candidate = {
   correctAnswer: 'A synchronization primitive that controls access to a shared resource'
 };
 
+// Policy: shared vocabulary alone cannot separate a synonym from a deliberate near-miss, so such
+// pairs are either rejected (near-identical sentences) or flagged for the semantic evaluator,
+// which must confirm only one of them is correct. They must never pass silently.
 const pre2 = deterministicValidator.runPreChecks(q2Candidate);
-assert.strictEqual(pre2.isValid, false, 'Pre-check should reject options with 75%+ vocabulary overlap');
 const hasSynonymError = pre2.errors.some(e => e.includes('Synonymous duplicate') || e.includes('Permuted duplicate'));
-assert.strictEqual(hasSynonymError, true, 'Pre-check should report synonymous duplicate error');
-console.log('✅ PASS [2]: High vocabulary overlap synonymous choices blocked');
+const hasSynonymFlag = (pre2.warnings || []).some(w => w && w.code === 'POSSIBLE_SYNONYM_PAIR');
+assert.strictEqual(hasSynonymError || hasSynonymFlag, true, 'High-overlap option pair must be rejected or flagged for semantic review');
+console.log('✅ PASS [2]: High vocabulary overlap synonymous choices rejected or flagged for semantic review');
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Test 3: Distractor matching correct answer in permuted order

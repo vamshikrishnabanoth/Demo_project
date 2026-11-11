@@ -331,7 +331,18 @@ EVALUATION DIRECTIVES:
   }
 }`;
 
-    const userPrompt = `
+    // Option pairs the deterministic pre-check could not separate (shared vocabulary): the semantic
+    // audit must confirm they are not both correct, otherwise reject with AMBIGUOUS_DISTRACTOR.
+    let flaggedPairsBlock = '';
+    try {
+      const optionWarnings = (deterministicValidator.validateOptionSet(candidateMCQ.options || [], candidateMCQ.questionText || '', candidateMCQ.correctAnswer || '').warnings || [])
+        .filter(w => w.code === 'POSSIBLE_SYNONYM_PAIR' && w.details);
+      if (optionWarnings.length > 0) {
+        flaggedPairsBlock = `\n[OPTION PAIRS TO CHECK FOR EQUIVALENCE]\n${optionWarnings.map(w => `- "${w.details.optionA}" vs "${w.details.optionB}"`).join('\n')}\nThese options share wording. Sharing wording is NOT a defect: near-miss distractors are intended. Use AMBIGUOUS_DISTRACTOR only if a subject expert would accept both options as correct answers to the stem.\n`;
+      }
+    } catch (_) {}
+
+    const userPrompt = `${flaggedPairsBlock}
 [TARGET SPECIFICATION]
 Concept: ${target.concept || candidateMCQ.metadata?.concept || 'Target Concept'}
 Subtopic: ${target.subtopic || 'General Topic'}
@@ -371,14 +382,14 @@ ${evidenceContext}
     const effectiveSignal = internalAbortController.signal;
 
     try {
-      const evalTimeoutMs = parseInt(process.env.AGENT3_EVAL_TIMEOUT_MS, 10) || 45000;
+      const evalTimeoutMs = parseInt(process.env.AGENT3_EVAL_TIMEOUT_MS, 10) || 150000;
       const evalPromise = llmRouter.complete({
         prompt: userPrompt,
         systemPrompt: systemPrompt,
         temperature: 0.1,
         model: process.env.AGENT3_MODEL || 'qwen/qwen3.8-27b',
         sessionId: evidencePackage?.sessionId,
-        maxTokens: 2000,
+        maxTokens: parseInt(process.env.AGENT3_MAX_TOKENS, 10) || 3000,
         operation: 'EVALUATION',
         signal: effectiveSignal
       });
@@ -981,7 +992,7 @@ ${evidenceContext}
     const preCheck = deterministicValidator.runPreChecks(candidateMCQ);
     if (!preCheck.isValid) {
       failureReasons.push(EVALUATOR_FAILURE_CODES.OPTION_VALIDATION_ERROR);
-      preCheckFailureReason = `Pre-checks failed: ${preCheck.reason || 'Invalid candidate MCQ format or missing options'}`;
+      preCheckFailureReason = `Pre-checks failed: ${preCheck.reason || (Array.isArray(preCheck.errors) && preCheck.errors.length ? preCheck.errors.join('; ') : 'Invalid candidate MCQ format or missing options')}`;
     }
 
     // 2. Correct Answer Inclusion Check
@@ -1570,6 +1581,27 @@ ${evidenceContext}
       /\b(?:what formula (?:expresses|calculates|governs))\b/i.test(qLower)
     );
 
+    // Condition 4A-1: General state / output prediction (Medium)
+    // A concrete input is given in the stem (a call with arguments, a drawn list/tree, code, an array or
+    // explicit values) and the student must work out the resulting state, output or value.
+    const hasConcreteInputInStem = (
+      /\b[a-z_][a-z0-9_]*\s*\(\s*(?:-?\d+|[a-z_][a-z0-9_]*|'[^']*'|"[^"]*")(?:\s*,\s*(?:-?\d+|[a-z_][a-z0-9_]*|'[^']*'|"[^"]*"))*\s*\)/i.test(qNormalized) ||
+      /(?:\d+\s*(?:<->|<=>|->|=>|↔|→)\s*\d+)/.test(qNormalized) ||
+      /\n\s*[\/\\]\s+[\/\\]?/.test(qNormalized) ||
+      /\n.*[;{}=]/.test(qNormalized) ||
+      /\[\s*-?\d+(?:\s*,\s*-?\d+){1,}\s*\]/.test(qNormalized) ||
+      /\b(?:given|consider)\s+(?:the|a|an|this)\s+(?:code|snippet|tree|list|graph|array|stack|queue|expression|table|matrix|function|program|sequence|input)\b/i.test(qLower)
+    );
+    const asksForResult = (
+      /\b(?:what (?:is|will be|would be|does|do) (?:the )?(?:output|printed|returned|result|value|final|resulting|state|contents?)|what (?:does|will) [^?]{0,60}(?:print|return|output|contain|reference|point to|evaluate to)|after (?:calling|executing|running|inserting|deleting|pushing|popping|enqueu\w*|dequeu\w*|applying|performing|the (?:call|operation|loop))|resulting (?:list|tree|state|array|stack|queue|output|value)|which (?:node|vertex|element|value|key|item) (?:is|will be) (?:visited|printed|returned|removed|popped|at the top|first|next|last)|which statements? (?:are|is) executed|what happens to|how many (?:times|nodes|elements|comparisons|swaps|iterations)|(?:sequence|order) of (?:values|nodes|keys|vertices|elements|items|operations)(?: that are| are| is)? (?:printed|visited|output|returned|processed|popped|performed)|what is the (?:sequence|order) of)\b/i.test(qLower)
+    );
+    if (hasConcreteInputInStem && asksForResult) {
+      return {
+        demand: 'TRACE',
+        reasoning: 'Requires working through a concrete input or operation to determine the resulting state, output or value.'
+      };
+    }
+
     // ──────────────────────────────────────────────────────────────────────────
     // Classification Logic & Anti-Bypass Guardrails
     // ──────────────────────────────────────────────────────────────────────────
@@ -1623,6 +1655,14 @@ ${evidenceContext}
       return {
         demand: 'TRACE',
         reasoning: 'Requires step-by-step chronological simulation of execution sequence to determine state transitions or outcome.'
+      };
+    }
+
+    // Condition 4A-1b: Procedural response to an event ("when the algorithm reads ')', what does it do?")
+    if (/\b(?:when|after|if|whenever)\b[^?]{3,120}\bwhat (?:does|should|must|will) (?:it|the algorithm|the program|the function|the parser|the system|[a-z_][a-z0-9_ ]{0,30}) do\b/i.test(qLower)) {
+      return {
+        demand: 'EXPLAIN_MECHANISM',
+        reasoning: 'Requires knowing the operational step a procedure takes in response to a specific event.'
       };
     }
 

@@ -5629,13 +5629,16 @@ Rules:
 Transcript Excerpt:
 ${transcriptText.slice(0, 1200)}`;
 
-            const titlingModel = process.env.TITLING_MODEL || 'llama-3.1-8b-instant';
-            const titlingPromise = client.chat.completions.create({
+            // llama-3.1-8b-instant is no longer served on Groq; gpt-oss-20b with low reasoning is fast and available.
+            const titlingModel = process.env.TITLING_MODEL || 'openai/gpt-oss-20b';
+            const titlingRequest = {
                 model: titlingModel,
                 messages: [{ role: 'user', content: prompt }],
                 temperature: 0.1,
-                max_tokens: 150
-            });
+                max_tokens: 300
+            };
+            if (titlingModel.startsWith('openai/gpt-oss')) titlingRequest.reasoning_effort = 'low';
+            const titlingPromise = client.chat.completions.create(titlingRequest);
             const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('Titling timeout')), 2500));
             const completion = await Promise.race([titlingPromise, timeoutPromise]);
 
