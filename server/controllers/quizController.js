@@ -963,7 +963,7 @@ function resolveGenerationErrorCode(err, pipelineResult) {
     return err?.errorCode || 'FAILED_GENERATION';
 }
 
-const generateQuestions = async (type, content, count = 5, difficulty = 'Medium', source_material_id = null, target_ratios = null, inputs = null, topic_weights = null, taskId = null, callbackUrl = null, isolated_narratives = null, questionStyle = 'MIXED', deficitPolicy = null, inputModality = null, capacityPolicy = 'ALLOW_SCOPE_SUPPLEMENTARY') => {
+const generateQuestions = async (type, content, count = 5, difficulty = 'Medium', source_material_id = null, target_ratios = null, inputs = null, topic_weights = null, taskId = null, callbackUrl = null, isolated_narratives = null, questionStyle = 'MIXED', deficitPolicy = null, inputModality = null, capacityPolicy = 'ALLOW_SCOPE_SUPPLEMENTARY', lectureModelId = null) => {
     try {
         console.log(`🚀 [Baseline v1.0] Executing 3-Agent Pipeline: ${type || 'multi-input'} | Count: ${count} | Style: ${questionStyle}`);
 
@@ -1079,6 +1079,47 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
             topic: (inputs && inputs[0] && inputs[0].content && inputs[0].type === 'text') ? inputs[0].content.trim() : (content || '')
         };
 
+        // Reuse the lecture model built when the teacher added the material (same understanding as the preview).
+        // lectureModelId may be a plain id or { id, excludeTopics } (topics the teacher unticked).
+        let lmUnitsForReview = null;
+        const lmOptions = (lectureModelId && typeof lectureModelId === 'object') ? lectureModelId : { id: lectureModelId };
+        lectureModelId = lmOptions.id || null;
+        const lmCandidate = lectureModelId ? lectureModel.getById(lectureModelId) : null;
+        if (lectureModelId && (!isTopicMode || (lmCandidate && lmCandidate.isTopicNotes))) {
+            const lm = lmCandidate;
+            // Topic-only input: generate from the reference notes (normal material path, not free-form synthesis).
+            if (lm && lm.isTopicNotes) {
+                sessionInputs.documentTexts = [lm.notesText];
+                sessionInputs.documentNames = [`Reference notes: ${lm.title}`];
+                sessionInputs.inputModality = 'UNIFIED';
+            }
+            if (lm && lm.ok && lm.units && lm.units.length > 0) {
+                const lmPlan = lectureModel.planRequest(lm, parseInt(count, 10) || 0, difficulty || 'Balanced', {
+                    excludeTopics: Array.isArray(lmOptions.excludeTopics) ? lmOptions.excludeTopics : [],
+                    fillOtherTiers: (deficitPolicy || 'FILL_WITH_MEDIUM') === 'FILL_WITH_MEDIUM'
+                });
+                const lmUnits = lectureModel.toTeachingUnits(lm, lmPlan);
+                if (lmUnits.primary.length > 0) {
+                    sessionInputs.teachingUnits = lmUnits.all;
+                    lmUnitsForReview = lmUnits;
+                    sessionInputs.lectureModelPlan = {
+                        lectureModelId,
+                        requested: lmPlan.requested,
+                        deliverable: lmPlan.deliverable,
+                        byDifficulty: lmPlan.byDifficulty,
+                        byTopic: lmPlan.byTopic,
+                        capacity: lm.capacity.byDifficulty,
+                        capacityTotal: lm.capacity.total,
+                        shortfall: lmPlan.shortfall,
+                        shortfallReasons: lmPlan.shortfallReasons
+                    };
+                    console.log(`[LectureModel] Reusing lecture model ${lectureModelId.slice(0, 10)}: ${lmUnits.primary.length} targets + ${lmUnits.reserve.length} reserves (${JSON.stringify(lmPlan.byDifficulty)}).`);
+                }
+            } else {
+                console.warn(`[LectureModel] Lecture model ${String(lectureModelId).slice(0, 10)} not found; falling back to in-pipeline extraction.`);
+            }
+        }
+
         // Guard against non-academic audio or topics before launching heavy pipeline
         if (voiceText && voiceText.trim().length > 10) {
             const vAnalysis = depthAnalyzer.analyzeLecture(voiceText, { sourceModality: 'VOICE' });
@@ -1165,8 +1206,68 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
             }
         }
         const result = await pipelineOrchestrator.runPipeline(sessionInputs, progressCallback);
+        // When the request exceeded what the lecture supports, say so first (before any quality-check detail).
+        const lmPlanInfo = sessionInputs.lectureModelPlan;
+        if (result && lmPlanInfo && Array.isArray(lmPlanInfo.shortfallReasons) && lmPlanInfo.shortfallReasons.length) {
+            const capNote = lmPlanInfo.shortfallReasons.join(' ');
+            result.notice = result.notice ? `${capNote} ${result.notice}` : capNote;
+            if (!result.questions || result.questions.length === 0) {
+                result.error = `${capNote} ${result.error || ''}`.trim();
+            }
+        }
+        if (result && taskId && lmPlanInfo) {
+            const tPlan = getTask(taskId);
+            if (tPlan) tPlan.lectureModelPlan = lmPlanInfo;
+        }
         if (result && result.questions && result.questions.length > 0) {
             console.log(`✅ [Baseline v1.0] 3-Agent Pipeline delivered ${result.questions.length} questions.`);
+            // Review details: where in the lecture each question comes from (target T01.. / R01.. map to the plan order).
+            if (lmUnitsForReview) {
+                for (const q of result.questions) {
+                    const tid = String(q.metadata?.targetId || q.targetId || '');
+                    const m = tid.match(/^([TR])(\d+)/);
+                    const u = m ? (m[1] === 'T' ? lmUnitsForReview.primary : lmUnitsForReview.reserve)[parseInt(m[2], 10) - 1] : null;
+                    if (!u) continue;
+                    q.lectureSource = {
+                        topic: u.topic,
+                        subtopic: u.subtopic,
+                        questionType: u.questionAngle,
+                        time: u.lectureTime || null,
+                        slides: u.lectureSlides || [],
+                        plannedDifficulty: u.plannedDifficulty,
+                        measuredDifficulty: q.difficulty || q.metadata?.targetDifficulty || null
+                    };
+                }
+            }
+            // Say plainly when fewer questions of a planned difficulty passed than were planned.
+            if (lmPlanInfo && lmPlanInfo.byDifficulty) {
+                const got = { easy: 0, medium: 0, hard: 0 };
+                result.questions.forEach(q => { const d = String(q.difficulty || q.metadata?.targetDifficulty || '').toLowerCase(); if (got[d] !== undefined) got[d]++; });
+                const gaps = ['hard', 'medium'].filter(d => (lmPlanInfo.byDifficulty[d] || 0) > got[d]);
+                if (gaps.length) {
+                    const mixNote = gaps.map(d => `Planned ${lmPlanInfo.byDifficulty[d]} ${d}; ${got[d]} passed the quality checks`).join('. ') +
+                        `. The remaining slot${gaps.reduce((n, d) => n + lmPlanInfo.byDifficulty[d] - got[d], 0) === 1 ? ' was' : 's were'} filled at the nearest difficulty (delivered: ${got.easy} easy, ${got.medium} medium, ${got.hard} hard).`;
+                    result.notice = result.notice ? `${result.notice} ${mixNote}` : mixNote;
+                }
+            }
+            // Independent answer check by a different model family; flags go to the teacher's review (bounded to 30 s).
+            if (process.env.DISABLE_BLIND_CHECK !== 'true') {
+                try {
+                    const { blindAnswerCheck } = require('../engine/validators/blindAnswerCheck');
+                    const summary = await Promise.race([
+                        blindAnswerCheck(result.questions),
+                        new Promise(resolve => setTimeout(() => resolve({ checked: false, flagged: 0, reason: 'timeout' }), 30000))
+                    ]);
+                    result.independentCheck = summary;
+                    if (summary.flagged > 0) {
+                        const flagNote = `${summary.flagged} question${summary.flagged === 1 ? '' : 's'} flagged by an independent answer check — please review ${summary.flagged === 1 ? 'it' : 'them'} before publishing.`;
+                        result.notice = result.notice ? `${result.notice} ${flagNote}` : flagNote;
+                    }
+                    console.log(`[BlindCheck] ${summary.checked ? `checked with ${summary.model}, ${summary.flagged} flagged` : `not run: ${summary.reason}`}`);
+                } catch (bcErr) {
+                    console.warn('[BlindCheck] skipped:', bcErr.message);
+                }
+            }
             if (taskId) {
                 updateTaskStage(taskId, 7, 'Grounding Gate & Final Audit');
                 const tObj = getTask(taskId);
@@ -3860,7 +3961,7 @@ exports.generateQuizQuestions = async (req, res) => {
 
             let finalQuestions = [];
             if (parsedInputs && parsedInputs.length > 0) {
-                finalQuestions = await generateQuestions(null, null, questionCount, difficulty, source_material_id, blendedRatios, parsedInputs, parsedTopicWeights, taskId, callbackUrl, parsedIsolatedNarratives, derivedStyle, deficitPolicy, explicitModality, reqCapacityPolicy);
+                finalQuestions = await generateQuestions(null, null, questionCount, difficulty, source_material_id, blendedRatios, parsedInputs, parsedTopicWeights, taskId, callbackUrl, parsedIsolatedNarratives, derivedStyle, deficitPolicy, explicitModality, reqCapacityPolicy, req.body.lectureModelId ? { id: req.body.lectureModelId, excludeTopics: (() => { try { const v = typeof req.body.excludedTopics === 'string' ? JSON.parse(req.body.excludedTopics) : req.body.excludedTopics; return Array.isArray(v) ? v.map(String).slice(0, 50) : []; } catch (_) { return []; } })() } : null);
             } else if (req.file) {
                 if (isVoiceSource && extractedText) {
                     const voiceInput = [{
@@ -3938,7 +4039,7 @@ exports.generateQuizQuestions = async (req, res) => {
             const validation = finalQuizValidator(finalQuestions, difficulty || 'Medium');
             let lectureDepth = null;
             if (isVoiceSource && extractedText) {
-                const depthAnalysis = depthAnalyzer.analyzeLecture(extractedText, { sourceModality: 'DOCUMENT_ONLY', modality: 'DOCUMENT_ONLY' });
+                const depthAnalysis = depthAnalyzer.analyzeLecture(String(extractedText).slice(0, 20000), { sourceModality: 'DOCUMENT_ONLY', modality: 'DOCUMENT_ONLY' });
                 lectureDepth = depthAnalysis.lectureDepth;
             }
 
@@ -3961,6 +4062,8 @@ exports.generateQuizQuestions = async (req, res) => {
                 shortfallCategory: (finalTaskObj && finalTaskObj.shortfallCategory) || pResult?.shortfallCategory || null,
                 requestedCount:  (finalTaskObj && finalTaskObj.requestedCount) || questionCount,
                 deliveredCount:  finalQuestions.length,
+                // Capacity, difficulty mix and per-topic allocation decided from the shared lecture model.
+                lectureModelPlan: (finalTaskObj && finalTaskObj.lectureModelPlan) || null,
                 groundedCount:   (finalTaskObj && finalTaskObj.pipelineResult?.groundedCount) ?? (finalTaskObj && finalTaskObj.groundedCount) ?? finalQuestions.filter(q => q.provenance !== 'SCOPE_SUPPLEMENTARY' && !q.isSupplementary).length,
                 supplementaryCount: (finalTaskObj && finalTaskObj.pipelineResult?.supplementaryCount) ?? (finalTaskObj && finalTaskObj.supplementaryCount) ?? finalQuestions.filter(q => q.provenance === 'SCOPE_SUPPLEMENTARY' || q.isSupplementary).length,
                 distinctTargetCount: (finalTaskObj && finalTaskObj.pipelineResult?.distinctTargetCount) ?? (finalTaskObj && finalTaskObj.distinctTargetCount) ?? new Set(finalQuestions.map(q => q.conceptTested || q.target?.concept || q.concept || '').filter(Boolean)).size,
@@ -4987,7 +5090,7 @@ exports.getFileMetadata = async (req, res) => {
         }
 
         // Academic content analysis on document text
-        const depthAnalysis = depthAnalyzer.analyzeLecture(extractedText, { sourceModality: 'DOCUMENT_ONLY', modality: 'DOCUMENT_ONLY' });
+        const depthAnalysis = depthAnalyzer.analyzeLecture((extractedText || '').slice(0, 20000), { sourceModality: 'DOCUMENT_ONLY', modality: 'DOCUMENT_ONLY' });
 
         // Calculate upfront Pedagogical Delivery Index (PDI) for uploaded document
         const pdiRouter = require('../engine/pdiRouter');
@@ -5003,8 +5106,8 @@ exports.getFileMetadata = async (req, res) => {
             documentId: docEntry ? docEntry.documentId : null,
             filename: req.file.originalname,
             totalCount,
-            extractedText: extractedText && extractedText.length > 120000
-                ? (extractedText.slice(0, 60000) + '\n\n[...Curriculum sampled for overview...]\n\n' + extractedText.slice(-60000))
+            extractedText: extractedText && extractedText.length > 300000
+                ? (extractedText.slice(0, 150000) + '\n\n[...middle of a very long document omitted from the overview...]\n\n' + extractedText.slice(-150000))
                 : extractedText,
             isAcademic: depthAnalysis.isAcademic,
             reason: depthAnalysis.reason,
@@ -5200,21 +5303,127 @@ function sanitizeLectureTitle(rawTitle) {
     return title;
 }
 
+const lectureModel = require('../engine/intelligence/lectureModel');
+const ANALYSIS_RESPONSE_VERSION = `analysis-v2|${lectureModel.MODEL_VERSION}`;
+
+/** Topic-only input: no lecture evidence exists, so no capacity or teaching score is claimed. */
+function buildTopicOnlyAnalysis(topic, wordCount) {
+    return {
+        success: true,
+        isAcademic: true,
+        isTopicMode: true,
+        topic,
+        whatWasTaught: `Topic only: questions will be written from general knowledge of "${topic}", not from your lecture.`,
+        keyTopics: [topic],
+        wordCount,
+        recommendedQuestions: 'Up to 30 questions (general knowledge)',
+        recommendedQuestionCount: 10,
+        recommendedByDifficulty: { easy: 10, medium: 10, hard: 10, balanced: 10 },
+        capacityByDifficulty: { easy: 30, medium: 30, hard: 30, balanced: 30 },
+        totalDefensibleCapacity: 30,
+        advisoryRationale: 'No lecture material was given, so counts are not limited by lecture content. Add notes, slides, code or a recording to get questions grounded in what you taught.',
+        lectureDepth: null,
+        lectureModel: {
+            ok: true,
+            isTopicOnly: true,
+            title: topic,
+            summary: `Topic only: "${topic}". No lecture material was provided, so there is no teaching score and questions come from general subject knowledge.`,
+            segments: [],
+            topics: [{ name: topic, subtopics: [], source: 'TOPIC' }],
+            teaching: { available: false, reason: 'A teaching score needs a recording or teaching material; a topic name alone cannot be scored.' }
+        },
+        lecture_intelligence: null
+    };
+}
+
+/** Maps the shared lecture model to the analyze-depth response (keeps legacy fields for older UI code). */
+function buildAnalysisFromLectureModel(model, wordCount) {
+    const cap = model.capacity;
+    const teaching = model.teaching || { available: false };
+    const chapters = model.segments.map((s, i) => ({
+        id: `ch_${String(i + 1).padStart(2, '0')}`,
+        title: s.title,
+        summary: s.description,
+        timestamp_start: s.time ? s.time.split('–')[0] : null,
+        timestamp_end: s.time ? s.time.split('–')[1] : null,
+        start_seconds: s.start,
+        end_seconds: s.end,
+        slide_range: s.slides && s.slides.length ? `${s.slides[0]}${s.slides.length > 1 ? `–${s.slides[s.slides.length - 1]}` : ''}` : null,
+        key_concepts: s.topics
+    }));
+    const rationale = cap.total === 0
+        ? 'No distinct question opportunities were found in this input.'
+        : `${cap.total} distinct question opportunities across ${model.topics.length} topic${model.topics.length === 1 ? '' : 's'} (${cap.byDifficulty.easy} easy, ${cap.byDifficulty.medium} medium, ${cap.byDifficulty.hard} hard), counted from what was actually taught.`;
+    return {
+        success: true,
+        isAcademic: true,
+        isTopicMode: false,
+        whatWasTaught: model.summary,
+        keyTopics: model.topics.map(t => t.name),
+        detectedFocus: model.topics.flatMap(t => t.subtopics).slice(0, 12),
+        wordCount: model.wordCount || wordCount,
+        recommendedQuestions: `${cap.recommended.balanced} Questions`,
+        recommendedQuestionCount: cap.recommended.balanced,
+        recommendedByDifficulty: { ...cap.recommended },
+        capacityByDifficulty: { ...cap.byDifficulty, balanced: cap.total },
+        totalDefensibleCapacity: cap.total,
+        advisoryRationale: rationale,
+        yieldNarrative: rationale,
+        easyExplanation: `${cap.byDifficulty.easy} questions that check a taught definition, command or fact.`,
+        mediumExplanation: `${cap.byDifficulty.medium} questions that apply, trace, compare or explain a taught mechanism.`,
+        hardExplanation: cap.byDifficulty.hard > 0
+            ? `${cap.byDifficulty.hard} questions that need multi-step reasoning on edge cases, what-ifs or combined ideas that were taught.`
+            : 'The lecture did not include material that supports genuinely hard questions (edge cases, multi-step reasoning).',
+        lectureDepth: {
+            rating: model.level === 'ADVANCED' ? 'Advanced' : (model.level === 'INTRODUCTORY' ? 'Introductory' : 'Intermediate'),
+            score: teaching.available ? teaching.overall : null,
+            characteristics: {}
+        },
+        teachingScore: teaching,
+        lectureModel: lectureModel.toClientPayload(model),
+        lecture_intelligence: {
+            title: model.title,
+            summary: model.summary,
+            chapters,
+            conceptMap: model.units.map(u => ({ id: u.id, name: u.subtopic, topic: u.topic })),
+            evidenceCapacity: {
+                distinctConceptCount: model.units.length,
+                recommendedQuestionCount: cap.recommended.balanced,
+                recommendedByDifficulty: { ...cap.recommended },
+                capacityByDifficulty: { ...cap.byDifficulty, balanced: cap.total },
+                totalDefensibleCapacity: cap.total,
+                advisoryRationale: rationale
+            }
+        }
+    };
+}
+
 exports.analyzeDepth = async (req, res) => {
     try {
         const { text, title, segments, modality, hasTimingData, forceRefresh } = req.body;
         const normalizedText = (text || '').trim();
+        const documents = Array.isArray(req.body.documents)
+            ? req.body.documents
+                .filter(d => d && typeof d.text === 'string' && d.text.trim().length > 0)
+                .map(d => ({ name: String(d.name || 'Material').slice(0, 120), text: d.text }))
+            : [];
         const contentSignature = crypto.createHash('sha256')
+            .update(ANALYSIS_RESPONSE_VERSION)
             .update(normalizedText)
             .update(String(title || '').trim())
             .update(String(modality || '').trim())
+            .update(JSON.stringify(documents))
             .digest('hex');
         const cachePath = path.join(DEPTH_CACHE_DIR, `${contentSignature}.json`);
 
         if (!forceRefresh && fs.existsSync(cachePath)) {
             try {
                 const cachedData = JSON.parse(fs.readFileSync(cachePath, 'utf8'));
-                return res.json(cachedData);
+                // A cached analysis is only reusable while the lecture model it points to still exists.
+                const cachedModelId = cachedData?.lectureModel?.id;
+                if (!cachedModelId || cachedData?.lectureModel?.isTopicOnly || lectureModel.getById(cachedModelId)) {
+                    return res.json(cachedData);
+                }
             } catch (_) {}
         }
 
@@ -5225,6 +5434,63 @@ exports.analyzeDepth = async (req, res) => {
             return res.json(payload);
         };
         const wordCount = (text || '').trim().split(/\s+/).filter(Boolean).length;
+        const timedInput = Array.isArray(segments) && segments.some(s => s && s.start !== null && s.start !== undefined);
+
+        // ── A short topic name (no material): questions can only come from general subject knowledge.
+        if (!timedInput && documents.length === 0 && isTopicLike(normalizedText)) {
+            // The typed text is the topic; a source/file name is not (it can be generic like "Text Input").
+            const topicName = sanitizeLectureTitle(normalizedText) || normalizedText;
+            try {
+                const tm = await lectureModel.buildTopicModel({ topic: topicName, forceRefresh: Boolean(forceRefresh) });
+                if (tm && tm.ok && tm.units.length > 0) {
+                    const payload = buildAnalysisFromLectureModel(tm, wordCount);
+                    payload.isTopicMode = true;
+                    payload.whatWasTaught = `Topic only: questions will come from standard reference notes on "${topicName}" (general knowledge, not your lecture).`;
+                    payload.lectureDepth = null;
+                    return sendAndCache(payload);
+                }
+            } catch (tmErr) {
+                console.warn('[analyzeDepth] Topic notes failed, using plain topic mode:', tmErr.message);
+            }
+            return sendAndCache(buildTopicOnlyAnalysis(topicName, wordCount));
+        }
+
+        // ── Everything else is teaching material: build the shared lecture model once.
+        if (normalizedText.length >= 15 || documents.length > 0) {
+            try {
+                const model = await lectureModel.buildLectureModel({
+                    text: normalizedText,
+                    segments: timedInput ? segments : [],
+                    documents,
+                    title: sanitizeLectureTitle(title || ''),
+                    modality,
+                    forceRefresh: Boolean(forceRefresh)
+                });
+                if (model && model.ok && model.units.length >= 1) {
+                    const payload = buildAnalysisFromLectureModel(model, wordCount);
+                    // An incomplete read (provider busy) is shown but not cached, so Retry re-reads it.
+                    return model.incomplete ? res.json(payload) : sendAndCache(payload);
+                }
+                if (model && model.ok && model.units.length === 0) {
+                    return sendAndCache({
+                        success: true,
+                        isAcademic: false,
+                        reason: 'No teachable academic content was found in this input (it looks like conversation, admin talk or non-academic material).',
+                        whatWasTaught: '',
+                        keyTopics: [],
+                        wordCount,
+                        recommendedQuestionCount: 0,
+                        recommendedByDifficulty: { easy: 0, medium: 0, hard: 0, balanced: 0 },
+                        capacityByDifficulty: { easy: 0, medium: 0, hard: 0, balanced: 0 },
+                        totalDefensibleCapacity: 0,
+                        lectureModel: lectureModel.toClientPayload(model)
+                    });
+                }
+            } catch (lmErr) {
+                console.warn('[analyzeDepth] Lecture model failed, using legacy analysis:', lmErr.message);
+            }
+        }
+
         const analysis = depthAnalyzer.analyzeLecture(text || '', { sourceModality: modality, modality });
         const pdiRouter = require('../engine/pdiRouter');
         const isVoiceInput = modality === 'VOICE_ONLY' || modality === 'HYBRID' || (Array.isArray(segments) && segments.length > 0);
@@ -5396,6 +5662,7 @@ exports.analyzeDepth = async (req, res) => {
         const supportsHard = (chars.reasoning === 'Strong' || chars.procedures === 'Strong') || (chars.reasoning !== 'Light' && (chars.examples === 'Present' || (analysis.curricularSegments && analysis.curricularSegments.length > 0)));
 
         let recommendedByDifficulty;
+        let validCap = null;
         let capacityByDifficulty;
         let totalDefensibleCapacity;
         let advisoryRationale;
@@ -5411,7 +5678,7 @@ exports.analyzeDepth = async (req, res) => {
 
         } else {
             // Step 1: Check if primary analysis yielded verified capacity
-            let validCap = (evCap && evCap.distinctConceptCount > 0 && evCap.totalDefensibleCapacity > 0) ? evCap : null;
+            validCap = (evCap && evCap.distinctConceptCount > 0 && evCap.totalDefensibleCapacity > 0) ? evCap : null;
 
             // Step 2: If primary analysis was unavailable, truncated, or produced 0 concepts, recover curriculum analysis
             if (!validCap && analysis.isAcademic && (text || '').trim().length >= 15) {
@@ -6307,3 +6574,6 @@ exports.approveQuiz = async (req, res) => {
         return res.status(500).json({ msg: 'Failed to approve quiz: ' + err.message });
     }
 };
+
+// Exposed for integration tests and evaluation harnesses (not routed).
+exports._generateQuestions = generateQuestions;

@@ -764,6 +764,11 @@ ${lateFormatted || 'Code walkthrough and implementation details presented in lat
         ? evidencePackage.pedagogicalReconstruction
         : (Array.isArray(evidencePackage?.reconstructedUnits) ? evidencePackage.reconstructedUnits : null));
 
+    if (structuredTeachingUnits && structuredTeachingUnits.length > 0 && structuredTeachingUnits.every(u => u && u.plannedDifficulty)) {
+      console.log(`🎓 [Agent 1 Planner] Using the shared lecture model plan: ${structuredTeachingUnits.filter(u => !u.isReserve).length} targets + ${structuredTeachingUnits.filter(u => u.isReserve).length} reserves.`);
+      return this._planFromLectureModel(structuredTeachingUnits, requestedDifficulty, requestedCount, evidencePackage);
+    }
+
     if (structuredTeachingUnits && structuredTeachingUnits.length > 0) {
       console.log(`🎓 [Agent 1 Planner] Consuming ${structuredTeachingUnits.length} verified pedagogical teaching units directly.`);
       return this._planFromTeachingUnits(structuredTeachingUnits, requestedDifficulty, requestedCount, evidencePackage, deficitPolicy, capacityPolicy);
@@ -5521,6 +5526,97 @@ Ensure targets are distributed across Easy, Medium, and Hard according to the re
     }
 
     return { strategy, misconceptions };
+  }
+
+  /**
+   * Plan built by the shared lecture model (engine/intelligence/lectureModel.js).
+   * The lecture model already decided, from the lecture itself, which question angle each
+   * target tests, its difficulty, the topic allocation and the misconceptions to use; this
+   * method only maps those decisions to AssessmentTargets without re-tiering them.
+   */
+  _planFromLectureModel(units, requestedDifficulty = 'Balanced', requestedCount = 5, evidencePackage = {}) {
+    const toTarget = (u, prefix, idx) => {
+      const tier = ['Easy', 'Medium', 'Hard'].includes(u.plannedDifficulty) ? u.plannedDifficulty : 'Medium';
+      const passage = u.transcriptExcerpt || u.statement || '';
+      return {
+        targetId: `${prefix}${String(idx + 1).padStart(2, '0')}`,
+        claimId: u.claimId,
+        sequenceIndex: u.sequenceIndex || idx + 1,
+        macroTopic: u.topic,
+        subtopic: u.subtopic,
+        concept: u.subtopic,
+        learningObjective: u.statement,
+        instruction: u.statement,
+        specificReasoningTask: u.angleFocus || u.statement,
+        statement: u.statement,
+        parentEnvelopeId: null,
+        formatRecommendation: u.hasCode ? 'CODE_ANALYSIS' : 'PROSE_MULTIPLE_CHOICE',
+        assessmentAngle: String(u.questionAngle || 'concept').toUpperCase(),
+        questionAngle: u.questionAngle,
+        trajectoryPhase: 'MID',
+        timestamp: u.lectureTime || null,
+        tier: 'Core',
+        dimension: u.questionAngle || 'concept',
+        cognitiveLevel: tier === 'Easy' ? 'Understand' : (tier === 'Medium' ? 'Apply' : 'Analyze'),
+        targetDifficulty: tier,
+        allocatedTier: tier,
+        allowDifficultyRelabel: String(requestedDifficulty || 'Balanced').toLowerCase() === 'balanced',
+        intendedCognitiveOperation: u.plannedOperation || 'EXPLAIN',
+        distractorStrategy: 'LECTURE_MISCONCEPTIONS',
+        distractorMisconceptions: (u.lectureMisconceptions || []).map(m => ({ concept: u.subtopic, description: m })),
+        operationalGuidance: `Question focus: ${u.angleFocus || u.statement}`,
+        evidenceType: u.provenance === 'VOICE_ONLY' ? 'VOICE' : 'SHARED',
+        provenance: u.provenance,
+        supportingEvidence: passage,
+        confidence: 'HIGH',
+        sourceChunks: [],
+        requiresExactArtifact: Boolean(u.hasCode || u.hasFormula),
+        isCapacityLimited: false,
+        structureType: 'INDEPENDENT_UNIT',
+        lectureUnitId: u.lectureUnitId,
+        lectureSlides: u.lectureSlides || []
+      };
+    };
+    const primaryUnits = units.filter(u => !u.isReserve);
+    const reserveUnits = units.filter(u => u.isReserve);
+    const assessmentTargets = primaryUnits.map((u, i) => toTarget(u, 'T', i));
+    const reserveTargets = reserveUnits.map((u, i) => toTarget(u, 'R', i));
+    // Relabelling is a safety valve, not a way to drift a Balanced quiz towards Easy: at most ~10% of
+    // the quiz may be relabelled; beyond that a mismatch is repaired/replaced at the planned tier.
+    const relabelBudget = { remaining: Math.max(1, Math.round(primaryUnits.length * 0.1)) };
+    [...assessmentTargets, ...reserveTargets].forEach(t => { t.relabelBudget = relabelBudget; });
+    const dist = { Easy: 0, Medium: 0, Hard: 0 };
+    assessmentTargets.forEach(t => { dist[t.targetDifficulty]++; });
+    const topics = Array.from(new Set(units.map(u => u.topic)));
+    return {
+      schemaVersion: PLANNER_SCHEMA_VERSION,
+      subject: evidencePackage.subject || topics[0] || 'Lecture',
+      mainTopic: evidencePackage.topic || topics[0] || 'Lecture',
+      subtopics: topics,
+      targetCount: assessmentTargets.length,
+      assessmentTargets,
+      reserveTargets,
+      requestedDifficulty,
+      requestedDistribution: { ...dist },
+      allocatedDistribution: { ...dist },
+      capacityAudit: {
+        source: 'LECTURE_MODEL',
+        requestedHardCount: dist.Hard,
+        requestedMediumCount: dist.Medium,
+        requestedEasyCount: dist.Easy,
+        reallocatedCount: 0,
+        requestedDistribution: { ...dist }
+      },
+      depthCapacity: { supportedHardCount: dist.Hard + reserveTargets.filter(t => t.targetDifficulty === 'Hard').length },
+      tcScore: null,
+      isLectureModelPlan: true,
+      curricularCoverage: {
+        eligibleConceptCount: new Set(units.map(u => u.lectureUnitId)).size,
+        plannedConceptCount: new Set(primaryUnits.map(u => u.lectureUnitId)).size,
+        plannedCoverageRatio: null,
+        distinctPlannedConcepts: Array.from(new Set(primaryUnits.map(u => u.subtopic)))
+      }
+    };
   }
 
   _planFromTeachingUnits(teachingUnits, requestedDifficulty = 'Medium', requestedCount = 5, evidencePackage = {}, deficitPolicy = null, capacityPolicy = 'ALLOW_SCOPE_SUPPLEMENTARY') {

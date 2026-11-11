@@ -987,6 +987,43 @@ export default function QuizAnalytics() {
                     </div>
                 </div>
 
+                {/* Item analysis (classical test theory) from real responses — teachers only */}
+                {!isStudent && analytics.itemAnalysis && Array.isArray(analytics.itemAnalysis.itemAnalyses) && analytics.itemAnalysis.itemAnalyses.length > 0 && (
+                    <div className="bg-white border-2 border-[var(--border-color)] p-6 sm:p-8 rounded-[2.5rem] shadow-sm space-y-3">
+                        <div>
+                            <h3 className="text-lg font-black text-[var(--text-primary)]">Question & distractor analysis</h3>
+                            <p className="text-xs text-slate-600">
+                                Difficulty p = share of students correct. Discrimination D = top 27% minus bottom 27% correct (≥ 0.3 is good; negative means the question may be flawed).
+                                A distractor is non-functioning if fewer than 5% pick it or stronger students pick it more. {analytics.itemAnalysis.reliabilityNote}
+                            </p>
+                        </div>
+                        <div className="overflow-x-auto">
+                            <table className="w-full text-xs">
+                                <thead>
+                                    <tr className="text-left text-slate-500 uppercase tracking-wider">
+                                        <th className="py-2 pr-3">Q</th><th className="py-2 pr-3">Difficulty p</th><th className="py-2 pr-3">Discrimination D</th><th className="py-2 pr-3">Distractor efficiency</th><th className="py-2 pr-3">Non-functioning distractors</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {analytics.itemAnalysis.itemAnalyses.map((it, i) => (
+                                        <tr key={i} className="border-t border-slate-100">
+                                            <td className="py-2 pr-3 font-black">#{i + 1}</td>
+                                            <td className="py-2 pr-3">{Number(it.pValue).toFixed(2)}</td>
+                                            <td className={`py-2 pr-3 font-bold ${it.discriminationD < 0 ? 'text-rose-600' : it.discriminationD >= 0.3 ? 'text-emerald-700' : 'text-amber-700'}`}>
+                                                {Number(it.discriminationD).toFixed(2)} <span className="font-medium text-slate-500">({String(it.discriminationRating || '').replace(/_/g, ' ').toLowerCase()})</span>
+                                            </td>
+                                            <td className="py-2 pr-3">{Math.round((it.distractorEfficiency || 0) * 100)}%</td>
+                                            <td className="py-2 pr-3">
+                                                {(it.optionsAnalysis || []).filter(o => !o.isCorrectKey && /NON_FUNCTIONING|REVERSE|NEGATIVE/i.test(o.status || '')).map(o => o.optionText).join('; ') || '—'}
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                )}
+
                 {/* Tactical Memory Map Leaderboard — Hidden for Students */}
                 {!isStudent && analytics.leaderboard && analytics.leaderboard.length > 0 && (
                     <div className="bg-white border-2 border-[var(--border-color)] p-6 sm:p-8 rounded-[2.5rem] shadow-sm">

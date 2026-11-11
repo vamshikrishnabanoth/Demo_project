@@ -31,6 +31,7 @@ const EVALUATOR_FAILURE_CODES = {
   ACCIDENTAL_CORRECT_DISTRACTOR: 'ACCIDENTAL_CORRECT_DISTRACTOR',
   TIER_COGNITIVE_MISMATCH: 'TIER_COGNITIVE_MISMATCH',
   STEM_ANSWER_MISALIGNMENT: 'STEM_ANSWER_MISALIGNMENT',
+  STEM_NOT_SELF_CONTAINED: 'STEM_NOT_SELF_CONTAINED',
   EVALUATION_CONTRACT_VIOLATION: 'EVALUATION_CONTRACT_VIOLATION',
   UNGROUNDED_EVIDENCE_CLAIM: 'UNGROUNDED_EVIDENCE_CLAIM',
   UNGROUNDED_RELATIONAL_CLAIM: 'UNGROUNDED_RELATIONAL_CLAIM',
@@ -56,6 +57,30 @@ const EVALUATOR_FAILURE_CODES = {
   REJECTED_TECHNICAL_CORRECTNESS: 'REJECTED_TECHNICAL_CORRECTNESS',
   DETERMINISTIC_INVARIANT_VIOLATION: 'DETERMINISTIC_INVARIANT_VIOLATION'
 };
+
+/**
+ * Hard by reasoning, not wording: the target's planned angle is multi-step and the stem itself
+ * contains the concrete material the student must work through (several values / a vector or
+ * matrix / a code or command block / at least two explicit conditions).
+ */
+function isGenuineMultiStepHard(candidateMCQ = {}, target = {}) {
+  const angle = String(target.questionAngle || '').toLowerCase();
+  if (!['trace', 'calculation', 'edge_case', 'debug', 'scenario', 'output', 'application'].includes(angle)) return false;
+  const stem = String(candidateMCQ.questionText || candidateMCQ.questionStem || '');
+  const numbers = (stem.match(/\b\d+(?:\.\d+)?\b/g) || []).length;
+  const hasVector = /[\[(]\s*-?\d+\s*,\s*-?\d+/.test(stem);
+  const hasBlock = /\n\s*\S.*\n\s*\S/.test(stem) || /```/.test(stem);
+  const conditions = (stem.match(/\b(?:if|when|while|after|then|but|unless|given that)\b/gi) || []).length;
+  return hasVector || hasBlock || numbers >= 4 || (conditions >= 2 && stem.split(/\s+/).length >= 25);
+}
+
+/** The keyword classifier calls data-heavy stems "RECALL"; several data lines or vectors mean there is work to do. */
+function hasSubstantialData(candidateMCQ = {}) {
+  const stem = String(candidateMCQ.questionText || candidateMCQ.questionStem || '');
+  const vectors = (stem.match(/[\[(]\s*-?\d+\s*(?:,\s*-?\d+\s*)+[\])]/g) || []).length;
+  const dataLines = stem.split('\n').filter(l => /\d/.test(l) && l.trim().length > 3).length;
+  return vectors >= 3 || dataLines >= 3 || /```[\s\S]*\n[\s\S]*\n[\s\S]*```/.test(stem);
+}
 
 const OPTION_VERDICTS = {
   VALID_KEY: 'VALID_KEY',
@@ -280,7 +305,7 @@ EVALUATION DIRECTIVES:
    - Evaluate the actual cognitive operation demanded by the question:
      * Easy (RECALL/RECOGNIZE): Factual recall, definition recognition.
      * Medium (COMPARE/TRACE/EXPLAIN_MECHANISM): Operational mechanism, sequential state transitions, comparative tradeoffs.
-     * Hard (APPLY/DIAGNOSE/PREDICT_CONSTRAINT): Concrete scenario diagnosis, constraint resolution, fault prediction.
+     * Hard (APPLY/DIAGNOSE/PREDICT_CONSTRAINT): Concrete scenario diagnosis, constraint resolution, fault prediction — and also a genuinely multi-step trace or calculation on concrete data given in the stem (e.g. running an algorithm over several steps, or combining two taught rules). A single-step lookup or one arithmetic operation is not Hard; length or vocabulary never makes a question Hard.
    - Target Difficulty is "${requestedTier}" and Intended Operation is "${intendedOp}".
    - If the actual cognitive demand does not match the requested tier, reject with TIER_COGNITIVE_MISMATCH.
 6b. TRANSFORMATION OF ANALOGIES INTO TECHNICAL ASSESSMENTS (CRITERION D):
@@ -683,6 +708,42 @@ ${evidenceContext}
     const hasDeterministicMismatch = Array.isArray(preAudit.failureReasons) &&
       preAudit.failureReasons.includes(EVALUATOR_FAILURE_CODES.TIER_COGNITIVE_MISMATCH);
     const hasCriticMismatch = parsed.cognitiveAudit && parsed.cognitiveAudit.isCalibrated === false;
+
+    // Balanced quizzes: a question that is otherwise valid but measures as a different tier is
+    // relabelled to its measured difficulty instead of being thrown away (difficulty is measured,
+    // not assumed). Single-tier requests keep the strict rejection so the teacher gets the tier asked for.
+    const relabelAllowed = target && target.allowDifficultyRelabel && (!target.relabelBudget || target.relabelBudget.remaining > 0);
+    if ((hasDeterministicMismatch || hasCriticMismatch) && relabelAllowed) {
+      const otherFailures = (Array.isArray(parsed.failureReasons) ? parsed.failureReasons : [])
+        .filter(r => r && r !== EVALUATOR_FAILURE_CODES.TIER_COGNITIVE_MISMATCH);
+      const preOther = (Array.isArray(preAudit.failureReasons) ? preAudit.failureReasons : [])
+        .filter(r => r && r !== EVALUATOR_FAILURE_CODES.TIER_COGNITIVE_MISMATCH);
+      if (otherFailures.length === 0 && preOther.length === 0) {
+        const demand = String(parsed.cognitiveAudit?.evaluatedCognitiveDemand || preAudit.cognitiveAudit?.evaluatedCognitiveDemand || '').toUpperCase();
+        const measured = demand === 'RECALL' ? 'Easy' : (demand === 'DIAGNOSE' ? 'Hard' : 'Medium');
+        const planned = target.targetDifficulty || requestedTier;
+        target.plannedDifficulty = target.plannedDifficulty || planned;
+        target.targetDifficulty = measured;
+        target.difficultyRelabeled = measured !== planned;
+        if (measured !== planned && target.relabelBudget) target.relabelBudget.remaining--;
+        if (candidateMCQ && candidateMCQ.metadata) candidateMCQ.metadata.targetDifficulty = measured;
+        parsed.status = 'PASS';
+        parsed.passed = true;
+        parsed.verdict = 'PASS';
+        parsed.failureReasons = [];
+        parsed.failureReason = null;
+        parsed.cognitiveAudit = {
+          ...(parsed.cognitiveAudit || {}),
+          requestedDifficulty: planned,
+          measuredDifficulty: measured,
+          evaluatedCognitiveDemand: demand || null,
+          isCalibrated: true,
+          relabeled: measured !== planned,
+          mismatchDetails: measured !== planned ? `Planned ${planned}; measured ${measured} (${demand || 'unknown demand'}). Relabelled.` : null
+        };
+        return parsed;
+      }
+    }
 
     if (hasDeterministicMismatch || hasCriticMismatch) {
       if (!Array.isArray(parsed.failureReasons)) {
@@ -1169,6 +1230,18 @@ ${evidenceContext}
       }
     }
 
+    // 3b. Self-containment: the stem must not depend on an example, table or passage the student cannot see.
+    const stemForContext = String(candidateMCQ.questionText || candidateMCQ.questionStem || '');
+    const MISSING_CONTEXT = /\b(?:as (?:in|shown in|given in) the (?:example|table|figure|diagram|lecture|slides?|notes)|(?:in|from) the (?:example|problem|scenario|program|code|table) (?:described|discussed|given|shown|above|earlier|in class)|(?:described|discussed|shown|given) (?:above|earlier|in (?:the )?(?:lecture|class|slides?|notes))|the (?:above|previous|earlier) (?:example|table|figure|program|code|snippet|matrix)|as discussed|as explained in class)\b|\b(?:problem|example|scenario|program|code|table|algorithm|figure|matrix) (?:described|discussed)(?=[,.?;:]|\s+(?:above|earlier|before|previously|in\b))/i;
+    // "the given HTML / the following code" with nothing actually given (no code block or line breaks).
+    const DANGLING_GIVEN = /\b(?:the given|the following|the above|this) (?:html|code|program|snippet|table|matrix|graph|query|output|example|figure|diagram|schedule|data)\b/i;
+    const hasInlineArtifact = /\n|```|<(\w+)[^>]*>[^<]*<\/\1>|\[[^\]]*\d[^\]]*\]|=\s*\S/.test(stemForContext);
+    if (MISSING_CONTEXT.test(stemForContext) || (DANGLING_GIVEN.test(stemForContext) && !hasInlineArtifact)) {
+      if (!failureReasons.includes(EVALUATOR_FAILURE_CODES.STEM_NOT_SELF_CONTAINED)) {
+        failureReasons.push(EVALUATOR_FAILURE_CODES.STEM_NOT_SELF_CONTAINED);
+      }
+    }
+
     // 4. Cognitive Demand Calibration Heuristic (Multi-Feature Analysis)
     const qLower = (candidateMCQ.questionText || '').toLowerCase();
     const cognitiveEvaluation = this._evaluateCognitiveDemand(candidateMCQ, target);
@@ -1179,10 +1252,17 @@ ${evidenceContext}
     let mismatchDetails = null;
 
     if (requestedTier === 'Hard') {
-      if (evaluatedDemand === 'UNCERTAIN') {
+      if (evaluatedDemand === 'UNCERTAIN' && isGenuineMultiStepHard(candidateMCQ, target)) {
+        // The keyword classifier could not label it, but the stem carries the multi-step material itself.
+        isCalibrated = true;
+      } else if (evaluatedDemand === 'UNCERTAIN') {
         isCalibrated = false;
         mismatchDetails = `Question cognitive demand could not be determined with sufficient confidence (UNCERTAIN: ${demandReasoning}); failing conservative calibration for requested Hard tier (${intendedOp})`;
         failureReasons.push(EVALUATOR_FAILURE_CODES.TIER_COGNITIVE_MISMATCH);
+      } else if (evaluatedDemand !== 'DIAGNOSE' && isGenuineMultiStepHard(candidateMCQ, target) && (evaluatedDemand !== 'RECALL' || hasSubstantialData(candidateMCQ))) {
+        // Lecture-planned multi-step angles (trace, calculation, edge case, debug, scenario) are Hard when the
+        // stem actually carries the multi-step material (data, vectors, code or several conditions) — not by length.
+        isCalibrated = true;
       } else if (evaluatedDemand !== 'DIAGNOSE') {
         // Hard tier strictly requires genuine scenario diagnosis or multi-constraint fault analysis.
         // Operations like RECALL, EXPLAIN_MECHANISM, COMPARE, or TRACE belong to Easy or Medium tiers.
@@ -1776,6 +1856,9 @@ ${evidenceContext}
       if (failureReasons.includes('STYLE_OPTION_LENGTH_ASYMMETRY') || failureReasons.includes('STYLE_DUPLICATE_OPTIONS')) {
         instructions.push('Style compliance: Ensure all 4 options are distinct, mutually exclusive concepts balanced in length (within 2.0x ratio).');
       }
+    }
+    if (failureReasons.includes(EVALUATOR_FAILURE_CODES.STEM_NOT_SELF_CONTAINED)) {
+      instructions.push('Self-containment: the stem refers to an example, table or passage the student cannot see. Put every value, matrix, code line or fact the student needs directly into the stem (keep it short), and remove phrases like "as in the example" or "described above".');
     }
     if (failureReasons.includes('FORMAT_MISMATCH_UNWANTED_CODE')) {
       instructions.push('Format alignment: Remove code block/snippet. Present as conceptual multiple-choice prose without programming code.');

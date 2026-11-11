@@ -1724,6 +1724,32 @@ ${target.distractorMisconceptions.map(m => `- ${m.concept}: ${m.description}`).j
       validTargets.some(t => /command|terminal|bash|linux|python|c\+\+|code|function|class|pointer|syntax/i.test(`${t.concept} ${t.instruction}`))
     );
 
+    const QUESTION_ANGLE_GUIDE = {
+      recall: 'check a taught definition, term, command or fact directly',
+      concept: 'check understanding of what an idea means or implies (not word-for-word recall)',
+      mechanism: 'ask how or why something works the way it was explained',
+      trace: 'give a short concrete input/state and ask for the state after following the taught steps',
+      output: 'give a short code fragment or command (inside the stem) and ask what it prints, returns or does',
+      calculation: 'give concrete numbers and ask for the computed result using the taught method; distractors are near-miss calculations',
+      debug: 'give a short fragment or command with one mistake and ask what is wrong or what error/result occurs',
+      comparison: 'ask about a specific difference between two taught ideas',
+      edge_case: 'ask what happens at a boundary or unusual case that follows from what was taught',
+      application: 'give a short realistic situation and ask which taught idea/command applies or what to do',
+      scenario: 'give a short realistic situation and ask for the correct action or consequence'
+    };
+
+    // Hard = at least two dependent reasoning steps on concrete material written into the stem.
+    const HARD_RECIPE = {
+      calculation: 'put all the numbers/vectors/matrices in the stem and ask for a result that needs at least two dependent computations using the taught method (e.g. compute Need, then decide which process can run first; compute an address, then the page/frame it falls in). One subtraction or lookup is NOT Hard.',
+      trace: 'give an initial state and a sequence of at least three operations/steps in the stem, and ask for the final state or the step at which something specific happens. Distractors are the states after a skipped, reordered or off-by-one step.',
+      output: 'give a short code fragment or command sequence (inside the stem) whose result depends on at least two interacting lines or a non-obvious rule taught in class; ask what it prints/does.',
+      debug: 'give a short fragment or command sequence with one subtle mistake whose effect only shows after following two or more steps; ask what goes wrong or why.',
+      edge_case: 'give a concrete boundary situation (exact values or state) where the student must apply two taught rules together to decide what happens; not a definition of the boundary.',
+      scenario: 'give a short concrete situation where the student must combine two taught ideas to choose the correct action or consequence.',
+      application: 'give a short concrete situation where the student must combine two taught ideas to choose the correct action or consequence.',
+      default: 'require at least two dependent reasoning steps on concrete data, code or a situation written into the stem, combining taught ideas. A single fact, definition, lookup or one-step computation is NOT Hard, however long the wording.'
+    };
+
     // Build evidence context per target (bounded to ~1200 chars per target to avoid prompt bloat)
     const TIER_DEMAND = {
       Easy: 'Easy — one-step understanding: recognise a correct definition, property or direct fact that was taught. The student still has to think; no trick wording.',
@@ -1747,7 +1773,7 @@ Target ID: ${t.targetId}
 Concept: ${t.concept}
 Required difficulty: ${TIER_DEMAND[tier] || TIER_DEMAND.Medium}
 Cognitive operation: ${op}
-Learning objective: ${t.instruction || t.operationalGuidance || 'Test conceptual and applied understanding.'}
+${t.questionAngle && QUESTION_ANGLE_GUIDE[t.questionAngle] ? `Question type: ${QUESTION_ANGLE_GUIDE[t.questionAngle]}\n` : ''}${tier === 'Hard' ? `HARD RECIPE (mandatory): ${HARD_RECIPE[t.questionAngle] || HARD_RECIPE.default} Write the data on separate lines (e.g. "P1: Allocation [0,1,0], Max [7,5,3]" or code lines) so the prose sentence stays under 35 words.\n` : ''}Learning objective: ${t.instruction || t.operationalGuidance || 'Test conceptual and applied understanding.'}
 ${misconceptions}Evidence (the ONLY source of truth for this question):
 ${(ctx || '').slice(0, 1200).trim()}
 `;
@@ -1770,6 +1796,12 @@ Rules:
 - If you include code, keep it to the few lines the question needs (at most about 12).
 - "correctAnswer" must be copied character-for-character from "options", and "correctAnswerIndex" must point to it. Vary the position of the correct answer across questions.
 - Match the required difficulty exactly as described for each target.
+- Each question must test a different fact or skill from every other question in this batch; never ask the same thing twice in different words.
+- When the question asks to predict an output, state, value or error, the stem must NOT contain that output (show only the input/commands/code before it).
+- Every distractor must be definitely wrong. If an option could be argued correct (even partly, or under a common reading), replace it.
+- Every distractor must be something a student who attended this class could genuinely believe. Never use joke, extreme or unrelated options (e.g. "it deletes all files", "the system trash folder", "it encrypts the data") unless the lecture itself raised that confusion. Prefer options built from other ideas, commands, values or steps taught in the same lecture.
+- No giveaway clues: do not repeat a distinctive word or phrase from the stem in the correct option only, and do not make the correct option the only one that is complete, qualified or specific.
+- Write the stem as a natural classroom question a teacher would ask; prefer a short concrete situation, code fragment, command or value over abstract wording.
 
 Output ONLY a JSON array (no markdown fences, no commentary) of objects with this schema:
 {
@@ -1795,7 +1827,21 @@ Generate a JSON array of exactly ${validTargets.length} distinct, rigorous MCQs 
 
     try {
       const maxTokens = Math.min(6000, Math.max(1800, validTargets.length * 900));
-      responseText = await llmRouter.complete({
+      // Multi-step Hard questions need a stronger reasoning model: batches containing Hard targets go to the
+      // Gemini chain (3.5-flash first, then lighter models, then Groq) instead of the fast default model.
+      const hasHard = validTargets.some(t => t.targetDifficulty === 'Hard');
+      if (hasHard && process.env.HARD_GENERATION_PROVIDER !== 'groq' && process.env.GEMINI_API_KEY) {
+        try {
+          const r = await require('../intelligence/lectureModel')._internal.callJson({
+            systemPrompt, prompt: userPrompt, maxTokens: Math.max(maxTokens, 6000), operation: 'HARD_BATCH_GENERATION'
+          });
+          responseText = JSON.stringify(r.data);
+          console.log(`🧠 [Agent 2 Batch] Batch with Hard targets generated by ${r.provider}:${r.model}.`);
+        } catch (strongErr) {
+          console.warn(`⚠️ [Agent 2 Batch] Strong-model batch failed (${strongErr.message.slice(0, 120)}); using default model.`);
+        }
+      }
+      if (!responseText) responseText = await llmRouter.complete({
         prompt: userPrompt,
         systemPrompt: systemPrompt,
         temperature: 0.2,

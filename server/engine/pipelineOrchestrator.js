@@ -39,6 +39,47 @@ class PipelineOrchestrator {
   }
 
   /**
+   * Lecture-model plans: take the reserve that keeps the planned difficulty mix — same tier as
+   * the slot being replaced, preferably from a different teaching point. The reserve keeps its own
+   * question angle and instructions (they were planned from the lecture), so nothing is rewritten.
+   */
+  takeLectureModelReserve(pool, wantTier, excludeUnitId = null, replacedTarget = null) {
+    // A slot that keeps failing at Hard (3 attempts) is filled at Medium rather than looping; fallbacks
+    // always go to the adjacent difficulty first, never straight from Hard to Easy.
+    const attempts = ((replacedTarget && replacedTarget.slotAttempts) || 0) + 1;
+    const slotTier = (replacedTarget && replacedTarget.slotPlannedTier) || wantTier;
+    let tier = wantTier;
+    if (tier === 'Hard' && attempts >= 3) tier = 'Medium';
+    const ADJACENT = { Hard: ['Hard', 'Medium', 'Easy'], Medium: ['Medium', 'Easy', 'Hard'], Easy: ['Easy', 'Medium', 'Hard'] };
+    let idx = -1;
+    for (const t of (ADJACENT[tier] || [tier])) {
+      idx = pool.findIndex(r => r.allocatedTier === t && r.lectureUnitId !== excludeUnitId);
+      if (idx === -1) idx = pool.findIndex(r => r.allocatedTier === t);
+      if (idx !== -1) break;
+    }
+    if (idx === -1) idx = 0;
+    const [reserve] = pool.splice(idx, 1);
+    if (reserve) {
+      reserve.targetDifficulty = reserve.allocatedTier || reserve.targetDifficulty;
+      reserve.slotAttempts = attempts;
+      reserve.slotPlannedTier = slotTier;
+    }
+    return reserve;
+  }
+
+  /** Tier with the largest shortfall against a lecture-model plan's allocation (or null). */
+  lectureModelTierNeeded(plan, delivered = []) {
+    const want = plan?.allocatedDistribution || {};
+    let best = null, bestGap = 0;
+    for (const tier of ['Hard', 'Medium', 'Easy']) {
+      const have = delivered.filter(q => (q.metadata?.targetDifficulty || q.metadata?.tier) === tier).length;
+      const gap = (want[tier] || 0) - have;
+      if (gap > bestGap) { bestGap = gap; best = tier; }
+    }
+    return best;
+  }
+
+  /**
    * Determines the evidence-defensible difficulty tier for a promoted reserve target.
    * - Never forces a reserve into Hard solely to satisfy a Balanced quota.
    * - Respects evidence-supported concept depth.
@@ -222,6 +263,13 @@ class PipelineOrchestrator {
       }
       if (sessionInputs.evidenceCapacity && !evidencePackage.evidenceCapacity) {
         evidencePackage.evidenceCapacity = sessionInputs.evidenceCapacity;
+      }
+
+      // The shared lecture model read the whole input and found teachable points; the keyword
+      // heuristic (which rejects short code/terminal material) must not overrule it.
+      if (evidencePackage.isAcademic === false && sessionInputs.lectureModelPlan && Array.isArray(sessionInputs.teachingUnits) && sessionInputs.teachingUnits.length > 0) {
+        evidencePackage.isAcademic = true;
+        evidencePackage.academicFailureReason = null;
       }
 
       if (evidencePackage.isAcademic === false) {
@@ -636,6 +684,7 @@ class PipelineOrchestrator {
       const defaultConcurrency = 2;
       const concurrencyLimit = Math.max(1, Math.min(5, parseInt(process.env.GENERATION_CONCURRENCY, 10) || defaultConcurrency));
       let activeWorkers = 0;
+      const lmReserveHelper = this;
       const determineFeasibleReserveTier = (reserve, preferredTier) => this.determineFeasibleReserveTier(reserve, preferredTier, {
         agent1Planner,
         evidencePackage,
@@ -864,7 +913,12 @@ class PipelineOrchestrator {
 
           // Auto-promote reserve target to fulfill question count
           replenishReservePoolIfEmpty();
-          if (passingQuestions.length < requestedCount && activeReservePool.length > 0) {
+          if (passingQuestions.length < requestedCount && activeReservePool.length > 0 && plan?.isLectureModelPlan) {
+            const wantTier = currentTarget.allocatedTier || currentTarget.plannedDifficulty || tier;
+            const nextReserve = lmReserveHelper.takeLectureModelReserve(activeReservePool, wantTier, currentTarget.lectureUnitId, currentTarget);
+            candidateQueue.push(nextReserve);
+            console.log(`🔄 [Orchestrator] Promoted reserve target ${nextReserve.targetId} ("${nextReserve.concept}") at planned tier ${nextReserve.targetDifficulty} to replace unfulfilled ${wantTier} target ${currentTarget.targetId}`);
+          } else if (passingQuestions.length < requestedCount && activeReservePool.length > 0) {
             const nextReserve = activeReservePool.shift();
             const allocatedTier = determineFeasibleReserveTier(nextReserve, tier);
             nextReserve.targetDifficulty = allocatedTier;
@@ -1150,7 +1204,12 @@ class PipelineOrchestrator {
 
           // Auto-promote reserve target to fulfill question count!
           replenishReservePoolIfEmpty();
-          if (passingQuestions.length < requestedCount && activeReservePool.length > 0) {
+          if (passingQuestions.length < requestedCount && activeReservePool.length > 0 && plan?.isLectureModelPlan) {
+            const wantTier = currentTarget.allocatedTier || currentTarget.plannedDifficulty || currentTarget.targetDifficulty;
+            const nextReserve = lmReserveHelper.takeLectureModelReserve(activeReservePool, wantTier, currentTarget.lectureUnitId, currentTarget);
+            candidateQueue.push(nextReserve);
+            console.log(`🔄 [Orchestrator] Promoted reserve target ${nextReserve.targetId} ("${nextReserve.concept}") at planned tier ${nextReserve.targetDifficulty} to replace rejected ${wantTier} target ${currentTarget.targetId}`);
+          } else if (passingQuestions.length < requestedCount && activeReservePool.length > 0) {
             // Determine tier to maintain balance while respecting evidence-supported concept depth:
             let preferredTier = requestedDifficulty;
             if (String(requestedDifficulty || '').toLowerCase() === 'balanced') {
@@ -1215,6 +1274,19 @@ class PipelineOrchestrator {
           break; // Exit batch loop, let worker pool handle individually
         }
 
+        // Evaluate every candidate of the batch concurrently (each evaluation is an independent LLM call);
+        // outcomes are then recorded one by one, in order, so shared bookkeeping stays sequential.
+        const batchRepairAllowance = Math.max(0, MAX_QUIZ_REPAIRS - repairMetrics.totalAttempted);
+        let repairSlotsGiven = 0;
+        const parallelEvals = batchTargets.map((t, b) => {
+          const c = batchCandidates[b];
+          if (!c || c.isUnfulfilled) return Promise.resolve(null);
+          const allowRepair = repairSlotsGiven++ < batchRepairAllowance;
+          return agent3Evaluator.evaluateAndRepairQuestion(c, t, evidencePackage, agent2Generator, { allowRepair })
+            .then(evalResult => ({ evalResult }), evalErr => ({ evalErr }));
+        });
+        const settledEvals = await Promise.all(parallelEvals);
+
         for (let b = 0; b < batchTargets.length; b++) {
           if (passingQuestions.length >= requestedCount) break;
           const target = batchTargets[b];
@@ -1249,10 +1321,11 @@ class PipelineOrchestrator {
             continue;
           }
 
-          // Evaluate candidate using agent3Evaluator
+          // Evaluation already ran concurrently above; record its outcome.
           try {
-            const allowRepair = (repairMetrics.totalAttempted < MAX_QUIZ_REPAIRS);
-            const evalResult = await agent3Evaluator.evaluateAndRepairQuestion(candidate, target, evidencePackage, agent2Generator, { allowRepair });
+            const settled = settledEvals[b] || {};
+            if (settled.evalErr) throw settled.evalErr;
+            const evalResult = settled.evalResult;
             const repairAttempted = Boolean(evalResult.repair?.attempted);
             const repairSuccessful = Boolean(evalResult.repair?.successful);
             if (repairAttempted) {
@@ -1584,7 +1657,10 @@ class PipelineOrchestrator {
             break;
           }
 
-          const nextReserve = activeReservePool.shift();
+          const neededTier = plan?.isLectureModelPlan ? lmReserveHelper.lectureModelTierNeeded(plan, validatedQuestions) : null;
+          const nextReserve = plan?.isLectureModelPlan
+            ? lmReserveHelper.takeLectureModelReserve(activeReservePool, neededTier || 'Medium')
+            : activeReservePool.shift();
           if (!nextReserve) break;
 
           const cSig = normConceptSig(nextReserve.concept);
@@ -1609,13 +1685,15 @@ class PipelineOrchestrator {
             preferredTier = (hardDelivered < targetHard) ? 'Hard' : ((easyDelivered < targetEasy) ? 'Easy' : 'Medium');
           }
 
-          const allocatedTier = determineFeasibleReserveTier(nextReserve, preferredTier);
-          nextReserve.targetDifficulty = allocatedTier;
-          const cognitiveBp = agent1Planner.getCognitiveBlueprint(allocatedTier, nextReserve.dimension || 'Conceptual');
-          nextReserve.intendedCognitiveOperation = cognitiveBp.intendedCognitiveOperation;
-          nextReserve.bloomLevel = cognitiveBp.bloomLevel;
-          nextReserve.operationalGuidance = cognitiveBp.operationalGuidance;
-          nextReserve.instruction = `${cognitiveBp.operationalGuidance} Test concept: ${nextReserve.concept}.`;
+          if (!plan?.isLectureModelPlan) {
+            const allocatedTier = determineFeasibleReserveTier(nextReserve, preferredTier);
+            nextReserve.targetDifficulty = allocatedTier;
+            const cognitiveBp = agent1Planner.getCognitiveBlueprint(allocatedTier, nextReserve.dimension || 'Conceptual');
+            nextReserve.intendedCognitiveOperation = cognitiveBp.intendedCognitiveOperation;
+            nextReserve.bloomLevel = cognitiveBp.bloomLevel;
+            nextReserve.operationalGuidance = cognitiveBp.operationalGuidance;
+            nextReserve.instruction = `${cognitiveBp.operationalGuidance} Test concept: ${nextReserve.concept}.`;
+          }
 
           // Invariant Rule 4: Process through ALL evaluation and repair gates (no bypassing!)
           const outcome = await processSingleTarget(nextReserve, 1);
@@ -1656,7 +1734,7 @@ class PipelineOrchestrator {
                   if (!passingQuestions.includes(candidateMCQ)) {
                     passingQuestions.push(candidateMCQ);
                   }
-                  console.log(`✅ [Orchestrator] Replenished question ${validatedQuestions.length}/${requestedCount} via reserve ${nextReserve.targetId} ("${nextReserve.concept}") at tier ${allocatedTier}.`);
+                  console.log(`✅ [Orchestrator] Replenished question ${validatedQuestions.length}/${requestedCount} via reserve ${nextReserve.targetId} ("${nextReserve.concept}") at tier ${nextReserve.targetDifficulty}.`);
                 }
               } else {
                 console.warn(`⚠️ [Orchestrator] Replenishment candidate ${nextReserve.targetId} rejected at Grounding Gate: ${gCheck.reason}`);

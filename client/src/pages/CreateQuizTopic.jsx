@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import AgentPipelineLoader from '../components/loaders/AgentPipelineLoader';
 import TeachingScoreModal from '../components/quiz/TeachingScoreModal';
+import LectureUnderstandingPanel from '../components/quiz/LectureUnderstandingPanel';
 import toast from 'react-hot-toast';
 import {
     createSessionRecord,
@@ -58,6 +59,7 @@ export default function CreateQuizTopic() {
         if (analysis.capacityByDifficulty) setCapacityByDifficulty(analysis.capacityByDifficulty);
         if (analysis.totalDefensibleCapacity !== undefined) setTotalDefensibleCapacity(analysis.totalDefensibleCapacity);
         if (analysis.lecture_intelligence) setLectureIntel(analysis.lecture_intelligence);
+        setLectureModelData(analysis.lectureModel || null);
         setDepthError(false);
         setDepthLoading(false);
     }, []);
@@ -77,6 +79,7 @@ export default function CreateQuizTopic() {
         setCapacityByDifficulty(null);
         setTotalDefensibleCapacity(null);
         setLectureIntel(null);
+        setLectureModelData(null);
         setDepthError(false);
         setDepthLoading(false);
         try {
@@ -206,20 +209,29 @@ export default function CreateQuizTopic() {
     const [depthError, setDepthError] = useState(false);
     const [depthRetryCount, setDepthRetryCount] = useState(0);
     const [lectureIntel, setLectureIntel] = useState(null);
-    // Friendly calculation for teaching clarity score number out of 100
-    const teachingScore = useMemo(() => {
-        if (!lectureDepth) return 80;
-        if (typeof lectureDepth.score === 'number' && lectureDepth.score > 0) return Math.round(lectureDepth.score);
-        if (Array.isArray(lectureDepth.breakdown?.earnedRubric) && lectureDepth.breakdown.earnedRubric.length > 0) {
-            const sum = lectureDepth.breakdown.earnedRubric.reduce((acc, r) => acc + (Number(r.earned) || 0), 0);
-            if (sum > 0) return Math.min(100, Math.round(sum));
-        }
-        const r = (lectureDepth.rating || '').toLowerCase();
-        if (r.includes('comprehens') || r.includes('advanced')) return 88;
-        if (r.includes('develop')) return 76;
-        if (r.includes('introduct')) return 64;
-        return 82;
-    }, [lectureDepth]);
+    // Shared lecture model from /analyze-depth (summary, timeline, topics, capacity, teaching score).
+    const [lectureModelData, setLectureModelData] = useState(null);
+    // Evidence-based teaching score; null when it could not be judged (never a made-up fallback).
+    const teachingEval = lectureModelData?.teaching || null;
+    // Topics the teacher unticked (left out of the quiz) and her choice when a request exceeds capacity.
+    const [excludedTopics, setExcludedTopics] = useState([]);
+    const [shortfallPrompt, setShortfallPrompt] = useState(null);
+    const deficitChoiceRef = useRef(null);
+    useEffect(() => { setExcludedTopics([]); deficitChoiceRef.current = null; }, [lectureModelData?.id]);
+    // A new count, difficulty or topic selection needs a fresh decision.
+    useEffect(() => { deficitChoiceRef.current = null; }, [difficulty, excludedTopics]);
+    const toggleTopic = useCallback((name) => {
+        setExcludedTopics(prev => prev.includes(name) ? prev.filter(n => n !== name) : [...prev, name]);
+    }, []);
+    // Capacity of the kept topics, per difficulty (same rule the server uses when planning).
+    const keptCapacity = useMemo(() => {
+        if (!lectureModelData || lectureModelData.isTopicOnly || !Array.isArray(lectureModelData.units)) return null;
+        const by = { easy: 0, medium: 0, hard: 0 };
+        lectureModelData.units.filter(u => !excludedTopics.includes(u.topic))
+            .forEach(u => (u.angles || []).forEach(a => { if (by[a.difficulty] !== undefined) by[a.difficulty]++; }));
+        return { ...by, balanced: by.easy + by.medium + by.hard };
+    }, [lectureModelData, excludedTopics]);
+    const teachingScore = teachingEval?.available ? teachingEval.overall : null;
 
     const isTopicOnly = inputs.length > 0 && inputs.every(inp => inp.type === 'text');
     const isPureTopic = isTopicOnly;
@@ -426,12 +438,16 @@ export default function CreateQuizTopic() {
         } else {
             textToAnalyze = docAndTextInputs.map(d => (d.content || '').trim()).join('\n\n');
             primaryName = docAndTextInputs[0].source_name || '';
-            const isAllText = docAndTextInputs.every(i => i.type === 'text');
-            modality = isAllText ? 'TOPIC' : 'DOCUMENT_ONLY';
+            // The server decides whether short text is a topic name or pasted material (notes, code, terminal output).
+            modality = 'DOCUMENT_ONLY';
         }
+        // Audio + slides/notes: send the material too, so the analysis cross-references it with the speech.
+        const materialDocs = voiceInputs.length > 0
+            ? docAndTextInputs.map(d => ({ name: d.source_name || d.file?.name || 'Material', text: (d.content || '').trim() })).filter(d => d.text.length > 0)
+            : [];
 
-        if (textToAnalyze.length > 25) {
-            const currentSignature = `${primaryName}::${textToAnalyze.length}::${textToAnalyze.slice(0, 100)}::${textToAnalyze.slice(-100)}`;
+        if (textToAnalyze.length > 2) {
+            const currentSignature = `${primaryName}::${textToAnalyze.length}::${textToAnalyze.slice(0, 100)}::${textToAnalyze.slice(-100)}::${materialDocs.map(d => d.text.length).join(',')}`;
             if (lastAnalyzedSignatureRef.current === currentSignature && lectureDepth && depthRetryCount === 0) {
                 return;
             }
@@ -445,9 +461,10 @@ export default function CreateQuizTopic() {
                         title: primaryName,
                         modality,
                         segments: voiceSegs,
+                        documents: materialDocs,
                         hasTimingData: voiceSegs.length > 0 && voiceSegs.some(s => s.start !== null && s.start !== undefined),
                         forceRefresh: depthRetryCount > 0
-                    });
+                    }, { timeout: 180000 });
                     if (res.data && res.data.isAcademic) {
                         const analysisPayload = {
                             signature: currentSignature,
@@ -462,7 +479,8 @@ export default function CreateQuizTopic() {
                             recommendedByDifficulty: res.data.recommendedByDifficulty || res.data.lecture_intelligence?.evidenceCapacity?.recommendedByDifficulty || null,
                             capacityByDifficulty: res.data.capacityByDifficulty || res.data.lecture_intelligence?.evidenceCapacity?.capacityByDifficulty || null,
                             totalDefensibleCapacity: res.data.totalDefensibleCapacity || res.data.lecture_intelligence?.evidenceCapacity?.totalDefensibleCapacity || null,
-                            lecture_intelligence: res.data.lecture_intelligence || null
+                            lecture_intelligence: res.data.lecture_intelligence || null,
+                            lectureModel: res.data.lectureModel || null
                         };
                         applyAnalysisData(analysisPayload);
                         try {
@@ -1336,6 +1354,21 @@ export default function CreateQuizTopic() {
             return;
         }
 
+        // More questions requested than the kept topics support at this difficulty: let the teacher decide.
+        if (keptCapacity && questionCount > 0 && !deficitChoiceRef.current) {
+            const diffKey = String(difficulty || 'Balanced').toLowerCase();
+            const available = keptCapacity[diffKey] ?? keptCapacity.balanced;
+            if (available < questionCount) {
+                setShortfallPrompt({ available, requested: questionCount, difficulty: difficulty || 'Balanced', total: keptCapacity.balanced });
+                return;
+            }
+        }
+
+        if (!questionCount || questionCount < 1) {
+            toast('0 questions selected: your lecture analysis and teaching score are shown above; no quiz is generated.');
+            return;
+        }
+
         if (hasTranscribingAudio) {
             toast.error('Please wait for lecture audio transcription to complete before generating the quiz.');
             return;
@@ -1392,7 +1425,12 @@ export default function CreateQuizTopic() {
         formData.append('questionCount', questionCount);
         formData.append('question_count', questionCount);
         formData.append('difficulty', difficulty);
-        formData.append('deficitPolicy', 'FILL_WITH_MEDIUM');
+        // The teacher's explicit choice when the request exceeded what the lecture supports at this difficulty.
+        formData.append('deficitPolicy', deficitChoiceRef.current === 'ACCEPT' ? 'ACCEPT_FEASIBLE_COUNT' : 'FILL_WITH_MEDIUM');
+        if (lectureModelData?.id && !lectureModelData.isTopicOnly) {
+            formData.append('lectureModelId', lectureModelData.id);
+            if (excludedTopics.length > 0) formData.append('excludedTopics', JSON.stringify(excludedTopics));
+        }
         formData.append('capacityPolicy', capacityPolicy);
 
         // 3. Text prompts: voice transcripts, text inputs, and fallback text for restored documents without live File
@@ -1454,7 +1492,7 @@ export default function CreateQuizTopic() {
                             finalValidation:    result.finalValidation || null,
                             representationMode: result.representation_mode || representationMode || 'BLUEPRINT',
                             pipelineResult:     result,
-                            lectureDepth:       result.lectureDepth || lectureDepth || null,
+                            lectureDepth:       lectureDepth || result.lectureDepth || null,
                             capacityDeficitReport: result.capacityDeficitReport || result.difficultyReport?.capacityDeficitReport || null,
                             isPartial:          result.isPartial || (result.questions?.length < (questionCount || 10)),
                             shortfallCategory:  result.shortfallCategory || null,
@@ -1463,6 +1501,7 @@ export default function CreateQuizTopic() {
                             whatWasTaught:      result.whatWasTaught || whatWasTaught || '',
                             keyTopics:          result.keyTopics || keyTopics || [],
                             requestedCount:     questionCount || 10,
+                            lectureModelPlan:   result.lectureModelPlan || null,
                             executionMessages:  result.metadata?.executionMessages || []
                         }
                     });
@@ -1531,8 +1570,8 @@ export default function CreateQuizTopic() {
 
                     <div className="flex items-center gap-3 flex-wrap">
 
-                        {/* Interactive Pedagogical & Quality Score Badge */}
-                        {lectureDepth && (
+                        {/* Interactive Pedagogical & Quality Score Badge (only when there is lecture evidence) */}
+                        {lectureModelData && !lectureModelData.isTopicOnly && lectureDepth && (
                             <button
                                 type="button"
                                 onClick={() => setShowTeachingScoreModal(true)}
@@ -1541,12 +1580,12 @@ export default function CreateQuizTopic() {
                             >
                                 {/* Bold Score Number */}
                                 <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-[#ea580c] to-[#c2410c] text-white flex flex-col items-center justify-center shrink-0 shadow-sm group-hover:scale-105 transition-transform">
-                                    <span className="text-base font-black tracking-tight leading-none">{teachingScore}</span>
+                                    <span className="text-base font-black tracking-tight leading-none">{teachingScore ?? '–'}</span>
                                     <span className="text-[8px] font-black uppercase tracking-widest text-orange-200 leading-none mt-0.5">/100</span>
                                 </div>
                                 <div>
                                     <div className="flex items-center gap-1.5">
-                                        <p className="text-[10px] font-black text-[#9a3412] uppercase tracking-widest">Teaching Clarity Score</p>
+                                        <p className="text-[10px] font-black text-[#9a3412] uppercase tracking-widest">Teaching Score</p>
                                         <span className="text-[9px] font-bold text-[#c2410c] bg-orange-100 px-2 py-0.5 rounded-full group-hover:bg-[#ea580c] group-hover:text-white transition-colors flex items-center gap-1">
                                             <span>See Breakdown</span>
                                             <Info size={10} className="shrink-0" />
@@ -2130,206 +2169,20 @@ export default function CreateQuizTopic() {
                         {/* 4. LECTURE CONTENT & ASSESSMENT SCOPE CARD (Any learning materials) */}
                         {inputs.length > 0 && (
                             <>
-                                {depthLoading && (
-                                    <div className="p-4 bg-orange-50/60 border border-orange-200/70 rounded-3xl flex items-center justify-center gap-3 text-xs text-orange-800 font-medium animate-pulse">
-                                        <Loader2 size={16} className="animate-spin text-[#ea580c]" />
-                                        <span>Analyzing pedagogical depth and assessment scope...</span>
+                                {lectureDepth?.rating === 'Non-Academic' && !depthLoading ? (
+                                    <div className="p-4 bg-slate-50 border border-slate-200 rounded-3xl text-xs text-slate-700">
+                                        No teachable academic content was found in this input, so no questions can be grounded in it.
                                     </div>
-                                )}
-
-                                {!depthLoading && depthError && (
-                                    <div className="p-4 bg-amber-50/90 border border-amber-200 rounded-3xl flex items-center justify-between gap-3 text-xs text-amber-800 shadow-2xs">
-                                        <div className="flex items-center gap-2">
-                                            <AlertCircle size={16} className="text-amber-600 shrink-0" />
-                                            <span>Pedagogical depth analysis is temporarily unavailable. Question generation will still operate normally using your materials.</span>
-                                        </div>
-                                        <button
-                                            type="button"
-                                            onClick={() => setDepthRetryCount(c => c + 1)}
-                                            className="px-3 py-1.5 bg-white border border-amber-300 rounded-xl text-amber-800 font-bold hover:bg-amber-100/60 active:scale-95 transition-all text-[11px] shrink-0 flex items-center gap-1.5 shadow-2xs cursor-pointer"
-                                        >
-                                            <RefreshCw size={12} />
-                                            Retry
-                                        </button>
-                                    </div>
-                                )}
-
-                                {!depthLoading && !depthError && lectureDepth && lectureDepth.rating !== 'Non-Academic' && (
-                                    <div className="p-4.5 bg-[#fff8f3] border-2 border-[#f5d0b5] rounded-3xl space-y-3.5 shadow-xs transition-all animate-in fade-in duration-200">
-                                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-[#f5d0b5]/70">
-                                            <div className="flex items-center gap-3">
-                                                <div className="w-10 h-10 rounded-xl bg-orange-600 text-white flex flex-col items-center justify-center font-black shadow-xs shrink-0">
-                                                    <span className="text-sm font-black leading-none">{teachingScore}</span>
-                                                    <span className="text-[8px] font-bold leading-none text-orange-200 mt-0.5">/100</span>
-                                                </div>
-                                                <div>
-                                                    <span className="text-[11px] font-black text-[#c2410c] uppercase tracking-wider block">
-                                                        {hasAudio ? 'Lecture Teaching Score' : hasDocFiles ? 'Material Quality Score' : 'Curriculum Score'}
-                                                    </span>
-                                                    <span className="text-xs font-bold text-slate-800">
-                                                        {lectureDepth.rating || 'Comprehensive'} Depth ⭐
-                                                    </span>
-                                                </div>
-                                            </div>
-                                            {/* Show Friendly Breakdown button */}
-                                            <button
-                                                type="button"
-                                                onClick={() => setShowTeachingScoreModal(true)}
-                                                className="self-start sm:self-auto text-xs font-bold text-[#9a3412] bg-white hover:bg-orange-100/90 px-3.5 py-1.5 rounded-xl border border-[#f5d0b5] flex items-center gap-2 shadow-2xs transition-all cursor-pointer hover:scale-105 active:scale-95"
-                                                title="Click to see what the AI understood and why you received this score"
-                                            >
-                                                <Sparkles size={13} className="text-[#ea580c] shrink-0" />
-                                                <span>See What AI Understood</span>
-                                                <Info size={11} className="text-[#ea580c] shrink-0" />
-                                            </button>
-                                        </div>
-
-                                        {/* Main Topic / Subject */}
-                                        {(lectureIntel?.title || whatWasTaught || inputs[0]?.source_name) && (
-                                            <div className="bg-white/95 p-3 rounded-2xl border border-orange-200/70 shadow-2xs space-y-1">
-                                                <p className="text-[10px] font-black uppercase tracking-wider text-[#c2410c] flex items-center gap-1.5">
-                                                    <Tag size={13} className="text-[#c2410c] shrink-0" /> {hasAudio ? "Today's Lecture" : hasDocFiles ? 'Document Subject' : 'Topic Subject'}
-                                                </p>
-                                                <p className="text-xs font-bold text-slate-900 leading-snug">
-                                                    {lectureIntel?.title || inputs[0]?.source_name || 'Academic Subject'}
-                                                </p>
-                                            </div>
-                                        )}
-
-                                        {/* Goal of Lecture / Curriculum Overview */}
-                                        {(lectureIntel?.summary || whatWasTaught) && (
-                                            <div className="bg-white/95 p-3 rounded-2xl border border-orange-200/70 shadow-2xs space-y-1">
-                                                <p className="text-[10px] font-black uppercase tracking-wider text-[#c2410c] flex items-center gap-1.5">
-                                                    <Target size={13} className="text-[#c2410c] shrink-0" /> {hasAudio ? 'What You Taught Today' : hasDocFiles ? 'What the Material Covers' : 'Curriculum Scope'}
-                                                </p>
-                                                <p className="text-xs font-medium text-slate-700 leading-relaxed">
-                                                    {lectureIntel?.summary || whatWasTaught}
-                                                </p>
-                                            </div>
-                                        )}
-
-                                        {/* Audio Lecture Chapters (when audio is present) */}
-                                        {hasAudio && lectureIntel?.chapters && lectureIntel.chapters.length > 0 && (
-                                            <div className="bg-white/95 p-3.5 rounded-2xl border border-orange-200/70 shadow-2xs space-y-2">
-                                                <p className="text-[10px] font-black uppercase tracking-wider text-[#c2410c] flex items-center gap-1.5">
-                                                    <ListOrdered size={13} className="text-[#c2410c] shrink-0" /> Topics Covered Today
-                                                </p>
-                                                <div className="space-y-1.5 max-h-48 overflow-y-auto pr-1">
-                                                    {lectureIntel.chapters.map((ch, idx) => (
-                                                        <div key={ch.id || idx} className="p-2.5 rounded-xl bg-slate-50 border border-slate-100 text-xs flex items-center justify-between">
-                                                            <span className="font-bold text-slate-800">{idx + 1}. {ch.title}</span>
-                                                            {ch.timestamp_start && (
-                                                                <span className="text-[10px] font-mono font-bold text-slate-600 bg-slate-200/70 px-2 py-0.5 rounded-full shrink-0">
-                                                                    {ch.timestamp_start}{ch.timestamp_end ? ` - ${ch.timestamp_end}` : ""}
-                                                                </span>
-                                                            )}
-                                                        </div>
-                                                    ))}
-                                                </div>
-                                            </div>
-                                        )}
-
-                                        {/* Hybrid Cross-Material Link (when BOTH audio and documents are present) */}
-                                        {isHybrid && (
-                                            <div className="bg-orange-50/90 p-3 rounded-2xl border border-orange-200/90 space-y-1">
-                                                <p className="text-[10px] font-black uppercase tracking-wider text-[#c2410c] flex items-center gap-1.5">
-                                                    <Link2 size={13} className="text-[#ea580c] shrink-0" /> Linked Source Materials
-                                                </p>
-                                                <p className="text-xs text-slate-700 font-medium leading-snug">
-                                                    Your uploaded notes and slides <span className="font-bold text-slate-900">({inputs.filter(i => i.type !== 'voice' && i.type !== 'audio' && (i.file || i.documentId)).map(d => d.source_name || d.file?.name || 'Document').join(', ')})</span> are linked to the lecture chapters. Questions will be grounded in both.
-                                                </p>
-                                            </div>
-                                        )}
-
-                                        {/* Key Topics Understood (always visible for audio, document, and topic modes) */}
-                                        {((keyTopics && keyTopics.length > 0) || (detectedFocus && detectedFocus.length > 0)) && (
-                                            <div className="bg-white/95 p-3.5 rounded-2xl border border-orange-200/70 shadow-2xs space-y-2">
-                                                <div className="flex items-center justify-between">
-                                                    <p className="text-[10px] font-black uppercase tracking-wider text-[#c2410c] flex items-center gap-1.5">
-                                                        <Tag size={13} className="text-[#c2410c] shrink-0" /> Key Topics Understood ({((keyTopics && keyTopics.length > 0) ? keyTopics : detectedFocus).length})
-                                                    </p>
-                                                    {recommendedQuestionCount && (
-                                                        <span className="text-[10px] font-bold text-orange-800 bg-orange-100/90 px-2.5 py-0.5 rounded-lg border border-orange-200/60">
-                                                            {recommendedQuestionCount} Qs Recommended
-                                                        </span>
-                                                    )}
-                                                </div>
-                                                <div className="flex flex-wrap gap-1.5 max-h-36 overflow-y-auto pr-1">
-                                                    {((keyTopics && keyTopics.length > 0) ? keyTopics : detectedFocus)
-                                                        .filter(t => t && t.length >= 3 && !/^\d+$/.test(t.trim()) && !/^(obviously|clearly|should|would|could|can|will|s not|it's|that's|what|why|how)/i.test(t))
-                                                        .map((topic, i) => (
-                                                        <span key={i} className="text-[11px] font-bold text-slate-800 bg-orange-50/80 hover:bg-orange-100/90 px-2.5 py-1 rounded-xl border border-orange-200/70 shadow-2xs transition-colors flex items-center gap-1.5">
-                                                            <span className="w-1.5 h-1.5 rounded-full bg-[#ea580c] shrink-0" />
-                                                            <span>{topic}</span>
-                                                        </span>
-                                                    ))}
-                                                </div>
-                                            </div>
-                                        )}
-
-                                        {/* Expected Question Yield & Difficulty Spread (Directly Communicating Capacity to Teacher) */}
-                                        {recommendedByDifficulty && (
-                                            <div className="bg-white/95 p-3.5 rounded-2xl border border-orange-200/80 shadow-2xs space-y-2.5">
-                                                <div className="flex items-center justify-between">
-                                                    <p className="text-[10px] font-black uppercase tracking-wider text-[#c2410c] flex items-center gap-1.5">
-                                                        <Sparkles size={13} className="text-[#ea580c] shrink-0" /> Expected Question Yield From Your Class
-                                                    </p>
-                                                    <span className="text-[9px] font-bold text-orange-900 bg-orange-100/90 px-2 py-0.5 rounded-md border border-orange-200/60">
-                                                        {isHighSpread ? 'High Pedagogical Depth' : 'Calibrated Focus'}
-                                                    </span>
-                                                </div>
-
-                                                {/* Narrative explaining what the teacher taught and what to expect */}
-                                                <p className="text-xs text-slate-700 leading-relaxed font-medium">
-                                                    {isHighSpread
-                                                        ? `You taught ${topicCount} topics with deep causal reasoning and architectural comparisons. This supports a wide pedagogical spread: ${recEasyVal} Easy questions (foundational definitions), ${recMedVal} Medium questions (mechanisms & workflows), and ${recHardVal} Hard questions (architectural tradeoffs).`
-                                                        : `You covered ${topicCount} topics with focused explanations. To ensure questions strictly test what was taught without guessing, question counts across Easy (${recEasyVal} Qs), Medium (${recMedVal} Qs), and Hard (${recHardVal} Qs) stay closely calibrated to your direct words.`
-                                                    }
-                                                </p>
-
-                                                {/* 3-Tier Dynamic Yield Breakdown */}
-                                                <div className="grid grid-cols-3 gap-2 pt-0.5 text-center">
-                                                    <div className="p-2 rounded-xl bg-emerald-50/70 border border-emerald-200/80">
-                                                        <span className="text-[9px] font-black uppercase tracking-wider text-emerald-800 block">Easy</span>
-                                                        <span className="text-base font-black text-slate-900 block my-0.5">{recEasyVal} Qs</span>
-                                                        <span className="text-[9px] text-slate-600 block leading-tight">Definitions & terms</span>
-                                                    </div>
-                                                    <div className="p-2 rounded-xl bg-blue-50/70 border border-blue-200/80">
-                                                        <span className="text-[9px] font-black uppercase tracking-wider text-blue-800 block">Medium</span>
-                                                        <span className="text-base font-black text-slate-900 block my-0.5">{recMedVal} Qs</span>
-                                                        <span className="text-[9px] text-slate-600 block leading-tight">Mechanisms & examples</span>
-                                                    </div>
-                                                    <div className="p-2 rounded-xl bg-purple-50/70 border border-purple-200/80">
-                                                        <span className="text-[9px] font-black uppercase tracking-wider text-purple-800 block">Hard</span>
-                                                        <span className="text-base font-black text-slate-900 block my-0.5">{recHardVal} Qs</span>
-                                                        <span className="text-[9px] text-slate-600 block leading-tight">Tradeoffs & synthesis</span>
-                                                    </div>
-                                                </div>
-
-                                                <p className="text-[10px] text-slate-500 italic pt-0.5">
-                                                    {isHighSpread
-                                                        ? 'High pedagogical variation: Rich explanations in your class support a distinct spread between foundational recall and complex tradeoffs.'
-                                                        : 'Calibrated pedagogical variation: Question tiers stay closely aligned so that all questions strictly reflect what was taught without guessing.'
-                                                    }
-                                                </p>
-                                            </div>
-                                        )}
-
-                                        {/* Friendly Assurance Footer */}
-                                        <div className="pt-1 flex items-center justify-between text-[11px] font-bold text-orange-950 bg-orange-100/60 p-2.5 rounded-xl border border-orange-200/50">
-                                            <span className="flex items-center gap-1.5">
-                                                <CheckCircle size={14} className="text-emerald-600 shrink-0" />
-                                                <span>Zero-Guessing · Direct Lecture Evidence · All Difficulties Supported</span>
-                                            </span>
-                                            <button
-                                                type="button"
-                                                onClick={() => setShowTeachingScoreModal(true)}
-                                                className="text-orange-800 hover:text-orange-950 underline cursor-pointer text-[10px] font-black uppercase tracking-wider shrink-0"
-                                            >
-                                                See Rubric & Plan →
-                                            </button>
-                                        </div>
-                                    </div>
+                                ) : (
+                                    <LectureUnderstandingPanel
+                                        model={lectureModelData}
+                                        loading={depthLoading}
+                                        error={!depthLoading && depthError}
+                                        onRetry={() => setDepthRetryCount(c => c + 1)}
+                                        onOpenScore={() => setShowTeachingScoreModal(true)}
+                                        excludedTopics={excludedTopics}
+                                        onToggleTopic={toggleTopic}
+                                    />
                                 )}
                             </>
                         )}
@@ -2440,11 +2293,11 @@ export default function CreateQuizTopic() {
                                         </div>
                                         <input
                                             type="range"
-                                            min="1"
+                                            min="0"
                                             max="30"
                                             disabled={isGenerating}
                                             value={questionCount}
-                                            onChange={(e) => setQuestionCount(parseInt(e.target.value) || 5)}
+                                            onChange={(e) => { const v = parseInt(e.target.value, 10); setQuestionCount(Number.isNaN(v) ? 5 : v); }}
                                             className="w-full accent-[var(--bg-accent)] bg-slate-100 h-2 rounded-lg cursor-pointer disabled:opacity-50"
                                         />
                                     </div>
@@ -2551,24 +2404,40 @@ export default function CreateQuizTopic() {
 
             {/* TEACHING SCORE MODAL */}
 
+            {shortfallPrompt && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50" role="dialog" aria-modal="true" aria-labelledby="shortfall-title" onClick={() => setShortfallPrompt(null)}>
+                    <div className="bg-white max-w-md w-full rounded-3xl p-5 space-y-3 shadow-2xl" onClick={(e) => e.stopPropagation()}>
+                        <h2 id="shortfall-title" className="text-base font-black text-slate-900">Your lecture supports fewer questions</h2>
+                        <p className="text-sm text-slate-700">
+                            You asked for <b>{shortfallPrompt.requested}</b> {shortfallPrompt.difficulty === 'Balanced' ? '' : `${shortfallPrompt.difficulty} `}questions,
+                            but {excludedTopics.length ? 'the topics you kept support' : 'what you taught supports'} <b>{shortfallPrompt.available}</b> distinct {shortfallPrompt.difficulty === 'Balanced' ? '' : `${shortfallPrompt.difficulty} `}question{shortfallPrompt.available === 1 ? '' : 's'}.
+                            We won't make up extra questions on the same points.
+                        </p>
+                        <div className="flex flex-col gap-2 pt-1">
+                            {shortfallPrompt.available > 0 && (
+                                <button type="button" className="w-full px-4 py-2.5 rounded-2xl bg-[var(--bg-accent)] text-white font-black text-sm cursor-pointer"
+                                    onClick={() => { deficitChoiceRef.current = 'ACCEPT'; setQuestionCount(shortfallPrompt.available); setShortfallPrompt(null); setTimeout(() => handleGenerateQuiz(), 0); }}>
+                                    Generate {shortfallPrompt.available} {shortfallPrompt.difficulty === 'Balanced' ? '' : shortfallPrompt.difficulty} question{shortfallPrompt.available === 1 ? '' : 's'}
+                                </button>
+                            )}
+                            {shortfallPrompt.difficulty !== 'Balanced' && shortfallPrompt.total > shortfallPrompt.available && (
+                                <button type="button" className="w-full px-4 py-2.5 rounded-2xl border-2 border-[var(--bg-accent)] text-[var(--text-accent)] font-black text-sm cursor-pointer"
+                                    onClick={() => { deficitChoiceRef.current = 'FILL'; setShortfallPrompt(null); setTimeout(() => handleGenerateQuiz(), 0); }}>
+                                    Generate {Math.min(shortfallPrompt.requested, shortfallPrompt.total)}: fill the rest with other difficulties
+                                </button>
+                            )}
+                            <button type="button" className="w-full px-4 py-2 rounded-2xl text-slate-600 font-bold text-sm cursor-pointer" onClick={() => setShortfallPrompt(null)}>
+                                Cancel — I'll add more material
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
             <TeachingScoreModal
                 isOpen={showTeachingScoreModal}
                 onClose={() => setShowTeachingScoreModal(false)}
-                lectureDepth={lectureDepth}
-                detectedFocus={detectedFocus}
-                whatWasTaught={whatWasTaught}
-                keyTopics={keyTopics}
-                lectureWordCount={lectureWordCount}
-                recommendedQuestions={recommendedQuestions}
-                recommendedQuestionCount={recommendedQuestionCount}
-                recommendedByDifficulty={recommendedByDifficulty}
-                capacityByDifficulty={capacityByDifficulty}
-                lectureIntel={lectureIntel}
-                onApplyQuestionCount={(cnt, diff) => {
-                    setQuestionCount(cnt);
-                    if (diff) setDifficulty(diff);
-                    toast.success(`Applied recommended ${cnt} questions${diff ? ` (${diff})` : ''}!`);
-                }}
+                teaching={teachingEval}
+                model={lectureModelData}
             />
         </DashboardLayout>
     );

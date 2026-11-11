@@ -179,6 +179,7 @@ export default function CreateQuizText() {
     const [alignmentWarning, setAlignmentWarning] = useState(null);
     const [isPartialYield, setIsPartialYield] = useState(false);
     const [requestedCount, setRequestedCount] = useState(null);
+    const lectureModelPlan = location.state?.lectureModelPlan || null;
     const [representationMode, setRepresentationMode] = useState(null);
     const [capacityDeficitReport, setCapacityDeficitReport] = useState(null);
     const [executionMessages, setExecutionMessages] = useState([]);
@@ -724,8 +725,13 @@ export default function CreateQuizText() {
                                     )}
                                 </div>
                                 <p className="text-xs text-slate-300 leading-relaxed font-medium">
-                                    {`${questions.length} of ${requestedCount} requested questions were generated. The remaining ${requestedCount - questions.length === 1 ? 'question' : 'questions'} could not be validated against the available instructional evidence. Add more lecture content or supporting material to enable additional questions.`}
+                                    {pipelineNotice}
                                 </p>
+                                {lectureModelPlan && Array.isArray(lectureModelPlan.byTopic) && lectureModelPlan.byTopic.length > 0 && (
+                                    <p className="text-[11px] text-slate-400 leading-relaxed">
+                                        Planned from your lecture ({lectureModelPlan.capacityTotal} distinct questions available): {lectureModelPlan.byTopic.map(t => `${t.topic} ×${t.count}`).join(' · ')}
+                                    </p>
+                                )}
                             </div>
                         </div>
                         <button
@@ -1333,6 +1339,43 @@ export default function CreateQuizText() {
                                                             <span className="font-black text-sm uppercase tracking-widest">Regenerating Q{idx + 1}…</span>
                                                         </div>
                                                     </div>
+                                                )}
+                                                {q.independentCheck && (q.independentCheck.status === 'DISAGREES' || q.independentCheck.status === 'POSSIBLY_AMBIGUOUS') && (
+                                                    <div className="mb-2 px-4 py-2.5 rounded-2xl bg-amber-50 border border-amber-300 text-amber-900 text-xs font-semibold flex items-start gap-2" role="note">
+                                                        <AlertTriangle size={14} className="shrink-0 mt-0.5" />
+                                                        <span>
+                                                            <span className="font-black">Please review Q{idx + 1}: </span>
+                                                            {q.independentCheck.reason}
+                                                            {Array.isArray(q.independentCheck.otherDefensible) && q.independentCheck.otherDefensible.length > 0 && ` (also defensible: "${q.independentCheck.otherDefensible.join('", "')}")`}
+                                                        </span>
+                                                    </div>
+                                                )}
+                                                {(q.lectureSource || (Array.isArray(q.distractorRationale) && q.distractorRationale.length > 0)) && (
+                                                    <details className="mb-2 px-4 py-2 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-700">
+                                                        <summary className="cursor-pointer font-bold text-slate-800">
+                                                            Why this question
+                                                            {q.lectureSource && (
+                                                                <span className="font-medium text-slate-600">
+                                                                    {' — '}{q.lectureSource.time ? `at ${q.lectureSource.time}` : (q.lectureSource.slides?.length ? `slide ${q.lectureSource.slides[0]}` : 'from your material')}
+                                                                    {` · ${q.lectureSource.topic}`}
+                                                                    {q.lectureSource.questionType ? ` · ${String(q.lectureSource.questionType).replace('_', ' ')}` : ''}
+                                                                    {q.lectureSource.measuredDifficulty ? ` · ${q.lectureSource.measuredDifficulty}` : ''}
+                                                                    {q.lectureSource.plannedDifficulty && q.lectureSource.measuredDifficulty && q.lectureSource.plannedDifficulty !== q.lectureSource.measuredDifficulty ? ` (planned ${q.lectureSource.plannedDifficulty}, measured ${q.lectureSource.measuredDifficulty})` : ''}
+                                                                </span>
+                                                            )}
+                                                        </summary>
+                                                        <div className="pt-2 space-y-1">
+                                                            {q.lectureSource?.subtopic && <p><span className="font-bold">Tests:</span> {q.lectureSource.subtopic}</p>}
+                                                            {Array.isArray(q.distractorRationale) && q.distractorRationale.length > 0 && (
+                                                                <div>
+                                                                    <p className="font-bold">Why the wrong options are wrong:</p>
+                                                                    <ul className="list-disc pl-5">
+                                                                        {q.distractorRationale.slice(0, 3).map((r, i) => <li key={i}>{typeof r === 'string' ? r : (r?.misconception || r?.reason || JSON.stringify(r))}</li>)}
+                                                                    </ul>
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    </details>
                                                 )}
                                                 <QuizQuestionEditor
                                                     index={idx}

@@ -446,7 +446,8 @@ exports.getQuizAnalytics = async (req, res) => {
                 participationRate: { attempted: totalParticipants, totalEligible: allStudentsInDb },
                 topStudents,
                 leaderboard,
-                cheatingLogs: formattedCheatingLogs
+                cheatingLogs: formattedCheatingLogs,
+                itemAnalysis: buildItemAnalysis(normalizedQuestions, results)
             };
             await setCache(cacheKey, sharedAnalytics, quiz.status === 'finished' ? 60000 : 30000);
         }
@@ -485,6 +486,37 @@ exports.getQuizAnalytics = async (req, res) => {
         res.status(500).json({ msg: 'Server Error', error: err.message });
     }
 };
+
+/**
+ * Classical test theory item analysis from real student responses: difficulty index p, discrimination
+ * index D (upper vs lower 27%), distractor selection frequency, non-functioning distractors and distractor
+ * efficiency. Reported with its sample size; below ~30 responses the numbers are marked as indicative only.
+ */
+function buildItemAnalysis(normalizedQuestions, results) {
+    try {
+        if (!Array.isArray(results) || results.length < 2) return null;
+        const Analyzer = require('../engine/assessment/distractorDiscriminationAnalyzer');
+        const assessments = results.map(r => ({
+            studentId: r.studentId || r.student?.id || r.id,
+            totalScore: Number(r.score) || 0,
+            answers: getAnswersArray(r.answers).map(a => ({
+                questionIndex: Number(a.questionIndex) + 1,
+                selectedOption: a.selectedOption || null,
+                isCorrect: Boolean(a.isCorrect),
+                status: a.selectedOption ? 'ANSWERED' : 'SKIPPED'
+            }))
+        }));
+        const report = Analyzer.analyzeQuiz(normalizedQuestions, assessments, false);
+        report.reliability = results.length >= 30 ? 'ADEQUATE' : 'INDICATIVE_ONLY';
+        report.reliabilityNote = results.length >= 30
+            ? `Based on ${results.length} student responses.`
+            : `Only ${results.length} responses — treat these numbers as indicative; about 30 or more are needed for stable item statistics.`;
+        return report;
+    } catch (e) {
+        console.warn('[analytics] item analysis skipped:', e.message);
+        return null;
+    }
+}
 
 exports.getTeacherAdvancedAnalytics = async (req, res) => {
     // Advanced metrics across all quizzes

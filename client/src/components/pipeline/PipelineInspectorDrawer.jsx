@@ -229,7 +229,7 @@ export default function PipelineInspectorDrawer({
       isCompleted: Boolean(plan?.assessmentTargets || stages.some(s => s.stage === 'AGENT_1_PLANNING')),
       isActive: currentBackendStage === 'AGENT_1_PLANNING',
       summary: plan?.assessmentTargets
-        ? `${plan.assessmentTargets.length} Primary Targets • TC: ${plan.tcScore?.overallScore || 85}/100`
+        ? `${plan.assessmentTargets.length} Primary Targets`
         : null,
       durationMs: stageMap['AGENT_1_PLANNING']?.durationMs || null
     },

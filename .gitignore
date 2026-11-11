@@ -72,3 +72,4 @@ server/data/cache/
 
 # Local Archive of Obsolete Experiments
 archive/
+server/storage/lecture_model_cache/

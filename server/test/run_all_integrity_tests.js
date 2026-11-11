@@ -23,7 +23,8 @@ const SUITES = [
   { name: 'Step 4B: Plumbing Hardening', file: 'test_plumbing_hardening.js' },
   { name: 'Step 4C: Audit Defect Prevention', file: 'test_audit_failure_prevention.js' },
   { name: 'Step 5: End-to-End Pipeline Delivery', file: 'test_pipeline_end_to_end_delivery.js' },
-  { name: 'Step 6: Input Kind Routing', file: 'test_input_kind_routing.js' }
+  { name: 'Step 6: Input Kind Routing', file: 'test_input_kind_routing.js' },
+  { name: 'Step 7: Shared Lecture Model', file: 'test_lecture_model.js' }
 ];
 
 async function runChildSuite(suite) {

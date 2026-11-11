@@ -111,8 +111,10 @@ class EvidencePackager {
     // 1. Decoupled Modality Depth Analyses:
     // Architectural Invariant: Document evidence CANNOT inflate or alter Teacher Pedagogical Richness.
     let voiceAnalysis = null;
+    // With a shared lecture model the full text was already analysed; the keyword heuristics only need a sample.
+    const hasLectureModelPlan = Boolean(sessionInputs.lectureModelPlan);
     if (hasVoice) {
-      voiceAnalysis = depthAnalyzer.analyzeLecture(voiceText, { sourceModality: 'VOICE' });
+      voiceAnalysis = depthAnalyzer.analyzeLecture(hasLectureModelPlan ? voiceText.slice(0, 15000) : voiceText, { sourceModality: 'VOICE' });
     }
 
     let docAnalysis = null;
@@ -120,7 +122,7 @@ class EvidencePackager {
       isTopicLike(cleanDocsText.trim() || (sessionInputs.inputModality === 'TOPIC_SYNTHESIS' ? sessionInputs.topic : ''));
     const hasDocs = Boolean(cleanDocsText && (isTopicSynthesisEarly ? cleanDocsText.trim().length > 0 : cleanDocsText.trim().length > 30));
     if (hasDocs) {
-      docAnalysis = depthAnalyzer.analyzeLecture(cleanDocsText, { sourceModality: isTopicSynthesisEarly ? 'TOPIC' : 'DOCUMENT' });
+      docAnalysis = depthAnalyzer.analyzeLecture(hasLectureModelPlan ? cleanDocsText.slice(0, 15000) : cleanDocsText, { sourceModality: isTopicSynthesisEarly ? 'TOPIC' : 'DOCUMENT' });
     }
 
     // Determine primary instructional analysis:
@@ -310,7 +312,9 @@ class EvidencePackager {
 
     // Step 5: Pre-Generation Curricular Coverage Analysis (assessability pre-check)
     try {
-      packageData.curricularCoverage = CurricularCoverageAnalyzer.analyzeCoverage(packageData);
+      packageData.curricularCoverage = hasLectureModelPlan
+        ? CurricularCoverageAnalyzer._createEmptyProfile()
+        : CurricularCoverageAnalyzer.analyzeCoverage(packageData);
     } catch (covErr) {
       console.warn(`⚠️ [EvidencePackager] Notice analyzing curricular coverage: ${covErr.message}`);
       packageData.curricularCoverage = CurricularCoverageAnalyzer._createEmptyProfile();

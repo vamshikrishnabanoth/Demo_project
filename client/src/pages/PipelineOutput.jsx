@@ -319,7 +319,7 @@ export default function PipelineOutput() {
       isCompleted: Boolean(plan?.assessmentTargets || stages.some(s => s.stage === 'AGENT_1_PLANNING')),
       isActive: currentBackendStage === 'AGENT_1_PLANNING',
       summary: plan?.assessmentTargets
-        ? `${plan.assessmentTargets.length} Primary Targets • TC: ${typeof plan.tcScore?.overallScore === 'number' ? `${plan.tcScore.overallScore}/100` : 'Not evaluated'}`
+        ? `${plan.assessmentTargets.length} Primary Targets`
         : null,
       durationMs: stageMap['AGENT_1_PLANNING']?.durationMs || null
     },

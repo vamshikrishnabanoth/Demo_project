@@ -57,7 +57,12 @@ class DenseEmbeddingBridge {
       return memoryCache.get(cacheKey);
     }
 
-    // Try Python spawnSync
+    // Python spawnSync blocks the Node event loop (every user's request stalls) and reloads the model on
+    // every call, so it is opt-in only (DENSE_EMBEDDINGS_PYTHON=true, e.g. for offline experiments) and
+    // is switched off for the rest of the process after the first failure.
+    if (process.env.DENSE_EMBEDDINGS_PYTHON !== 'true' || DenseEmbeddingBridge._pythonDisabled) {
+      return this._fallbackCosine(textA, textB);
+    }
     try {
       const pyScript = `
 import sys, json, numpy as np
@@ -86,7 +91,9 @@ print(json.dumps({'sim': round(sim, 4)}))
           return sim;
         }
       }
+      DenseEmbeddingBridge._pythonDisabled = true;
     } catch (err) {
+      DenseEmbeddingBridge._pythonDisabled = true;
       // Silently fall back to heuristic/character n-gram similarity on spawn failure
     }
 

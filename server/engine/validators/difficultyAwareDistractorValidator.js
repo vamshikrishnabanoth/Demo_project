@@ -789,7 +789,7 @@ class DifficultyAwareDistractorValidator {
    * as well as inter-distractor pairwise divergence Di vs Dj.
    *
    * Distinction Invariant:
-   * 1. Pre-Test Distractor Discrepancy Index (DDI): Evaluates predicted plausibility, near-miss balance,
+   * 1. Predicted distractor plausibility (pre-test, model-estimated; not a psychometric index): Evaluates predicted plausibility, near-miss balance,
    *    and absence of synonymous ambiguity before administration.
    * 2. Post-Test Distractor Efficiency (DE) & Item Discrimination (D): Evaluates actual student choices
    *    using response matrices (implemented in distractorDiscriminationAnalyzer.js).
@@ -892,7 +892,7 @@ class DifficultyAwareDistractorValidator {
     const compositeDDI = parseFloat((avgQuality * 0.7 + diversityScore * 0.3).toFixed(3));
 
     return {
-      metricName: 'Pre-Test Distractor Discrepancy Index (DDI)',
+      metricName: 'Predicted distractor plausibility (pre-test, model-estimated; not a psychometric index)',
       evaluationType: 'PRE_TEST_PREDICTIVE_PLAUSIBILITY',
       compositeScore: compositeDDI,
       meanKeyDiscrepancy: avgKeyDiscrepancy,
@@ -900,7 +900,7 @@ class DifficultyAwareDistractorValidator {
       targetDiscrepancyRange: '[0.20, 0.85]',
       distractorAnalyses: distractorReports,
       pairwiseAnalyses: pairwiseDiscrepancies,
-      distinctionNotice: 'NOTE: Pre-Test DDI models lexical/semantic divergence and near-miss plausibility prior to testing. Empirical post-test distractor discrimination (D) and distractor efficiency (DE) are calculated from student assessment records via DistractorDiscriminationAnalyzer.'
+      distinctionNotice: 'NOTE: This pre-test score models lexical/semantic divergence and near-miss plausibility prior to testing. Empirical post-test distractor discrimination (D) and distractor efficiency (DE) are calculated from student assessment records via DistractorDiscriminationAnalyzer.'
     };
   }
 }
