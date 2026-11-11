@@ -1278,11 +1278,27 @@ class PipelineOrchestrator {
         // outcomes are then recorded one by one, in order, so shared bookkeeping stays sequential.
         const batchRepairAllowance = Math.max(0, MAX_QUIZ_REPAIRS - repairMetrics.totalAttempted);
         let repairSlotsGiven = 0;
+        // Saves provider quota: Easy/Medium conceptual questions share ONE semantic-audit call; Hard,
+        // calculation, trace, output, debug and code questions keep their own call (where mistakes are likely).
+        // Each batched verdict still passes through the same per-question fail-closed parsing. AGENT3_BATCH_CRITIC=false turns it off.
+        const precomputed = new Array(batchTargets.length).fill(null);
+        if (process.env.AGENT3_BATCH_CRITIC !== 'false') {
+          const eligible = batchTargets.map((t, b) => ({ t, b, c: batchCandidates[b] })).filter(({ t, c }) =>
+            c && !c.isUnfulfilled &&
+            ['Easy', 'Medium'].includes(t.targetDifficulty || 'Medium') &&
+            !['trace', 'calculation', 'output', 'debug'].includes(String(t.questionAngle || '').toLowerCase()) &&
+            !t.requiresExactArtifact && !t.hasCode);
+          if (eligible.length >= 2) {
+            const verdicts = await agent3Evaluator.batchCriticResponses(eligible.map(e => ({ candidateMCQ: e.c, target: e.t })), evidencePackage);
+            eligible.forEach((e, i) => { precomputed[e.b] = verdicts[i]; });
+            console.log(`🧮 [Orchestrator] Batched semantic audit: ${verdicts.filter(Boolean).length}/${eligible.length} verdicts in one call.`);
+          }
+        }
         const parallelEvals = batchTargets.map((t, b) => {
           const c = batchCandidates[b];
           if (!c || c.isUnfulfilled) return Promise.resolve(null);
           const allowRepair = repairSlotsGiven++ < batchRepairAllowance;
-          return agent3Evaluator.evaluateAndRepairQuestion(c, t, evidencePackage, agent2Generator, { allowRepair })
+          return agent3Evaluator.evaluateAndRepairQuestion(c, t, evidencePackage, agent2Generator, { allowRepair, precomputedCriticResponse: precomputed[b] })
             .then(evalResult => ({ evalResult }), evalErr => ({ evalErr }));
         });
         const settledEvals = await Promise.all(parallelEvals);

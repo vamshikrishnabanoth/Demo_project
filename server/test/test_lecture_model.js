@@ -149,6 +149,34 @@ test('A rejected Medium/Hard slot is refilled with a reserve of the same planned
   assert.strictEqual(orch.takeLectureModelReserve(pool3, 'Hard', null, null).targetId, 'R21');
 });
 
+async function asyncTests() {
+  const llmRouter = require('../engine/adapter/llmRouter');
+  const evaluator = require('../engine/agents/agent3Evaluator');
+  const original = llmRouter.complete;
+  try {
+    llmRouter.complete = async () => JSON.stringify({ evaluations: [
+      { id: 'Q2', status: 'FAIL', verdict: 'FAIL', failureReasons: ['AMBIGUOUS_DISTRACTOR'] },
+      { id: 'Q1', status: 'PASS', verdict: 'PASS', failureReasons: [] }
+    ] });
+    const items = [1, 2, 3].map(i => ({ candidateMCQ: { questionText: `q${i}`, options: ['a', 'b', 'c', 'd'], correctAnswer: 'a' }, target: { concept: 'c', targetDifficulty: 'Easy', supportingEvidence: 'evidence text for the question' } }));
+    const out = await evaluator.batchCriticResponses(items, {});
+    test('Batched audit maps verdicts by question id; a missing verdict falls back to a single call', () => {
+      assert.strictEqual(JSON.parse(out[0]).status, 'PASS');
+      assert.strictEqual(JSON.parse(out[1]).status, 'FAIL');
+      assert.strictEqual(out[2], null);
+    });
+    llmRouter.complete = async () => { throw new Error('provider down'); };
+    const down = await evaluator.batchCriticResponses(items, {});
+    test('Batched audit failure falls back to single-question evaluation for every item', () => {
+      assert.deepStrictEqual(down, [null, null, null]);
+    });
+  } finally {
+    llmRouter.complete = original;
+  }
+}
+
+asyncTests().then(() => {
 const passed = results.filter(Boolean).length;
 console.log(`\n🏁 ${passed} / ${results.length} tests passed`);
 process.exit(passed === results.length ? 0 : 1);
+});

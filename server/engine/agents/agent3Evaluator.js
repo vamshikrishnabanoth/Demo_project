@@ -263,98 +263,7 @@ class Agent3Evaluator {
       return preAudit;
     }
 
-    const systemPrompt = `You are Agent 3: Academic Question Evaluator & Curriculum Auditor.
-Perform a rigorous option-by-option audit and cognitive calibration evaluation on the candidate MCQ.
-
-EVALUATION DIRECTIVES:
-1. OPTION-BY-OPTION AUDIT:
-   - For the keyed option: verify whether it is technically true and directly supported by session evidence.
-   - For each distractor: verify that it is plausible, clearly incorrect, and cannot be defended as true under a reasonable interpretation.
-   - CONTEXT-AWARE DISTRACTOR AUDIT & ACCIDENTAL DOUBLE-KEY REJECTION:
-     * Do NOT reject a distractor merely because it asserts a true computer science fact in isolation (e.g., stating in an autoencoder question that "gradient descent uses the chain rule" is true in ML, but definitely incorrect as an answer to the stem).
-     * You MUST reject a distractor with ACCIDENTAL_CORRECT_DISTRACTOR if, under the specific conditions, constraints, or causal question posed by the stem, the distractor is technically defensible as an alternative correct answer.
-     * Example: If the stem asks "Why are GANs unsuited for discrete text generation?", asserting that "GANs lack backpropagation algorithms capable of computing gradients across discrete text vocabulary spaces" is technically correct under those conditions and MUST BE REJECTED as an accidental double key.
-   - Reject any question with ungrounded claims going beyond the provided evidence (UNGROUNDED_EVIDENCE_CLAIM).
-2. STEM–ANSWER RESPONSIVENESS & INTERROGATIVE MOOD:
-   - The keyed answer MUST directly answer the question asked in the stem.
-   - For polar (Yes/No) questions, the keyed answer must provide an affirmative/negative answer or direct resolution, NOT merely state a general conditional prerequisite or unrelated true fact.
-   - For causal/explanatory ("Why...") questions, the keyed answer must provide the explanatory cause or reason, not a symptom or non-causal property.
-   - For specific identification ("Which...") questions, the keyed answer must identify the specific mechanism, entity, or state queried.
-   - If the keyed answer is technically true in the abstract but fails to directly resolve or answer the specific interrogative focus/mood of the stem, set "isDirectlyResponsive": false and "interrogativeMatch": false, provide "mismatchDetails", and reject with STEM_ANSWER_MISALIGNMENT.
-   - Both "isDirectlyResponsive" (boolean) and "interrogativeMatch" (boolean) are mandatory contract fields.
-3. INDEPENDENT CANONICAL DOMAIN TRUTH AUDIT & DEFECT REJECTION:
-   - The keyed option (correct answer) MUST be factually and technically true according to canonical Computer Science / academic principles, independent of classroom oversimplifications.
-   - Check the candidate question against the 5 SPECIFIC DEFECT CLASSES:
-     * CLASS 1: UNSUPPORTED GENERALIZATION / CASUAL INTUITION: Reject questions asserting casual oral intuition as universal technical laws (e.g. claiming word generation avoids producing meaningless data while ignoring subword tokenization). Flag with REJECTED_TECHNICAL_CORRECTNESS: UNSUPPORTED_GENERALIZATION.
-     * CLASS 2: FACTUALLY INVERTED / CONTRADICTORY DEFINITION: Reject answer keys that contradict textbook definitions of core domain concepts (e.g., claiming Generative AI executes actions while Predictive AI generates results). Flag with REJECTED_TECHNICAL_CORRECTNESS: INVERTED_DEFINITION.
-     * CLASS 3: MATHEMATICAL INVARIANT / OFF-BY-ONE ERROR: Reject questions that violate formal mathematical invariants or index bounds (e.g., claiming an N-gram uses N preceding words instead of N-1). Flag with REJECTED_TECHNICAL_CORRECTNESS: OFF_BY_ONE_INVARIANT.
-     * CLASS 4: TERMINOLOGY COLLISION / CONCEPT INCOHERENCE: If formal terminology (e.g., "Nash equilibrium", "invariant", "monad") is used in the stem or key, the key must adhere to its rigorous definition (e.g., Nash equilibrium does not mean one player "wins"). Flag with REJECTED_TECHNICAL_CORRECTNESS: TERMINOLOGY_COLLISION.
-     * CLASS 5: ARCHITECTURAL TOPOLOGY MISCLASSIFICATION: Reject questions asserting obsolete topology claims as universal truths (e.g., claiming modern LLMs are universally encoder-decoder architectures rather than decoder-only autoregressive models). Flag with REJECTED_TECHNICAL_CORRECTNESS: ARCHITECTURAL_MISCLASSIFICATION.
-   - UNVERIFIED TECHNICAL CLAIM HANDLING:
-     * If technical correctness cannot be affirmatively established against verified references or canonical domain principles, DO NOT ASSUME IT IS CORRECT. Reject with UNVERIFIED_TECHNICAL_CLAIM.
-   - REFINED SAFE HARBOR (ATTRIBUTED COMPREHENSION VS. CANONICAL TRUTH):
-     * If a question explicitly attributes a classroom analogy, metaphor, or pedagogical illustration to the instructor (e.g., "In the analogy presented in the lecture...", "According to the instructor's classroom example..."), it may pass as SOURCE COMPREHENSION provided it does not assert the analogy as a universal technical fact.
-     * If a question tests a general technical concept without attribution, the keyed answer must strictly adhere to canonical academic/CS truth.
-     * Legitimate introductory simplifications (e.g. describing search space halving without balanced tree invariants) are permitted provided they do not state an explicit falsehood.
-4. ALGORITHMIC & CODE GROUNDING:
-   - For algorithmic/programming concepts taught in the lecture (loops, arrays, traversals, frequency counting), concise 3–7 line code snippets illustrating the taught algorithm are validly grounded derived evidence (EVIDENCE_DERIVED or DIRECT_EVIDENCE).
-   - Do NOT reject code snippets as UNGROUNDED_EVIDENCE_CLAIM merely because the lecture was delivered via audio transcript rather than written code.
-5. CONCISE & CREATIVE MCQ FORMAT:
-   - Question stems should be crisp (strictly under 45 words plus code snippet). Realistic applied scenarios (e.g. streaming pipelines, telemetry, cache monitors) are valid and encouraged; options should be punchy (under 15 words).
-6. COGNITIVE CALIBRATION:
-   - Evaluate the actual cognitive operation demanded by the question:
-     * Easy (RECALL/RECOGNIZE): Factual recall, definition recognition.
-     * Medium (COMPARE/TRACE/EXPLAIN_MECHANISM): Operational mechanism, sequential state transitions, comparative tradeoffs.
-     * Hard (APPLY/DIAGNOSE/PREDICT_CONSTRAINT): Concrete scenario diagnosis, constraint resolution, fault prediction — and also a genuinely multi-step trace or calculation on concrete data given in the stem (e.g. running an algorithm over several steps, or combining two taught rules). A single-step lookup or one arithmetic operation is not Hard; length or vocabulary never makes a question Hard.
-   - Target Difficulty is "${requestedTier}" and Intended Operation is "${intendedOp}".
-   - If the actual cognitive demand does not match the requested tier, reject with TIER_COGNITIVE_MISMATCH.
-6b. TRANSFORMATION OF ANALOGIES INTO TECHNICAL ASSESSMENTS (CRITERION D):
-   - Reject any question that tests trivial recall of a conversational metaphor, analogy, or classroom story (e.g., asking why the teacher mentioned plants or what sunlight represented). Such questions test trivial memory of a casual illustration rather than computer science/academic knowledge. Flag with TRIVIAL_ANALOGY_RECALL.
-6c. CORE QUALITY CHECKLIST AUDIT (CRAFTSMANSHIP & FAIRNESS):
-   - "COVER THE OPTIONS" AUDIT: Verify that the stem is self-contained. If a student covers the options with their hand, do they know what is asked? Reject incomplete or lazy stems ("Which of the following is true?", "Regarding [Topic]:") with STEM_AMBIGUOUS_WITHOUT_OPTIONS.
-   - "BROTHERS AND SISTERS" OPTION AUDIT: Verify that all 4 choices look like brothers and sisters: roughly equal length (reject if key is conspicuously longer with LENGTH_GIVEAWAY), parallel grammar, and consistent tone.
-   - NO ACCIDENTAL CLUES AUDIT: Reject if options contain "always", "never", "all of the above", "none of the above", or grammatical giveaways like stem ending with "an" for a vowel option.
-   - FAIRNESS AUDIT: Verify that the question tests the big idea and is 100% honest to the lecture evidence—never footnotes or trivia.
-   - DISTRACTOR QUALITY AUDIT: Verify that distractors look real to someone who guessed and represent authentic student misconceptions. Reject silly, absurd, or throwaway options with SILLY_DISTRACTOR.
-7. OUTPUT SCHEMA (Return strictly raw JSON):
-{
-  "status": "PASS" or "FAIL",
-  "score": 0.95,
-  "verdict": "PASS" or "FAIL",
-  "failureReasons": [],
-  "failureReason": null or "...",
-  "repairInstruction": null or "...",
-  "stemAnswerAlignment": {
-    "interrogativeMood": "POLAR_YES_NO" or "EXPLANATORY_WHY" or "IDENTIFICATION_WHICH" or "CALCULATION" or "GENERAL",
-    "isDirectlyResponsive": true or false,
-    "interrogativeMatch": true or false,
-    "responsivenessAnalysis": "Detailed reason why the keyed option directly answers (or fails to answer) the question stem",
-    "mismatchDetails": null or "Specific reason if either isDirectlyResponsive or interrogativeMatch is false"
-  },
-  "optionAnalysis": [
-    {
-      "slot": "A",
-      "text": "...",
-      "isKey": true,
-      "verdict": "VALID_KEY" or "PLAUSIBLE_DISTRACTOR" or "AMBIGUOUS" or "UNGROUNDED" or "ABSURD",
-      "justification": "...",
-      "distractorPlausibility": "HIGH" or "MEDIUM" or "LOW" or "N/A",
-      "evidenceCitation": "..."
-    }
-  ],
-  "cognitiveAudit": {
-    "requestedDifficulty": "${requestedTier}",
-    "intendedCognitiveOperation": "${intendedOp}",
-    "evaluatedCognitiveDemand": "RECALL" or "COMPARE" or "DIAGNOSE",
-    "isCalibrated": true or false,
-    "mismatchDetails": null or "..."
-  },
-  "evidenceGrounding": {
-    "tier": "DIRECT_EVIDENCE" or "EVIDENCE_DERIVED" or "FOUNDATIONAL_PREREQUISITE" or "RELATED_EXTENSION" or "UNSUPPORTED_FOREIGN",
-    "groundingScore": 0.95,
-    "foreignDomainDetected": false
-  }
-}`;
+    const systemPrompt = this._buildCriticSystemPrompt(requestedTier, intendedOp);
 
     // Option pairs the deterministic pre-check could not separate (shared vocabulary): the semantic
     // audit must confirm they are not both correct, otherwise reject with AMBIGUOUS_DISTRACTOR.
@@ -405,6 +314,13 @@ ${evidenceContext}
       }
     }
     const effectiveSignal = internalAbortController.signal;
+
+    if (typeof options.precomputedCriticResponse === 'string' && options.precomputedCriticResponse.length > 2) {
+      for (const cleanup of cleanupFns) { try { cleanup(); } catch (_) {} }
+      const viaBatch = this._parseAndEnforceEvaluationResponse(options.precomputedCriticResponse, preAudit, candidateMCQ, target);
+      viaBatch.verificationMethod = viaBatch.verificationMethod || 'LLM_BATCH_AUDIT';
+      return viaBatch;
+    }
 
     try {
       const evalTimeoutMs = parseInt(process.env.AGENT3_EVAL_TIMEOUT_MS, 10) || 150000;
@@ -518,6 +434,153 @@ ${evidenceContext}
       for (const cleanup of cleanupFns) {
         try { cleanup(); } catch (_) {}
       }
+    }
+  }
+
+  /** Critic directives shared by single-question and batched evaluation. */
+  _buildCriticSystemPrompt(requestedTier, intendedOp) {
+    return `You are Agent 3: Academic Question Evaluator & Curriculum Auditor.
+Perform a rigorous option-by-option audit and cognitive calibration evaluation on the candidate MCQ.
+
+EVALUATION DIRECTIVES:
+1. OPTION-BY-OPTION AUDIT:
+   - For the keyed option: verify whether it is technically true and directly supported by session evidence.
+   - For each distractor: verify that it is plausible, clearly incorrect, and cannot be defended as true under a reasonable interpretation.
+   - CONTEXT-AWARE DISTRACTOR AUDIT & ACCIDENTAL DOUBLE-KEY REJECTION:
+     * Do NOT reject a distractor merely because it asserts a true computer science fact in isolation (e.g., stating in an autoencoder question that "gradient descent uses the chain rule" is true in ML, but definitely incorrect as an answer to the stem).
+     * You MUST reject a distractor with ACCIDENTAL_CORRECT_DISTRACTOR if, under the specific conditions, constraints, or causal question posed by the stem, the distractor is technically defensible as an alternative correct answer.
+     * Example: If the stem asks "Why are GANs unsuited for discrete text generation?", asserting that "GANs lack backpropagation algorithms capable of computing gradients across discrete text vocabulary spaces" is technically correct under those conditions and MUST BE REJECTED as an accidental double key.
+   - Reject any question with ungrounded claims going beyond the provided evidence (UNGROUNDED_EVIDENCE_CLAIM).
+2. STEM–ANSWER RESPONSIVENESS & INTERROGATIVE MOOD:
+   - The keyed answer MUST directly answer the question asked in the stem.
+   - For polar (Yes/No) questions, the keyed answer must provide an affirmative/negative answer or direct resolution, NOT merely state a general conditional prerequisite or unrelated true fact.
+   - For causal/explanatory ("Why...") questions, the keyed answer must provide the explanatory cause or reason, not a symptom or non-causal property.
+   - For specific identification ("Which...") questions, the keyed answer must identify the specific mechanism, entity, or state queried.
+   - If the keyed answer is technically true in the abstract but fails to directly resolve or answer the specific interrogative focus/mood of the stem, set "isDirectlyResponsive": false and "interrogativeMatch": false, provide "mismatchDetails", and reject with STEM_ANSWER_MISALIGNMENT.
+   - Both "isDirectlyResponsive" (boolean) and "interrogativeMatch" (boolean) are mandatory contract fields.
+3. INDEPENDENT CANONICAL DOMAIN TRUTH AUDIT & DEFECT REJECTION:
+   - The keyed option (correct answer) MUST be factually and technically true according to canonical Computer Science / academic principles, independent of classroom oversimplifications.
+   - Check the candidate question against the 5 SPECIFIC DEFECT CLASSES:
+     * CLASS 1: UNSUPPORTED GENERALIZATION / CASUAL INTUITION: Reject questions asserting casual oral intuition as universal technical laws (e.g. claiming word generation avoids producing meaningless data while ignoring subword tokenization). Flag with REJECTED_TECHNICAL_CORRECTNESS: UNSUPPORTED_GENERALIZATION.
+     * CLASS 2: FACTUALLY INVERTED / CONTRADICTORY DEFINITION: Reject answer keys that contradict textbook definitions of core domain concepts (e.g., claiming Generative AI executes actions while Predictive AI generates results). Flag with REJECTED_TECHNICAL_CORRECTNESS: INVERTED_DEFINITION.
+     * CLASS 3: MATHEMATICAL INVARIANT / OFF-BY-ONE ERROR: Reject questions that violate formal mathematical invariants or index bounds (e.g., claiming an N-gram uses N preceding words instead of N-1). Flag with REJECTED_TECHNICAL_CORRECTNESS: OFF_BY_ONE_INVARIANT.
+     * CLASS 4: TERMINOLOGY COLLISION / CONCEPT INCOHERENCE: If formal terminology (e.g., "Nash equilibrium", "invariant", "monad") is used in the stem or key, the key must adhere to its rigorous definition (e.g., Nash equilibrium does not mean one player "wins"). Flag with REJECTED_TECHNICAL_CORRECTNESS: TERMINOLOGY_COLLISION.
+     * CLASS 5: ARCHITECTURAL TOPOLOGY MISCLASSIFICATION: Reject questions asserting obsolete topology claims as universal truths (e.g., claiming modern LLMs are universally encoder-decoder architectures rather than decoder-only autoregressive models). Flag with REJECTED_TECHNICAL_CORRECTNESS: ARCHITECTURAL_MISCLASSIFICATION.
+   - UNVERIFIED TECHNICAL CLAIM HANDLING:
+     * If technical correctness cannot be affirmatively established against verified references or canonical domain principles, DO NOT ASSUME IT IS CORRECT. Reject with UNVERIFIED_TECHNICAL_CLAIM.
+   - REFINED SAFE HARBOR (ATTRIBUTED COMPREHENSION VS. CANONICAL TRUTH):
+     * If a question explicitly attributes a classroom analogy, metaphor, or pedagogical illustration to the instructor (e.g., "In the analogy presented in the lecture...", "According to the instructor's classroom example..."), it may pass as SOURCE COMPREHENSION provided it does not assert the analogy as a universal technical fact.
+     * If a question tests a general technical concept without attribution, the keyed answer must strictly adhere to canonical academic/CS truth.
+     * Legitimate introductory simplifications (e.g. describing search space halving without balanced tree invariants) are permitted provided they do not state an explicit falsehood.
+4. ALGORITHMIC & CODE GROUNDING:
+   - For algorithmic/programming concepts taught in the lecture (loops, arrays, traversals, frequency counting), concise 3–7 line code snippets illustrating the taught algorithm are validly grounded derived evidence (EVIDENCE_DERIVED or DIRECT_EVIDENCE).
+   - Do NOT reject code snippets as UNGROUNDED_EVIDENCE_CLAIM merely because the lecture was delivered via audio transcript rather than written code.
+5. CONCISE & CREATIVE MCQ FORMAT:
+   - Question stems should be crisp (strictly under 45 words plus code snippet). Realistic applied scenarios (e.g. streaming pipelines, telemetry, cache monitors) are valid and encouraged; options should be punchy (under 15 words).
+6. COGNITIVE CALIBRATION:
+   - Evaluate the actual cognitive operation demanded by the question:
+     * Easy (RECALL/RECOGNIZE): Factual recall, definition recognition.
+     * Medium (COMPARE/TRACE/EXPLAIN_MECHANISM): Operational mechanism, sequential state transitions, comparative tradeoffs.
+     * Hard (APPLY/DIAGNOSE/PREDICT_CONSTRAINT): Concrete scenario diagnosis, constraint resolution, fault prediction — and also a genuinely multi-step trace or calculation on concrete data given in the stem (e.g. running an algorithm over several steps, or combining two taught rules). A single-step lookup or one arithmetic operation is not Hard; length or vocabulary never makes a question Hard.
+   - Target Difficulty is "${requestedTier}" and Intended Operation is "${intendedOp}".
+   - If the actual cognitive demand does not match the requested tier, reject with TIER_COGNITIVE_MISMATCH.
+6b. TRANSFORMATION OF ANALOGIES INTO TECHNICAL ASSESSMENTS (CRITERION D):
+   - Reject any question that tests trivial recall of a conversational metaphor, analogy, or classroom story (e.g., asking why the teacher mentioned plants or what sunlight represented). Such questions test trivial memory of a casual illustration rather than computer science/academic knowledge. Flag with TRIVIAL_ANALOGY_RECALL.
+6c. CORE QUALITY CHECKLIST AUDIT (CRAFTSMANSHIP & FAIRNESS):
+   - "COVER THE OPTIONS" AUDIT: Verify that the stem is self-contained. If a student covers the options with their hand, do they know what is asked? Reject incomplete or lazy stems ("Which of the following is true?", "Regarding [Topic]:") with STEM_AMBIGUOUS_WITHOUT_OPTIONS.
+   - "BROTHERS AND SISTERS" OPTION AUDIT: Verify that all 4 choices look like brothers and sisters: roughly equal length (reject if key is conspicuously longer with LENGTH_GIVEAWAY), parallel grammar, and consistent tone.
+   - NO ACCIDENTAL CLUES AUDIT: Reject if options contain "always", "never", "all of the above", "none of the above", or grammatical giveaways like stem ending with "an" for a vowel option.
+   - FAIRNESS AUDIT: Verify that the question tests the big idea and is 100% honest to the lecture evidence—never footnotes or trivia.
+   - DISTRACTOR QUALITY AUDIT: Verify that distractors look real to someone who guessed and represent authentic student misconceptions. Reject silly, absurd, or throwaway options with SILLY_DISTRACTOR.
+7. OUTPUT SCHEMA (Return strictly raw JSON):
+{
+  "status": "PASS" or "FAIL",
+  "score": 0.95,
+  "verdict": "PASS" or "FAIL",
+  "failureReasons": [],
+  "failureReason": null or "...",
+  "repairInstruction": null or "...",
+  "stemAnswerAlignment": {
+    "interrogativeMood": "POLAR_YES_NO" or "EXPLANATORY_WHY" or "IDENTIFICATION_WHICH" or "CALCULATION" or "GENERAL",
+    "isDirectlyResponsive": true or false,
+    "interrogativeMatch": true or false,
+    "responsivenessAnalysis": "Detailed reason why the keyed option directly answers (or fails to answer) the question stem",
+    "mismatchDetails": null or "Specific reason if either isDirectlyResponsive or interrogativeMatch is false"
+  },
+  "optionAnalysis": [
+    {
+      "slot": "A",
+      "text": "...",
+      "isKey": true,
+      "verdict": "VALID_KEY" or "PLAUSIBLE_DISTRACTOR" or "AMBIGUOUS" or "UNGROUNDED" or "ABSURD",
+      "justification": "...",
+      "distractorPlausibility": "HIGH" or "MEDIUM" or "LOW" or "N/A",
+      "evidenceCitation": "..."
+    }
+  ],
+  "cognitiveAudit": {
+    "requestedDifficulty": "${requestedTier}",
+    "intendedCognitiveOperation": "${intendedOp}",
+    "evaluatedCognitiveDemand": "RECALL" or "COMPARE" or "DIAGNOSE",
+    "isCalibrated": true or false,
+    "mismatchDetails": null or "..."
+  },
+  "evidenceGrounding": {
+    "tier": "DIRECT_EVIDENCE" or "EVIDENCE_DERIVED" or "FOUNDATIONAL_PREREQUISITE" or "RELATED_EXTENSION" or "UNSUPPORTED_FOREIGN",
+    "groundingScore": 0.95,
+    "foreignDomainDetected": false
+  }
+}`;
+  }
+
+  /**
+   * Batched semantic audit: one LLM call returns the critic verdict for several questions.
+   * Each verdict is later parsed by _parseAndEnforceEvaluationResponse exactly like a single call,
+   * so every fail-closed rule still applies per question. Returns an array aligned with `items`
+   * (null where a verdict is missing, so that question falls back to its own single call).
+   */
+  async batchCriticResponses(items = [], evidencePackage = {}) {
+    if (!Array.isArray(items) || items.length < 2) return items.map(() => null);
+    const blocks = items.map(({ candidateMCQ, target }, i) => {
+      let ctx = getTargetEvidenceContext(target, evidencePackage, 1200);
+      const direct = target.supportingEvidence || (evidencePackage?.unifiedRawContent || '');
+      if (direct && (!ctx || ctx.trim().length < 20)) ctx = direct.slice(0, 1200);
+      const tier = target.targetDifficulty || candidateMCQ.metadata?.targetDifficulty || 'Medium';
+      const op = target.intendedCognitiveOperation || (tier === 'Easy' ? 'RECALL' : 'COMPARE');
+      return `=== QUESTION Q${i + 1} ===
+[TARGET SPECIFICATION]
+Concept: ${target.concept || 'Target Concept'}
+Learning Objective: ${target.learningObjective || target.concept || 'Grounded understanding'}
+Target Difficulty: ${tier}
+Intended Cognitive Operation: ${op}
+[CANDIDATE MCQ]
+Question: ${candidateMCQ.questionText}
+Options: ${JSON.stringify(candidateMCQ.options)}
+Correct Answer: ${candidateMCQ.correctAnswer}
+[SESSION EVIDENCE]
+${String(ctx || '').slice(0, 1200)}`;
+    }).join('\n\n');
+    const systemPrompt = this._buildCriticSystemPrompt('as given for each question', 'as given for each question') +
+      `\n\nBATCH MODE: you receive ${items.length} independent questions. Audit EACH one separately and fully, using only its own target and evidence. Return {"evaluations":[{"id":"Q1", ...the full schema above for Q1}, {"id":"Q2", ...}]} with exactly one entry per question.`;
+    try {
+      const raw = await llmRouter.complete({
+        prompt: blocks,
+        systemPrompt,
+        temperature: 0.1,
+        model: process.env.AGENT3_MODEL || 'qwen/qwen3.8-27b',
+        sessionId: evidencePackage?.sessionId,
+        maxTokens: Math.min(9000, 1400 * items.length),
+        operation: 'EVALUATION'
+      });
+      const parsed = require('../utils/jsonParser').safeParseJson(raw, null);
+      const list = Array.isArray(parsed) ? parsed : (parsed && Array.isArray(parsed.evaluations) ? parsed.evaluations : []);
+      return items.map((_, i) => {
+        const ev = list.find(e => e && String(e.id || '').toUpperCase() === `Q${i + 1}`) || list[i];
+        return ev && typeof ev === 'object' && (ev.status || ev.verdict) ? JSON.stringify(ev) : null;
+      });
+    } catch (err) {
+      console.warn(`⚠️ [Agent 3] Batched evaluation unavailable (${err.message}); using single-question evaluation.`);
+      return items.map(() => null);
     }
   }
 
@@ -807,7 +870,7 @@ ${evidenceContext}
     }
 
     // 1. Initial Evaluation
-    const initialEval = await this.evaluateQuestion(candidateMCQ, target, evidencePackage);
+    const initialEval = await this.evaluateQuestion(candidateMCQ, target, evidencePackage, { precomputedCriticResponse: options.precomputedCriticResponse || null });
 
     // 2. If already passed, or if unfulfilled, return immediately without repair
     if (initialEval.status === 'PASS' || initialEval.status === 'UNFULFILLED' || initialEval.isUnfulfilled || candidateMCQ.isUnfulfilled) {
