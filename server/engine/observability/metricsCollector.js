@@ -26,12 +26,12 @@ class MetricsCollector {
 
     // Grounding scores
     const groundingScores = passingQuestions
-      .map(q => q.metadata?.groundingScore || 0.95)
+      .map(q => q.metadata?.groundingScore)
       .filter(s => typeof s === 'number');
 
     const avgGrounding = groundingScores.length > 0
       ? Number((groundingScores.reduce((a, b) => a + b, 0) / groundingScores.length).toFixed(3))
-      : 0.95;
+      : null;
 
     // Dimension breakdown
     const dimensionCounts = {};

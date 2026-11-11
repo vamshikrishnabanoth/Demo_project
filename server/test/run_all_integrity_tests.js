@@ -21,7 +21,8 @@ const SUITES = [
   { name: 'Step 3: Trace Linkage', file: 'test_trace_linkage.js' },
   { name: 'Step 4A: Grounding Gate Contract', file: 'test_grounding_gate_contract.js' },
   { name: 'Step 4B: Plumbing Hardening', file: 'test_plumbing_hardening.js' },
-  { name: 'Step 4C: Audit Defect Prevention', file: 'test_audit_failure_prevention.js' }
+  { name: 'Step 4C: Audit Defect Prevention', file: 'test_audit_failure_prevention.js' },
+  { name: 'Step 5: End-to-End Pipeline Delivery', file: 'test_pipeline_end_to_end_delivery.js' }
 ];
 
 async function runChildSuite(suite) {
@@ -85,7 +86,7 @@ async function main() {
 
   console.log('======================================================================');
   if (allPassed) {
-    console.log('🎉 ALL 5 SUITES PASSED CLEANLY (45/45 TESTS VERIFIED)');
+    console.log(`🎉 ALL ${SUITES.length} SUITES PASSED`);
     process.exit(0);
   } else {
     console.error('⚠️ SOME TEST SUITES FAILED');

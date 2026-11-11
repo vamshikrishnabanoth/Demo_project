@@ -99,7 +99,7 @@ export default function EvaluationViewer({ evaluations = [], targetResults = [],
             <div className="p-3 bg-slate-50 rounded-lg border border-slate-100">
               <span className="text-[10px] uppercase font-bold text-slate-400 block">Grounding Score</span>
               <span className="font-bold text-emerald-700">
-                {activeEval.mcq?.metadata?.groundingScore ? `${(activeEval.mcq.metadata.groundingScore * 100).toFixed(0)}%` : '96%'}
+                {typeof activeEval.mcq?.metadata?.groundingScore === 'number' ? `${(activeEval.mcq.metadata.groundingScore * 100).toFixed(0)}%` : 'Not measured'}
               </span>
             </div>
 

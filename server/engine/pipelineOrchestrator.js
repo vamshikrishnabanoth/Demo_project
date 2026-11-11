@@ -1,5 +1,3 @@
-const fs = require('fs');
-const path = require('path');
 /**
  * server/engine/pipelineOrchestrator.js
  *
@@ -33,8 +31,10 @@ class PipelineOrchestrator {
   calculateAttemptCeiling(requestedCount, primaryTargetsCount, reserveTargetsCount) {
     const pCount = (typeof primaryTargetsCount === 'number') ? primaryTargetsCount : requestedCount;
     const rCount = (typeof reserveTargetsCount === 'number') ? reserveTargetsCount : Math.ceil(requestedCount / 2);
-    // Strict bounded attempt ceiling: maximum primary targets + bounded reserves (capped at 1.6x requestedCount, hard ceiling 12)
-    return Math.min(pCount + rCount, Math.ceil(requestedCount * 1.6), 12);
+    // Attempt budget scales with the request: every primary and reserve target may be tried once,
+    // with at least 2x headroom for replacements, bounded by an absolute ceiling of 60.
+    // (A fixed ceiling of 12 made requests above ~12-15 questions impossible to satisfy.)
+    return Math.min(Math.max(pCount + rCount, Math.ceil(requestedCount * 2)), 60);
   }
 
   /**
@@ -221,14 +221,6 @@ class PipelineOrchestrator {
       }
       if (sessionInputs.evidenceCapacity && !evidencePackage.evidenceCapacity) {
         evidencePackage.evidenceCapacity = sessionInputs.evidenceCapacity;
-      }
-      if (!evidencePackage.teachingUnits && (String(sessionId).includes('MULTI_005') || sessionInputs.datasetId === 'MULTI_005')) {
-        const datasetPath = path.join(__dirname, '../../evaluation_dataset/VOICE_PLUS_MATERIAL/MULTI_005/multi_005_pedagogical_reconstruction.json');
-        if (fs.existsSync(datasetPath)) {
-          try {
-            evidencePackage.teachingUnits = JSON.parse(fs.readFileSync(datasetPath, 'utf8'));
-          } catch (_) {}
-        }
       }
 
       if (evidencePackage.isAcademic === false) {
@@ -605,8 +597,8 @@ class PipelineOrchestrator {
       };
 
       // Strict repair & replenishment limits
-      const MAX_QUIZ_REPAIRS = Math.min(3, Math.ceil(requestedCount / 2));
-      const MAX_DYNAMIC_RESERVES = Math.min(1, Math.floor(requestedCount * 0.3));
+      const MAX_QUIZ_REPAIRS = Math.min(10, Math.max(3, Math.ceil(requestedCount / 2)));
+      const MAX_DYNAMIC_RESERVES = Math.max(1, Math.ceil(requestedCount * 0.5));
       let dynamicReserveCounter = 0;
       const replenishReservePoolIfEmpty = () => {
         if (activeReservePool.length === 0 && passingQuestions.length < requestedCount && dynamicReserveCounter < MAX_DYNAMIC_RESERVES) {
@@ -875,7 +867,7 @@ class PipelineOrchestrator {
             const nextReserve = activeReservePool.shift();
             const allocatedTier = determineFeasibleReserveTier(nextReserve, tier);
             nextReserve.targetDifficulty = allocatedTier;
-            const cognitiveBp = agent1Planner.getCognitiveBlueprint(tier, nextReserve.dimension || 'Conceptual');
+            const cognitiveBp = agent1Planner.getCognitiveBlueprint(allocatedTier, nextReserve.dimension || 'Conceptual');
             nextReserve.intendedCognitiveOperation = cognitiveBp.intendedCognitiveOperation;
             nextReserve.bloomLevel = cognitiveBp.bloomLevel;
             nextReserve.operationalGuidance = cognitiveBp.operationalGuidance;
@@ -930,7 +922,7 @@ class PipelineOrchestrator {
                   isLLMVerified: Boolean(evalResult.isLLMVerified),
                   isFallback: Boolean(evalResult.isFallback),
                   tier: evalResult.tier || evalResult.evidenceGrounding?.tier || 'EVIDENCE_DERIVED',
-                  groundingScore: typeof evalResult.groundingScore === 'number' ? evalResult.groundingScore : (evalResult.evidenceGrounding?.groundingScore || 0.95),
+                  groundingScore: typeof evalResult.groundingScore === 'number' ? evalResult.groundingScore : (evalResult.evidenceGrounding?.groundingScore ?? null),
                   repaired: Boolean(evalResult.repaired),
                   criticUnavailableReason: evalResult.criticUnavailableReason || null
                 },
@@ -961,7 +953,7 @@ class PipelineOrchestrator {
                   "isLLMVerified": Boolean(evalResult.isLLMVerified),
                   "isFallback": Boolean(evalResult.isFallback),
                   "tier": evalResult.tier || evalResult.evidenceGrounding?.tier || 'EVIDENCE_DERIVED',
-                  "groundingScore": typeof evalResult.groundingScore === 'number' ? evalResult.groundingScore : (evalResult.evidenceGrounding?.groundingScore || 0.95),
+                  "groundingScore": typeof evalResult.groundingScore === 'number' ? evalResult.groundingScore : (evalResult.evidenceGrounding?.groundingScore ?? null),
                   "cognitiveAudit": evalResult.cognitiveAudit,
                   "repaired": Boolean(evalResult.repaired),
                   "verdict": evalResult.status || "PASS",
@@ -1001,7 +993,7 @@ class PipelineOrchestrator {
                 hasRealTimestamps: provenance.hasRealTimestamps,
                 isEvidenceVerified: provenance.isEvidenceVerified,
                 evidenceVerificationStatus: provenance.verificationStatus,
-                groundingScore: evalResult.evidenceGrounding?.groundingScore || 0.95,
+                groundingScore: evalResult.evidenceGrounding?.groundingScore ?? (typeof evalResult.groundingScore === 'number' ? evalResult.groundingScore : null),
                 targetId: currentTarget.targetId,
                 repairAttempted,
                 repairSuccessful,
@@ -1402,14 +1394,47 @@ class PipelineOrchestrator {
       // ──────────────────────────────────────────────────────────────────────────
       const t6 = Date.now();
 
-      // Verify and guarantee answer key integrity across all passing questions
-      passingQuestions.forEach((q, idx) => {
+      // Verify answer key integrity. A broken item is removed (and later replaced from reserves)
+      // instead of failing the whole quiz.
+      for (let idx = passingQuestions.length - 1; idx >= 0; idx--) {
+        const q = passingQuestions[idx];
+        let integrityError = null;
         if (!Array.isArray(q.options) || q.options.length !== 4) {
-          throw new Error(`Answer-Key Integrity Error: Question ${idx + 1} does not have exactly 4 options`);
+          integrityError = 'does not have exactly 4 options';
+        } else if (!q.options.includes(q.correctAnswer)) {
+          integrityError = 'options do not include correctAnswer';
         }
-        if (!q.options.includes(q.correctAnswer)) {
-          throw new Error(`Answer-Key Integrity Error: Question ${idx + 1} options do not include correctAnswer`);
+        if (integrityError) {
+          console.warn(`⚠️ [Orchestrator] Removed question ${idx + 1} (answer-key integrity: ${integrityError}).`);
+          passingQuestions.splice(idx, 1);
+          const qTier = q.metadata?.targetDifficulty || 'Medium';
+          if (byTier[qTier]) {
+            byTier[qTier].accepted = Math.max(0, byTier[qTier].accepted - 1);
+            byTier[qTier].rejected++;
+          }
+          rejectionReasonsCount['ANSWER_KEY_INTEGRITY'] = (rejectionReasonsCount['ANSWER_KEY_INTEGRITY'] || 0) + 1;
+          const rejectedRecord = {
+            targetId: q.metadata?.targetId || q.targetId,
+            concept: q.metadata?.concept || 'Unknown Concept',
+            subtopic: q.metadata?.subtopic || 'Core Mechanism',
+            targetDifficulty: qTier,
+            status: 'REJECTED',
+            reason: `ANSWER_KEY_INTEGRITY: ${integrityError}`,
+            failureReasons: ['ANSWER_KEY_INTEGRITY'],
+            attempts: 1,
+            repairAttempted: false,
+            repairSuccessful: false
+          };
+          rejectedTargets.push(rejectedRecord);
+          const tr = targetResults.find(r => r.targetId === rejectedRecord.targetId && r.status === 'ACCEPTED');
+          if (tr) {
+            tr.status = 'REJECTED';
+            tr.reason = rejectedRecord.reason;
+            tr.failureReasons = ['ANSWER_KEY_INTEGRITY'];
+          }
         }
+      }
+      passingQuestions.forEach((q) => {
         const keyIdx = ['A', 'B', 'C', 'D'].indexOf(q.correctAnswerKey);
         if (keyIdx === -1 || q.options[keyIdx] !== q.correctAnswer) {
           const correctIdx = q.options.indexOf(q.correctAnswer);
@@ -1455,7 +1480,7 @@ class PipelineOrchestrator {
       const t7 = Date.now();
       const groundingResult = groundingGate.verifyQuizGrounding(postCheckedQuestions, evidencePackage);
       const evidenceSafety = groundingResult.status === 'PASSED' ? 'GROUNDED' : 'FOREIGN_CONTAMINATED';
-      const validatedQuestions = groundingResult.validatedQuestions || [];
+      let validatedQuestions = groundingResult.validatedQuestions || [];
 
       await trace.recordStage({
         stageOrder: '07',
@@ -1643,7 +1668,7 @@ class PipelineOrchestrator {
       }
       // Capacity integrity: truthful partial fulfillment without synthetic deficit padding
 
-      const deliveredCount = validatedQuestions.length;
+      let deliveredCount = validatedQuestions.length;
 
       // Compute Difficulty Distribution & Conformance Report
       const requestedDistribution = plan?.requestedDistribution
@@ -1720,6 +1745,17 @@ class PipelineOrchestrator {
 
       const hasValidationRejections = rejectedTargets.length > 0 && !hasProviderFailures && !hasDifficultyMismatch;
 
+      // Why did generation stop? Recorded so that a shortfall is never blamed on the lecture
+      // when the system itself stopped (attempt budget, cancellation, provider failure).
+      const wasAborted = Boolean(abortSignal?.aborted);
+      const attemptBudgetExhausted = iterationCount >= MAX_TOTAL_ITERATIONS &&
+        (candidateQueue.length > 0 || activeReservePool.length > 0);
+      const plannedOpportunityCount = primaryTargets.length + reservePool.length + dynamicReserveCounter;
+      const planHadFewerTargetsThanRequested = plannedOpportunityCount < requestedCount;
+      const rejectionCodeSummary = Object.entries(rejectionReasonsCount)
+        .map(([code, n]) => `${code} ×${n}`)
+        .join(', ');
+
       if (deliveredCount === 0) {
         if (hasProviderFailures) {
           pipelineStatus = 'FAILED';
@@ -1738,15 +1774,26 @@ class PipelineOrchestrator {
         const noticeParts = [];
         noticeParts.push(`Delivered ${deliveredCount} of ${requestedCount} requested questions.`);
 
-        if (unfulfilledTargets.length > 0) {
-          const deficitsSummary = unfulfilledTargets.filter(Boolean).map(u => `"${u?.concept || 'Target'}": ${u?.reason || 'Capacity limit'}`).join('; ');
-          noticeParts.push(`${unfulfilledTargets.length} question(s) withheld due to evidence capacity limitations (${deficitsSummary}).`);
+        if (wasAborted) {
+          noticeParts.push('Generation was cancelled before completion.');
+        }
+        if (hasProviderFailures) {
+          const providerCount = unfulfilledTargets.filter(u => u?.status === 'UNFULFILLED_PROVIDER_FAILURE' || u?.unfulfilledReason === 'PROVIDER_UNAVAILABLE' || u?.unfulfilledReason === 'PROVIDER_ERROR').length;
+          noticeParts.push(`${providerCount} question(s) could not be generated because the AI provider failed or was rate-limited; retrying may succeed.`);
+        }
+        const capacityUnfulfilled = unfulfilledTargets.filter(u => u && u.status !== 'UNFULFILLED_PROVIDER_FAILURE' && u.unfulfilledReason !== 'PROVIDER_UNAVAILABLE' && u.unfulfilledReason !== 'PROVIDER_ERROR');
+        if (capacityUnfulfilled.length > 0) {
+          const deficitsSummary = capacityUnfulfilled.map(u => `"${u?.concept || 'Target'}": ${u?.reason || 'Capacity limit'}`).join('; ');
+          noticeParts.push(`${capacityUnfulfilled.length} planned question(s) were not supported by the material (${deficitsSummary}).`);
         }
         if (rejectedTargets.length > 0) {
-          const rejectionSummary = rejectedTargets.filter(Boolean).map(r => `"${r?.concept || 'Target'}": ${r?.reason || 'Quality audit'}`).join('; ');
-          noticeParts.push(`${rejectedTargets.length} question(s) withheld due to quality or cognitive calibration audit (${rejectionSummary}).`);
+          noticeParts.push(`${rejectedTargets.length} generated question(s) failed quality checks and were removed (${rejectionCodeSummary || 'quality audit'}).`);
         }
-        noticeParts.push('Questions were withheld to ensure strict factual grounding and prevent artificial difficulty drift.');
+        if (attemptBudgetExhausted) {
+          noticeParts.push(`Generation stopped at the attempt limit (${MAX_TOTAL_ITERATIONS}) while unused question opportunities remained; retrying may deliver more.`);
+        } else if (planHadFewerTargetsThanRequested) {
+          noticeParts.push(`The material supported ${plannedOpportunityCount} distinct question opportunities for ${requestedCount} requested.`);
+        }
         notice = noticeParts.join(' ');
       } else {
         pipelineStatus = 'COMPLETED';
@@ -1757,14 +1804,20 @@ class PipelineOrchestrator {
       const isPartial = deliveredCount > 0 && deliveredCount < requestedCount;
       let shortfallCategory = null;
       if (isPartial || deliveredCount < requestedCount) {
-        if (hasProviderFailures) {
+        if (wasAborted) {
+          shortfallCategory = 'CANCELLED';
+        } else if (hasProviderFailures) {
           shortfallCategory = 'PROVIDER_ERROR';
+        } else if (attemptBudgetExhausted) {
+          shortfallCategory = 'ATTEMPT_BUDGET_EXHAUSTED';
         } else if (hasDifficultyMismatch) {
           shortfallCategory = 'DIFFICULTY_UNSUPPORTED';
-        } else if (hasValidationRejections && unfulfilledTargets.length === 0) {
+        } else if (hasValidationRejections && unfulfilledTargets.length === 0 && !planHadFewerTargetsThanRequested) {
           shortfallCategory = 'VALIDATION_REJECTION';
-        } else {
+        } else if (planHadFewerTargetsThanRequested || unfulfilledTargets.length > 0) {
           shortfallCategory = 'MATERIAL_EXHAUSTED';
+        } else {
+          shortfallCategory = 'VALIDATION_REJECTION';
         }
       }
 
@@ -1801,7 +1854,7 @@ class PipelineOrchestrator {
       const totalDeficit = Math.max(0, requestedCount - deliveredCount);
       const hasDeficit = totalDeficit > 0;
       const primaryReason = unfulfilledTargets.find(u => u.reason)?.reason ||
-        (hasDeficit ? `Insufficient lecture evidence for ${totalDeficit} additional distinct ${requestedDifficulty} questions without hallucination` : null);
+        (hasDeficit ? (notice || `${totalDeficit} requested question(s) were not delivered.`) : null);
 
       const defensibleCapacity = evidencePackage?.lectureIntelligence?.evidenceCapacity?.totalDefensibleCapacity ||
         plan?.capacityDeficitReport?.totalDefensibleCapacity ||
@@ -1820,7 +1873,7 @@ class PipelineOrchestrator {
 
       let capacityWarning = hasCoverageLimitation
         ? (hasDeficit
-            ? `This lecture supports up to ${defensibleCapacity} distinct evidence-grounded questions. Insufficient evidence for ${totalDeficit} Hard question(s). Recommended quiz size: ${recommendedCount} questions.`
+            ? `Delivered ${deliveredCount} of ${requestedCount}. Estimated capacity for this material: ${defensibleCapacity} questions (recommended: ${recommendedCount}).${hardCapacityDeficit > 0 ? ` ${hardCapacityDeficit} Hard question(s) were not supported by the material.` : ''}`
             : `This lecture supports up to ${defensibleCapacity} distinct assessment targets. Generating ${requestedCount} questions assesses these targets across multiple distinct cognitive approaches (${repeatedTargetCount} repeated targets). Review repeated target labels below.`)
         : null;
 
@@ -2186,7 +2239,7 @@ class PipelineOrchestrator {
         failureCode,
         errorCode: failureCode,
         isPartial: false,
-        shortfallCategory: failureCode === 'PROVIDER_RATE_LIMITED' ? 'PROVIDER_ERROR' : 'MATERIAL_EXHAUSTED',
+        shortfallCategory: failureCode === 'PROVIDER_RATE_LIMITED' ? 'PROVIDER_ERROR' : (failureCode === 'INSUFFICIENT_EVIDENCE' ? 'MATERIAL_EXHAUSTED' : 'PIPELINE_ERROR'),
         evidenceSafety: 'UNKNOWN',
         quizQualityStatus: 'FAILED',
         error: failureReason,

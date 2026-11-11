@@ -115,7 +115,7 @@ export default function TraceabilityViewer({ questions = [] }) {
                         5. Agent 3 Evaluation Verdict
                       </span>
                       <p className="text-slate-700">
-                        Verdict: <strong className="text-emerald-700">PASS</strong> • Grounding Score: <strong className="font-mono">{((q.metadata?.groundingScore || 0.95) * 100).toFixed(0)}%</strong>
+                        Verdict: <strong className="text-emerald-700">PASS</strong> • Grounding Score: <strong className="font-mono">{typeof q.metadata?.groundingScore === 'number' ? `${(q.metadata.groundingScore * 100).toFixed(0)}%` : 'Not measured'}</strong>
                       </p>
                     </div>
 

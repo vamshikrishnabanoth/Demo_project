@@ -3980,7 +3980,7 @@ exports.generateQuizQuestions = async (req, res) => {
                 difficultyDeficits: (finalTaskObj && finalTaskObj.pipelineResult?.difficultyDeficits) ?? (finalTaskObj && finalTaskObj.difficultyDeficits) ?? null,
                 capacityPolicy:  (finalTaskObj && finalTaskObj.pipelineResult?.capacityPolicy) ?? (finalTaskObj && finalTaskObj.capacityPolicy) ?? (req.body.capacityPolicy || 'ALLOW_SCOPE_SUPPLEMENTARY'),
                 sessionModality: (finalTaskObj && finalTaskObj.pipelineResult?.sessionModality) ?? (finalTaskObj && finalTaskObj.sessionModality) ?? null,
-                notice:          (finalTaskObj && finalTaskObj.pipelineNotice) || (finalQuestions.length < questionCount ? `${finalQuestions.length} evidence-grounded questions were generated from the available instructional content. One additional question could not be validated against the available evidence.` : null),
+                notice:          (finalTaskObj && finalTaskObj.pipelineNotice) || (finalQuestions.length < questionCount ? `Delivered ${finalQuestions.length} of ${questionCount} requested questions.` : null),
                 alignmentWarning: (finalTaskObj && finalTaskObj.alignmentWarning) || null,
                 unalignedDocuments: (finalTaskObj && finalTaskObj.unalignedDocuments) || [],
                 representation_mode: (finalTaskObj && finalTaskObj.representation_mode) || (isVoiceSource ? 'SUMMARY' : 'BLUEPRINT'),

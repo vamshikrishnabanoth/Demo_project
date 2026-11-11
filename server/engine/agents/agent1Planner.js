@@ -5498,125 +5498,12 @@ Ensure targets are distributed across Easy, Medium, and Hard according to the re
    * Avoids rigid off-by-one templates by tailoring misconceptions to the specific domain invariant.
    */
   _deriveTeachingUnitMisconceptions(u, op = 'COMPARE', tier = 'Medium') {
-    const topic = (u.topic || '').toLowerCase();
-    const subtopic = (u.subtopic || '').toLowerCase();
-    const statement = (u.statement || '').toLowerCase();
-
     const misconceptions = [];
-    let strategy = `Curricular Invariant & Mechanism Misconceptions for ${u.subtopic}`;
+    const strategy = `Curricular Invariant & Mechanism Misconceptions for ${u.subtopic}`;
 
-    if (topic.includes('stock') || subtopic.includes('stock') || subtopic.includes('trade') || subtopic.includes('transaction')) {
-      strategy = 'Stock Trading Constraint & Invariant Misconceptions';
-      if (subtopic.includes('problem definition') || subtopic.includes('single-transaction') || statement.includes('single-transaction') || statement.includes('at most one transaction')) {
-        misconceptions.push({
-          concept: 'Multiple Transaction Inversion',
-          description: 'Believing the trader can execute multiple separate buy-sell transactions across different price peaks to accumulate profit, rather than selecting a single buy and single sell interval.'
-        });
-        misconceptions.push({
-          concept: 'Temporal Precondition Inversion',
-          description: 'Assuming the trader can sell before buying or use future knowledge to execute backwards in time.'
-        });
-        misconceptions.push({
-          concept: 'Day Index Fixation',
-          description: 'Believing stock must be purchased on Day 0 or sold on Day N-1 regardless of intermediate maximum profit.'
-        });
-      } else if (subtopic.includes('i/o') || subtopic.includes('edge case') || statement.includes('return 0') || statement.includes('decreasing')) {
-        misconceptions.push({
-          concept: 'Negative Profit Fallacy',
-          description: 'Assuming negative profit or -1 must be returned on decreasing prices instead of 0 for no transaction.'
-        });
-        misconceptions.push({
-          concept: 'Mandatory Transaction Fallacy',
-          description: 'Believing a transaction is mandatory even when prices never rise, incurring a forced loss.'
-        });
-        misconceptions.push({
-          concept: 'Format/Index Confusion',
-          description: 'Returning day indices or array values instead of the computed maximum profit integer.'
-        });
-      } else {
-        misconceptions.push({
-          concept: 'Brute Force vs Greedy Invariant',
-          description: 'Tracking global maximum price instead of maintaining running minimum purchase price seen so far.'
-        });
-        misconceptions.push({
-          concept: 'Local vs Global Optima',
-          description: 'Selling immediately on the first price increase instead of comparing current profit against maximum profit.'
-        });
-      }
-    } else if (topic.includes('product') || subtopic.includes('product') || statement.includes('product')) {
-      strategy = 'Minimum Product Subset Boundary & Sign Invariant Misconceptions';
-      if (subtopic.includes('zero') || statement.includes('zero')) {
-        misconceptions.push({
-          concept: 'Zero Multiplicative Dominance Fallacy',
-          description: 'Assuming zero always produces the minimum product, failing to recognize that negative numbers yield products strictly less than zero.'
-        });
-        misconceptions.push({
-          concept: 'Zero Inclusion Inversion',
-          description: 'Excluding zero when all numbers are positive, missing that product 0 is strictly smaller than positive products.'
-        });
-      } else if (subtopic.includes('negative') || statement.includes('negative')) {
-        misconceptions.push({
-          concept: 'Even Negatives Parity Trap',
-          description: 'Multiplying all even negative numbers together, resulting in a large positive product instead of excluding the negative with the smallest absolute value to maintain negativity.'
-        });
-        misconceptions.push({
-          concept: 'Absolute vs Algebraic Value Inversion',
-          description: 'Confusing largest negative number (closest to zero, e.g. -1) with most negative number (smallest algebraic value, e.g. -9).'
-        });
-      } else if (subtopic.includes('positive') || statement.includes('positive')) {
-        misconceptions.push({
-          concept: 'All Positives Multiplication Fallacy',
-          description: 'Selecting all positive elements to minimize product, which actually maximizes the product. Only the single smallest positive number should be selected.'
-        });
-        misconceptions.push({
-          concept: 'Empty Set Trap',
-          description: 'Assuming an empty subset with product 0 or 1 is permissible when non-empty subset is required.'
-        });
-      } else {
-        misconceptions.push({
-          concept: 'Greedy Element Selection Trap',
-          description: 'Failing to track negative count parity when greedily selecting non-zero elements.'
-        });
-      }
-    } else if (topic.includes('spanning') || topic.includes('prim') || subtopic.includes('graph') || subtopic.includes('mst')) {
-      strategy = 'Minimum Spanning Tree & Prim Algorithm Invariants';
-      if (subtopic.includes('capacity') || subtopic.includes('complete graph') || statement.includes('spanning tree')) {
-        misconceptions.push({
-          concept: 'Edge Count vs Vertex Count',
-          description: 'Confusing V vertices with V edges, forgetting a tree with V vertices has strictly V - 1 edges.'
-        });
-        misconceptions.push({
-          concept: 'Complete Graph Cycle Fallacy',
-          description: 'Believing dense complete graphs have fewer spanning trees due to cycles, rather than having exponentially more potential trees.'
-        });
-        misconceptions.push({
-          concept: 'Unique Spanning Tree Assumption',
-          description: 'Assuming a complete graph has only one unique spanning tree regardless of edge weights.'
-        });
-      } else if (subtopic.includes('visited') || subtopic.includes('distance') || statement.includes('visited')) {
-        misconceptions.push({
-          concept: 'Array Functional Inversion',
-          description: 'Confusing the cycle prevention role of visited[] with the edge weight minimization role of distance[].'
-        });
-        misconceptions.push({
-          concept: 'Edge vs Vertex Tracking',
-          description: 'Believing visited[] marks edges rather than vertices included in the growing tree.'
-        });
-        misconceptions.push({
-          concept: 'Initialization Sentinel Misconception',
-          description: 'Assuming distance[] should be initialized to 0 instead of infinity (Integer.MAX_VALUE) for unvisited vertices.'
-        });
-      } else if (subtopic.includes('cut') || subtopic.includes('greedy') || statement.includes('edge')) {
-        misconceptions.push({
-          concept: 'Global vs Cut Minimum Edge Confusion',
-          description: 'Selecting the globally minimum edge anywhere in the graph (Kruskal) instead of the minimum weight edge crossing the current cut from visited to unvisited (Prim).'
-        });
-        misconceptions.push({
-          concept: 'Re-visitation State Corruption',
-          description: 'Updating distances or adding edges connected to already visited vertices, which would form a cycle.'
-        });
-      }
-    }
+    // Topic-specific misconception catalogues for individual benchmark lectures were removed:
+    // they inflated benchmark results without helping any other lecture. Lecture-derived
+    // misconceptions are planned for the distractor stage (see audit plan, Stage 5).
 
     if (misconceptions.length === 0) {
       misconceptions.push({

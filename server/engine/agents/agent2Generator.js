@@ -11,7 +11,6 @@
 
 const crypto = require('crypto');
 const llmRouter = require('../adapter/llmRouter');
-const calculationEngine = require('../validators/calculationEngine');
 const { safeParseJson } = require('../utils/jsonParser');
 const { getTargetEvidenceContext } = require('../evidence/evidenceContextSelector');
 const kmitStyleContract = require('../../config/kmitStyleContract');
@@ -1892,13 +1891,9 @@ Generate a JSON array of exactly ${validTargets.length} distinct, rigorous MCQs 
     const isTopicMode = target.isTopicMode ||
       evidencePackage?.inputModality === 'TOPIC_SYNTHESIS' ||
       evidencePackage?.representationMode === 'TOPIC_BLUEPRINT';
-    const isBankersTarget = (target.concept || '').toLowerCase().includes('banker') ||
-      (target.supportingEvidence || '').toLowerCase().includes('banker');
-
-    let calculatedData = null;
-    if (isBankersTarget) {
-      calculatedData = calculationEngine.evaluateCalculation(target, { max: [7, 5, 3], allocation: [3, 2, 2] });
-    }
+    // Note: a former Banker's-algorithm special case computed answers from a hardcoded example
+    // matrix and overwrote the generated key; removed so keys always come from the lecture's own data.
+    const calculatedData = null;
 
     const rawTier = target.targetDifficulty || target.difficulty || target.tier || 'Medium';
     const tier = (rawTier === 1 || rawTier === '1' || String(rawTier).toLowerCase() === 'easy') ? 'Easy' : ((rawTier === 3 || rawTier === '3' || String(rawTier).toLowerCase() === 'hard') ? 'Hard' : 'Medium');

@@ -283,7 +283,7 @@ class LectureIntelligence {
       if (hasInvariantsInLecture) {
         // Op 1: Invariant Preservation & Boundary Violation (e.g. balance factor, thresholds, capacity bounds)
         const hasBoundaryOrInvariant = (substanceType === 'RULE_OR_CONDITION' || substanceType === 'RULE') &&
-          (/\b(invariant|threshold|limit|must maintain|conservation|equilibrium|capacity|overflow|violation|precondition|postcondition|base case|base condition|termination|stopping condition|search bound|upper bound|lower bound|staging|commit|status|diff|detached|re-modify|config)\b/i.test(`${name} ${def} ${mech}`) ||
+          (/\b(invariant|threshold|limit|must maintain|conservation|equilibrium|capacity|overflow|violation|precondition|postcondition|base case|base condition|termination|stopping condition|search bound|upper bound|lower bound)\b/i.test(`${name} ${def} ${mech}`) ||
            (/\b(boundary|at most|at least)\b/i.test(`${name} ${def} ${mech}`) && /\b(preserve|maintain|violate|exceed|proof|bound)\b/i.test(`${def} ${mech}`)));
         if (hasBoundaryOrInvariant) {
           op1Count += 1;
@@ -311,7 +311,7 @@ class LectureIntelligence {
 
         // Op 5: Multi-Concept Causal Chain (e.g. naval blockade -> price surge -> bread riots -> rationing; permitted even under NO_CODE + NO_MATH)
         const isCausalChain = (substanceType === 'RULE_OR_CONDITION' || substanceType === 'MECHANISM' || def.length >= 25 || mech.length >= 20) &&
-          /\b(because|leads to|results in|causes|consequently|triggers|forces|forced to|due to|led to|as a result|recursively|returns|updates|overrides|persists|overcome|bottleneck|prevents|adversarial|generator|discriminator|attention mechanism)\b/i.test(`${def} ${mech}`);
+          /\b(because|leads to|results in|causes|consequently|triggers|forces|forced to|due to|led to|as a result|recursively|returns|updates|overrides|persists|overcome|bottleneck|prevents)\b/i.test(`${def} ${mech}`);
         if (isCausalChain) {
           op5Count += 1;
           operationEvidenceTrail.push({
