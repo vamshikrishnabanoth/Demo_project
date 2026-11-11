@@ -79,8 +79,8 @@ You should see:
 - `update_second_year_field.js` - Update second year students
 
 ### Documentation
-- `SETUP_SUMMARY.md` - Complete overview
-- `README_FIRST_YEAR_IMPORT.md` - Detailed guide
+- `docs/archive/SETUP_SUMMARY.md` - Complete overview
+- `server/README_FIRST_YEAR_IMPORT.md` - Detailed guide
 - `QUICK_START.md` - This file
 
 ## 🐛 Common Issues
@@ -165,4 +165,4 @@ After running `node setup_first_year.js`:
 
 ---
 
-**Questions?** Check `SETUP_SUMMARY.md` for more details.
+**Questions?** Check `docs/archive/SETUP_SUMMARY.md` for more details.

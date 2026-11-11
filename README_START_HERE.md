@@ -70,7 +70,7 @@ Students can now login with:
 
 - Quick guide: `QUICK_START.md`
 - Complete details: `server/README_FIRST_YEAR_IMPORT.md`
-- Full overview: `SETUP_SUMMARY.md`
+- Full overview: `docs/archive/SETUP_SUMMARY.md`
 
 ## 📊 What Happens
 

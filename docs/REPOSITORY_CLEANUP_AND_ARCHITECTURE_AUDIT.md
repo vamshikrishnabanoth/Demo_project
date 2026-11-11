@@ -86,9 +86,9 @@ The following keys have been removed from `server/.env` and root `.env` because 
 ## 5. Fine-Tuned LLaMA Model: Current Status & Future Activation
 
 Per team instructions, the **fine-tuned LLaMA model is preserved 100% intact**:
-* **Model Binary**: `llama-3-8b.Q4_K_M.gguf` (Kept in root)
-* **Colab Training Assets**: `llama_quiz_expert/` & `llama_quiz_expert_for_colab.zip` (Kept in root)
-* **Ollama Definition**: `Modelfile` (Kept in root)
+* **Model Binary**: `llama-3-8b.Q4_K_M.gguf` — moved on 2026-11-12 to `git_kahoot/_model_backup/fine_tuned_llama/` (outside the repo, never in git; see the README there)
+* **Colab Training Assets**: `llama_quiz_expert/` & `llama_quiz_expert_for_colab.zip` — same backup folder
+* **Ollama Definition**: `Modelfile` — same backup folder (its `FROM ./llama-3-8b.Q4_K_M.gguf` path still works there)
 * **FastAPI Bridge**: `ai_service.py` (Kept in root)
 * **Configuration**: `AI_SERVICE_URL=http://localhost:8000` and `OLLAMA_BASE_URL` in `.env`.
 
@@ -108,3 +108,24 @@ Following this cleanup:
 * [x] `Demo_project/client`: `npm run build` generates the Vite production bundle in **~6.5s with zero errors**.
 * [x] All active routes (`/api/quiz/*`, `/api/auth/*`, `/api/telemetry/*`) operate strictly against Prisma and PostgreSQL.
 * [x] No sensitive files or loose test databases remain in the repository root.
+
+---
+
+## 7. Cleanup of 2026-11-12 (branch `chore/repo-cleanup`)
+
+Everything removed here can be restored from the git tag **`pre-cleanup-2026-11-12`**
+(e.g. `git checkout pre-cleanup-2026-11-12 -- server/test_total_pipeline.js`).
+
+| What | Action | Why |
+|---|---|---|
+| ~35 old reports, plans and generated HTML/PDF at the repo root | moved to `docs/archive/` | historical; kept readable |
+| Deployment / troubleshooting guides | moved to `docs/deployment/` | grouped |
+| One-off root scripts (CSV converters, seed generators, `run_final_closure_evaluation.js`, `run_staging_canary.js`, `test_youtube.js`, `check_users.js`, `connect-laptop-to-aws.bat`) and images/QR codes, `regression_results.json` | removed | unused by app, tests or npm scripts |
+| `locustfile.py` | moved to `load_tests/` | with the other load tests |
+| ~50 ad-hoc `server/test_*.js` scripts, `server/test.pptx`, `server/verify_deep_multimodal.js` | removed | legacy manual probes, not part of `npm test`; the maintained tests are in `server/test/` |
+| Fine-tuned LLaMA model, `Modelfile`, Colab assets | moved out of the repo to `git_kahoot/_model_backup/fine_tuned_llama/` | 5 GB, never in git; kept safe |
+
+Kept on purpose: root `generate_html_report.js` (load-test npm scripts), `run_master_product_evaluation.js` and
+`run_mat004_positive_path_benchmark.js` (used by tests in `server/test/`), all `server/` admin, seeding and
+student-import scripts (they use paths relative to `server/`), `experiments/`, `evaluation_dataset/`,
+`production_engine/`, `ai_service.py`.
