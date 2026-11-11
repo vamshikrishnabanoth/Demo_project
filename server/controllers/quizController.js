@@ -23,6 +23,7 @@ const { GoogleGenerativeAI } = require('@google/generative-ai');
 const { YoutubeTranscript } = require('youtube-transcript');
 const { logPipelineStep } = require('../utils/logger');
 const { isTopicLike, classifyTextBlock } = require('../utils/inputKind');
+const { readPptxSlides, renderSlides } = require('../utils/pptxSlides');
 const { resolveCorrectOptionText } = require('../utils/grading');
 const cacheManager = require('../utils/cacheManager');
 const { toUserFriendlyError } = require('../utils/friendlyErrorMapper');
@@ -667,6 +668,12 @@ const extractText = async (filePath) => {
         if (['.mp3', '.wav', '.m4a', '.webm', '.ogg', '.aac', '.flac'].includes(ext)) {
             return (await transcribeAudio(filePath)) || '';
         }
+        if (ext === '.pptx') {
+            try {
+                const rendered = renderSlides(readPptxSlides(filePath));
+                if (rendered.trim().length > 0) return rendered;
+            } catch (_) { /* fall back to flat extraction */ }
+        }
         if (['.pptx', '.xlsx', '.ppt'].includes(ext)) {
             return await parsePptOrPptx(filePath);
         }
@@ -714,11 +721,41 @@ const extractText = async (filePath) => {
     }
 };
 
+/**
+ * Read text from an image or a scanned / low-text PDF through the document router (OCR, or vision
+ * where configured). Returns '' when nothing readable is found; callers must then skip the file
+ * rather than pass raw bytes to the model as if they were lecture text.
+ */
+const extractReadableTextFromScan = async (filePath, originalName) => {
+    try {
+        const commonDoc = await DocumentRouter.ingestDocument(filePath, { filename: originalName || path.basename(filePath) });
+        const text = (commonDoc && typeof commonDoc.toUnifiedText === 'function') ? commonDoc.toUnifiedText() : '';
+        return String(text || '').trim();
+    } catch (err) {
+        console.warn(`⚠️ [quizController] OCR/vision extraction failed for ${originalName}: ${err.message}`);
+        return '';
+    }
+};
+
 const extractTextWithRange = async (filePath, startPage = 1, endPage = 999) => {
     try {
         const ext = path.extname(filePath).toLowerCase();
         if (['.mp3', '.wav', '.m4a', '.webm', '.ogg', '.aac', '.flac'].includes(ext)) {
             return (await transcribeAudio(filePath)) || '';
+        }
+        if (ext === '.pptx') {
+            // Slide-accurate extraction: real slide numbers, speaker notes, image markers.
+            try {
+                const slides = readPptxSlides(filePath);
+                if (slides.length > 0) {
+                    const s0 = Math.max(1, parseInt(startPage, 10) || 1);
+                    const e0 = Math.max(s0, parseInt(endPage, 10) || slides.length);
+                    const rendered = renderSlides(slides, s0, e0);
+                    if (rendered.trim().length > 0) return rendered;
+                }
+            } catch (pptxErr) {
+                console.warn(`⚠️ [quizController] Slide-level PPTX parsing failed (${pptxErr.message}); using flat text extraction.`);
+            }
         }
         if (['.pptx', '.xlsx', '.ppt'].includes(ext)) {
             const parsedText = await parsePptOrPptx(filePath);
@@ -3374,10 +3411,12 @@ exports.generateQuizQuestions = async (req, res) => {
 
                         const isTxt = ext === '.txt';
                         if (isTxt) {
+                            // A .txt upload is a document (notes, code, a saved terminal session), not a
+                            // voice transcript; it must not be scored or segmented as spoken delivery.
                             const textContent = fs.readFileSync(filePath, 'utf8');
                             safeUnlink(filePath);
                             return {
-                                type: 'voice',
+                                type: 'text',
                                 content: textContent,
                                 source_name: file.originalname
                             };
@@ -3385,28 +3424,35 @@ exports.generateQuizQuestions = async (req, res) => {
 
                         let textContent = "";
                         const isImage = ['.jpg', '.jpeg', '.png', '.gif', '.webp'].includes(ext);
-                        let isHandwrittenScan = isImage;
+                        let isHandwrittenScan = false;
 
-                        if (isImage) {
-                            const buffer = fs.readFileSync(filePath);
-                            textContent = "base64:" + buffer.toString('base64');
-                        } else {
+                        if (!isImage) {
                             textContent = await extractTextWithRange(filePath, config.startPage, config.endPage);
-                            if (ext === '.pdf') {
-                                const fileNameLower = file.originalname.toLowerCase();
-                                if (fileNameLower.includes('scan') || fileNameLower.includes('handwritten') || fileNameLower.includes('handwriting') || (!textContent || textContent.trim().length < 100)) {
-                                    isHandwrittenScan = true;
-                                    const buffer = fs.readFileSync(filePath);
-                                    textContent = "base64:" + buffer.toString('base64');
-                                }
+                        }
+                        // Images and PDFs without a usable text layer go through OCR/vision. The raw bytes
+                        // are never passed to the model as lecture text.
+                        if (isImage || (ext === '.pdf' && (!textContent || textContent.trim().length < 100))) {
+                            const scannedText = await extractReadableTextFromScan(filePath, file.originalname);
+                            if (scannedText.length >= 20) {
+                                textContent = scannedText;
+                                isHandwrittenScan = true;
                             }
                         }
 
                         safeUnlink(filePath);
 
+                        if (!textContent || textContent.trim().length < 20) {
+                            console.warn(`⚠️ [Ingestion] No readable text could be extracted from "${file.originalname}"; it was not used.`);
+                            const tObj = getTask(taskId);
+                            if (tObj) {
+                                tObj.unreadableSources = [...(tObj.unreadableSources || []), file.originalname];
+                            }
+                            return null;
+                        }
+
                         return {
                             type: isHandwrittenScan ? 'handwritten_scan' : ext.replace('.', ''),
-                            content: textContent || filePath,
+                            content: textContent,
                             source_name: file.originalname,
                             startPage: config.startPage || 1,
                             endPage: config.endPage || 999
@@ -3688,77 +3734,12 @@ exports.generateQuizQuestions = async (req, res) => {
                           }
                       }
 
-                      // METHOD 3: Gemini AI content generation (fallback — no download needed)
-                      if ((!text || text.length < 100 || extractionMethod === 'oembed') && process.env.GEMINI_API_KEY) {
-                          try {
-                              console.log(`[YouTube] 🤖 Using Gemini AI to generate educational content...`);
-                              updateTaskStage(taskId, 0, 'Generating Content with AI');
-                              const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-                              const model = genAI.getGenerativeModel({ model: 'gemini-flash-latest' });
-                              const videoHint = getVideoHint(url);
-                              const contextHint = extractionMethod === 'oembed' ? `Video Details from YouTube: ${text}` : '';
-                              const geminiPrompt = [
-                                  `You are an educational content expert.`,
-                                  `A student has submitted a YouTube video URL for quiz generation: ${url}`,
-                                  `${videoHint}`,
-                                  `${contextHint}`,
-                                  ``,
-                                  `Since the video transcript is not directly accessible, generate a comprehensive educational summary`,
-                                  `that covers the likely key concepts, facts, and learning points from this video.`,
-                                  ``,
-                                  `Write 500-800 words of educational content suitable for generating 10 multiple-choice quiz questions.`,
-                                  `Focus on factual, testable knowledge. Use clear, concise language.`,
-                                  `If you cannot determine the topic from the URL, generate content about general educational topics.`,
-                              ].join('\n');
-                              const geminiResult = await model.generateContent(geminiPrompt);
-                              const geminiText = geminiResult.response.text();
-                              if (geminiText && geminiText.length > 200) {
-                                  text = geminiText;
-                                  extractionMethod = 'ai-generated';
-                                  console.log(`[YouTube] ✅ AI-generated content: ${text.length} chars`);
-                              }
-                          } catch (geminiErr) {
-                              console.log(`[YouTube] ⚠️ Gemini AI fallback failed: ${geminiErr.message}`);
-                          }
-                      }
-
-                      // METHOD 4: Groq AI content generation (fallback — no download needed, very reliable)
-                      if ((!text || text.length < 100 || extractionMethod === 'oembed') && groq) {
-                          try {
-                              console.log(`[YouTube] 🤖 Using Groq AI to generate educational content...`);
-                              updateTaskStage(taskId, 0, 'Generating Content with AI');
-                              const videoHint = getVideoHint(url);
-                              const contextHint = extractionMethod === 'oembed' ? `Video Details from YouTube: ${text}` : '';
-                              const groqPrompt = [
-                                  `You are an educational content expert.`,
-                                  `A student has submitted a YouTube video URL for quiz generation: ${url}`,
-                                  `${videoHint}`,
-                                  `${contextHint}`,
-                                  ``,
-                                  `Since the video transcript is not directly accessible, generate a comprehensive educational summary`,
-                                  `that covers the likely key concepts, facts, and learning points from this video.`,
-                                  ``,
-                                  `Write 500-800 words of educational content suitable for generating 10 multiple-choice quiz questions.`,
-                                  `Focus on factual, testable knowledge. Use clear, concise language.`,
-                                  `If you cannot determine the topic from the URL, generate content about general educational topics.`,
-                              ].join('\n');
-
-                              const chatCompletion = await groq.chat.completions.create({
-                                  messages: [{ role: 'user', content: groqPrompt }],
-                                  model: 'llama-3.1-8b-instant',
-                                  temperature: 0.5,
-                                  max_tokens: 2000
-                              });
-
-                              const groqText = chatCompletion.choices[0].message.content;
-                              if (groqText && groqText.length > 200) {
-                                  text = groqText;
-                                  extractionMethod = 'groq-ai-generated';
-                                  console.log(`[YouTube] ✅ Groq AI-generated content: ${text.length} chars`);
-                              }
-                          } catch (groqErr) {
-                              console.log(`[YouTube] ⚠️ Groq AI fallback failed: ${groqErr.message}`);
-                          }
+                      // Note: earlier versions asked an LLM to invent "likely" lecture content from the URL
+                      // when no transcript existed. Questions must come from what the video actually says,
+                      // so a video without a transcript now fails with a clear message instead.
+                      if (extractionMethod === 'oembed' || extractionMethod === 'metadata') {
+                          failTask(taskId, 'This video has no accessible transcript (captions), so questions cannot be grounded in what it teaches. Please use a video with captions, or upload the lecture audio or notes instead.');
+                          return;
                       }
 
                      console.log(`[YouTube] ✅ Content extracted via ${extractionMethod}`);
@@ -3987,7 +3968,12 @@ exports.generateQuizQuestions = async (req, res) => {
                 difficultyDeficits: (finalTaskObj && finalTaskObj.pipelineResult?.difficultyDeficits) ?? (finalTaskObj && finalTaskObj.difficultyDeficits) ?? null,
                 capacityPolicy:  (finalTaskObj && finalTaskObj.pipelineResult?.capacityPolicy) ?? (finalTaskObj && finalTaskObj.capacityPolicy) ?? (req.body.capacityPolicy || 'ALLOW_SCOPE_SUPPLEMENTARY'),
                 sessionModality: (finalTaskObj && finalTaskObj.pipelineResult?.sessionModality) ?? (finalTaskObj && finalTaskObj.sessionModality) ?? null,
-                notice:          (finalTaskObj && finalTaskObj.pipelineNotice) || (finalQuestions.length < questionCount ? `Delivered ${finalQuestions.length} of ${questionCount} requested questions.` : null),
+                notice:          [
+                    (finalTaskObj && finalTaskObj.pipelineNotice) || (finalQuestions.length < questionCount ? `Delivered ${finalQuestions.length} of ${questionCount} requested questions.` : null),
+                    (finalTaskObj && Array.isArray(finalTaskObj.unreadableSources) && finalTaskObj.unreadableSources.length > 0)
+                        ? `No readable text could be extracted from: ${finalTaskObj.unreadableSources.join(', ')}. These files were not used.`
+                        : null
+                ].filter(Boolean).join(' ') || null,
                 alignmentWarning: (finalTaskObj && finalTaskObj.alignmentWarning) || null,
                 unalignedDocuments: (finalTaskObj && finalTaskObj.unalignedDocuments) || [],
                 representation_mode: (finalTaskObj && finalTaskObj.representation_mode) || (isVoiceSource ? 'SUMMARY' : 'BLUEPRINT'),
@@ -4760,26 +4746,27 @@ exports.analyzeSources = async (req, res) => {
 
                 let textContent = "";
                 const isImage = ['.jpg', '.jpeg', '.png', '.gif', '.webp'].includes(ext);
-                let isHandwrittenScan = isImage;
+                let isHandwrittenScan = false;
 
-                if (isImage) {
-                    const buffer = fs.readFileSync(filePath);
-                    textContent = "base64:" + buffer.toString('base64');
-                } else {
+                if (!isImage) {
                     textContent = await extractTextWithRange(filePath, config.startPage, config.endPage);
-                    if (ext === '.pdf') {
-                        const fileNameLower = file.originalname.toLowerCase();
-                        if (fileNameLower.includes('scan') || fileNameLower.includes('handwritten') || fileNameLower.includes('handwriting') || (!textContent || textContent.trim().length < 100)) {
-                            isHandwrittenScan = true;
-                            const buffer = fs.readFileSync(filePath);
-                            textContent = "base64:" + buffer.toString('base64');
-                        }
+                }
+                if (isImage || (ext === '.pdf' && (!textContent || textContent.trim().length < 100))) {
+                    const scannedText = await extractReadableTextFromScan(filePath, file.originalname);
+                    if (scannedText.length >= 20) {
+                        textContent = scannedText;
+                        isHandwrittenScan = true;
                     }
+                }
+                if (!textContent || textContent.trim().length < 20) {
+                    console.warn(`⚠️ [analyzeSources] No readable text in "${file.originalname}"; skipped.`);
+                    try { fs.unlinkSync(filePath); } catch (_) {}
+                    continue;
                 }
 
                 inputs.push({
                     type: isHandwrittenScan ? 'handwritten_scan' : ext.replace('.', ''),
-                    content: textContent || filePath,
+                    content: textContent,
                     source_name: file.originalname,
                     startPage: config.startPage || 1,
                     endPage: config.endPage || 999
@@ -4881,7 +4868,9 @@ Return ONLY a clean JSON object conforming strictly to this format:
                         { role: 'system', content: 'You are a JSON generator. Respond strictly with valid JSON.' },
                         { role: 'user', content: prompt }
                     ],
-                    model: 'llama-3.1-8b-instant',
+                    // llama-3.1-8b-instant is no longer served on Groq.
+                    model: process.env.ANALYZE_SOURCES_MODEL || 'openai/gpt-oss-20b',
+                    reasoning_effort: 'low',
                     response_format: { type: "json_object" }
                 });
                 rawContent = chatCompletion.choices[0].message.content;
@@ -4892,7 +4881,7 @@ Return ONLY a clean JSON object conforming strictly to this format:
                         { role: 'system', content: 'You are an academic analyzer. Respond ONLY with a valid raw JSON object.' },
                         { role: 'user', content: prompt }
                     ],
-                    model: 'llama-3.1-8b-instant'
+                    model: process.env.ANALYZE_SOURCES_FALLBACK_MODEL || 'qwen/qwen3.8-27b'
                 });
                 rawContent = fallbackCompletion.choices[0].message.content;
             }
@@ -4945,10 +4934,20 @@ exports.getFileMetadata = async (req, res) => {
             const result = await mammoth.extractRawText({ path: absolutePath });
             extractedText = result.value || '';
             totalCount = Math.max(1, Math.ceil(extractedText.split(/\s+/).length / 300));
-        } else if (['.pptx', '.ppt'].includes(ext)) {
+        } else if (ext === '.pptx' || ext === '.ppt') {
             try {
-                extractedText = await parsePptOrPptx(absolutePath);
-                totalCount = Math.max(1, Math.ceil((extractedText || '').split(/\s+/).length / 100));
+                let slides = [];
+                if (ext === '.pptx') {
+                    try { slides = readPptxSlides(absolutePath); } catch (_) { slides = []; }
+                }
+                if (slides.length > 0) {
+                    // Real slide count so the teacher's slide range maps to actual slides.
+                    extractedText = renderSlides(slides);
+                    totalCount = slides.length;
+                } else {
+                    extractedText = await parsePptOrPptx(absolutePath);
+                    totalCount = Math.max(1, Math.ceil((extractedText || '').split(/\s+/).length / 100));
+                }
             } catch (_) {
                 extractedText = '';
                 totalCount = 1;
