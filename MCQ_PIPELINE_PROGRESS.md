@@ -30,10 +30,11 @@ Audit and full plan: `TEACHER_ROLE_COMPLETE_IMPLEMENTATION_AUDIT.md`.
 
 ## Live evidence so far (Groq free tier)
 - MAT_004 (DS lab manual), 5 Medium: delivered 0–2 per run before the last fixes; delivered questions were correct code traces. Latest fixes not yet verified live.
+- **DBMS SQL Joins doc (team dataset), 5 Balanced, after all Stage 2 fixes: 4/5 delivered in 211 s.** Keys correct. Remaining quality issues seen: one stem refers to table rows not shown in the question (not self-contained); one stem slightly inconsistent with its query; some distractors too easy; a trace question labelled Easy. Rejections: AMBIGUOUS_DISTRACTOR x4, TIER_COGNITIVE_MISMATCH x3, option/style checks x4.
 - Blockers: Groq free tier = 8k tokens/min per model and a daily token cap (exhausted on 2026-11-11). Gemini fallback key saved but rejected as invalid (check the secret has no "Bearer" prefix).
 
 ## Next steps
-1. Live-verify Stage 2 on real inputs (DBMS joins doc, MAT_004, a pasted terminal session, a lecture audio) once a provider has quota; fix remaining rejection causes.
+1. Add a self-containment check (stem must include the data it refers to), review remaining AMBIGUOUS_DISTRACTOR / TIER_COGNITIVE_MISMATCH rejections, then live-verify Stage 2 on more real inputs (DBMS joins doc, MAT_004, a pasted terminal session, a lecture audio) once a provider has quota; fix remaining rejection causes.
 2. Stage 3: single lecture model shared by preview, capacity, generation and teaching score; real timestamped segments; slide↔speech alignment.
 
 ## Running a live check
