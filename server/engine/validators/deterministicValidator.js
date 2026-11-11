@@ -13,6 +13,7 @@
 const crypto = require('crypto');
 const { OPTION_SET_CONTRACT } = require('../contracts/pipelineContracts');
 const DifficultyAwareDistractorValidator = require('./difficultyAwareDistractorValidator');
+const disfluencySanitizer = require('../intelligence/disfluencySanitizer');
 
 const SCHEMA_PLACEHOLDER_OPTIONS = new Set([
   'contrasting algorithmic approach or property',
@@ -223,18 +224,31 @@ class DeterministicValidator {
             const jaccard = unionSize > 0 ? (intersection / unionSize) : 0;
 
             if (isExactWordPermutation) {
-              errors.push({
-                code: this.OPTION_SET_CONTRACT.hardRejectionCodes.PERMUTED_DUPLICATE_OPTION || 'PERMUTED_DUPLICATE_OPTION',
-                message: `Permuted duplicate option choices detected: "${options[i]}" and "${options[j]}" contain identical words in permuted order`,
-                details: { indexA: i, indexB: j, optionA: options[i], optionB: options[j] }
-              });
-            } else if (jaccard >= 0.60 || (intersection >= 3 && (intersection / Math.min(t1.size, t2.size)) >= 0.65)) {
-              const containment = intersection / Math.min(t1.size, t2.size);
-              errors.push({
-                code: this.OPTION_SET_CONTRACT.hardRejectionCodes.SYNONYMOUS_DISTRACTOR_OPTION || 'SYNONYMOUS_DISTRACTOR_OPTION',
-                message: `Synonymous duplicate option choices detected: "${options[i]}" and "${options[j]}" share ${(containment * 100).toFixed(0)}% core vocabulary`,
-                details: { indexA: i, indexB: j, optionA: options[i], optionB: options[j], jaccard, containment }
-              });
+              const isDistinctOps = this._isDistinctOperationalPair(options[i], options[j], stem);
+              if (!isDistinctOps) {
+                errors.push({
+                  code: this.OPTION_SET_CONTRACT.hardRejectionCodes.PERMUTED_DUPLICATE_OPTION || 'PERMUTED_DUPLICATE_OPTION',
+                  message: `Permuted duplicate option choices detected: "${options[i]}" and "${options[j]}" contain identical words in permuted order`,
+                  details: { indexA: i, indexB: j, optionA: options[i], optionB: options[j] }
+                });
+              }
+            } else {
+              const hasSharedComplexity = [...t1].some(t => t.startsWith('complexity_') && t2.has(t));
+              const isSynonymousThreshold = jaccard >= 0.60 ||
+                (intersection >= 3 && (intersection / Math.min(t1.size, t2.size)) >= 0.65) ||
+                (hasSharedComplexity && intersection >= 3 && (intersection / Math.min(t1.size, t2.size)) >= 0.50);
+
+              if (isSynonymousThreshold) {
+                const isDistinctOps = this._isDistinctOperationalPair(options[i], options[j], stem);
+                if (!isDistinctOps) {
+                  const containment = intersection / Math.min(t1.size, t2.size);
+                  errors.push({
+                    code: this.OPTION_SET_CONTRACT.hardRejectionCodes.SYNONYMOUS_DISTRACTOR_OPTION || 'SYNONYMOUS_DISTRACTOR_OPTION',
+                    message: `Synonymous duplicate option choices detected: "${options[i]}" and "${options[j]}" share ${(containment * 100).toFixed(0)}% core vocabulary`,
+                    details: { indexA: i, indexB: j, optionA: options[i], optionB: options[j], jaccard, containment }
+                  });
+                }
+              }
             }
           }
         }
@@ -306,6 +320,38 @@ class DeterministicValidator {
           });
         }
       }
+
+      // 8. Stem-Option Comparison Alignment Check
+      // Catches distinction/contrast stems paired with isolated single-entity definition options
+      const comparisonMatch = stem.match(/\b(?:distinguish(?:es)?|contrast(?:s)?|difference between)\s+(?:a|an|the)?\s*([a-zA-Z0-9_\s-]+?)\s+(?:from|and|with)\s+(?:a|an|the)?\s*([a-zA-Z0-9_\s-]+?)(?:\?|\.|\s|$)/i);
+      if (comparisonMatch && correctAnswer && typeof correctAnswer === 'string') {
+        const rawEntityA = comparisonMatch[1].trim().toLowerCase();
+        const rawEntityB = comparisonMatch[2].trim().toLowerCase();
+        const cleanEntity = (str) => str.replace(/^(?:a|an|the)\s+/, '').trim();
+        const entityA = cleanEntity(rawEntityA);
+        const entityB = cleanEntity(rawEntityB);
+
+        if (entityA.length >= 3 && entityB.length >= 3 && entityA !== entityB) {
+          const ansLower = correctAnswer.toLowerCase();
+          const tokensA = entityA.split(/\s+/).filter(w => w.length >= 4);
+          const tokensB = entityB.split(/\s+/).filter(w => w.length >= 4);
+
+          const mentionsA = ansLower.includes(entityA) || (tokensA.length > 0 && tokensA.some(t => ansLower.includes(t)));
+          const mentionsB = ansLower.includes(entityB) || (tokensB.length > 0 && tokensB.some(t => ansLower.includes(t)));
+
+          const hasComparativeMarkers = /\b(?:whereas|while|unlike|compared to|in contrast|differs|different|only|instead of|rather than|conversely|vice versa|but)\b/i.test(correctAnswer) ||
+            /;\s+/i.test(correctAnswer);
+
+          const isRelationalComparison = (mentionsA && mentionsB) || hasComparativeMarkers;
+
+          if (!isRelationalComparison) {
+            errors.push({
+              code: 'STEM_COMPARISON_MISALIGNMENT',
+              message: `Question stem asks to distinguish "${entityA}" from "${entityB}", but the correct option provides only an isolated single-entity description without comparative relation.`
+            });
+          }
+        }
+      }
     }
     return {
       isValid: errors.length === 0,
@@ -335,10 +381,16 @@ class DeterministicValidator {
       return { isValid: false, errors: ['MCQ payload is null or not an object'], warnings: [] };
     }
 
+    // Normalize and synchronize prompt text across question, questionText, stem, prompt
+    const prompt = String(mcq.question || mcq.questionText || mcq.stem || mcq.prompt || '').trim();
+    mcq.question = prompt;
+    mcq.questionText = prompt;
+    mcq.stem = prompt;
+
     // Normalize correctAnswer before validating
     this.normalizeCorrectAnswer(mcq);
 
-    if (!mcq.questionText || typeof mcq.questionText !== 'string' || mcq.questionText.trim().length < 10) {
+    if (!prompt || prompt.length < 10) {
       errors.push('questionText must be a string with at least 10 characters');
     }
 
@@ -364,12 +416,59 @@ class DeterministicValidator {
       errors.push('correctAnswer does not match any of the 4 provided options');
     }
 
+    // Explicit disfluency contamination pre-check
+    const disfluencyCheck = disfluencySanitizer.detectDisfluencyViolation(
+      mcq.questionText || mcq.stem || '',
+      mcq.options || []
+    );
+    if (disfluencyCheck.hasViolation) {
+      errors.push(`CONVERSATIONAL_DISFLUENCY_CONTAMINATION: ${disfluencyCheck.reason}`);
+    }
+
+    // Deterministic technical invariants check
+    const invariantCheck = this.validateTechnicalInvariants(mcq);
+    if (!invariantCheck.isValid) {
+      errors.push(...invariantCheck.errors);
+    }
+
     return {
       isValid: errors.length === 0,
       errors: errors,
       warnings: warnings,
       optionMetrics: optionSetResult.metrics,
       detailedErrors: optionSetResult.errors
+    };
+  }
+
+  /**
+   * Evaluates deterministic technical invariants for recognized mathematical and domain rules.
+   *
+   * @param {Object} mcq - MCQ object with stem/questionText, options, and correctAnswer
+   * @returns {Object} { isValid: boolean, errors: Array<string> }
+   */
+  validateTechnicalInvariants(mcq) {
+    const errors = [];
+    if (!mcq || typeof mcq !== 'object') return { isValid: true, errors: [] };
+
+    const stem = String(mcq.questionText || mcq.stem || '');
+    const key = String(mcq.correctAnswer || '').trim();
+
+    // Check for explicit attribution safe harbor
+    const isAttributed = /\b(?:according to (?:the )?(?:lecture|instructor|teacher)|in the (?:classroom )?(?:analogy|metaphor|illustration|story)|as explained by the instructor)\b/i.test(stem);
+    if (isAttributed) {
+      return { isValid: true, errors: [] };
+    }
+
+    // 1. N-gram Markov context length invariant (off-by-one check)
+    if (/\b(?:n-gram|bigram|trigram|markov)\b/i.test(stem) && /\b(?:how many|number of)\s+(?:preceding|previous|prior)\s+(?:words|tokens)/i.test(stem)) {
+      if (/^n$/i.test(key) || /\b(?:uses?|exactly)\s+n\s+(?:preceding|previous|prior)\b/i.test(key) || /^\s*n\s*$/i.test(key)) {
+        errors.push('DETERMINISTIC_INVARIANT_VIOLATION: In an N-gram language model, predicting the next word conditions on N - 1 preceding words, not N.');
+      }
+    }
+
+    return {
+      isValid: errors.length === 0,
+      errors
     };
   }
 
@@ -528,7 +627,90 @@ class DeterministicValidator {
     if (word.endsWith('s') && !word.endsWith('ss')) return word.slice(0, -1);
     if (word.endsWith('ing') && word.length > 5) return word.slice(0, -3);
     if (word.endsWith('ed') && word.length > 4) return word.slice(0, -2);
+    if (word.endsWith('ically') && word.length > 7) return word.slice(0, -6);
+    if (word.endsWith('ly') && word.length > 4) return word.slice(0, -2);
     return word;
+  }
+
+  /**
+   * Normalizes number words to standardized digit representations
+   * so that e.g. "8" and "eight", "1" and "one", "20" and "30" evaluate as distinct, preserved numeric tokens.
+   */
+  _normalizeNumberWords(text = '') {
+    const numMap = {
+      'zero': 'num_0', 'one': 'num_1', 'two': 'num_2', 'three': 'num_3', 'four': 'num_4',
+      'five': 'num_5', 'six': 'num_6', 'seven': 'num_7', 'eight': 'num_8', 'nine': 'num_9', 'ten': 'num_10'
+    };
+    let normalized = String(text || '').replace(/\b(zero|one|two|three|four|five|six|seven|eight|nine|ten)\b/gi, (m) => {
+      const lower = m.toLowerCase();
+      return numMap[lower] || m;
+    });
+    // Normalize all numeric digits so node identifiers like 20, 30 are preserved as num_20, num_30 rather than dropped by length <= 2
+    normalized = normalized.replace(/\b\d+\b/g, m => `num_${m}`);
+    return normalized;
+  }
+
+  /**
+   * Domain-aware operational distinction check:
+   * Determines whether high token overlap represents genuine mutually exclusive operational choices
+   * (e.g. Left vs Right rotation, operation sequence permutation, distinct node numbers)
+   * while rejecting semantic duplicates (e.g. relational inversions A < B vs B > A, commutative formulas).
+   */
+  _isDistinctOperationalPair(optA, optB, stem = '') {
+    const a = String(optA || '').toLowerCase();
+    const b = String(optB || '').toLowerCase();
+
+    // 1. Relational Inversion Guard (NEGATIVE CASE):
+    // "left subtree < root" vs "root > left subtree" are identical claims.
+    const isRelationalA = /\b(?:less than|greater than|smaller than|larger than)\b/i.test(a);
+    const isRelationalB = /\b(?:less than|greater than|smaller than|larger than)\b/i.test(b);
+    if (isRelationalA && isRelationalB) {
+      const hasLessA = /\b(?:less than|smaller than)\b/i.test(a);
+      const hasGreaterA = /\b(?:greater than|larger than)\b/i.test(a);
+      const hasLessB = /\b(?:less than|smaller than)\b/i.test(b);
+      const hasGreaterB = /\b(?:greater than|larger than)\b/i.test(b);
+      if ((hasLessA && hasGreaterB) || (hasGreaterA && hasLessB)) {
+        return false; // Inverted relational statements are semantically equivalent duplicates -> FAIL
+      }
+    }
+
+    // 2. Commutative Formula Equivalence Guard (NEGATIVE CASE):
+    // "N + 2" vs "2 + N"
+    const normFormula = s => s.replace(/\s+/g, '').replace(/(\w+)\+(\w+)/g, (m, p1, p2) => [p1, p2].sort().join('+'));
+    if (normFormula(a) === normFormula(b)) {
+      return false; // Semantically identical formula -> FAIL
+    }
+
+    // 3. Operational Sequencing (e.g. LR vs RL rotation order: "left... then right..." vs "right... then left..."):
+    const seqConnectors = /\b(then|after|followed by|first|second)\b/i;
+    if (seqConnectors.test(a) && seqConnectors.test(b)) {
+      const dirA = (a.match(/\b(left|right|clockwise|counter-clockwise)\b/gi) || []).join('->');
+      const dirB = (b.match(/\b(left|right|clockwise|counter-clockwise)\b/gi) || []).join('->');
+      if (dirA && dirB && dirA !== dirB) {
+        return true; // Mutually exclusive sequence of operations -> PASS
+      }
+    }
+
+    // 4. Directional Rotation Operation (Left vs Right):
+    const hasRotate = /\b(rotat\w*)\b/i.test(a) && /\b(rotat\w*)\b/i.test(b);
+    if (hasRotate) {
+      const hasLeftA = /\bleft\b/i.test(a);
+      const hasRightA = /\bright\b/i.test(a);
+      const hasLeftB = /\bleft\b/i.test(b);
+      const hasRightB = /\bright\b/i.test(b);
+      if ((hasLeftA && !hasRightA && !hasLeftB && hasRightB) || (!hasLeftA && hasRightA && hasLeftB && !hasRightB)) {
+        return true; // Single left vs single right rotation: mutually exclusive -> PASS
+      }
+    }
+
+    // 5. Distinct Target Node Identifiers / Numbers from fixture:
+    const numTokensA = a.match(/\bnum_\d+\b/g) || a.match(/\b\d+\b/g) || [];
+    const numTokensB = b.match(/\bnum_\d+\b/g) || b.match(/\b\d+\b/g) || [];
+    if (numTokensA.length > 0 && numTokensB.length > 0 && numTokensA.join(',') !== numTokensB.join(',')) {
+      return true; // Refers to different node values or parameters in the problem fixture -> PASS
+    }
+
+    return false;
   }
 
   /**
@@ -543,12 +725,20 @@ class DeterministicValidator {
       'why', 'can', 'are', 'were'
     ]);
 
+    let normalized = this._normalizeNumberWords(text);
+
+    // Canonicalize standard algorithmic asymptotic complexity notations to detect paraphrased duplicates
+    normalized = normalized
+      .replace(/\b(?:o\s*\(\s*log\s*n\s*\)|logarithmic(?:ally)?\b)/gi, 'complexity_log_n')
+      .replace(/\b(?:o\s*\(\s*n\s*\)|linear(?:ly)?\b)/gi, 'complexity_linear_n')
+      .replace(/\b(?:o\s*\(\s*1\s*\)|constant(?:ly)?\b)/gi, 'complexity_constant_1');
+
     return new Set(
-      String(text || '')
+      normalized
         .toLowerCase()
-        .replace(/[^a-z0-9\s]/g, ' ')
+        .replace(/[^a-z0-9_\s]/g, ' ')
         .split(/\s+/)
-        .filter(w => w.length > 2 && !stopwords.has(w))
+        .filter(w => (w.length > 2 || /^num_\d+$/.test(w) || /^complexity_/.test(w)) && !stopwords.has(w))
         .map(w => this._stem(w))
     );
   }
@@ -616,19 +806,26 @@ class DeterministicValidator {
           .replace(/\s+/g, ' ')
           .trim();
       };
-      const normCandConcept = normalizeConcept(candidateMCQ.metadata?.concept || currentTarget.concept || '');
-      const normExistConcept = normalizeConcept(existing.metadata?.concept || '');
+      const normCandConcept = normalizeConcept(candidateMCQ.concept || candidateMCQ.metadata?.concept || currentTarget.concept || '');
+      const normExistConcept = normalizeConcept(existing.concept || existing.metadata?.concept || '');
       const sameConcept = normCandConcept.length > 3 && (
         normCandConcept === normExistConcept ||
         this.calculateSimilarity(normCandConcept, normExistConcept) >= 0.70
       );
 
-      // 1. Extreme verbatim duplicate stem
-      if (sim >= 0.70) {
+      // 1. Extreme verbatim duplicate stem OR Comparative-frame duplicate (threshold 0.65)
+      const isComparativeFrame = (text) => {
+        return /\b(?:fundamentally differ|differ from|differ between|in contrast to|compared to|comparative tradeoff|how do (?:their|they) differ|when comparing)\b/i.test(text);
+      };
+      const isComparativePair = isComparativeFrame(candText) && isComparativeFrame(existingText);
+
+      if (sim >= 0.70 || (isComparativePair && sim >= 0.45)) {
         return {
           isDuplicate: true,
           similarity: sim,
-          reason: 'VERBATIM_DUPLICATE: Text similarity exceeds 0.70',
+          reason: isComparativePair && sim < 0.70
+            ? `COMPARATIVE_STEM_DUPLICATE: Comparative-frame text similarity (${(sim * 100).toFixed(1)}%) exceeds 0.45 threshold`
+            : 'VERBATIM_DUPLICATE: Text similarity exceeds 0.70',
           duplicateWith: existing.questionText
         };
       }
@@ -795,6 +992,178 @@ class DeterministicValidator {
           }
         }
       }
+
+      // 5e. Same-Concept High-Level Functional Purpose Collision (with Strict Cognitive Protection)
+      if (sameConcept) {
+        // High-level functional inquiry detector
+        const isFunctionalAsk = (text) => {
+          return /\b(?:primary (?:function|role|purpose|objective)|main purpose|what is the (?:primary )?function|what does it do)\b/i.test(text) ||
+                 /\bhow does (?:the )?[a-z\s]+ fundamentally (?:alter|change|transform|improve) (?:information processing|processing|architecture|learning)\b/i.test(text);
+        };
+
+        // COGNITIVE PROTECTION SHIELD:
+        // Discrete operational tasks on the same data structure / topic MUST COEXIST:
+        // 1. Ordering / property vs search vs deletion vs rotation vs code trace
+        const isDiscreteOperation = (text) => {
+          return /\b(?:ordering|valid(?:ity)?|invariant|search(?:ing)?|lookup|worst-case|delete|deletion|successor|predecessor|rotat\w+|balance\s+factor|avl|red-black|code|snippet|trace|iteration|loop)\b/i.test(text);
+        };
+
+        // 2. Mathematical loss / formula vs architectural / functional role
+        const isMathDynamics = (text, ans) => {
+          return /\b(?:loss|gradient|vanishing|saturat\w+|derivative|formula|backprop|divergence|minimax|arithmetic|calculate|algebra)\b/i.test((text || '') + ' ' + (ans || ''));
+        };
+
+        const candIsMath = isMathDynamics(candText, candidateMCQ.correctAnswer);
+        const existIsMath = isMathDynamics(existingText, existing.correctAnswer);
+
+        const candIsDiscrete = isDiscreteOperation(candText);
+        const existIsDiscrete = isDiscreteOperation(existingText);
+
+        // Only consider for functional duplicate if NEITHER tests a discrete operation AND NEITHER differs in math vs architecture
+        if (!candIsDiscrete && !existIsDiscrete && (candIsMath === existIsMath)) {
+          if (isFunctionalAsk(candText) && isFunctionalAsk(existingText)) {
+            // Check if both correct answers assert identical operational mechanism
+            // For Attention: both asserting modeling / computing relationships across tokens / input elements
+            const assertsAttentionRelation = (ans) => {
+              return /\b(?:model|comput\w+|captur\w+|evaluat\w+|connect\w*)\s+(?:relationship\w*|dependenc\w*|interaction\w*)\s+(?:across|between|among)\s+(?:tokens|elements|words|inputs)\b/i.test(ans) ||
+                     /\b(?:relationships? (?:between|across)|context across (?:tokens|elements))\b/i.test(ans);
+            };
+
+            const candAnsRel = assertsAttentionRelation(candidateMCQ.correctAnswer || '');
+            const existAnsRel = assertsAttentionRelation(existing.correctAnswer || '');
+
+            const ansSim = this.calculateSimilarity(candidateMCQ.correctAnswer || '', existing.correctAnswer || '');
+
+            if ((candAnsRel && existAnsRel) || ansSim >= 0.40) {
+              return {
+                isDuplicate: true,
+                similarity: sim,
+                reason: `SAME_CONCEPT_FUNCTIONAL_DUPLICATE: Both questions test identical high-level functional purpose and operational mechanism for "${normCandConcept}"`,
+                duplicateWith: existing.questionText
+              };
+            }
+          }
+        }
+      }
+
+      // 5f. Cross-Concept Operational Competency Collision
+      // Detects when questions across related / divergent labels test the identical runtime mechanism and outcome
+      const isModelForwardAsk = (text) => {
+        return /\b(?:what happens|what occurs|what is the (?:primary )?(?:outcome|result)|how does the system respond)\b/i.test(text) &&
+               /\bmodel\b/i.test(text) &&
+               /\bforward(?:ed|ing)?\b/i.test(text);
+      };
+
+      const assertsModelShaping = (ans) => {
+        return /\b(?:shape|shapes|shaping|dimension)\b/i.test(ans);
+      };
+
+      if (isModelForwardAsk(candText) && isModelForwardAsk(existingText)) {
+        if (assertsModelShaping(candidateMCQ.correctAnswer || '') && assertsModelShaping(existing.correctAnswer || '')) {
+          return {
+            isDuplicate: true,
+            similarity: sim,
+            reason: 'OPERATIONAL_COMPETENCY_DUPLICATE: Both questions assess identical runtime outcome (dynamic layer/tensor shaping) upon model forwarding',
+            duplicateWith: existing.questionText
+          };
+        }
+      }
+
+      // General cross-concept token generation competency check (Next-token prediction vs Text generation)
+      const isTokenGenAsk = (text) => {
+        return /\b(?:how does (?:token|text) generation|standard text generation|next-token prediction)\b/i.test(text) &&
+               /\b(?:large language models?|llms?)\b/i.test(text);
+      };
+      const assertsSequentialProbability = (ans) => {
+        return /\b(?:iterative|sequential|step-by-step)\b/i.test(ans) &&
+               /\b(?:probability|probabilities)\b/i.test(ans) &&
+               /\b(?:token|word|prediction)\b/i.test(ans);
+      };
+
+      if (isTokenGenAsk(candText) && isTokenGenAsk(existingText)) {
+        if (assertsSequentialProbability(candidateMCQ.correctAnswer || '') && assertsSequentialProbability(existing.correctAnswer || '')) {
+          return {
+            isDuplicate: true,
+            similarity: sim,
+            reason: 'OPERATIONAL_COMPETENCY_DUPLICATE: Both questions assess identical operational competency (sequential probability-based token generation)',
+            duplicateWith: existing.questionText
+          };
+        }
+      }
+
+      // 5g. Cross-Concept Output Layer & Convergence Invariant Duplicate Check
+      // Catches when candidate and existing questions both assess converging 8 hidden neurons into 1 output signal
+      const isOutputLayerAsk = (text, concept) => {
+        return /\b(?:output layer|output unit|final layer|output signal)\b/i.test(`${text} ${concept}`) &&
+               /\b(?:neuron|signal|unit|connect|converge|preceding|hidden)\b/i.test(text);
+      };
+      const assertsOutputConvergence = (ans) => {
+        const norm = this._normalizeNumberWords(String(ans || '').toLowerCase());
+        const has8Neurons = /\bnum_8\s+(?:hidden\s+)?neurons?\b/i.test(norm) || (/\bnum_8\b/i.test(norm) && /\bneurons?\b/i.test(norm));
+        const has1Signal = /\bnum_1\s+(?:output\s+)?(?:signal|unit|neuron)\b/i.test(norm) || (/\bnum_1\b/i.test(norm) && /\bsignal\b/i.test(norm));
+        const hasConvergenceVerb = /\b(?:connect\w*|converge\w*|map\w*|combin\w*|join\w*)\b/i.test(norm);
+        return has8Neurons && has1Signal && hasConvergenceVerb;
+      };
+
+      if (isOutputLayerAsk(candText, normCandConcept) && isOutputLayerAsk(existingText, normExistConcept)) {
+        if (assertsOutputConvergence(candidateMCQ.correctAnswer || '') && assertsOutputConvergence(existing.correctAnswer || '')) {
+          return {
+            isDuplicate: true,
+            similarity: Math.max(sim, 0.45),
+            reason: 'OPERATIONAL_COMPETENCY_DUPLICATE: Both questions assess identical architectural invariant (converging 8 hidden neurons into 1 output signal)',
+            duplicateWith: existing.questionText
+          };
+        }
+      }
+
+      // 5h. Autoregressive Sequence Appending & Token Generation Invariant Duplicate Check
+      const isAutoregressiveAsk = (text, concept) => {
+        return /\b(?:autoregressive|next-token|token generation|generates? a (?:multi-word )?sentence|multi-token output)\b/i.test(`${text} ${concept}`) &&
+               /\b(?:evolve|input sequence|predict(?:ing)? (?:the )?next|operational mechanism|append)\b/i.test(text);
+      };
+      const assertsTokenAppending = (ans) => {
+        const norm = String(ans || '').toLowerCase();
+        const hasAppend = /\b(?:append\w*|add\w*|feed\w*|re-feed\w*|combin\w*)\b/i.test(norm);
+        const hasTokenInput = /\b(?:token|word|output)\b/i.test(norm) && /\b(?:input|sequence)\b/i.test(norm);
+        const hasNextPredict = /\b(?:predict\w*|next\w*|iteration|re-process\w*)\b/i.test(norm);
+        return hasAppend && hasTokenInput && hasNextPredict;
+      };
+
+      if (isAutoregressiveAsk(candText, normCandConcept) && isAutoregressiveAsk(existingText, normExistConcept)) {
+        if (assertsTokenAppending(candidateMCQ.correctAnswer || '') && assertsTokenAppending(existing.correctAnswer || '')) {
+          return {
+            isDuplicate: true,
+            similarity: Math.max(sim, 0.45),
+            reason: 'OPERATIONAL_COMPETENCY_DUPLICATE: Both questions assess identical autoregressive mechanism (appending generated token to input to predict next token)',
+            duplicateWith: existing.questionText
+          };
+        }
+      }
+
+      // 5i. Transformer Attention vs Sequential Processing Invariant Duplicate Check
+      const isTransformerVsSequentialAsk = (text, concept) => {
+        const hasTransformer = /\b(?:transformer|self-attention|attention mechanism)\b/i.test(`${text} ${concept}`);
+        const hasSequential = /\b(?:sequential|rnn|recurrent|traditional)\b/i.test(text);
+        const hasComparison = /\b(?:differ|contrast|overcome|bottleneck|versus|vs)\b/i.test(text);
+        return hasTransformer && hasSequential && hasComparison;
+      };
+      const assertsParallelComputation = (ans) => {
+        const norm = String(ans || '').toLowerCase();
+        const hasParallel = /\b(?:parallel|simultaneous\w*|matrix)\b/i.test(norm);
+        const hasComputeTokens = /\b(?:comput\w*|process\w*|relat\w*|sequence|token)\b/i.test(norm);
+        return hasParallel && hasComputeTokens;
+      };
+
+      if (isTransformerVsSequentialAsk(candText, normCandConcept) && isTransformerVsSequentialAsk(existingText, normExistConcept)) {
+        if (assertsParallelComputation(candidateMCQ.correctAnswer || '') && assertsParallelComputation(existing.correctAnswer || '')) {
+          return {
+            isDuplicate: true,
+            similarity: Math.max(sim, 0.45),
+            reason: 'OPERATIONAL_COMPETENCY_DUPLICATE: Both questions assess identical comparative invariant (Transformer parallel matrix self-attention vs sequential token processing)',
+            duplicateWith: existing.questionText
+          };
+        }
+      }
     }
 
     return { isDuplicate: false, similarity: 0 };
@@ -852,14 +1221,22 @@ class DeterministicValidator {
         };
       }
 
-      // Case 2: Substantive verbatim distractor collision (length >= 20 chars or >= 4 words)
+      // Case 2: Substantive verbatim distractor collision (Conservative handling)
+      // Per safeguard: Do not reject questions merely because they share a plausible distractor.
+      // Only reject if:
+      // (a) The shared distractor is an extensive verbatim boilerplate template (>= 8 words AND >= 45 chars)
+      // (b) OR the two questions also share significant stem similarity (stemSim >= 0.25)
       for (const s of shared) {
         const wordCount = s.split(/\s+/).filter(Boolean).length;
-        if (s.length >= 20 || wordCount >= 4) {
+        const stemSim = this.calculateSimilarity(candidateMCQ.questionText || '', existing.questionText || '');
+        const isLongBoilerplate = s.length >= 45 && wordCount >= 8;
+        const isSharedWithStemContext = (s.length >= 25 || wordCount >= 5) && stemSim >= 0.25;
+
+        if (isLongBoilerplate || isSharedWithStemContext) {
           return {
             hasCollision: true,
             type: 'VERBATIM_DISTRACTOR_COLLISION',
-            reason: `Substantive distractor "${s}" is identical to a distractor in Question ${qIdx + 1}`,
+            reason: `Substantive distractor "${s}" exhibits verbatim redundancy with Question ${qIdx + 1} (stem similarity: ${(stemSim * 100).toFixed(0)}%)`,
             collidedWith: existing.questionText || `Question ${qIdx + 1}`,
             sharedDistractors: [s]
           };

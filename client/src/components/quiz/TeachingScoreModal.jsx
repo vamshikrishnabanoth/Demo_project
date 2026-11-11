@@ -48,26 +48,36 @@ export default function TeachingScoreModal({
     const earnedRubric = Array.isArray(breakdown.earnedRubric) ? breakdown.earnedRubric : [];
 
     // Calculate reliable score out of 100
-    const rawSum = earnedRubric.length > 0
+    const isNonAcademic = lectureDepth?.rating === 'Non-Academic' || lectureDepth?.academicClassification === 'NON_ACADEMIC' || profile?.academicStatus === 'FAIL';
+
+    const rawSum = !isNonAcademic && earnedRubric.length > 0
         ? earnedRubric.reduce((acc, r) => acc + (Number(r.earned) || 0), 0)
-        : (typeof lectureDepth?.score === 'number' && lectureDepth.score > 0 ? lectureDepth.score : null);
+        : (typeof lectureDepth?.score === 'number' && lectureDepth.score > 0 && !isNonAcademic ? lectureDepth.score : null);
 
-    const score = rawSum !== null
+    const score = (rawSum !== null && !isNonAcademic)
         ? Math.min(100, Math.max(0, Math.round(rawSum)))
-        : (lectureDepth?.rating === 'Comprehensive' ? 88 : (lectureDepth?.rating === 'Developing' ? 76 : 82));
+        : (typeof lectureDepth?.score === 'number' && lectureDepth.score > 0 && !isNonAcademic ? Math.round(lectureDepth.score) : null);
 
-    // Friendly grade badge & message
-    let gradeLabel = 'Great Teaching Depth ⭐';
-    let gradeMessage = 'Your lecture explains core concepts clearly with real-world context, making it ideal for creating high-quality quiz questions!';
-    if (score >= 85) {
-        gradeLabel = 'Outstanding Teaching Depth 🌟';
-        gradeMessage = 'Your lecture covers clear core concepts, uses practical examples, and guides students step-by-step. Students have plenty of substantive material to be tested on!';
-    } else if (score >= 70) {
-        gradeLabel = 'Solid Teaching Coverage 👍';
-        gradeMessage = 'Your material has clear definitions and enough technical detail to generate an effective, well-grounded assessment.';
-    } else if (score >= 50) {
-        gradeLabel = 'Good Introductory Overview 📘';
-        gradeMessage = 'Covers basic concepts well. A few more examples or step-by-step procedures will allow even deeper questions.';
+    // Friendly grade badge & message (null-safe, strictly evidence-calibrated)
+    let gradeLabel = 'Analysis In Progress ⏳';
+    let gradeMessage = 'Your material is being analysed. The score will appear once processing completes.';
+    if (isNonAcademic) {
+        gradeLabel = 'Non-Assessable Input ⚠️';
+        gradeMessage = 'The provided material is too short, empty, or non-curricular to conduct an instructional evaluation.';
+    } else if (score !== null) {
+        if (score >= 85) {
+            gradeLabel = 'Outstanding Evidence Depth 🌟';
+            gradeMessage = 'Your material covers rich core concepts, practical examples, and step-by-step procedures, providing substantive ground truth for quiz generation.';
+        } else if (score >= 70) {
+            gradeLabel = 'Solid Curricular Coverage 👍';
+            gradeMessage = 'Your material contains clear definitions and sufficient technical detail to generate an effective, well-grounded assessment.';
+        } else if (score >= 50) {
+            gradeLabel = 'Foundational Overview 📘';
+            gradeMessage = 'Covers basic concepts well. Additional worked examples or procedural steps in subsequent material will support deeper question tiers.';
+        } else {
+            gradeLabel = 'Limited Assessable Evidence ⚠️';
+            gradeMessage = 'The provided input has sparse instructional concepts or procedural detail. A compact or foundational assessment is recommended.';
+        }
     }
 
     // Clean, readable list of concepts taught
@@ -195,7 +205,7 @@ export default function TeachingScoreModal({
                     {/* HERO SCORE BANNER */}
                     <div className="p-4.5 rounded-2xl bg-gradient-to-br from-orange-50 via-amber-50/50 to-white border-2 border-orange-200 shadow-xs flex items-center gap-4">
                         <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#ea580c] to-[#c2410c] text-white flex flex-col items-center justify-center shrink-0 shadow-md">
-                            <span className="text-2xl font-black leading-none tracking-tight">{score}</span>
+                            <span className="text-2xl font-black leading-none tracking-tight">{score !== null ? score : '—'}</span>
                             <span className="text-[9px] font-black uppercase tracking-widest text-orange-200 mt-0.5">/ 100</span>
                         </div>
                         <div className="flex-1 min-w-0">
@@ -315,6 +325,71 @@ export default function TeachingScoreModal({
                             })}
                         </div>
                     </div>
+
+                    {/* SECTION 2b: PERSONALIZED TEACHING FEEDBACK */}
+                    {(() => {
+                        const wellItems = lectureIntel?.teachingFeedback?.whatWentWell || [];
+                        const growItems = lectureIntel?.teachingFeedback?.growthOpportunities || [];
+                        if (wellItems.length === 0 && growItems.length === 0) return null;
+                        return (
+                            <div className="space-y-2.5">
+                                <h4 className="text-xs font-black uppercase tracking-wider text-slate-800 flex items-center gap-1.5">
+                                    <span>✨</span>
+                                    <span>Your Lecture Highlights</span>
+                                </h4>
+                                <div className="space-y-2">
+                                    {wellItems.length > 0 && (
+                                        <div className="p-3.5 bg-emerald-50/70 rounded-2xl border border-emerald-200">
+                                            <p className="text-[10px] font-black uppercase tracking-wider text-emerald-800 mb-2 flex items-center gap-1.5">
+                                                <CheckCircle2 size={12} className="text-emerald-600 shrink-0" />
+                                                What You Did Well
+                                            </p>
+                                            <ul className="space-y-1.5">
+                                                {wellItems.map((item, i) => {
+                                                    const [title, ...rest] = item.split(':');
+                                                    return (
+                                                        <li key={i} className="text-[11px] text-slate-700 leading-relaxed flex items-start gap-1.5">
+                                                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-1.5 shrink-0" />
+                                                            <span>
+                                                                {rest.length > 0
+                                                                    ? <><span className="font-bold text-emerald-900">{title}: </span>{rest.join(':').trim()}</>
+                                                                    : item
+                                                                }
+                                                            </span>
+                                                        </li>
+                                                    );
+                                                })}
+                                            </ul>
+                                        </div>
+                                    )}
+                                    {growItems.length > 0 && (
+                                        <div className="p-3.5 bg-blue-50/60 rounded-2xl border border-blue-200">
+                                            <p className="text-[10px] font-black uppercase tracking-wider text-blue-800 mb-2 flex items-center gap-1.5">
+                                                <Lightbulb size={12} className="text-blue-600 shrink-0" />
+                                                Consider For Next Session
+                                            </p>
+                                            <ul className="space-y-1.5">
+                                                {growItems.map((item, i) => {
+                                                    const [title, ...rest] = item.split(':');
+                                                    return (
+                                                        <li key={i} className="text-[11px] text-slate-700 leading-relaxed flex items-start gap-1.5">
+                                                            <span className="w-1.5 h-1.5 rounded-full bg-blue-400 mt-1.5 shrink-0" />
+                                                            <span>
+                                                                {rest.length > 0
+                                                                    ? <><span className="font-bold text-blue-900">{title}: </span>{rest.join(':').trim()}</>
+                                                                    : item
+                                                                }
+                                                            </span>
+                                                        </li>
+                                                    );
+                                                })}
+                                            </ul>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        );
+                    })()}
 
                     {/* SECTION 3: RECOMMENDED QUIZ PLAN */}
                     <div className="space-y-2.5">

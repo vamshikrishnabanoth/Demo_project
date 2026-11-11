@@ -1,0 +1,30 @@
+{
+  "summaryType": "PARTIAL",
+  "timestamp": "2026-11-10T15:20:53.425Z",
+  "globalBudget": {
+    "MAX_HTTP_ATTEMPTS": 120,
+    "MAX_TOKENS": 350000,
+    "CONSECUTIVE_429_THRESHOLD": 3
+  },
+  "consumed": {
+    "totalHttpAttempts": 5,
+    "failedHttpAttempts": 1,
+    "committedTokens": 12500,
+    "reservedTokens": 0,
+    "actualTokensRecorded": 0,
+    "estimatedTokensRecorded": 0,
+    "consecutive429Count": 0,
+    "circuitBreakerTripped": false,
+    "budgetExhausted": false
+  },
+  "completedRunsCount": 1,
+  "runResults": [
+    {
+      "runId": "R1",
+      "cohortId": "MULTI_004",
+      "deliveredCount": 5,
+      "pipelineStatus": "COMPLETED"
+    }
+  ],
+  "callLedger": []
+}

@@ -40,8 +40,27 @@ class LLMRouter {
   }
 
   /** Sleep helper for exponential backoff on rate limits */
-  _sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+  _sleep(ms, signal = null) {
+    if (signal?.aborted) {
+      return Promise.reject(new Error('Operation aborted during cooldown'));
+    }
+    return new Promise((resolve, reject) => {
+      let onAbort = null;
+      const handle = setTimeout(() => {
+        if (signal && onAbort) {
+          try { signal.removeEventListener('abort', onAbort); } catch (_) {}
+        }
+        resolve();
+      }, ms);
+      if (signal) {
+        onAbort = () => {
+          clearTimeout(handle);
+          try { signal.removeEventListener('abort', onAbort); } catch (_) {}
+          reject(new Error('Operation aborted during cooldown'));
+        };
+        signal.addEventListener('abort', onAbort, { once: true });
+      }
+    });
   }
 
   /**
@@ -58,10 +77,11 @@ class LLMRouter {
     }
 
     const errors = [];
+    const groqSleepBudget = { spent: 0, max: 30000 };
 
     // Resolve model cleanly: use active models on user key
-    let primaryModel = process.env.GROQ_MODEL || 'openai/gpt-oss-120b';
-    let fallbackModel = process.env.GROQ_FALLBACK_MODEL || (primaryModel === 'openai/gpt-oss-120b' ? 'openai/gpt-oss-20b' : 'openai/gpt-oss-120b');
+    let primaryModel = process.env.GROQ_MODEL || 'qwen/qwen3.8-27b';
+    let fallbackModel = process.env.GROQ_FALLBACK_MODEL || (primaryModel === 'qwen/qwen3.8-27b' ? 'openai/gpt-oss-120b' : 'qwen/qwen3.8-27b');
     if (model) {
       primaryModel = model;
     }
@@ -69,14 +89,14 @@ class LLMRouter {
     const preferredProvider = process.env.DEFAULT_LLM_PROVIDER || (this.groqApiKey ? 'groq' : (this.geminiApiKey ? 'gemini' : 'local_ollama'));
 
     // 0. If preferred provider is Gemini, try Gemini first
-    if (preferredProvider === 'gemini' && (this.geminiApiKey || process.env.GEMINI_API_KEY)) {
+    if (process.env.DISABLE_GEMINI !== 'true' && preferredProvider === 'gemini' && (this.geminiApiKey || process.env.GEMINI_API_KEY)) {
       try {
         return await this._callGemini({
           prompt,
           systemPrompt,
           temperature,
           responseFormat,
-          model: (model && String(model).startsWith('gemini')) ? model : (process.env.GEMINI_MODEL || 'gemini-2.5-flash'),
+          model: (model && String(model).startsWith('gemini')) ? model : (process.env.GEMINI_MODEL || 'gemini-3.1-flash-lite'),
           sessionId,
           maxTokens,
           operation,
@@ -100,7 +120,8 @@ class LLMRouter {
           sessionId,
           maxTokens,
           operation,
-          signal: effectiveSignal
+          signal: effectiveSignal,
+          groqSleepBudget
         });
       } catch (err) {
         errors.push(`Groq (${err.message})`);
@@ -109,7 +130,16 @@ class LLMRouter {
     }
 
     // 2. Try Gemini Provider (Cloud Fallback for Groq 429 / failure)
-    if (preferredProvider !== 'gemini' && (this.geminiApiKey || process.env.GEMINI_API_KEY)) {
+    if (process.env.DISABLE_GEMINI !== 'true' && preferredProvider !== 'gemini' && (this.geminiApiKey || process.env.GEMINI_API_KEY)) {
+      // Explicit fallback-size check: prevent submitting an unbounded oversized payload
+      const totalPromptBytes = Buffer.byteLength(String(prompt || '') + String(systemPrompt || ''), 'utf8');
+      const MAX_FALLBACK_PAYLOAD_BYTES = 500000; // 500 KB absolute sanity ceiling
+      if (totalPromptBytes > MAX_FALLBACK_PAYLOAD_BYTES) {
+        const payloadFatal = new Error(`FALLBACK_PAYLOAD_TOO_LARGE: Serialized payload size (${totalPromptBytes} bytes) exceeds cloud fallback ceiling (${MAX_FALLBACK_PAYLOAD_BYTES} bytes). Halting dispatch.`);
+        payloadFatal.code = 'FALLBACK_PAYLOAD_TOO_LARGE';
+        throw payloadFatal;
+      }
+
       try {
         return await this._callGemini({
           prompt,
@@ -123,7 +153,39 @@ class LLMRouter {
         });
       } catch (err) {
         errors.push(`Gemini (${err.message})`);
-        console.warn(`⚠️ [LLMRouter] Gemini provider failed: ${err.message}. Trying local AI...`);
+        console.warn(`⚠️ [LLMRouter] Gemini provider failed: ${err.message}. Checking Groq rolling cooldown...`);
+        // If Gemini failed and Groq is throttled with a short rolling reset, wait and retry Groq
+        if (this.groqApiKey) {
+          const now = Date.now();
+          const cooldowns = [...this.modelCooldowns.values(), ...this.tpdExhaustedRoutes.values()].map(t => t - now).filter(t => t > 0);
+          if (cooldowns.length > 0) {
+            const minWait = Math.min(...cooldowns) + 500;
+            const remainingAllowance = Math.max(0, groqSleepBudget.max - groqSleepBudget.spent);
+            if (minWait <= 30000 && remainingAllowance > 0) {
+              const waitMs = Math.min(minWait, remainingAllowance);
+              groqSleepBudget.spent += waitMs;
+              console.warn(`⏳ [LLMRouter] Waiting ${Math.round(waitMs / 1000)}s (cumulative: ${Math.round(groqSleepBudget.spent / 1000)}s/30s) for Groq rolling reset after Gemini failure...`);
+              await this._sleep(waitMs, effectiveSignal);
+              try {
+                return await this._callGroqWithRetry({
+                  prompt,
+                  userPrompt: prompt,
+                  systemPrompt,
+                  temperature,
+                  primaryModel,
+                  fallbackModel,
+                  sessionId,
+                  maxTokens,
+                  operation,
+                  signal: effectiveSignal,
+                  groqSleepBudget
+                });
+              } catch (retryErr) {
+                errors.push(`GroqRetry (${retryErr.message})`);
+              }
+            }
+          }
+        }
       }
     }
 
@@ -165,6 +227,9 @@ class LLMRouter {
 
   _getGroqKeys() {
     const foundKeys = [];
+    if (process.env.GROQ_API_KEY && typeof process.env.GROQ_API_KEY === 'string') {
+      foundKeys.push(process.env.GROQ_API_KEY.trim());
+    }
     // Dynamically collect all available keys configured across environments
     for (const [name, val] of Object.entries(process.env)) {
       if ((name.startsWith('GROQ_API_KEY') || name.startsWith('GROQ_KEY')) && typeof val === 'string' && val.trim().length > 10) {
@@ -183,8 +248,10 @@ class LLMRouter {
   }
 
   /** Call Groq Cloud API with configured model, multi-key pool, and bounded rate-limit backoff */
-  async _callGroqWithRetry({ prompt, systemPrompt, temperature, primaryModel, fallbackModel, sessionId = null, maxTokens = null, operation = null, signal = null, abortSignal = null }) {
+  async _callGroqWithRetry({ prompt, userPrompt, systemPrompt, temperature, primaryModel, fallbackModel, sessionId = null, maxTokens = null, operation = null, signal = null, abortSignal = null, groqSleepBudget = null }) {
+    prompt = prompt || userPrompt || '';
     const effectiveSignal = signal || abortSignal;
+    const sleepBudget = groqSleepBudget || { spent: 0, max: 30000 };
     let resolvedMaxTokens = parseInt(maxTokens, 10);
     if (isNaN(resolvedMaxTokens) || resolvedMaxTokens <= 0) {
       if (operation === 'LECTURE_INTELLIGENCE') {
@@ -214,8 +281,10 @@ class LLMRouter {
     const configuredModels = process.env.GROQ_MODELS ? process.env.GROQ_MODELS.split(',').map(m => m.trim()).filter(Boolean) : [];
     const baseModels = configuredModels.length > 0
       ? configuredModels
-      : (operation === 'EVALUATION' ? ['openai/gpt-oss-120b', 'openai/gpt-oss-20b'] : ['openai/gpt-oss-120b', 'openai/gpt-oss-20b', 'qwen/qwen3.8-27b']);
-    const modelsToTry = Array.from(new Set([primaryModel, ...baseModels, fallbackModel].filter(Boolean)));
+      : ['qwen/qwen3.8-27b', 'openai/gpt-oss-120b', 'openai/gpt-oss-20b'];
+    const modelsToTry = configuredModels.length > 0
+      ? configuredModels
+      : Array.from(new Set([primaryModel, ...baseModels, fallbackModel].filter(Boolean)));
     const totalKeys = keys.length;
     const groqTimeoutMs = parseInt(process.env.GROQ_TIMEOUT_MS, 10) || 15000;
     let lastErr = null;
@@ -223,8 +292,8 @@ class LLMRouter {
     // Distribute concurrent calls evenly across available keys by advancing starting key index per invocation
     const startKeyOffset = (this.currentKeyIndex++) % totalKeys;
 
-    // Up to 3 passes across the pool with bounded cooldown sleep if keys are temporarily throttled
-    for (let poolAttempt = 0; poolAttempt < 5; poolAttempt++) {
+    // Up to 20 passes across the pool with bounded cooldown sleep if keys are temporarily throttled
+    for (let poolAttempt = 0; poolAttempt < 20; poolAttempt++) {
       for (let offset = 0; offset < totalKeys; offset++) {
         const keyIdx = (startKeyOffset + offset) % totalKeys;
         const key = keys[keyIdx];
@@ -267,9 +336,9 @@ class LLMRouter {
             const sanitizedSystemPrompt = systemPrompt
               ? (hasJsonWord ? systemPrompt : `${systemPrompt}\nOutput valid JSON format.`)
               : 'Output valid JSON format.';
-            const finalUserPrompt = prompt.toLowerCase().includes('json')
+            const finalUserPrompt = prompt.toLowerCase().includes('strictly a valid json')
               ? prompt
-              : `${prompt}\n\nReturn strictly valid JSON format.`;
+              : `${prompt}\n\nTask: Output strictly a single valid JSON object matching the required schema. Do not include markdown code fences or text outside JSON.`;
 
             const requestPayload = {
               model: currentModel,
@@ -280,8 +349,8 @@ class LLMRouter {
               temperature: temperature,
               max_tokens: resolvedMaxTokens || 2500
             };
-            // Groq json_object is only supported on select models; openai/gpt-oss models fail validation if response_format is passed
-            if (!currentModel.includes('openai') && !currentModel.includes('gpt-oss')) {
+            // Groq json_object is only officially supported on llama models; qwen and gpt-oss models fail validation if response_format is passed
+            if (currentModel.includes('llama')) {
               requestPayload.response_format = { type: 'json_object' };
             }
 
@@ -302,6 +371,8 @@ class LLMRouter {
               const choice = response.data.choices[0];
               const content = choice.message.content;
               if (!content || typeof content !== 'string' || !content.trim()) {
+                // Mark route on temporary cooldown so subsequent attempts do not hammer empty-yielding model
+                this.modelCooldowns.set(`${keyIdx}_${currentModel}`, Date.now() + 60000);
                 throw new Error(`Groq model '${currentModel}' returned empty content.`);
               }
               if (choice.finish_reason === 'length') {
@@ -323,6 +394,14 @@ class LLMRouter {
               this.currentKeyIndex = (keyIdx + 1) % totalKeys;
               keySucceeded = true;
 
+              // Record structured metadata for caller inspection (model that actually succeeded and provider usage)
+              this.lastCompletionMetadata = {
+                model: currentModel,
+                provider: 'groq',
+                usage: response.data.usage || null,
+                requestId: response.data.id || null
+              };
+
               if (sessionId) {
                 try {
                   const telemetryLedger = require('../observability/telemetryLedger');
@@ -342,15 +421,32 @@ class LLMRouter {
               lastErr = err;
               const status = err.response?.status;
               const errorMsg = err.response?.data?.error?.message || err.message || '';
-              const isTPD = errorMsg.includes('tokens per day') || errorMsg.includes('TPD');
-              const isRateLimit = status === 429 || errorMsg.includes('429') || errorMsg.includes('Rate limit') || isTPD;
+              const isPayloadTooLarge = status === 413 ||
+                errorMsg.includes('Request Entity Too Large') ||
+                errorMsg.includes('request entity too large') ||
+                errorMsg.includes('payload too large') ||
+                errorMsg.includes('exceeded maximum context length') ||
+                errorMsg.includes('maximum context length is') ||
+                (status === 413 && (errorMsg.includes('tokens per minute') || errorMsg.includes('TPM')));
+              const isTPM = !isPayloadTooLarge && (errorMsg.includes('on tokens per minute') || errorMsg.includes('on requests per minute'));
+              const isTPD = !isTPM && !isPayloadTooLarge && (errorMsg.includes('tokens per day') || errorMsg.includes('requests per day') || (errorMsg.includes('TPD') && !errorMsg.includes('TPM')));
+              const isRateLimit = !isPayloadTooLarge && (status === 429 || errorMsg.includes('429') || errorMsg.includes('Rate limit') || isTPD || isTPM);
               const isTimeout = err.code === 'ECONNABORTED' || errorMsg.includes('timeout') || err.message?.includes('timeout');
               if (isTimeout) {
                 console.warn(`⏳ [LLMRouter] Groq Key-${keyIdx + 1} model '${currentModel}' client request timed out after ${groqTimeoutMs}ms. Failing over to alternative model or key...`);
                 productionMetrics.inc('provider_timeout_count');
               }
 
-              if (errorMsg.includes('Failed to validate JSON') && attempts === 1) {
+              if (isPayloadTooLarge) {
+                console.warn(`⚠️ [LLMRouter] Groq request payload exceeded limits (HTTP ${status || 413}): ${errorMsg}. Halting retries on identical oversized payload and failing over to cloud fallback provider immediately.`);
+                productionMetrics.inc('provider_failure_count');
+                const payloadErr = new Error(`Groq request payload too large (${status || 413}): ${errorMsg}`);
+                payloadErr.code = 'PAYLOAD_TOO_LARGE';
+                payloadErr.status = 413;
+                throw payloadErr;
+              }
+
+              if ((errorMsg.includes('Failed to validate JSON') || errorMsg.includes('Failed to generate JSON')) && attempts === 1) {
                 console.warn(`⚠️ [LLMRouter] Groq strict JSON validator rejected '${currentModel}'. Retrying with relaxed JSON prompt...`);
                 try {
                   const retryResp = await axios.post(
@@ -362,7 +458,7 @@ class LLMRouter {
                         { role: 'user', content: prompt }
                       ],
                       temperature: temperature,
-                      max_tokens: 4096
+                      max_tokens: resolvedMaxTokens || 1000
                     },
                     {
                       headers: {
@@ -387,35 +483,76 @@ class LLMRouter {
               }
 
               if (isRateLimit) {
-                const retryAfterSec = err.response?.headers?.['retry-after']
-                  ? parseFloat(err.response.headers['retry-after'])
-                  : null;
-                const retryMatch = errorMsg.match(/try again in ([\d\.]+)s/i);
-                const extractedWaitSec = retryAfterSec || (retryMatch ? parseFloat(retryMatch[1]) : null);
+                // Parse standard RFC Retry-After header supporting both integer seconds and HTTP-date formats
+                let retryAfterSec = null;
+                const rawRetryAfter = err.response?.headers?.['retry-after'];
+                if (rawRetryAfter) {
+                  const asNum = parseFloat(rawRetryAfter);
+                  if (!isNaN(asNum)) {
+                    retryAfterSec = asNum;
+                  } else {
+                    const parsedDate = Date.parse(rawRetryAfter);
+                    if (!isNaN(parsedDate)) {
+                      retryAfterSec = Math.max(0, Math.ceil((parsedDate - Date.now()) / 1000));
+                    }
+                  }
+                }
+
+                // Check provider-specific reset headers (e.g., x-ratelimit-reset-tokens, x-ratelimit-reset-requests)
+                const parseResetVal = (val) => {
+                  if (!val) return null;
+                  const str = String(val).trim();
+                  const num = parseFloat(str);
+                  if (!isNaN(num) && /^\d+(\.\d+)?s?$/.test(str)) return num;
+                  let sec = 0;
+                  const m = str.match(/(\d+)\s*m/);
+                  if (m) sec += parseInt(m[1], 10) * 60;
+                  const s = str.match(/(\d+(?:\.\d+)?)\s*s/);
+                  if (s) sec += parseFloat(s[1]);
+                  return sec > 0 ? sec : null;
+                };
+
+                const resetHeaderSec = parseResetVal(err.response?.headers?.['x-ratelimit-reset-tokens']) ||
+                  parseResetVal(err.response?.headers?.['x-ratelimit-reset-requests']);
+
+                const msgMatch = errorMsg.match(/try again in ([^.\n]+(?:\.\d+s)?)/i);
+                const extractedMsgSec = msgMatch ? parseResetVal(msgMatch[1]) : null;
+                const extractedWaitSec = retryAfterSec !== null ? retryAfterSec : (resetHeaderSec !== null ? resetHeaderSec : extractedMsgSec);
                 const parsedWaitMs = extractedWaitSec ? Math.ceil(extractedWaitSec * 1000) + 400 : null;
 
-                const cooldownMs = parsedWaitMs ? Math.min(Math.max(parsedWaitMs, 2500), 12000) : 3000;
-                this.keyCooldowns.set(keyIdx, Date.now() + cooldownMs);
-                this.modelCooldowns.set(`${keyIdx}_${currentModel}`, Date.now() + cooldownMs);
                 if (isTPD) {
-                  const tpdDurationMs = 12 * 60 * 60 * 1000; // 12 hours
+                  // Prefer actual quota-reset information over assumed fixed duration
+                  const tpdDurationMs = parsedWaitMs ? Math.min(Math.max(parsedWaitMs, 3000), 30000) : 15000;
                   this.tpdExhaustedRoutes.set(`${keyIdx}_${currentModel}`, Date.now() + tpdDurationMs);
-                  console.warn(`⚡ [LLMRouter] Groq Key-${keyIdx + 1} model '${currentModel}' daily token quota exhausted (TPD). Route marked unavailable for 12h.`);
+                  this.modelCooldowns.set(`${keyIdx}_${currentModel}`, Date.now() + tpdDurationMs);
+                  console.warn(`⚡ [LLMRouter] Groq Key-${keyIdx + 1} model '${currentModel}' daily token quota exhausted (TPD). Route marked unavailable for ${Math.round(tpdDurationMs / 1000)}s.`);
+                  continue; // Fail over immediately to next model in cascade on this key
                 } else {
-                  console.warn(`⚠️ [LLMRouter] Groq Key-${keyIdx + 1} hit rate limit (${extractedWaitSec || 'N/A'}s). Advancing to next key pool...`);
+                  // Short-term RPM/TPM limit: apply bounded dynamic backoff to key and route
+                  const cooldownMs = parsedWaitMs ? Math.min(Math.max(parsedWaitMs, 2500), 60000) : 3000;
+                  this.keyCooldowns.set(keyIdx, Date.now() + cooldownMs);
+                  this.modelCooldowns.set(`${keyIdx}_${currentModel}`, Date.now() + cooldownMs);
+                  console.warn(`⚠️ [LLMRouter] Groq Key-${keyIdx + 1} hit temporary rate limit (${extractedWaitSec !== null ? extractedWaitSec : 'N/A'}s). Immediate failover to next key in pool...`);
+                  break; // Advance to next key in pool for organization-level RPM/TPM limits
                 }
-                break; // Break model loop to advance to next key in pool immediately
               } else if (status === 413) {
                 console.warn(`⚠️ [LLMRouter] Groq Key-${keyIdx + 1} request payload exceeded limits (413). Failing over to cloud fallback provider immediately.`);
                 throw new Error('Groq request payload too large (413)');
               } else if (status === 401 || status === 403) {
-                console.warn(`🚨 [LLMRouter] Groq Key-${keyIdx + 1} authentication/permission failed (${status}). Marking key invalid.`);
+                // Auth/Permission failures invalidate only this specific key; do not treat as daily quota or invalidate whole organization
+                console.warn(`🚨 [LLMRouter] Groq Key-${keyIdx + 1} authentication/permission failed (${status}). Marking only Key-${keyIdx + 1} invalid.`);
                 this.invalidKeys.add(keyIdx);
                 productionMetrics.inc('provider_failure_count');
                 break;
               } else if (status === 404) {
                 console.warn(`⚠️ [LLMRouter] Model '${currentModel}' not found (404). Marking model unavailable on Key-${keyIdx + 1}.`);
                 this.modelCooldowns.set(`${keyIdx}_${currentModel}`, Date.now() + 3600000);
+                productionMetrics.inc('provider_failure_count');
+                break;
+              } else if (status >= 500 && status < 600) {
+                // Transient server error: brief cooldown on route, immediate failover to alternative key
+                console.warn(`⚠️ [LLMRouter] Groq Key-${keyIdx + 1} upstream server error (${status}). Immediate failover to next key...`);
+                this.modelCooldowns.set(`${keyIdx}_${currentModel}`, Date.now() + 5000);
                 productionMetrics.inc('provider_failure_count');
                 break;
               } else {
@@ -448,10 +585,42 @@ class LLMRouter {
         }
       }
 
-      // 1. ALL ELIGIBLE ROUTES TPD-EXHAUSTED -> BREAK IMMEDIATELY! 0ms wait!
+      const hasGemini = process.env.DISABLE_GEMINI !== 'true' && Boolean((this.geminiApiKey || process.env.GEMINI_API_KEY) && (!this.geminiCooldownUntil || Date.now() >= this.geminiCooldownUntil));
+
+      // 1. ALL ELIGIBLE ROUTES TPD-EXHAUSTED
       if (unattemptedCount === 0 && tpmBackoffCount === 0 && tpdExhaustedCount > 0) {
-        console.warn('⚡ [LLMRouter] All eligible Groq routes for this operation are TPD-exhausted. Fast-failing over to Gemini immediately (0ms delay).');
-        break; // Exits Loop 1 -> _callGroq throws -> fallback catches -> calls _callGemini()
+        const now = Date.now();
+        const tpdCooldowns = Array.from(this.tpdExhaustedRoutes.values()).filter(t => t - now > 0);
+        const minWaitMs = tpdCooldowns.length > 0 ? (Math.min(...tpdCooldowns) - now + 800) : 0;
+        if (minWaitMs > 0 && minWaitMs <= 30000 && poolAttempt < 18) {
+          const remainingAllowance = Math.max(0, sleepBudget.max - sleepBudget.spent);
+          if (remainingAllowance <= 0) {
+            console.warn('⚡ [LLMRouter] Cumulative retry wait reached 30s limit across attempts. Breaking retry loop.');
+            break;
+          }
+          const waitMs = Math.min(Math.max(minWaitMs, 2000), remainingAllowance);
+          sleepBudget.spent += waitMs;
+          console.warn(`⏳ [LLMRouter] Groq rolling token reset in ${Math.round(minWaitMs / 1000)}s. Waiting ${Math.round(waitMs / 1000)}s (cumulative: ${Math.round(sleepBudget.spent / 1000)}s/30s) before retry pass ${poolAttempt + 2}...`);
+          await this._sleep(waitMs, effectiveSignal);
+          continue;
+        }
+        if (hasGemini) {
+          console.warn('⚡ [LLMRouter] All eligible Groq routes for this operation are TPD-exhausted. Fast-failing over to Gemini immediately (0ms delay).');
+          break; // Exits Loop 1 -> _callGroq throws -> fallback catches -> calls _callGemini()
+        }
+        if (poolAttempt < 18 && tpdCooldowns.length > 0) {
+          const remainingAllowance = Math.max(0, sleepBudget.max - sleepBudget.spent);
+          if (remainingAllowance <= 0) {
+            console.warn('⚡ [LLMRouter] Cumulative retry wait reached 30s limit across attempts. Breaking retry loop.');
+            break;
+          }
+          const waitMs = Math.min(Math.max(minWaitMs, 3000), remainingAllowance);
+          sleepBudget.spent += waitMs;
+          console.warn(`⏳ [LLMRouter] Groq rolling token reset in ${Math.round(minWaitMs / 1000)}s. Waiting ${Math.round(waitMs / 1000)}s (cumulative: ${Math.round(sleepBudget.spent / 1000)}s/30s) before retry pass ${poolAttempt + 2}...`);
+          await this._sleep(waitMs, effectiveSignal);
+          continue;
+        }
+        break;
       }
 
       // 2. UNATTEMPTED ROUTES EXIST -> CONTINUE IMMEDIATELY WITHOUT SLEEP
@@ -464,11 +633,22 @@ class LLMRouter {
         if (process.env.ALLOW_MOCK_FALLBACK === 'true' && process.env.NODE_ENV !== 'production') {
           break;
         }
+        if (hasGemini) {
+          console.warn('⚡ [LLMRouter] Groq keys throttled by TPM. Fast-failing over to Gemini immediately (0ms delay)...');
+          break;
+        }
         const now = Date.now();
         const shortCooldowns = Array.from(this.modelCooldowns.values()).filter(t => t - now <= 20000 && t - now > 0);
-        const waitMs = shortCooldowns.length > 0 ? Math.min(Math.max(...shortCooldowns) - now + 300, 15000) : 3000;
-        console.warn(`⏳ [LLMRouter] Transient TPM rate limit. Provider-aware wait ${waitMs}ms before pool pass ${poolAttempt + 2}...`);
-        await this._sleep(waitMs);
+        const rawWaitMs = shortCooldowns.length > 0 ? Math.min(Math.max(...shortCooldowns) - now + 300, 15000) : 3000;
+        const remainingAllowance = Math.max(0, sleepBudget.max - sleepBudget.spent);
+        if (remainingAllowance <= 0) {
+          console.warn('⚡ [LLMRouter] Cumulative retry wait reached 30s limit across attempts. Breaking retry loop.');
+          break;
+        }
+        const waitMs = Math.min(rawWaitMs, remainingAllowance);
+        sleepBudget.spent += waitMs;
+        console.warn(`⏳ [LLMRouter] Transient TPM rate limit. Provider-aware wait ${waitMs}ms (cumulative: ${Math.round(sleepBudget.spent / 1000)}s/30s) before pool pass ${poolAttempt + 2}...`);
+        await this._sleep(waitMs, effectiveSignal);
       }
     }
 
@@ -496,8 +676,8 @@ class LLMRouter {
     }
 
     if (this.geminiCooldownUntil && Date.now() < this.geminiCooldownUntil) {
-      const wait = Math.min(3000, Math.max(500, this.geminiCooldownUntil - Date.now()));
-      await this._sleep(wait);
+      const remainingSec = Math.round((this.geminiCooldownUntil - Date.now()) / 1000);
+      throw new Error(`Gemini provider is in quota cooldown (${remainingSec}s remaining)`);
     }
 
     let GoogleGenerativeAI;
@@ -512,23 +692,20 @@ class LLMRouter {
     // Configurable model cascade: verified supported models from Google ModelService API
     const candidateModels = Array.from(new Set([
       process.env.GEMINI_MODEL,
-      model && typeof model === 'string' && model.startsWith('gemini') ? model : null,
-      'gemini-2.5-flash',
-      'gemini-3.5-flash-lite',
-      'gemini-3.5-flash',
-      'gemma-4-26b-a4b-it'
+      'gemini-flash-lite-latest',
+      'gemini-3.5-flash-lite'
     ].filter(Boolean)));
 
     let lastErr = null;
 
-    for (let attempt = 0; attempt < 3; attempt++) {
+    for (let attempt = 0; attempt < 6; attempt++) {
       for (const geminiModelName of candidateModels) {
         try {
           const modelConfig = {
           model: geminiModelName,
           generationConfig: {
             temperature: typeof temperature === 'number' ? temperature : 0.3,
-            maxOutputTokens: resolvedMaxTokens || 2048
+            maxOutputTokens: Math.max(resolvedMaxTokens || 2048, 2048)
           }
         };
 
@@ -576,9 +753,15 @@ class LLMRouter {
         const status = err.status || (msg.includes('429') ? 429 : (msg.includes('403') ? 403 : (msg.includes('404') ? 404 : 500)));
 
         if (status === 429 || msg.includes('RESOURCE_EXHAUSTED')) {
-          const cooldownMs = 4000;
+          if (msg.includes('PerDay') || msg.includes('limit: 20') || msg.includes('per day')) {
+            console.warn(`⚡ [LLMRouter] Gemini model '${geminiModelName}' daily limit reached. Fast-failing over to next candidate model...`);
+            continue;
+          }
+          const retryMatch = msg.match(/retry(?:Delay| in)\D+(\d+(?:\.\d+)?)\s*s?/i);
+          const dynamicWaitSec = retryMatch ? parseFloat(retryMatch[1]) : null;
+          const cooldownMs = dynamicWaitSec ? Math.ceil(dynamicWaitSec * 1000) + 600 : 5000;
           this.geminiCooldownUntil = Date.now() + cooldownMs;
-          console.warn(`⚠️ [LLMRouter] Gemini hit transient rate limit (429). Bounded cooldown ${cooldownMs}ms...`);
+          console.warn(`⚠️ [LLMRouter] Gemini model '${geminiModelName}' hit transient rate limit (429). Bounded cooldown ${cooldownMs}ms...`);
           await this._sleep(cooldownMs);
           continue;
         } else if (status === 403 || msg.includes('PERMISSION_DENIED') || msg.includes('leaked') || msg.includes('API key')) {
@@ -713,6 +896,10 @@ class LLMRouter {
         targetDifficulty: 'Medium'
       }
     });
+  }
+
+  getLastCompletionMetadata() {
+    return this.lastCompletionMetadata || null;
   }
 }
 

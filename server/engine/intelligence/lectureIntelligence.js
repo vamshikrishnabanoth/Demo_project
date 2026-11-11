@@ -14,6 +14,8 @@
 'use strict';
 
 const crypto = require('crypto');
+const fs = require('fs');
+const path = require('path');
 const llmRouter = require('../adapter/llmRouter');
 const { safeParseJson } = require('../utils/jsonParser');
 const depthAnalyzer = require('../evidence/depthAnalyzer');
@@ -48,27 +50,58 @@ class LectureIntelligence {
   }
 
   /**
-   * Retrieve from cache if fresh.
+   * Retrieve from cache if fresh (checks memory and persistent disk).
    */
   getFromCache(cacheKey) {
+    const now = Date.now();
     const entry = this.cache.get(cacheKey);
-    if (!entry) return null;
-    if (Date.now() - entry.timestamp > CACHE_TTL_MS) {
+    if (entry) {
+      const isMemValid = typeof entry.timestamp === 'number' && Number.isFinite(entry.timestamp) && entry.timestamp <= now && (now - entry.timestamp <= CACHE_TTL_MS);
+      if (isMemValid) {
+        return JSON.parse(JSON.stringify(entry.data));
+      }
       this.cache.delete(cacheKey);
-      return null;
     }
-    return JSON.parse(JSON.stringify(entry.data));
+
+    try {
+      const diskDir = path.resolve(__dirname, '../../data/cache/intelligence');
+      const diskFile = path.join(diskDir, `${cacheKey}.json`);
+      if (fs.existsSync(diskFile)) {
+        const parsed = JSON.parse(fs.readFileSync(diskFile, 'utf8'));
+        const ts = parsed?.timestamp;
+        const isValidDiskTimestamp = typeof ts === 'number' && Number.isFinite(ts) && ts <= now && (now - ts <= CACHE_TTL_MS);
+        if (parsed && parsed.data && isValidDiskTimestamp) {
+          this.cache.set(cacheKey, { data: parsed.data, timestamp: ts });
+          return JSON.parse(JSON.stringify(parsed.data));
+        } else if (fs.existsSync(diskFile)) {
+          // Expired, in the future, missing, or non-finite timestamp -> reject and purge from disk
+          try { fs.unlinkSync(diskFile); } catch (_) {}
+        }
+      }
+    } catch (_) {}
+
+    return null;
   }
 
   /**
-   * Save to cache with LRU eviction.
+   * Save to cache with LRU eviction and persistent disk backing.
    */
   saveToCache(cacheKey, data) {
     if (this.cache.size >= MAX_CACHE_ENTRIES) {
       const oldestKey = this.cache.keys().next().value;
       this.cache.delete(oldestKey);
     }
-    this.cache.set(cacheKey, { data, timestamp: Date.now() });
+    const timestamp = Date.now();
+    this.cache.set(cacheKey, { data, timestamp });
+
+    try {
+      const diskDir = path.resolve(__dirname, '../../data/cache/intelligence');
+      if (!fs.existsSync(diskDir)) {
+        fs.mkdirSync(diskDir, { recursive: true });
+      }
+      const diskFile = path.join(diskDir, `${cacheKey}.json`);
+      fs.writeFileSync(diskFile, JSON.stringify({ data, timestamp }, null, 2), 'utf8');
+    } catch (_) {}
   }
 
   /**
@@ -165,6 +198,13 @@ class LectureIntelligence {
     const reasoning = pedagogicalCritique?.reasoningDepth || [];
     const demonstrations = pedagogicalCritique?.practicalDemonstrations || [];
 
+    // Explicit Hard Infeasibility Gate from depth analyzer prerequisite gates or instructional profile
+    const isHardExplicitlyInfeasible = options.hardFeasible === false ||
+      options.hardFeasibility?.hardFeasible === false ||
+      options.overrideProfile?.hardFeasibility?.hardFeasible === false ||
+      pedagogicalCritique?.hardFeasible === false ||
+      (options.curricularEvidenceProfile?.assessmentCapacity && options.curricularEvidenceProfile.assessmentCapacity.hard === 0);
+
     const hasMechanismsInLecture = explanatory.includes('OPERATIONAL_MECHANISM') || explanatory.includes('THEORETICAL_DERIVATION') || explanatory.includes('CRITIQUE_AND_EVALUATION');
     const hasPracticalTraces = demonstrations.includes('WORKED_TRACE_OR_CODE');
     const hasInvariantsInLecture = reasoning.includes('INVARIANT_AND_CAUSAL') || explanatory.includes('THEORETICAL_DERIVATION') || explanatory.includes('CRITIQUE_AND_EVALUATION') || hasPracticalTraces || (hasMechanismsInLecture && (options.wordCount || 0) >= 150);
@@ -205,37 +245,32 @@ class LectureIntelligence {
 
       // Identify mechanism, comparison, and rule characteristics
       const hasConceptMechanism = Boolean(mech && mech !== 'NOT_OBSERVED' && mech !== 'null' && mech.length >= 15);
-      const isComparison = substanceType === 'COMPARISON' || /\b(versus|vs|difference|compare|tradeoff|unlike)\b/i.test(`${name} ${def}`);
-      const isRuleOrProcedure = substanceType === 'RULE' || substanceType === 'RULE_OR_CONDITION' || substanceType === 'MECHANISM' || /\b(algorithm|steps?|compute|formula|condition|pointer)\b/i.test(`${def} ${mech}`);
+      const isComparison = substanceType === 'COMPARISON' || /\b(versus|vs\.?|difference|compare|tradeoff|unlike|diverge|divergence)\b/i.test(`${name} ${def}`);
+      const isRuleOrProcedure = substanceType === 'RULE' || substanceType === 'RULE_OR_CONDITION' || substanceType === 'MECHANISM' || /\b(algorithm|steps?|compute|formula|condition|pointer|execution|workflow)\b/i.test(`${def} ${mech}`);
 
       // Cognitive Operation 1: Easy Angle (Recall / Recognize / Define)
-      // Angle 1: Primary definition / terminology recall
+      // Grounded in primary definition or terminology anchor
       const supportsEasy = def.length >= 10 || anchors.length > 0;
-      let conceptEasyAngles = 0;
-      if (supportsEasy) {
-        conceptEasyAngles += 1;
-        // Angle 2: Key property, characteristic, syntax, or parameter identification
-        // Grounded in verified mechanisms, rules, or comparative properties within the concept
-        const hasSemanticSubstance = (hasConceptMechanism && def.length >= 35) ||
-          (isRuleOrProcedure && def.length >= 40) ||
-          (isComparison && def.length >= 35);
-        if (hasSemanticSubstance) {
-          conceptEasyAngles += 1;
-        }
-      }
-      totalEasy += conceptEasyAngles;
+      let conceptEasyAngles = supportsEasy ? 1 : 0;
 
       // Cognitive Operation 2: Medium Angles (Mechanism / Trace / Comparison)
-
+      // Grounded strictly in verified operational mechanisms, procedural rules, or explicit comparative tradeoffs
       let conceptMediumAngles = 0;
-      if (hasConceptMechanism || isRuleOrProcedure || (hasMechanismsInLecture && def.length >= 40)) {
+      const hasOperationalDepth = hasConceptMechanism || isRuleOrProcedure || (hasMechanismsInLecture && def.length >= 35);
+      if (hasOperationalDepth) {
         conceptMediumAngles += 1; // Operational mechanism / execution trace angle (Op 2)
       }
-      if (isComparison || substantiveList.length >= 2) {
+      if (isComparison) {
         conceptMediumAngles += 1; // Comparative distinction / tradeoff angle (Op 3)
       }
-      // Cap medium angles per single concept to 2 distinct operations
-      totalMedium += Math.min(conceptMediumAngles, 2);
+
+      // Multi-facet capacity: A concept supports Easy recall if it has a clear definition.
+      // It supports Medium operational/comparative reasoning if it has procedural or mechanism depth.
+      conceptEasyAngles = supportsEasy ? 1 : 0;
+      conceptMediumAngles = (hasOperationalDepth || isComparison) ? 1 : 0;
+
+      totalEasy += conceptEasyAngles;
+      totalMedium += conceptMediumAngles;
 
       // Negative boundary enforcement: if teacher explicitly excluded code or math, discount those angles
       const negBoundaries = Array.isArray(options.negativeBoundaries) ? options.negativeBoundaries : (Array.isArray(pedagogicalCritique?.negativeBoundaries) ? pedagogicalCritique.negativeBoundaries : []);
@@ -331,8 +366,12 @@ class LectureIntelligence {
           });
         }
 
-        // Worked code trace / multi-step diagnostic scenario (discounted if code excluded)
-        const isCodeTrace = !isCodeExcluded && (hasPracticalTraces && hasConceptMechanism && (def.length >= 40 || (def.length + mech.length >= 60)));
+        // Worked code trace / multi-step diagnostic scenario (discounted if code excluded or Hard is infeasible)
+        // Strictly requires code mutation, invariant assertion, or diagnostic defect analysis to qualify as Hard
+        const isCodeTrace = !isCodeExcluded && !isHardExplicitlyInfeasible && (
+          hasPracticalTraces && hasConceptMechanism &&
+          /\b(mutation|invariant|boundary|defect|bug|overflow|underflow|pointer|recursion|exception|state transition|off-by-one|step-by-step trace)\b/i.test(`${name} ${def} ${mech}`)
+        );
         if (isCodeTrace) {
           codeTraceCount += 1;
           operationEvidenceTrail.push({
@@ -375,6 +414,23 @@ class LectureIntelligence {
       if (totalHard === 0 && substantiveConceptCount >= 2 && hasInvariantsInLecture) {
         // Substantive academic lecture with reasoning or mechanisms supports hard assessment via tradeoffs
         totalHard = Math.max(1, Math.min(8, Math.round(substantiveConceptCount * 0.35)));
+      }
+    }
+
+    if (isHardExplicitlyInfeasible) {
+      totalHard = 0;
+    }
+
+    if (!isBriefExcerpt && options.curricularEvidenceProfile?.assessmentCapacity) {
+      const cepCap = options.curricularEvidenceProfile.assessmentCapacity;
+      if (typeof cepCap.easy === 'number' && cepCap.easy > 0) {
+        totalEasy = Math.max(totalEasy, cepCap.easy);
+      }
+      if (typeof cepCap.medium === 'number' && cepCap.medium > 0) {
+        totalMedium = Math.max(totalMedium, cepCap.medium);
+      }
+      if (typeof cepCap.hard === 'number' && !isHardExplicitlyInfeasible && cepCap.hard > 0) {
+        totalHard = Math.max(totalHard, cepCap.hard);
       }
     }
 
@@ -842,6 +898,53 @@ class LectureIntelligence {
     return chapters;
   }
 
+  _deriveWhatWentWell(depthResult = {}, concepts = []) {
+    const praise = [];
+    const focus = (depthResult.detectedFocus || []).filter(f => f && f !== 'Core Subject Matter');
+    const mainConcept = focus[0] || (concepts[0]?.name) || 'Core Subject';
+
+    if (depthResult.hasDef) {
+      praise.push(`Clear Foundational Exposition: You clearly established the core definitions and terminology for ${mainConcept}.`);
+    }
+    if (depthResult.hasMech) {
+      praise.push(`Mechanistic Depth: You explained how internal processes and operational mechanisms function step-by-step.`);
+    }
+    if (depthResult.hasExp || depthResult.characteristics?.examples === 'Present') {
+      praise.push(`Practical Grounding: You grounded abstract theoretical concepts with concrete worked examples or practical analogies.`);
+    }
+    if (depthResult.hasComp) {
+      praise.push(`Comparative Analysis: You contrasted related mechanisms, helping students distinguish key differences.`);
+    }
+    if (depthResult.hasRule || depthResult.characteristics?.reasoning === 'Strong') {
+      praise.push(`Causal Reasoning: You explained the "why" and underlying invariants behind the concepts.`);
+    }
+    if (praise.length === 0) {
+      praise.push(`Structured Delivery: Clear topic overview with identifiable assessable curriculum.`);
+    }
+    return praise.slice(0, 3);
+  }
+
+  _deriveGrowthOpportunities(depthResult = {}, concepts = []) {
+    const opportunities = [];
+    const chars = depthResult.characteristics || {};
+    const focus = (depthResult.detectedFocus || []).filter(f => f && f !== 'Core Subject Matter');
+    const secondConcept = focus[1] || (concepts[1]?.name) || null;
+
+    if (chars.reasoning !== 'Strong' && !depthResult.hasRule) {
+      opportunities.push(`Causal Invariants: In a follow-up class, discussing runtime invariants or failure edge cases will unlock deeper analytical questions.`);
+    }
+    if (chars.examples !== 'Present' && !depthResult.hasExp) {
+      opportunities.push(`Worked Demonstrations: Adding a sample dataset walkthrough or code trace will reinforce operational understanding.`);
+    }
+    if (secondConcept) {
+      opportunities.push(`Cross-Concept Synthesis: Linking ${focus[0] || 'the main concept'} to ${secondConcept} in a follow-up session will support comparative questions.`);
+    }
+    if (opportunities.length === 0) {
+      opportunities.push(`Advanced Extensions: Exploring boundary conditions and corner cases will further challenge advanced students.`);
+    }
+    return opportunities.slice(0, 2);
+  }
+
   buildPartialFallback(opts = {}) {
     const inputOpts = typeof opts === 'string' ? { evidenceText: opts } : (opts || {});
     const { evidenceText, rawText: inputRaw, text: inputText, modality = 'VOICE_ONLY', hasTimingData = false, decoyFilename = null, fileName = null, duration = null, segments = [], slides = [], errorReason = 'LLM analysis unavailable', negativeBoundaries = [] } = inputOpts;
@@ -883,7 +986,11 @@ class LectureIntelligence {
           totalDefensibleCapacity: 0,
           advisoryRationale: 'No questions recommended: Recording contains no assessable instructional curriculum.'
         },
-        auditTrail: {
+        teachingFeedback: {
+        whatWentWell: this._deriveWhatWentWell(depthResult, concepts),
+        growthOpportunities: this._deriveGrowthOpportunities(depthResult, concepts)
+      },
+      auditTrail: {
           modelUsed: 'deterministic-depth-analyzer-v1',
           analyzedAt: new Date().toISOString(),
           inputWordCount: (rawText.split(/\s+/).filter(Boolean)).length,
@@ -947,8 +1054,24 @@ class LectureIntelligence {
       const hasSubstantiveMech = ['RULE_OR_CONDITION', 'FORMAL_DERIVATION', 'CRITIQUE_OR_INTERPRETATION', 'MECHANISM', 'COMPARISON'].includes(substanceType);
       const anchorId = `seg_${i + 1}`;
 
+      let existingMatchKey = null;
       if (conceptMap.has(normKey)) {
-        const existing = conceptMap.get(normKey);
+        existingMatchKey = normKey;
+      } else {
+        const candWords = candidateName.toLowerCase().replace(/[^a-z0-9\s]/g, '').split(/\s+/).filter(w => w.length > 3 && !['the', 'and', 'for', 'with', 'this', 'that', 'what', 'how', 'have', 'from'].includes(w));
+        for (const [key, val] of conceptMap.entries()) {
+          const keyWords = key.replace(/[^a-z0-9\s]/g, '').split(/\s+/).filter(w => w.length > 3 && !['the', 'and', 'for', 'with', 'this', 'that', 'what', 'how', 'have', 'from'].includes(w));
+          const hasSharedStem = candWords.some(cw => keyWords.some(kw => cw.startsWith(kw) || kw.startsWith(cw)));
+          const isSubstring = key.includes(normKey) || normKey.includes(key);
+          if (hasSharedStem || isSubstring) {
+            existingMatchKey = key;
+            break;
+          }
+        }
+      }
+
+      if (existingMatchKey) {
+        const existing = conceptMap.get(existingMatchKey);
         if (!existing.sourceAnchors.includes(anchorId)) {
           existing.sourceAnchors.push(anchorId);
         }
@@ -1058,7 +1181,9 @@ class LectureIntelligence {
         wordCount,
         isCurricular: depthResult.isCurricular,
         curricularSegmentsCount: depthResult.curricularSegments?.length || 0,
-        negativeBoundaries: Array.isArray(negativeBoundaries) ? negativeBoundaries : []
+        negativeBoundaries: Array.isArray(negativeBoundaries) ? negativeBoundaries : [],
+        curricularEvidenceProfile: depthResult.curricularEvidenceProfile,
+        hardFeasibility: depthResult.hardFeasibility || (depthResult.curricularEvidenceProfile?.assessmentCapacity?.hard === 0 ? { hardFeasible: false, deficitReason: 'Zero Hard-tier reasoning operations or invariants observed.' } : null)
       }),
       auditTrail: {
         modelUsed: 'deterministic-depth-analyzer-v1',
@@ -1295,6 +1420,10 @@ ${promptEvidence}`;
         const hasValidConcepts = Array.isArray(parsed.conceptMap) && parsed.conceptMap.length > 0;
         const timingOnlyError = !val.valid && Array.isArray(val.errors) && val.errors.every(e => e.includes('timestamp') || e.includes('start_seconds') || e.includes('end_seconds'));
         if ((val.valid || timingOnlyError) && hasValidConcepts) {
+          parsed.teachingFeedback = {
+            whatWentWell: this._deriveWhatWentWell(depthAnalyzer.analyzeLecture(rawText), parsed.conceptMap),
+            growthOpportunities: this._deriveGrowthOpportunities(depthAnalyzer.analyzeLecture(rawText), parsed.conceptMap)
+          };
           this.saveToCache(cacheKey, parsed);
           return parsed;
         } else {
@@ -1362,8 +1491,14 @@ ${promptEvidence}`;
     lockedProvider = null,
     lockedModel = null
   } = {}) {
-    const provider = lockedProvider || process.env.DEFAULT_LLM_PROVIDER || 'groq';
-    const model = lockedModel || process.env.DEFAULT_LLM_MODEL || 'openai/gpt-oss-20b';
+    const provider = lockedProvider || process.env.DEFAULT_LLM_PROVIDER || (process.env.GROQ_API_KEY ? 'groq' : 'gemini');
+    let defaultModel = 'openai/gpt-oss-20b';
+    if (provider === 'gemini') {
+      defaultModel = process.env.GEMINI_MODEL || 'gemini-flash-lite-latest';
+    } else if (provider === 'groq') {
+      defaultModel = process.env.GROQ_MODEL || 'qwen/qwen3.8-27b';
+    }
+    const model = lockedModel || (provider === 'gemini' ? (process.env.GEMINI_MODEL || defaultModel) : (process.env.DEFAULT_LLM_MODEL || defaultModel));
     const promptVersion = 'v1.0.0-overlapping-parents';
 
     // 1. Check Content-Hash LRU Cache
@@ -1381,23 +1516,23 @@ ${promptEvidence}`;
       return cached;
     }
 
-    // 2. Identify all parents from Hierarchical Store
-    let allParents = [];
+    // 2. Identify all parents from Hierarchical Store and split any oversized parents
+    let rawParents = [];
     if (hierarchicalStore && Array.isArray(hierarchicalStore.parents) && hierarchicalStore.parents.length > 0) {
-      allParents = hierarchicalStore.parents.filter(p => p.sourceType === 'TRANSCRIPT' || (p.parentId && p.parentId.startsWith('P_')));
-      if (allParents.length === 0) {
-        allParents = [...hierarchicalStore.parents];
+      rawParents = hierarchicalStore.parents.filter(p => p.sourceType === 'TRANSCRIPT' || (p.parentId && p.parentId.startsWith('P_')));
+      if (rawParents.length === 0) {
+        rawParents = [...hierarchicalStore.parents];
       }
     }
 
     // Fallback if no parents exist in store but transcript exists
-    if (allParents.length === 0 && voiceTranscript && voiceTranscript.trim().length > 0) {
+    if (rawParents.length === 0 && voiceTranscript && voiceTranscript.trim().length > 0) {
       const words = voiceTranscript.trim().split(/\s+/).filter(Boolean);
       const pSize = 400;
       for (let i = 0; i < words.length; i += pSize) {
         const pWords = words.slice(i, i + pSize);
         const pIdx = Math.floor(i / pSize) + 1;
-        allParents.push({
+        rawParents.push({
           parentId: `P_${String(pIdx).padStart(2, '0')}`,
           evidenceId: `E_PARENT_${String(pIdx).padStart(2, '0')}`,
           title: `Lecture Segment ${pIdx}`,
@@ -1409,36 +1544,110 @@ ${promptEvidence}`;
       }
     }
 
-    if (allParents.length === 0 && (!documentTexts || documentTexts.length === 0)) {
+    if (rawParents.length === 0 && (!documentTexts || documentTexts.length === 0)) {
       throw new Error('R1_EXTRACTION_EMPTY_INPUT: No transcript parents or document text available for extraction.');
     }
 
-    // 3. Build Overlapping Parent Macro-Windows (calibrated for high throughput without rate-limit saturation)
-    const maxMacroWindows = 4;
-    const strideParents = allParents.length <= 3
-      ? 1
-      : Math.max(2, Math.ceil(allParents.length / maxMacroWindows));
-    const windowSizeParents = Math.min(allParents.length, strideParents + 2);
+    // Split any oversized parents (e.g. > 700 words or > 3,200 bytes) into bounded segments preserving all source content
+    const MAX_PARENT_SEGMENT_WORDS = 700;
+    const MAX_PARENT_SEGMENT_BYTES = 3200;
+    const allParents = [];
+
+    for (const p of rawParents) {
+      const pBytes = Buffer.byteLength(p.fullText || '', 'utf8');
+      const pWords = (p.wordCount || (p.fullText || '').split(/\s+/).filter(Boolean).length);
+      if (pWords <= MAX_PARENT_SEGMENT_WORDS && pBytes <= MAX_PARENT_SEGMENT_BYTES) {
+        allParents.push(p);
+      } else {
+        const words = (p.fullText || '').split(/\s+/).filter(Boolean);
+        const children = Array.isArray(p.childIds) ? p.childIds : [];
+        const childrenPerSeg = Math.max(1, Math.ceil(children.length / Math.max(1, Math.ceil(words.length / MAX_PARENT_SEGMENT_WORDS))));
+        let segIdx = 1;
+        for (let wIdx = 0; wIdx < words.length; wIdx += MAX_PARENT_SEGMENT_WORDS) {
+          const segWords = words.slice(wIdx, wIdx + MAX_PARENT_SEGMENT_WORDS);
+          const childStart = (segIdx - 1) * childrenPerSeg;
+          const segChildren = children.slice(childStart, childStart + childrenPerSeg);
+          allParents.push({
+            parentId: `${p.parentId}_s${segIdx}`,
+            evidenceId: `${p.evidenceId || p.parentId}_s${segIdx}`,
+            title: `${p.title || 'Segment'} (Part ${segIdx})`,
+            sourceType: p.sourceType || 'TRANSCRIPT',
+            fullText: segWords.join(' '),
+            wordCount: segWords.length,
+            childIds: segChildren.length > 0 ? segChildren : children,
+            isSegment: true,
+            originalParentId: p.parentId
+          });
+          segIdx++;
+        }
+      }
+    }
+
+    // 3. Build Overlapping Bounded Parent Windows enforcing a strict serialized prompt ceiling
+    let docSection = '';
+    if (Array.isArray(documentTexts) && documentTexts.length > 0) {
+      docSection = '\n\n--- DOCUMENT / SLIDE EVIDENCE CONTEXT ---\n' +
+        documentTexts.map((d, i) => `[SLIDE/DOC ${i + 1}]:\n${typeof d === 'string' ? d.substring(0, 500) : JSON.stringify(d).substring(0, 500)}`).join('\n\n');
+    }
+    const templateBytes = 1500 + Buffer.byteLength(docSection, 'utf8');
+
+    function calculateSerializedPromptBytes(winParents) {
+      let evidenceBytes = 0;
+      for (const p of winParents) {
+        let childBytes = 0;
+        for (const cid of (p.childIds || [])) {
+          const c = hierarchicalStore?.childMap?.[cid];
+          if (c && c.text) childBytes += Buffer.byteLength(`  [CHILD ${cid}]: ${c.text}\n`, 'utf8');
+        }
+        evidenceBytes += Buffer.byteLength(`--- PARENT CHUNK ${p.evidenceId || p.parentId} (${p.title || ''}) ---\n`, 'utf8') + (childBytes || Buffer.byteLength(p.fullText || '', 'utf8')) + 2;
+      }
+      return templateBytes + evidenceBytes;
+    }
+
+    const MAX_SERIALIZED_PROMPT_BYTES = 7680; // 7.5 KB strict serialized request ceiling
+    const MAX_WINDOW_PARENTS = 4;
     const windows = [];
     const coveredParentIndices = new Set();
 
     let startIdx = 0;
     while (startIdx < allParents.length) {
-      const endIdx = Math.min(startIdx + windowSizeParents, allParents.length);
+      let endIdx = startIdx;
+
+      while (endIdx < allParents.length && (endIdx - startIdx) < MAX_WINDOW_PARENTS) {
+        const candidateParents = allParents.slice(startIdx, endIdx + 1);
+        const promptBytes = calculateSerializedPromptBytes(candidateParents);
+        if (promptBytes > MAX_SERIALIZED_PROMPT_BYTES && endIdx > startIdx) {
+          break; // Stop: adding this parent would breach the 7.5 KB serialized request ceiling
+        }
+        endIdx++;
+      }
+
+      // Ensure at least 1 parent/segment is included per window
+      if (endIdx === startIdx) {
+        endIdx = startIdx + 1;
+      }
+
       const winParents = allParents.slice(startIdx, endIdx);
+      const winPromptBytes = calculateSerializedPromptBytes(winParents);
       windows.push({
         windowIndex: windows.length,
         startParentIdx: startIdx,
         endParentIdx: endIdx - 1,
-        parents: winParents
+        parents: winParents,
+        promptBytes: winPromptBytes
       });
+
       for (let i = startIdx; i < endIdx; i++) {
         coveredParentIndices.add(i);
       }
+
       if (endIdx >= allParents.length) {
         break;
       }
-      startIdx += strideParents;
+
+      // Overlap by 1 parent for contextual continuity between windows, advancing by at least 1 parent
+      const stride = Math.max(1, (endIdx - startIdx) > 1 ? (endIdx - startIdx - 1) : 1);
+      startIdx += stride;
     }
 
     // Mandatory Invariant 1: Complete coverage assertion including the final parent
@@ -1452,9 +1661,18 @@ ${promptEvidence}`;
       throw new Error(`FINAL_PARENT_COVERAGE_ASSERTION_FAILED: Final parent ${allParents[finalParentIdx].evidenceId || allParents[finalParentIdx].parentId} was not covered.`);
     }
 
-    console.log(`[LectureIntelligence] Generic R1 Extraction: ${allParents.length} parents mapped to ${windows.length} overlapping windows (windowSize=${windowSizeParents}, stride=${strideParents}). 100% parent coverage verified.`);
+    console.log(`[LectureIntelligence] Generic R1 Extraction: ${allParents.length} parents/segments mapped to ${windows.length} bounded windows (maxPromptBytes=${MAX_SERIALIZED_PROMPT_BYTES}). 100% parent coverage verified.`);
 
-    // 4. Overlapping Window Extraction (Bounded concurrency = 2)
+    // 4. Overlapping Window Extraction (Bounded concurrency = 1)
+    let activeExtractionModel = model;
+    const extractionTelemetry = {
+      windowCount: windows.length,
+      maxSerializedPromptBytes: MAX_SERIALIZED_PROMPT_BYTES,
+      emptyResponseCount: 0,
+      fallbackPromotions: 0,
+      actualTokensRecorded: 0,
+      windows: []
+    };
     const allExtractedUnits = [];
     const quarantinedUnits = [];
     const extractSingleWindow = async (win) => {
@@ -1509,20 +1727,58 @@ Respond with a JSON object in this format:
       const systemPrompt = "You are a pedagogical evidence extraction engine. You must respond with a JSON object containing a 'units' array of verified teaching units with exact verbatim quotes.";
 
       let responseStr = null;
-      try {
-        responseStr = await llmRouter.complete({
-          prompt,
-          systemPrompt,
-          temperature: 0.1,
-          responseFormat: 'json',
-          maxTokens: 4096,
-          model,
-          sessionId,
-          operation: 'TEACHING_UNIT_EXTRACTION'
-        });
-      } catch (winErr) {
-        console.warn(`[LectureIntelligence] Window ${win.windowIndex + 1} extraction error: ${winErr.message}. Continuing with neighboring windows.`);
+      let attempts = 0;
+      while (attempts < 2 && !responseStr) {
+        attempts++;
+        try {
+          responseStr = await llmRouter.complete({
+            prompt,
+            systemPrompt,
+            temperature: 0.1,
+            responseFormat: 'json',
+            maxTokens: 2048,
+            model: activeExtractionModel,
+            sessionId,
+            operation: 'TEACHING_UNIT_EXTRACTION'
+          });
+
+          if (typeof llmRouter.getLastCompletionMetadata === 'function') {
+            const meta = llmRouter.getLastCompletionMetadata();
+            if (meta && meta.model && meta.model !== activeExtractionModel) {
+              console.log(`⚡ [LectureIntelligence] Fallback model promoted for subsequent extraction windows: '${activeExtractionModel}' -> '${meta.model}'`);
+              activeExtractionModel = meta.model;
+              extractionTelemetry.fallbackPromotions++;
+            }
+            if (meta?.usage) {
+              extractionTelemetry.actualTokensRecorded += (meta.usage.total_tokens || ((meta.usage.prompt_tokens || 0) + (meta.usage.completion_tokens || 0)));
+            }
+          }
+        } catch (winErr) {
+          console.warn(`[LectureIntelligence] Window ${win.windowIndex + 1} extraction attempt ${attempts} error: ${winErr.message}.`);
+          if (winErr.message && winErr.message.includes('returned empty content')) {
+            extractionTelemetry.emptyResponseCount++;
+            const verifiedFallback = (activeExtractionModel !== 'qwen/qwen3.8-27b')
+              ? 'qwen/qwen3.8-27b'
+              : (process.env.GROQ_FALLBACK_MODEL && process.env.GROQ_FALLBACK_MODEL !== activeExtractionModel ? process.env.GROQ_FALLBACK_MODEL : 'openai/gpt-oss-120b');
+            if (activeExtractionModel !== verifiedFallback) {
+              console.log(`⚡ [LectureIntelligence] Switching active extraction model away from empty-yielding model '${activeExtractionModel}' to verified fallback '${verifiedFallback}'`);
+              activeExtractionModel = verifiedFallback;
+              extractionTelemetry.fallbackPromotions++;
+            }
+          }
+          if (attempts < 2) {
+            await new Promise(r => setTimeout(r, 2000));
+          }
+        }
       }
+
+      extractionTelemetry.windows.push({
+        windowIndex: win.windowIndex,
+        parentCount: win.parents.length,
+        promptBytes: win.promptBytes,
+        modelUsed: activeExtractionModel,
+        deliveredUnits: responseStr ? true : false
+      });
 
       if (!responseStr || typeof responseStr !== 'string' || responseStr.trim().length === 0) {
         console.warn(`[LectureIntelligence] Window ${win.windowIndex + 1} returned empty content. Continuing with neighboring windows.`);
@@ -1547,19 +1803,29 @@ Respond with a JSON object in this format:
 
       const rawUnits = Array.isArray(parsed?.units) ? parsed.units : (Array.isArray(parsed?.teachingUnits) ? parsed.teachingUnits : (Array.isArray(parsed) ? parsed : []));
 
-      return rawUnits.filter(raw => raw && (raw.statement || raw.subtopic)).map(raw => ({
-        ...raw,
-        windowIndex: win.windowIndex
-      }));
+      return rawUnits
+        .filter(raw => raw && (raw.statement || raw.transcriptExcerpt || raw.verbatim_quote))
+        .map(raw => ({
+          ...raw,
+          statement: raw.statement || raw.verbatim_quote || raw.transcriptExcerpt,
+          subtopic: raw.subtopic || raw.concept || raw.topic || 'Core Subject',
+          transcriptExcerpt: raw.transcriptExcerpt || raw.verbatim_quote || raw.quote || null,
+          isSyntheticFallback: false,
+          windowIndex: win.windowIndex
+        }));
     };
 
-    // Execute with controlled concurrency of 2 to balance latency and rate-limits
-    const concurrency = 2;
+    // Execute sequentially to respect single-key Groq TPM limits (8,000 TPM)
+    const concurrency = 1;
     for (let i = 0; i < windows.length; i += concurrency) {
       const chunk = windows.slice(i, i + concurrency);
       const results = await Promise.all(chunk.map(win => extractSingleWindow(win)));
       for (const resList of results) {
         allExtractedUnits.push(...resList);
+      }
+      if (i + concurrency < windows.length) {
+        const sleepMs = process.env.NODE_ENV === 'test' ? 10 : 1500;
+        await new Promise(r => setTimeout(r, sleepMs));
       }
     }
 
@@ -1783,8 +2049,11 @@ Respond with a JSON object in this format:
         voiceOnly: reconciledUnits.filter(u => u.provenance === 'VOICE_ONLY').length,
         documentOnly: reconciledUnits.filter(u => u.provenance === 'DOCUMENT_ONLY').length
       },
+      extractionTelemetry,
       timestamp: new Date().toISOString()
     };
+
+    this.lastExtractionTelemetry = extractionTelemetry;
 
     const result = {
       teachingUnits: reconciledUnits,

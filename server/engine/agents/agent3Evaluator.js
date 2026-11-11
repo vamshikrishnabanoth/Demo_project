@@ -51,7 +51,10 @@ const EVALUATOR_FAILURE_CODES = {
   DISTRACTOR_FORMAT_ASYMMETRY: 'DISTRACTOR_FORMAT_ASYMMETRY',
   DISTRACTOR_IMPLAUSIBLE_SUBSET: 'DISTRACTOR_IMPLAUSIBLE_SUBSET',
   DISTRACTOR_WEAK_FILLER: 'DISTRACTOR_WEAK_FILLER',
-  DISTRACTOR_GENERIC_FILLER: 'DISTRACTOR_GENERIC_FILLER'
+  DISTRACTOR_GENERIC_FILLER: 'DISTRACTOR_GENERIC_FILLER',
+  UNVERIFIED_TECHNICAL_CLAIM: 'UNVERIFIED_TECHNICAL_CLAIM',
+  REJECTED_TECHNICAL_CORRECTNESS: 'REJECTED_TECHNICAL_CORRECTNESS',
+  DETERMINISTIC_INVARIANT_VIOLATION: 'DETERMINISTIC_INVARIANT_VIOLATION'
 };
 
 const OPTION_VERDICTS = {
@@ -167,11 +170,24 @@ class Agent3Evaluator {
     const preAudit = this._runDeterministicAudit(candidateMCQ, target, evidenceContext, '', evidencePackage);
 
     // 4a. Mandatory Independent Answer Verification Gate (Blind Solver Protocol)
+    const iavOptions = { ...options };
+    // Optimized Provider Efficiency (Requirement 9): When Agent 3 runs its comprehensive
+    // option-by-option LLM audit downstream, run IAV's 14 deterministic domain checks first,
+    // reserving blind LLM solver dispatch for complex algorithmic routes or when explicitly requested.
+    if (!iavOptions.fullSolver && process.env.AGENT3_UNIFIED_EVAL !== 'false') {
+      const isRoute1Or2 = ['ROUTE_1_MATHEMATICAL_AND_DERIVATIVE', 'ROUTE_2_ALGORITHMIC_AND_STATE_INVARIANT'].includes(
+        independentAnswerVerifier.classifyVerificationRoute(candidateMCQ.questionText, candidateMCQ.options)
+      );
+      if (!isRoute1Or2 && !options.requireBlindSolver) {
+        iavOptions.skipLLM = true;
+      }
+    }
+
     const iavResult = await independentAnswerVerifier.verifyAnswerIndependently(
       candidateMCQ,
       target,
       evidenceContext,
-      options
+      iavOptions
     );
 
     candidateMCQ.independentVerification = iavResult;
@@ -181,6 +197,7 @@ class Agent3Evaluator {
       preAudit.passed = false;
       preAudit.status = 'FAIL';
       preAudit.verdict = 'FAIL';
+      preAudit.isFullVerification = false;
       preAudit.score = 0.1;
       if (!preAudit.failureReasons.includes(iavResult.failureReason)) {
         preAudit.failureReasons.push(iavResult.failureReason || 'INDEPENDENT_VERIFICATION_FAILED');
@@ -195,6 +212,7 @@ class Agent3Evaluator {
       preAudit.verificationMethod = 'DETERMINISTIC_AUDIT';
       preAudit.isFallback = false;
       preAudit.isLLMVerified = false;
+      preAudit.isFullVerification = false;
       return preAudit;
     }
 
@@ -206,10 +224,15 @@ class Agent3Evaluator {
     // Medium and Hard questions require semantic quality evaluation (cannot be certified by lexical match alone).
     const isEasyTier = requestedTier === 'Easy';
     const enableFastPath = process.env.AGENT3_FAST_PATH !== 'false' && process.env.AGENT3_ALWAYS_CALL_LLM !== 'true';
-    if (enableFastPath && isEasyTier && preAudit.passed && preAudit.failureReasons.length === 0 && preAudit.score >= 0.90) {
+    const hasPreVerifiedFactualContent = Boolean(
+      target.teachingUnit?.isPreVerifiedFact === true ||
+      candidateMCQ.verificationRecord?.verifiedAgainstCuratedReference === true
+    );
+    if (enableFastPath && isEasyTier && hasPreVerifiedFactualContent && preAudit.passed && preAudit.failureReasons.length === 0 && preAudit.score >= 0.90) {
       preAudit.verificationMethod = 'DETERMINISTIC_RECALL_FAST_PATH';
       preAudit.isFallback = false;
       preAudit.isLLMVerified = false;
+      preAudit.isFullVerification = false;
       preAudit.verifiedProgrammatically = Boolean(candidateMCQ.verificationRecord?.verifiedProgrammatically);
       preAudit.verificationStatus = candidateMCQ.verificationRecord?.verificationStatus || 'MODEL_ASSERTED';
       return preAudit;
@@ -234,9 +257,20 @@ EVALUATION DIRECTIVES:
    - For specific identification ("Which...") questions, the keyed answer must identify the specific mechanism, entity, or state queried.
    - If the keyed answer is technically true in the abstract but fails to directly resolve or answer the specific interrogative focus/mood of the stem, set "isDirectlyResponsive": false and "interrogativeMatch": false, provide "mismatchDetails", and reject with STEM_ANSWER_MISALIGNMENT.
    - Both "isDirectlyResponsive" (boolean) and "interrogativeMatch" (boolean) are mandatory contract fields.
-3. CANONICAL DOMAIN TRUTH INVARIANT:
-   - The keyed option (correct answer) MUST be factually and technically true according to canonical Computer Science / academic principles.
-   - If a teacher in spoken audio made an inadvertent verbal slip (e.g. calling an array 1-indexed or misstating an asymptotic complexity), the technically sound answer is correct; do NOT fail a question for upholding canonical domain truth over a spoken verbal slip.
+3. INDEPENDENT CANONICAL DOMAIN TRUTH AUDIT & DEFECT REJECTION:
+   - The keyed option (correct answer) MUST be factually and technically true according to canonical Computer Science / academic principles, independent of classroom oversimplifications.
+   - Check the candidate question against the 5 SPECIFIC DEFECT CLASSES:
+     * CLASS 1: UNSUPPORTED GENERALIZATION / CASUAL INTUITION: Reject questions asserting casual oral intuition as universal technical laws (e.g. claiming word generation avoids producing meaningless data while ignoring subword tokenization). Flag with REJECTED_TECHNICAL_CORRECTNESS: UNSUPPORTED_GENERALIZATION.
+     * CLASS 2: FACTUALLY INVERTED / CONTRADICTORY DEFINITION: Reject answer keys that contradict textbook definitions of core domain concepts (e.g., claiming Generative AI executes actions while Predictive AI generates results). Flag with REJECTED_TECHNICAL_CORRECTNESS: INVERTED_DEFINITION.
+     * CLASS 3: MATHEMATICAL INVARIANT / OFF-BY-ONE ERROR: Reject questions that violate formal mathematical invariants or index bounds (e.g., claiming an N-gram uses N preceding words instead of N-1). Flag with REJECTED_TECHNICAL_CORRECTNESS: OFF_BY_ONE_INVARIANT.
+     * CLASS 4: TERMINOLOGY COLLISION / CONCEPT INCOHERENCE: If formal terminology (e.g., "Nash equilibrium", "invariant", "monad") is used in the stem or key, the key must adhere to its rigorous definition (e.g., Nash equilibrium does not mean one player "wins"). Flag with REJECTED_TECHNICAL_CORRECTNESS: TERMINOLOGY_COLLISION.
+     * CLASS 5: ARCHITECTURAL TOPOLOGY MISCLASSIFICATION: Reject questions asserting obsolete topology claims as universal truths (e.g., claiming modern LLMs are universally encoder-decoder architectures rather than decoder-only autoregressive models). Flag with REJECTED_TECHNICAL_CORRECTNESS: ARCHITECTURAL_MISCLASSIFICATION.
+   - UNVERIFIED TECHNICAL CLAIM HANDLING:
+     * If technical correctness cannot be affirmatively established against verified references or canonical domain principles, DO NOT ASSUME IT IS CORRECT. Reject with UNVERIFIED_TECHNICAL_CLAIM.
+   - REFINED SAFE HARBOR (ATTRIBUTED COMPREHENSION VS. CANONICAL TRUTH):
+     * If a question explicitly attributes a classroom analogy, metaphor, or pedagogical illustration to the instructor (e.g., "In the analogy presented in the lecture...", "According to the instructor's classroom example..."), it may pass as SOURCE COMPREHENSION provided it does not assert the analogy as a universal technical fact.
+     * If a question tests a general technical concept without attribution, the keyed answer must strictly adhere to canonical academic/CS truth.
+     * Legitimate introductory simplifications (e.g. describing search space halving without balanced tree invariants) are permitted provided they do not state an explicit falsehood.
 4. ALGORITHMIC & CODE GROUNDING:
    - For algorithmic/programming concepts taught in the lecture (loops, arrays, traversals, frequency counting), concise 3–7 line code snippets illustrating the taught algorithm are validly grounded derived evidence (EVIDENCE_DERIVED or DIRECT_EVIDENCE).
    - Do NOT reject code snippets as UNGROUNDED_EVIDENCE_CLAIM merely because the lecture was delivered via audio transcript rather than written code.
@@ -316,21 +350,44 @@ Correct Answer Key: ${candidateMCQ.correctAnswerKey || candidateMCQ.correct_answ
 ${evidenceContext}
 `;
 
+    let timeoutHandle = null;
+    const internalAbortController = new AbortController();
+    const externalSignals = [target?.abortSignal, evidencePackage?.abortSignal].filter(Boolean);
+    const cleanupFns = [];
+
+    for (const sig of externalSignals) {
+      if (sig.aborted) {
+        internalAbortController.abort(sig.reason);
+      } else {
+        const handler = () => {
+          try { internalAbortController.abort(sig.reason); } catch (_) {}
+        };
+        sig.addEventListener('abort', handler, { once: true });
+        cleanupFns.push(() => {
+          try { sig.removeEventListener('abort', handler); } catch (_) {}
+        });
+      }
+    }
+    const effectiveSignal = internalAbortController.signal;
+
     try {
-      const evalTimeoutMs = 35000;
+      const evalTimeoutMs = parseInt(process.env.AGENT3_EVAL_TIMEOUT_MS, 10) || 45000;
       const evalPromise = llmRouter.complete({
         prompt: userPrompt,
         systemPrompt: systemPrompt,
         temperature: 0.1,
-        model: process.env.AGENT3_MODEL || 'openai/gpt-oss-120b',
+        model: process.env.AGENT3_MODEL || 'qwen/qwen3.8-27b',
         sessionId: evidencePackage?.sessionId,
-        maxTokens: 4096,
+        maxTokens: 2000,
         operation: 'EVALUATION',
-        signal: evidencePackage?.abortSignal || target?.abortSignal
+        signal: effectiveSignal
       });
-      const evalTimeout = new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Agent 3 LLM evaluation timed out after 15s')), evalTimeoutMs)
-      );
+      const evalTimeout = new Promise((_, reject) => {
+        timeoutHandle = setTimeout(() => {
+          try { internalAbortController.abort('Agent 3 evaluation timeout'); } catch (_) {}
+          reject(new Error(`Agent 3 LLM evaluation timed out after ${Math.round(evalTimeoutMs / 1000)}s`));
+        }, evalTimeoutMs);
+      });
       const responseText = await Promise.race([evalPromise, evalTimeout]);
 
       return this._parseAndEnforceEvaluationResponse(responseText, preAudit, candidateMCQ, target);
@@ -341,6 +398,7 @@ ${evidenceContext}
       fallbackResult.verificationMethod = 'UNAUDITED_HEURISTIC_FALLBACK';
       fallbackResult.isFallback = true;
       fallbackResult.isLLMVerified = false;
+      fallbackResult.isFullVerification = false;
       fallbackResult.criticUnavailable = true;
       fallbackResult.criticUnavailableReason = err.message;
 
@@ -351,18 +409,38 @@ ${evidenceContext}
         fallbackResult.failureReasons?.includes(EVALUATOR_FAILURE_CODES.UNGROUNDED_EVIDENCE_CLAIM) ||
         (typeof gScore === 'number' && gScore < 0.20);
 
-      // Rule: An unverified Medium or Hard question must NOT silently pass merely because its words match the lecture
-      const isUnverifiedCognitiveTier = requestedTier === 'Medium' || requestedTier === 'Hard';
+      // Technical Correctness Gate: Source grounding must never substitute for technical correctness.
+      // 1. Medium and Hard questions strictly require independent semantic evaluation.
+      // 2. Unverified Easy questions from raw transcripts must fail closed when semantic evaluation is unavailable.
+      // 3. Pre-verified facts (target.teachingUnit.isPreVerifiedFact) and legitimate attributed analogies under Safe Harbor
+      //    are preserved under their approved verification fallback channels.
+      const hasPreVerifiedFact = Boolean(
+        target.teachingUnit?.isPreVerifiedFact === true ||
+        candidateMCQ.verificationRecord?.verifiedAgainstCuratedReference === true
+      );
+      const qStem = String(candidateMCQ.questionText || candidateMCQ.stem || '');
+      const isAttributedAnalogy = Boolean(
+        /\b(?:according to (?:the )?(?:lecture|instructor|teacher)|in the (?:classroom )?(?:analogy|metaphor|illustration|story)|as explained by the instructor)\b/i.test(qStem) &&
+        !fallbackResult.failureReasons?.includes('TRIVIAL_ANALOGY_RECALL')
+      );
 
-      if (fallbackResult.status === 'FAIL' || isForeign || isUnverifiedCognitiveTier) {
+      const isUnverifiedCognitiveTier = requestedTier === 'Medium' || requestedTier === 'Hard';
+      const isUnverifiedEasyQuestion = requestedTier === 'Easy' && !hasPreVerifiedFact && !isAttributedAnalogy;
+
+      if (fallbackResult.status === 'FAIL' || isForeign || isUnverifiedCognitiveTier || isUnverifiedEasyQuestion) {
         fallbackResult.status = 'FAIL';
         fallbackResult.passed = false;
         fallbackResult.verdict = 'FAIL';
         fallbackResult.tier = isForeign ? 'UNSUPPORTED_FOREIGN' : 'UNVERIFIED_EVALUATION_FAILURE';
         fallbackResult.groundingScore = typeof gScore === 'number' ? gScore : 0.0;
-        const failReason = isUnverifiedCognitiveTier
-          ? `Semantic evaluation unavailable: ${requestedTier} difficulty question cannot be certified without semantic quality evaluation (${err.message})`
-          : 'Question rejected due to insufficient evidence overlap (LLM unavailable fallback)';
+        
+        let failReason = 'Question rejected due to insufficient evidence overlap (LLM unavailable fallback)';
+        if (isUnverifiedCognitiveTier) {
+          failReason = `Semantic evaluation unavailable: ${requestedTier} difficulty question cannot be certified without semantic quality evaluation (${err.message})`;
+        } else if (isUnverifiedEasyQuestion) {
+          failReason = `Semantic evaluation unavailable: Easy question derived from unverified lecture evidence cannot be certified without independent semantic verification (${err.message})`;
+        }
+        
         if (!fallbackResult.failureReason) {
           fallbackResult.failureReason = failReason;
         } else if (!fallbackResult.failureReason.includes('Semantic evaluation unavailable')) {
@@ -371,16 +449,39 @@ ${evidenceContext}
         if (!fallbackResult.failureReasons.includes('SEMANTIC_EVALUATION_UNAVAILABLE')) {
           fallbackResult.failureReasons.push('SEMANTIC_EVALUATION_UNAVAILABLE');
         }
+        if (isUnverifiedEasyQuestion && !fallbackResult.failureReasons.includes('UNVERIFIED_TECHNICAL_CLAIM')) {
+          fallbackResult.failureReasons.push('UNVERIFIED_TECHNICAL_CLAIM');
+        }
       } else {
+        // Genuinely pre-verified factual ground truth OR legitimate attributed teaching analogy under Safe Harbor
         fallbackResult.status = 'PASS';
         fallbackResult.passed = true;
         fallbackResult.verdict = 'PASS';
-        fallbackResult.tier = 'VERIFICATION_FALLBACK';
         fallbackResult.groundingScore = (typeof gScore === 'number' && gScore > 0) ? gScore : 0.85;
-        fallbackResult.auditNotice = `Audited via deterministic lexical evidence match fallback for Easy recall (${err.message}).`;
+
+        if (hasPreVerifiedFact) {
+          fallbackResult.tier = 'DIRECT_EVIDENCE';
+          fallbackResult.verificationMethod = 'PRE_VERIFIED_GROUND_TRUTH_FALLBACK';
+          fallbackResult.verificationStatus = 'PRE_VERIFIED_GROUND_TRUTH';
+          fallbackResult.auditNotice = `Audited via pre-verified factual ground truth fallback (${err.message}).`;
+        } else if (isAttributedAnalogy) {
+          fallbackResult.tier = 'EVIDENCE_DERIVED';
+          fallbackResult.verificationMethod = 'SAFE_HARBOR_ANALOGY_FALLBACK';
+          fallbackResult.verificationStatus = 'SAFE_HARBOR_ATTRIBUTED_COMPREHENSION';
+          fallbackResult.auditNotice = `Audited via safe harbor attributed source-comprehension fallback (${err.message}).`;
+        } else {
+          fallbackResult.tier = 'VERIFICATION_FALLBACK';
+          fallbackResult.verificationMethod = 'DETERMINISTIC_RECALL_FALLBACK';
+          fallbackResult.auditNotice = `Audited via deterministic fallback (${err.message}).`;
+        }
       }
 
       return fallbackResult;
+    } finally {
+      if (timeoutHandle) clearTimeout(timeoutHandle);
+      for (const cleanup of cleanupFns) {
+        try { cleanup(); } catch (_) {}
+      }
     }
   }
 
@@ -415,6 +516,7 @@ ${evidenceContext}
     parsed.verificationMethod = 'LLM_EVALUATION';
     parsed.isFallback = false;
     parsed.isLLMVerified = true;
+    parsed.isFullVerification = true;
     parsed.tier = parsed.tier || parsed.evidenceGrounding?.tier || 'DIRECT_EVIDENCE';
     parsed.groundingScore = typeof parsed.groundingScore === 'number' ? parsed.groundingScore : (parsed.evidenceGrounding?.groundingScore || 0.95);
     parsed.repair = { attempted: false, successful: false, repairAttempts: 0, instruction: null };
@@ -614,7 +716,7 @@ ${evidenceContext}
    * @param {Object} generator - Agent 2 Generator instance
    * @returns {Object} Final evaluation result with repair metadata
    */
-  async evaluateAndRepairQuestion(candidateMCQ, target, evidencePackage, generator = null) {
+  async evaluateAndRepairQuestion(candidateMCQ, target, evidencePackage, generator = null, options = {}) {
     // 0. If candidate is null or not an object, fail immediately as unfulfilled without attempting repair
     if (!candidateMCQ || typeof candidateMCQ !== 'object') {
       return {
@@ -654,8 +756,8 @@ ${evidenceContext}
       };
     }
 
-    // 3. If generator is not provided, return failed evaluation directly
-    if (!generator || typeof generator.generateQuestion !== 'function') {
+    // 3. If generator is not provided or repair budget exhausted, return failed evaluation directly without repair
+    if (options.allowRepair === false || !generator || typeof generator.generateQuestion !== 'function') {
       return {
         ...initialEval,
         repaired: false,
@@ -801,7 +903,7 @@ ${evidenceContext}
       ...secondEval,
       passed: false,
       repaired: false,
-      mcq: candidateMCQ,
+      mcq: repairedMCQ,
       repair: {
         attempted: true,
         successful: false,
@@ -1648,7 +1750,7 @@ ${evidenceContext}
       instructions.push('REGENERATE AS TECHNICAL QUESTION: Question must test actual engineering mechanisms, algorithms, state transitions, or complexity without referencing "course material" or "technical reference".');
     }
     if (failureReasons.includes(EVALUATOR_FAILURE_CODES.OPTION_VALIDATION_ERROR)) {
-      instructions.push('Format with exactly 4 distinct, balanced options without superficial formatting variants.');
+      instructions.push('Provide exactly 4 distinct, mutually exclusive operational alternatives. Ensure distractors represent distinct errors or outcomes, not synonymous or permuted word variants.');
     }
     if (failureReasons.includes(EVALUATOR_FAILURE_CODES.AMBIGUOUS_DISTRACTOR) || failureReasons.includes(EVALUATOR_FAILURE_CODES.ACCIDENTAL_CORRECT_DISTRACTOR)) {
       instructions.push('Ensure options are mutually exclusive alternatives; eliminate command subsets or parameter extensions that could also be correct.');
@@ -1662,7 +1764,7 @@ ${evidenceContext}
     if (failureReasons.includes(EVALUATOR_FAILURE_CODES.TIER_COGNITIVE_MISMATCH)) {
       const tier = target.targetDifficulty || 'Medium';
       if (tier === 'Hard') {
-        instructions.push('Increase cognitive depth: require scenario diagnosis, fault prediction, or constraint analysis with concrete state parameters instead of simple recall or abstract definition.');
+        instructions.push('CRITICAL COGNITIVE DEPTH REPAIR: Switch from asking a definition or property recall to tracing a concrete numeric sequence, subtree heights, or balance factor violation. Provide initial tree or code fixture.');
       } else if (tier === 'Easy') {
         instructions.push('Simplify cognitive demand: test direct terminology definition or explicit recognition only.');
       } else {
@@ -1672,8 +1774,8 @@ ${evidenceContext}
     if (failureReasons.includes(EVALUATOR_FAILURE_CODES.UNGROUNDED_EVIDENCE_CLAIM) || failureReasons.includes(EVALUATOR_FAILURE_CODES.FOREIGN_DOMAIN_CONTAMINATION)) {
       instructions.push(`Ground all options strictly in lecture evidence for "${target.concept || 'target'}"; do not introduce external or foreign domain concepts.`);
     }
-    if (failureReasons.includes(EVALUATOR_FAILURE_CODES.CORRECT_ANSWER_NOT_IN_OPTIONS)) {
-      instructions.push('Ensure correctAnswer matches one of the 4 options verbatim.');
+    if (failureReasons.includes('CORRECT_ANSWER_INDEX_CONFLICT') || failureReasons.includes(EVALUATOR_FAILURE_CODES.CORRECT_ANSWER_NOT_IN_OPTIONS)) {
+      instructions.push('Ensure correctAnswer matches one of the 4 options verbatim, and correctAnswerIndex corresponds exactly to that option.');
     }
     if (failureReasons.includes(EVALUATOR_FAILURE_CODES.DISTRACTOR_FORMAT_ASYMMETRY)) {
       instructions.push('Maintain strict option format parallelism: if the correct answer is formatted as code syntax, all distractors must also be formatted as code syntax, not prose explanations.');

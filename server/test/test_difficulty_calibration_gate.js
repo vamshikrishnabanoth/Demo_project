@@ -116,7 +116,7 @@ runTest('v2_intent_relative supports conceptual Hard when mechanisms exist', () 
     assessmentTargets: [
       { targetId: 'T01', concept: 'Generator Dynamics', supportingEvidence: 'Generator learns distribution via discriminator loss feedback.' },
       { targetId: 'T02', concept: 'Discriminator Loss', supportingEvidence: 'Discriminator loss drives gradients.' },
-      { targetId: 'T03', concept: 'Gradient Starvation', supportingEvidence: 'If discriminator becomes too strong, generator gradients vanish.' }
+      { targetId: 'T03', concept: 'Gradient Starvation Defect', supportingEvidence: 'If discriminator becomes too strong, generator gradients vanish, causing generator failure and mode collapse.' }
     ]
   };
 

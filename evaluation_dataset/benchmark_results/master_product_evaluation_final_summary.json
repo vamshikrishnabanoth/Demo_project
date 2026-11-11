@@ -1,0 +1,1584 @@
+{
+  "summaryType": "FINAL",
+  "timestamp": "2026-11-10T14:49:56.056Z",
+  "globalBudget": {
+    "MAX_HTTP_ATTEMPTS": 120,
+    "MAX_TOKENS": 350000,
+    "CONSECUTIVE_429_THRESHOLD": 3
+  },
+  "consumed": {
+    "totalHttpAttempts": 80,
+    "failedHttpAttempts": 6,
+    "committedTokens": 345484,
+    "reservedTokens": 0,
+    "actualTokensRecorded": 244977,
+    "estimatedTokensRecorded": 100507,
+    "consecutive429Count": 0,
+    "circuitBreakerTripped": false,
+    "budgetExhausted": true
+  },
+  "completedRunsCount": 2,
+  "runResults": [
+    {
+      "runId": "R1",
+      "cohortId": "MULTI_004",
+      "lectureName": "Deepa Ma'am: Binary Trees and Different Types of Trees",
+      "requestedDifficulty": "Easy",
+      "requestedCount": 5,
+      "deliveredCount": 2,
+      "pipelineStatus": "COMPLETED_WITH_CAPACITY_DEFICIT",
+      "durationSec": "575.3",
+      "sessionId": "eval_r1_multi_004_eec564c6",
+      "recommendedQuestionCount": 18,
+      "totalDefensibleCapacity": 21,
+      "tcScore": 87,
+      "pdi": null,
+      "questions": [
+        {
+          "targetId": "T02",
+          "questionText": "Which statement correctly distinguishes a perfect binary tree from a complete binary tree?",
+          "options": [
+            "All internal nodes have two children, but some levels may be partially filled.",
+            "All levels are completely filled and every internal node has exactly two children.",
+            "Every node, including leaves, must have exactly two children.",
+            "All levels are filled except possibly the last, which is left-justified."
+          ],
+          "correctAnswerIndex": 1,
+          "correctAnswer": "All levels are completely filled and every internal node has exactly two children.",
+          "explanation": "The evidence states a perfect binary tree has every level completely filled and each internal node with exactly two children, which matches option 2; option 0 describes a complete tree, option 1 incorrectly forces leaves to have two children, and option 3 mixes perfect and complete properties.",
+          "question": "Which statement correctly distinguishes a perfect binary tree from a complete binary tree?",
+          "styleAudit": {
+            "passesStyle": true,
+            "issues": [],
+            "warnings": [],
+            "standardsVersion": "1.3.0"
+          },
+          "questionArchetype": "CONCEPTUAL_CONTRAST",
+          "pedagogicalIntent": "Assess direct factual recall, terminology definition, or explicit concept recognition. Prohibit multi-variable calculation, hypothetical scenarios, or multi-step tracing. Focus: A perfect binary tree is a binary tree in which every level is completely filled and every internal node has exactly two children..",
+          "verificationRecord": {
+            "verificationStatus": "VERIFICATION_UNSUPPORTED",
+            "verifiedProgrammatically": false,
+            "factualBasis": "The evidence states a perfect binary tree has every level completely filled and each internal node with exactly two children, which matches option 2; option 0 describes a complete tree, option 1 incorrectly forces leaves to have two children, and option 3 mixes perfect and complete properties.",
+            "computedOrTracedKey": "The evidence states a perfect binary tree has every level completely filled and each internal node with exactly two children, which matches option 2; option 0 describes a complete tree, option 1 incorrectly forces leaves to have two children, and option 3 mixes perfect and complete properties.",
+            "distractorRationales": {
+              "All levels are filled except possibly the last, which is left-justified.": "Plausible student misconception based on near miss mechanism.",
+              "Every node, including leaves, must have exactly two children.": "Plausible student misconception based on near miss mechanism.",
+              "All internal nodes have two children, but some levels may be partially filled.": "Plausible student misconception based on near miss mechanism."
+            },
+            "byLetter": {
+              "A": "Plausible student misconception based on near miss mechanism.",
+              "C": "Plausible student misconception based on near miss mechanism.",
+              "D": "Plausible student misconception based on near miss mechanism."
+            }
+          },
+          "distractorRationales": {
+            "All levels are filled except possibly the last, which is left-justified.": "Plausible student misconception based on near miss mechanism.",
+            "Every node, including leaves, must have exactly two children.": "Plausible student misconception based on near miss mechanism.",
+            "All internal nodes have two children, but some levels may be partially filled.": "Plausible student misconception based on near miss mechanism."
+          },
+          "usedArchetypes": [
+            "NEAR_MISS_MECHANISM",
+            "MISCONCEPTION_INVERSION"
+          ],
+          "correctAnswerText": "All levels are completely filled and every internal node has exactly two children.",
+          "correct_option": 1,
+          "correctOption": 1,
+          "correctAnswerKey": "B",
+          "correct_answer": "B",
+          "correct_answer_text": "All levels are completely filled and every internal node has exactly two children.",
+          "distractorRationalesByLetter": {
+            "A": "Plausible student misconception based on near miss mechanism.",
+            "C": "Plausible student misconception based on near miss mechanism.",
+            "D": "Plausible student misconception based on near miss mechanism."
+          },
+          "metadata": {
+            "dimension": "Conceptual",
+            "cognitiveLevel": "Understand",
+            "targetDifficulty": "Easy",
+            "intendedCognitiveOperation": "RECALL",
+            "concept": "Perfect Binary Tree",
+            "questionArchetype": "CONCEPTUAL_CONTRAST",
+            "usedArchetypes": [
+              "NEAR_MISS_MECHANISM",
+              "MISCONCEPTION_INVERSION"
+            ],
+            "distractorRationales": {
+              "All levels are filled except possibly the last, which is left-justified.": "Plausible student misconception based on near miss mechanism.",
+              "Every node, including leaves, must have exactly two children.": "Plausible student misconception based on near miss mechanism.",
+              "All internal nodes have two children, but some levels may be partially filled.": "Plausible student misconception based on near miss mechanism."
+            },
+            "capacityLimitation": null,
+            "isCapacityLimited": false,
+            "repeatedTarget": false,
+            "isRepeatedTarget": false,
+            "targetOccurrence": 1,
+            "cognitiveApproach": null,
+            "subtopic": "Perfect Binary Tree",
+            "sourceOrigin": "VOICE",
+            "supportingChunks": [
+              "E_CHILD_036"
+            ],
+            "parentChunks": [
+              "E_PARENT_07"
+            ],
+            "timeSpan": null,
+            "hasRealTimestamps": false,
+            "isEvidenceVerified": true,
+            "evidenceVerificationStatus": "VERIFIED_AGAINST_STORE",
+            "groundingScore": 0.95,
+            "targetId": "T02",
+            "repairAttempted": false,
+            "repairSuccessful": false,
+            "decisionLedger": {
+              "questionId": "Q1",
+              "source": {
+                "tier": "DIRECT_EVIDENCE",
+                "sourceOrigin": "VOICE",
+                "supportingChunks": [
+                  "E_CHILD_036"
+                ],
+                "parentChunks": [
+                  "E_PARENT_07"
+                ],
+                "timeSpan": null,
+                "hasRealTimestamps": false,
+                "isEvidenceVerified": true,
+                "verificationStatus": "VERIFIED_AGAINST_STORE"
+              },
+              "concept": "Perfect Binary Tree",
+              "subtopic": "Perfect Binary Tree",
+              "macroTopic": "Binary Trees",
+              "cognitiveDimension": "Conceptual",
+              "difficulty": "Easy",
+              "intendedCognitiveOperation": "RECALL",
+              "assessmentAngle": "CONCEPTUAL",
+              "formatRecommendation": "PROSE_MULTIPLE_CHOICE",
+              "studentAnswerability": "HIGH",
+              "redundancy": {
+                "similarQuestion": null,
+                "similarity": 0,
+                "decision": "KEEP"
+              },
+              "agent3": {
+                "verdict": "PASS",
+                "verificationMethod": "LLM_EVALUATION",
+                "isLLMVerified": true,
+                "isFallback": false,
+                "tier": "DIRECT_EVIDENCE",
+                "groundingScore": 0.95,
+                "repaired": false,
+                "criticUnavailableReason": null
+              },
+              "grounding": {
+                "status": "GROUNDED",
+                "isEvidenceVerified": true
+              }
+            },
+            "traceabilityAudit": {
+              "1_sourceOrigin": "VOICE",
+              "2_supportingSessionChunks": [
+                "E_CHILD_036"
+              ],
+              "2b_timeSpan": null,
+              "2c_hasRealTimestamps": false,
+              "2d_isEvidenceVerified": true,
+              "3_agent1AssessmentReasoning": {
+                "whyAssessed": "Teacher emphasized Perfect Binary Tree as a key learning outcome.",
+                "targetDifficulty": "Easy",
+                "intendedCognitiveOperation": "RECALL"
+              },
+              "4_agent2FormulationReasoning": {
+                "dimension": "Conceptual",
+                "cognitiveLevel": "Understand",
+                "usedArchetypes": [
+                  "NEAR_MISS_MECHANISM",
+                  "MISCONCEPTION_INVERSION"
+                ]
+              },
+              "5_agent3EvaluationReasoning": {
+                "verificationMethod": "LLM_EVALUATION",
+                "isLLMVerified": true,
+                "isFallback": false,
+                "tier": "DIRECT_EVIDENCE",
+                "groundingScore": 0.95,
+                "cognitiveAudit": {
+                  "requestedDifficulty": "Easy",
+                  "intendedCognitiveOperation": "RECALL",
+                  "evaluatedCognitiveDemand": "RECALL",
+                  "isCalibrated": true,
+                  "mismatchDetails": null
+                },
+                "repaired": false,
+                "verdict": "PASS",
+                "criticUnavailableReason": null
+              },
+              "6_deterministicCalculations": {
+                "preChecksPassed": true,
+                "optionCount": 4,
+                "optionsMutuallyExclusive": true
+              },
+              "7_finalGroundingGateReasoning": {
+                "status": "PASSED",
+                "justification": "Question and options are directly justified by verified session evidence chunks [E_CHILD_036] for Perfect Binary Tree."
+              }
+            },
+            "assessmentAngle": "CONCEPTUAL",
+            "formatRecommendation": "PROSE_MULTIPLE_CHOICE",
+            "macroTopic": "Binary Trees",
+            "capacityReport": {
+              "status": "CAPACITY_DEFICIT",
+              "hasDeficit": true,
+              "totalCountFulfillment": "PARTIALLY_FULFILLED",
+              "difficultyCapacityFulfillment": "FULFILLED",
+              "requestedCount": 5,
+              "estimatedDefensibleCapacity": 21,
+              "totalDefensibleCapacity": 21,
+              "recommendedQuestionCount": 18,
+              "finalRecommendedCount": 18,
+              "candidatesGenerated": 33,
+              "candidatesRejected": 7,
+              "validatedCount": 2,
+              "deliveredCount": 2,
+              "unfulfilledDeficitCount": 3,
+              "unfulfilledCount": 3,
+              "capacityDeficit": 3,
+              "hardCapacityDeficit": 0,
+              "reallocatedCount": 0,
+              "reallocatedTo": null,
+              "capacityWarning": "This lecture supports up to 21 distinct evidence-grounded questions. Insufficient evidence for 3 Hard question(s). Recommended quiz size: 18 questions.",
+              "reallocationWarning": null,
+              "capacityAudit": {
+                "mode": "v4_lcacm_2d_matrix",
+                "requestedDifficulty": "Easy",
+                "requestedCount": 5,
+                "requestedDistribution": {
+                  "Easy": 5,
+                  "Medium": 0,
+                  "Hard": 0
+                },
+                "allocatedDistribution": {
+                  "Easy": 5,
+                  "Medium": 0,
+                  "Hard": 0
+                },
+                "requestedHardCount": 0,
+                "allocatedHardCount": 0,
+                "reallocatedCount": 0,
+                "reallocatedTo": null,
+                "reason": "Lecture evidence supports 0 Hard targets. Reallocated to Medium.",
+                "deficitStatus": null
+              },
+              "instructorApprovalRequired": true,
+              "isApprovedByInstructor": false,
+              "options": [
+                {
+                  "action": "ACCEPT_FEASIBLE_COUNT",
+                  "label": "Accept 2 Easy Questions"
+                },
+                {
+                  "action": "ACCEPT_RECOMMENDED_COUNT",
+                  "label": "Accept recommended quiz size (18 questions)"
+                },
+                {
+                  "action": "ADD_MATERIALS",
+                  "label": "Provide additional lecture materials"
+                },
+                {
+                  "action": "EXPAND_SCOPE",
+                  "label": "Expand lecture scope"
+                },
+                {
+                  "action": "CANCEL",
+                  "label": "Cancel / Adjust Request"
+                }
+              ],
+              "topicDifficultyMatrix": {
+                "subtopics": [
+                  {
+                    "name": "Data Structures",
+                    "instructionalScore": 0.287,
+                    "signals": {
+                      "T": 0.014,
+                      "E": 1,
+                      "D": 0.35,
+                      "P": 0.05,
+                      "O": 0.05,
+                      "composite": 0.287
+                    },
+                    "budget": 1,
+                    "capacities": {
+                      "Easy": 9,
+                      "Medium": 10,
+                      "Hard": 2,
+                      "difficultyEvidence": {
+                        "easyBasis": "Direct definitions and terminology verified in evidence",
+                        "mediumBasis": "Operational mechanisms and sequential state transitions observed",
+                        "hardBasis": "Boundary conditions, scope invariants, or counterfactual failure modes present"
+                      }
+                    },
+                    "allocated": {
+                      "Easy": 1,
+                      "Medium": 0,
+                      "Hard": 0,
+                      "DEFICIT": 0,
+                      "total": 1
+                    }
+                  },
+                  {
+                    "name": "Binary Trees",
+                    "instructionalScore": 0.427,
+                    "signals": {
+                      "T": 0.228,
+                      "E": 1,
+                      "D": 0.35,
+                      "P": 0.05,
+                      "O": 0.7,
+                      "composite": 0.427
+                    },
+                    "budget": 2,
+                    "capacities": {
+                      "Easy": 9,
+                      "Medium": 10,
+                      "Hard": 2,
+                      "difficultyEvidence": {
+                        "easyBasis": "Direct definitions and terminology verified in evidence",
+                        "mediumBasis": "Operational mechanisms and sequential state transitions observed",
+                        "hardBasis": "Boundary conditions, scope invariants, or counterfactual failure modes present"
+                      }
+                    },
+                    "allocated": {
+                      "Easy": 2,
+                      "Medium": 0,
+                      "Hard": 0,
+                      "DEFICIT": 0,
+                      "total": 2
+                    }
+                  },
+                  {
+                    "name": "Tree Data Structures",
+                    "instructionalScore": 0.466,
+                    "signals": {
+                      "T": 0.34,
+                      "E": 1,
+                      "D": 0.35,
+                      "P": 0.05,
+                      "O": 0.7,
+                      "composite": 0.466
+                    },
+                    "budget": 2,
+                    "capacities": {
+                      "Easy": 9,
+                      "Medium": 10,
+                      "Hard": 2,
+                      "difficultyEvidence": {
+                        "easyBasis": "Direct definitions and terminology verified in evidence",
+                        "mediumBasis": "Operational mechanisms and sequential state transitions observed",
+                        "hardBasis": "Boundary conditions, scope invariants, or counterfactual failure modes present"
+                      }
+                    },
+                    "allocated": {
+                      "Easy": 2,
+                      "Medium": 0,
+                      "Hard": 0,
+                      "DEFICIT": 0,
+                      "total": 2
+                    }
+                  }
+                ],
+                "globalRequested": "Easy",
+                "substitutions": {
+                  "hardToMedium": 0,
+                  "hardToEasy": 0,
+                  "easyToMedium": 0,
+                  "easyToHard": 0,
+                  "mediumToEasy": 0,
+                  "mediumToHard": 0,
+                  "reasons": []
+                },
+                "globalAllocated": {
+                  "Easy": 5,
+                  "Medium": 0,
+                  "Hard": 0,
+                  "Deficit": 0,
+                  "TotalDefensible": 5
+                }
+              }
+            },
+            "capacityDeficitReport": {
+              "status": "CAPACITY_DEFICIT",
+              "requestedCount": 5,
+              "generatedCount": 2,
+              "deliveredCount": 2,
+              "groundedCount": 2,
+              "supplementaryCount": 0,
+              "distinctTargetCount": 1,
+              "repeatedTargetCount": 0,
+              "estimatedDefensibleCapacity": 21,
+              "totalDefensibleCapacity": 21,
+              "distinctTargetCapacity": 21,
+              "primaryTargetsCovered": 5,
+              "recommendedQuestionCount": 18,
+              "requestedDifficulty": "Easy",
+              "capacityPolicy": "ALLOW_SCOPE_SUPPLEMENTARY",
+              "fulfilledDifficulty": "Easy",
+              "capacityDeficit": 3,
+              "unfulfilledDeficitCount": 3,
+              "hasDeficit": true,
+              "hasCoverageLimitation": false,
+              "capacityWarning": "This lecture supports up to 21 distinct evidence-grounded questions. Insufficient evidence for 3 Hard question(s). Recommended quiz size: 18 questions.",
+              "instructorApprovalRequired": true,
+              "isApprovedByInstructor": false,
+              "deficitPolicyApplied": null,
+              "deficitReason": null,
+              "teacherActionRequired": true,
+              "options": [
+                {
+                  "action": "ACCEPT_FEASIBLE_COUNT",
+                  "label": "Accept 2 Easy Questions"
+                },
+                {
+                  "action": "ACCEPT_RECOMMENDED_COUNT",
+                  "label": "Accept recommended quiz size (18 questions)"
+                },
+                {
+                  "action": "ADD_MATERIALS",
+                  "label": "Provide additional lecture materials"
+                },
+                {
+                  "action": "EXPAND_SCOPE",
+                  "label": "Expand lecture scope"
+                },
+                {
+                  "action": "CANCEL",
+                  "label": "Cancel / Adjust Request"
+                }
+              ],
+              "totalCountFulfillment": "PARTIALLY_FULFILLED",
+              "difficultyCapacityFulfillment": "FULFILLED",
+              "hardCapacityDeficit": 0,
+              "reallocatedCount": 0,
+              "reallocatedTo": null,
+              "reallocationWarning": null,
+              "deficitsByTier": {
+                "Hard": 0,
+                "Medium": 0,
+                "Easy": 0
+              },
+              "capacityAudit": {
+                "mode": "v4_lcacm_2d_matrix",
+                "requestedDifficulty": "Easy",
+                "requestedCount": 5,
+                "requestedDistribution": {
+                  "Easy": 5,
+                  "Medium": 0,
+                  "Hard": 0
+                },
+                "allocatedDistribution": {
+                  "Easy": 5,
+                  "Medium": 0,
+                  "Hard": 0
+                },
+                "requestedHardCount": 0,
+                "allocatedHardCount": 0,
+                "reallocatedCount": 0,
+                "reallocatedTo": null,
+                "reason": "Lecture evidence supports 0 Hard targets. Reallocated to Medium.",
+                "deficitStatus": null
+              },
+              "isPartial": true,
+              "shortfallCategory": "PROVIDER_ERROR"
+            },
+            "instructorApprovalRequired": true,
+            "isApprovedByInstructor": false
+          },
+          "independentVerification": {
+            "passed": true,
+            "status": "PASS",
+            "route": "ROUTE_3_CONCEPTUAL_AND_CAUSAL",
+            "verifiedAnswerIndex": 1,
+            "confidence": 0.97,
+            "reasoning": "The lecture evidence defines a perfect binary tree as one where every level is completely filled and every node has exactly two children (i.e., every internal node has two children and leaves have none). Option A states exactly this: \"All levels are completely filled and every internal node has exactly two children.\" This matches the definition and therefore correctly distinguishes a perfect binary tree from a complete binary tree, whose definition is different (all levels filled except possibly the last, left‑justified). Options B, C, and D each contain statements that contradict the definition or describe a different tree type, so they are incorrect.",
+            "mathematicalChecks": [
+              {
+                "claim": "Perfect binary tree: every level completely filled and every internal node has exactly two children.",
+                "status": "VERIFIED",
+                "justification": "Matches lecture excerpt: \"Every level should be completely filled and every node should have two only.\""
+              },
+              {
+                "claim": "Option A description matches the perfect tree definition.",
+                "status": "VERIFIED",
+                "justification": "Option A says all levels are completely filled and every internal node has exactly two children, which aligns with the verified definition."
+              }
+            ],
+            "verificationMethod": "BLIND_SOLVER_CONSENSUS"
+          },
+          "timeSpan": null,
+          "hasRealTimestamps": false,
+          "sourceOrigin": "VOICE",
+          "supportingChunks": [
+            "E_CHILD_036"
+          ],
+          "isEvidenceVerified": true,
+          "qOriginId": "eval_r1_multi_004_eec564c6_q01_a938d7"
+        },
+        {
+          "targetId": "T03",
+          "questionText": "Identify the definition that accurately describes a complete binary tree's node arrangement across its levels.",
+          "options": [
+            "Only the last level needs to be filled, earlier levels can be sparse.",
+            "Every level, including the last, must be completely filled.",
+            "Nodes are added arbitrarily as long as the tree stays balanced.",
+            "All levels are full except possibly the last, which is filled left-to-right."
+          ],
+          "correctAnswerIndex": 3,
+          "correctAnswer": "All levels are full except possibly the last, which is filled left-to-right.",
+          "explanation": "The correct option matches the evidence that all levels should be complete but the last one can be left incomplete and must be filled left‑to‑right; the other choices either require the last level to be full, allow earlier levels to be sparse, or ignore the left‑to‑right filling rule.",
+          "question": "Identify the definition that accurately describes a complete binary tree's node arrangement across its levels.",
+          "styleAudit": {
+            "passesStyle": true,
+            "issues": [],
+            "warnings": [],
+            "standardsVersion": "1.3.0"
+          },
+          "questionArchetype": "CONCEPTUAL_CONTRAST",
+          "pedagogicalIntent": "Assess direct factual recall, terminology definition, or explicit concept recognition. Prohibit multi-variable calculation, hypothetical scenarios, or multi-step tracing. Focus: A complete binary tree is a binary tree where all levels are completely filled except possibly the last level, which is filled from left to right..",
+          "verificationRecord": {
+            "verificationStatus": "VERIFICATION_UNSUPPORTED",
+            "verifiedProgrammatically": false,
+            "factualBasis": "The correct option matches the evidence that all levels should be complete but the last one can be left incomplete and must be filled left‑to‑right; the other choices either require the last level to be full, allow earlier levels to be sparse, or ignore the left‑to‑right filling rule.",
+            "computedOrTracedKey": "The correct option matches the evidence that all levels should be complete but the last one can be left incomplete and must be filled left‑to‑right; the other choices either require the last level to be full, allow earlier levels to be sparse, or ignore the left‑to‑right filling rule.",
+            "distractorRationales": {
+              "Every level, including the last, must be completely filled.": "Plausible student misconception based on near miss mechanism.",
+              "Only the last level needs to be filled, earlier levels can be sparse.": "Plausible student misconception based on near miss mechanism.",
+              "Nodes are added arbitrarily as long as the tree stays balanced.": "Plausible student misconception based on near miss mechanism."
+            },
+            "byLetter": {
+              "A": "Plausible student misconception based on near miss mechanism.",
+              "B": "Plausible student misconception based on near miss mechanism.",
+              "C": "Plausible student misconception based on near miss mechanism."
+            }
+          },
+          "distractorRationales": {
+            "Every level, including the last, must be completely filled.": "Plausible student misconception based on near miss mechanism.",
+            "Only the last level needs to be filled, earlier levels can be sparse.": "Plausible student misconception based on near miss mechanism.",
+            "Nodes are added arbitrarily as long as the tree stays balanced.": "Plausible student misconception based on near miss mechanism."
+          },
+          "usedArchetypes": [
+            "NEAR_MISS_MECHANISM",
+            "MISCONCEPTION_INVERSION"
+          ],
+          "correctAnswerText": "All levels are full except possibly the last, which is filled left-to-right.",
+          "correct_option": 3,
+          "correctOption": 3,
+          "correctAnswerKey": "D",
+          "correct_answer": "D",
+          "correct_answer_text": "All levels are full except possibly the last, which is filled left-to-right.",
+          "distractorRationalesByLetter": {
+            "A": "Plausible student misconception based on near miss mechanism.",
+            "B": "Plausible student misconception based on near miss mechanism.",
+            "C": "Plausible student misconception based on near miss mechanism."
+          },
+          "metadata": {
+            "dimension": "Conceptual",
+            "cognitiveLevel": "Understand",
+            "targetDifficulty": "Easy",
+            "intendedCognitiveOperation": "RECALL",
+            "concept": "Complete Binary Tree",
+            "questionArchetype": "CONCEPTUAL_CONTRAST",
+            "usedArchetypes": [
+              "NEAR_MISS_MECHANISM",
+              "MISCONCEPTION_INVERSION"
+            ],
+            "distractorRationales": {
+              "Every level, including the last, must be completely filled.": "Plausible student misconception based on near miss mechanism.",
+              "Only the last level needs to be filled, earlier levels can be sparse.": "Plausible student misconception based on near miss mechanism.",
+              "Nodes are added arbitrarily as long as the tree stays balanced.": "Plausible student misconception based on near miss mechanism."
+            },
+            "capacityLimitation": null,
+            "isCapacityLimited": false,
+            "repeatedTarget": false,
+            "isRepeatedTarget": false,
+            "targetOccurrence": 1,
+            "cognitiveApproach": null,
+            "subtopic": "Complete Binary Tree",
+            "sourceOrigin": "VOICE",
+            "supportingChunks": [
+              "E_CHILD_044"
+            ],
+            "parentChunks": [
+              "E_PARENT_08"
+            ],
+            "timeSpan": null,
+            "hasRealTimestamps": false,
+            "isEvidenceVerified": true,
+            "evidenceVerificationStatus": "VERIFIED_AGAINST_STORE",
+            "groundingScore": 0.97,
+            "targetId": "T03",
+            "repairAttempted": false,
+            "repairSuccessful": false,
+            "decisionLedger": {
+              "questionId": "Q2",
+              "source": {
+                "tier": "DIRECT_EVIDENCE",
+                "sourceOrigin": "VOICE",
+                "supportingChunks": [
+                  "E_CHILD_044"
+                ],
+                "parentChunks": [
+                  "E_PARENT_08"
+                ],
+                "timeSpan": null,
+                "hasRealTimestamps": false,
+                "isEvidenceVerified": true,
+                "verificationStatus": "VERIFIED_AGAINST_STORE"
+              },
+              "concept": "Complete Binary Tree",
+              "subtopic": "Complete Binary Tree",
+              "macroTopic": "Binary Trees",
+              "cognitiveDimension": "Conceptual",
+              "difficulty": "Easy",
+              "intendedCognitiveOperation": "RECALL",
+              "assessmentAngle": "CONCEPTUAL",
+              "formatRecommendation": "PROSE_MULTIPLE_CHOICE",
+              "studentAnswerability": "HIGH",
+              "redundancy": {
+                "similarQuestion": null,
+                "similarity": 0,
+                "decision": "KEEP"
+              },
+              "agent3": {
+                "verdict": "PASS",
+                "verificationMethod": "LLM_EVALUATION",
+                "isLLMVerified": true,
+                "isFallback": false,
+                "tier": "DIRECT_EVIDENCE",
+                "groundingScore": 0.97,
+                "repaired": false,
+                "criticUnavailableReason": null
+              },
+              "grounding": {
+                "status": "GROUNDED",
+                "isEvidenceVerified": true
+              }
+            },
+            "traceabilityAudit": {
+              "1_sourceOrigin": "VOICE",
+              "2_supportingSessionChunks": [
+                "E_CHILD_044"
+              ],
+              "2b_timeSpan": null,
+              "2c_hasRealTimestamps": false,
+              "2d_isEvidenceVerified": true,
+              "3_agent1AssessmentReasoning": {
+                "whyAssessed": "Teacher emphasized Complete Binary Tree as a key learning outcome.",
+                "targetDifficulty": "Easy",
+                "intendedCognitiveOperation": "RECALL"
+              },
+              "4_agent2FormulationReasoning": {
+                "dimension": "Conceptual",
+                "cognitiveLevel": "Understand",
+                "usedArchetypes": [
+                  "NEAR_MISS_MECHANISM",
+                  "MISCONCEPTION_INVERSION"
+                ]
+              },
+              "5_agent3EvaluationReasoning": {
+                "verificationMethod": "LLM_EVALUATION",
+                "isLLMVerified": true,
+                "isFallback": false,
+                "tier": "DIRECT_EVIDENCE",
+                "groundingScore": 0.97,
+                "cognitiveAudit": {
+                  "requestedDifficulty": "Easy",
+                  "intendedCognitiveOperation": "RECALL",
+                  "evaluatedCognitiveDemand": "RECALL",
+                  "isCalibrated": true,
+                  "mismatchDetails": null
+                },
+                "repaired": false,
+                "verdict": "PASS",
+                "criticUnavailableReason": null
+              },
+              "6_deterministicCalculations": {
+                "preChecksPassed": true,
+                "optionCount": 4,
+                "optionsMutuallyExclusive": true
+              },
+              "7_finalGroundingGateReasoning": {
+                "status": "PASSED",
+                "justification": "Question and options are directly justified by verified session evidence chunks [E_CHILD_044] for Complete Binary Tree."
+              }
+            },
+            "assessmentAngle": "CONCEPTUAL",
+            "formatRecommendation": "PROSE_MULTIPLE_CHOICE",
+            "macroTopic": "Binary Trees",
+            "capacityReport": {
+              "status": "CAPACITY_DEFICIT",
+              "hasDeficit": true,
+              "totalCountFulfillment": "PARTIALLY_FULFILLED",
+              "difficultyCapacityFulfillment": "FULFILLED",
+              "requestedCount": 5,
+              "estimatedDefensibleCapacity": 21,
+              "totalDefensibleCapacity": 21,
+              "recommendedQuestionCount": 18,
+              "finalRecommendedCount": 18,
+              "candidatesGenerated": 33,
+              "candidatesRejected": 7,
+              "validatedCount": 2,
+              "deliveredCount": 2,
+              "unfulfilledDeficitCount": 3,
+              "unfulfilledCount": 3,
+              "capacityDeficit": 3,
+              "hardCapacityDeficit": 0,
+              "reallocatedCount": 0,
+              "reallocatedTo": null,
+              "capacityWarning": "This lecture supports up to 21 distinct evidence-grounded questions. Insufficient evidence for 3 Hard question(s). Recommended quiz size: 18 questions.",
+              "reallocationWarning": null,
+              "capacityAudit": {
+                "mode": "v4_lcacm_2d_matrix",
+                "requestedDifficulty": "Easy",
+                "requestedCount": 5,
+                "requestedDistribution": {
+                  "Easy": 5,
+                  "Medium": 0,
+                  "Hard": 0
+                },
+                "allocatedDistribution": {
+                  "Easy": 5,
+                  "Medium": 0,
+                  "Hard": 0
+                },
+                "requestedHardCount": 0,
+                "allocatedHardCount": 0,
+                "reallocatedCount": 0,
+                "reallocatedTo": null,
+                "reason": "Lecture evidence supports 0 Hard targets. Reallocated to Medium.",
+                "deficitStatus": null
+              },
+              "instructorApprovalRequired": true,
+              "isApprovedByInstructor": false,
+              "options": [
+                {
+                  "action": "ACCEPT_FEASIBLE_COUNT",
+                  "label": "Accept 2 Easy Questions"
+                },
+                {
+                  "action": "ACCEPT_RECOMMENDED_COUNT",
+                  "label": "Accept recommended quiz size (18 questions)"
+                },
+                {
+                  "action": "ADD_MATERIALS",
+                  "label": "Provide additional lecture materials"
+                },
+                {
+                  "action": "EXPAND_SCOPE",
+                  "label": "Expand lecture scope"
+                },
+                {
+                  "action": "CANCEL",
+                  "label": "Cancel / Adjust Request"
+                }
+              ],
+              "topicDifficultyMatrix": {
+                "subtopics": [
+                  {
+                    "name": "Data Structures",
+                    "instructionalScore": 0.287,
+                    "signals": {
+                      "T": 0.014,
+                      "E": 1,
+                      "D": 0.35,
+                      "P": 0.05,
+                      "O": 0.05,
+                      "composite": 0.287
+                    },
+                    "budget": 1,
+                    "capacities": {
+                      "Easy": 9,
+                      "Medium": 10,
+                      "Hard": 2,
+                      "difficultyEvidence": {
+                        "easyBasis": "Direct definitions and terminology verified in evidence",
+                        "mediumBasis": "Operational mechanisms and sequential state transitions observed",
+                        "hardBasis": "Boundary conditions, scope invariants, or counterfactual failure modes present"
+                      }
+                    },
+                    "allocated": {
+                      "Easy": 1,
+                      "Medium": 0,
+                      "Hard": 0,
+                      "DEFICIT": 0,
+                      "total": 1
+                    }
+                  },
+                  {
+                    "name": "Binary Trees",
+                    "instructionalScore": 0.427,
+                    "signals": {
+                      "T": 0.228,
+                      "E": 1,
+                      "D": 0.35,
+                      "P": 0.05,
+                      "O": 0.7,
+                      "composite": 0.427
+                    },
+                    "budget": 2,
+                    "capacities": {
+                      "Easy": 9,
+                      "Medium": 10,
+                      "Hard": 2,
+                      "difficultyEvidence": {
+                        "easyBasis": "Direct definitions and terminology verified in evidence",
+                        "mediumBasis": "Operational mechanisms and sequential state transitions observed",
+                        "hardBasis": "Boundary conditions, scope invariants, or counterfactual failure modes present"
+                      }
+                    },
+                    "allocated": {
+                      "Easy": 2,
+                      "Medium": 0,
+                      "Hard": 0,
+                      "DEFICIT": 0,
+                      "total": 2
+                    }
+                  },
+                  {
+                    "name": "Tree Data Structures",
+                    "instructionalScore": 0.466,
+                    "signals": {
+                      "T": 0.34,
+                      "E": 1,
+                      "D": 0.35,
+                      "P": 0.05,
+                      "O": 0.7,
+                      "composite": 0.466
+                    },
+                    "budget": 2,
+                    "capacities": {
+                      "Easy": 9,
+                      "Medium": 10,
+                      "Hard": 2,
+                      "difficultyEvidence": {
+                        "easyBasis": "Direct definitions and terminology verified in evidence",
+                        "mediumBasis": "Operational mechanisms and sequential state transitions observed",
+                        "hardBasis": "Boundary conditions, scope invariants, or counterfactual failure modes present"
+                      }
+                    },
+                    "allocated": {
+                      "Easy": 2,
+                      "Medium": 0,
+                      "Hard": 0,
+                      "DEFICIT": 0,
+                      "total": 2
+                    }
+                  }
+                ],
+                "globalRequested": "Easy",
+                "substitutions": {
+                  "hardToMedium": 0,
+                  "hardToEasy": 0,
+                  "easyToMedium": 0,
+                  "easyToHard": 0,
+                  "mediumToEasy": 0,
+                  "mediumToHard": 0,
+                  "reasons": []
+                },
+                "globalAllocated": {
+                  "Easy": 5,
+                  "Medium": 0,
+                  "Hard": 0,
+                  "Deficit": 0,
+                  "TotalDefensible": 5
+                }
+              }
+            },
+            "capacityDeficitReport": {
+              "status": "CAPACITY_DEFICIT",
+              "requestedCount": 5,
+              "generatedCount": 2,
+              "deliveredCount": 2,
+              "groundedCount": 2,
+              "supplementaryCount": 0,
+              "distinctTargetCount": 1,
+              "repeatedTargetCount": 0,
+              "estimatedDefensibleCapacity": 21,
+              "totalDefensibleCapacity": 21,
+              "distinctTargetCapacity": 21,
+              "primaryTargetsCovered": 5,
+              "recommendedQuestionCount": 18,
+              "requestedDifficulty": "Easy",
+              "capacityPolicy": "ALLOW_SCOPE_SUPPLEMENTARY",
+              "fulfilledDifficulty": "Easy",
+              "capacityDeficit": 3,
+              "unfulfilledDeficitCount": 3,
+              "hasDeficit": true,
+              "hasCoverageLimitation": false,
+              "capacityWarning": "This lecture supports up to 21 distinct evidence-grounded questions. Insufficient evidence for 3 Hard question(s). Recommended quiz size: 18 questions.",
+              "instructorApprovalRequired": true,
+              "isApprovedByInstructor": false,
+              "deficitPolicyApplied": null,
+              "deficitReason": null,
+              "teacherActionRequired": true,
+              "options": [
+                {
+                  "action": "ACCEPT_FEASIBLE_COUNT",
+                  "label": "Accept 2 Easy Questions"
+                },
+                {
+                  "action": "ACCEPT_RECOMMENDED_COUNT",
+                  "label": "Accept recommended quiz size (18 questions)"
+                },
+                {
+                  "action": "ADD_MATERIALS",
+                  "label": "Provide additional lecture materials"
+                },
+                {
+                  "action": "EXPAND_SCOPE",
+                  "label": "Expand lecture scope"
+                },
+                {
+                  "action": "CANCEL",
+                  "label": "Cancel / Adjust Request"
+                }
+              ],
+              "totalCountFulfillment": "PARTIALLY_FULFILLED",
+              "difficultyCapacityFulfillment": "FULFILLED",
+              "hardCapacityDeficit": 0,
+              "reallocatedCount": 0,
+              "reallocatedTo": null,
+              "reallocationWarning": null,
+              "deficitsByTier": {
+                "Hard": 0,
+                "Medium": 0,
+                "Easy": 0
+              },
+              "capacityAudit": {
+                "mode": "v4_lcacm_2d_matrix",
+                "requestedDifficulty": "Easy",
+                "requestedCount": 5,
+                "requestedDistribution": {
+                  "Easy": 5,
+                  "Medium": 0,
+                  "Hard": 0
+                },
+                "allocatedDistribution": {
+                  "Easy": 5,
+                  "Medium": 0,
+                  "Hard": 0
+                },
+                "requestedHardCount": 0,
+                "allocatedHardCount": 0,
+                "reallocatedCount": 0,
+                "reallocatedTo": null,
+                "reason": "Lecture evidence supports 0 Hard targets. Reallocated to Medium.",
+                "deficitStatus": null
+              },
+              "isPartial": true,
+              "shortfallCategory": "PROVIDER_ERROR"
+            },
+            "instructorApprovalRequired": true,
+            "isApprovedByInstructor": false
+          },
+          "independentVerification": {
+            "passed": true,
+            "status": "PASS",
+            "route": "ROUTE_3_CONCEPTUAL_AND_CAUSAL",
+            "verifiedAnswerIndex": 3,
+            "confidence": 0.99,
+            "reasoning": "A complete binary tree is defined such that every level of the tree is completely filled with nodes, except possibly the last level. If the last level is not full, the nodes that do appear on that level must occupy the leftmost positions, i.e., they are filled from left to right without gaps. This matches the lecture excerpt: \"all levels should be complete. But the last one can be left incomplete.\" Option D states exactly this condition, whereas the other options either allow sparsity in earlier levels, require the last level to be full, or describe arbitrary balanced insertion, all of which contradict the definition.",
+            "mathematicalChecks": [
+              {
+                "claim": "In a complete binary tree, all levels except possibly the last are full.",
+                "status": "VERIFIED",
+                "justification": "By definition of completeness, each level i < h (height) contains 2^i nodes; the last level may have ≤ 2^{h-1} nodes placed left‑to‑right."
+              },
+              {
+                "claim": "If the last level is full, the tree is also a perfect binary tree with total nodes = 2^{h} - 1.",
+                "status": "VERIFIED",
+                "justification": "When the last level is completely filled, the tree satisfies the stronger perfect‑tree condition, yielding the known node count formula."
+              },
+              {
+                "claim": "Option A's claim that earlier levels can be sparse is false.",
+                "status": "CONTRADICTED",
+                "justification": "Completeness requires earlier levels to be completely filled; sparsity would violate the definition."
+              },
+              {
+                "claim": "Option B's claim that the last level must also be completely filled is false for completeness (it describes a perfect tree).",
+                "status": "CONTRADICTED",
+                "justification": "A complete tree allows the last level to be partially filled."
+              },
+              {
+                "claim": "Option C's claim of arbitrary node addition as long as the tree stays balanced is false.",
+                "status": "CONTRADICTED",
+                "justification": "Balance alone does not guarantee the left‑to‑right filling property required for completeness."
+              }
+            ],
+            "verificationMethod": "BLIND_SOLVER_CONSENSUS"
+          },
+          "timeSpan": null,
+          "hasRealTimestamps": false,
+          "sourceOrigin": "VOICE",
+          "supportingChunks": [
+            "E_CHILD_044"
+          ],
+          "isEvidenceVerified": true,
+          "qOriginId": "eval_r1_multi_004_eec564c6_q02_7b3fa9"
+        }
+      ],
+      "error": null
+    },
+    {
+      "runId": "R2",
+      "cohortId": "MULTI_004",
+      "lectureName": "Deepa Ma'am: Binary Trees and Different Types of Trees",
+      "requestedDifficulty": "Hard",
+      "requestedCount": 5,
+      "deliveredCount": 0,
+      "pipelineStatus": "FAILED",
+      "durationSec": "1354.4",
+      "sessionId": "eval_r2_multi_004_455c93ba",
+      "recommendedQuestionCount": 18,
+      "totalDefensibleCapacity": 21,
+      "tcScore": 94,
+      "pdi": null,
+      "questions": [],
+      "error": null
+    }
+  ],
+  "callLedger": [
+    {
+      "attemptIndex": "R1_BASELINE",
+      "runId": "R1",
+      "provider": "mixed",
+      "status": "SUCCESS",
+      "note": "Approved R1 baseline: 37 attempts, 133,000 conservative committed tokens (86,525 actual provider + 46,475 conservative Gemini bound)"
+    },
+    {
+      "attemptIndex": 38,
+      "runId": "R2",
+      "provider": "groq",
+      "model": "openai/gpt-oss-20b",
+      "url": "https://api.groq.com/openai/v1/chat/completions",
+      "timestamp": "2026-11-10T14:27:33.951Z",
+      "reservedTokens": 8960,
+      "status": "SUCCESS",
+      "usageSource": "EXACT_PROVIDER",
+      "actualTokens": 4549
+    },
+    {
+      "attemptIndex": 39,
+      "runId": "R2",
+      "provider": "groq",
+      "model": "qwen/qwen3.8-27b",
+      "url": "https://api.groq.com/openai/v1/chat/completions",
+      "timestamp": "2026-11-10T14:27:36.723Z",
+      "reservedTokens": 8958,
+      "status": "SUCCESS",
+      "usageSource": "EXACT_PROVIDER",
+      "actualTokens": 3831
+    },
+    {
+      "attemptIndex": 40,
+      "runId": "R2",
+      "provider": "groq",
+      "model": "openai/gpt-oss-20b",
+      "url": "https://api.groq.com/openai/v1/chat/completions",
+      "timestamp": "2026-11-10T14:27:40.618Z",
+      "reservedTokens": 8732,
+      "status": "SUCCESS",
+      "usageSource": "EXACT_PROVIDER",
+      "actualTokens": 4381
+    },
+    {
+      "attemptIndex": 41,
+      "runId": "R2",
+      "provider": "groq",
+      "model": "qwen/qwen3.8-27b",
+      "url": "https://api.groq.com/openai/v1/chat/completions",
+      "timestamp": "2026-11-10T14:27:43.623Z",
+      "reservedTokens": 8730,
+      "status": "SUCCESS",
+      "usageSource": "EXACT_PROVIDER",
+      "actualTokens": 3591
+    },
+    {
+      "attemptIndex": 42,
+      "runId": "R2",
+      "provider": "groq",
+      "model": "openai/gpt-oss-20b",
+      "url": "https://api.groq.com/openai/v1/chat/completions",
+      "timestamp": "2026-11-10T14:27:47.613Z",
+      "reservedTokens": 8765,
+      "status": "SUCCESS",
+      "usageSource": "EXACT_PROVIDER",
+      "actualTokens": 4414
+    },
+    {
+      "attemptIndex": 43,
+      "runId": "R2",
+      "provider": "groq",
+      "model": "qwen/qwen3.8-27b",
+      "url": "https://api.groq.com/openai/v1/chat/completions",
+      "timestamp": "2026-11-10T14:27:50.443Z",
+      "reservedTokens": 8763,
+      "status": "SUCCESS",
+      "usageSource": "EXACT_PROVIDER",
+      "actualTokens": 3560
+    },
+    {
+      "attemptIndex": 44,
+      "runId": "R2",
+      "provider": "groq",
+      "model": "openai/gpt-oss-20b",
+      "url": "https://api.groq.com/openai/v1/chat/completions",
+      "timestamp": "2026-11-10T14:27:53.904Z",
+      "reservedTokens": 9101,
+      "status": "SUCCESS",
+      "usageSource": "EXACT_PROVIDER",
+      "actualTokens": 4566
+    },
+    {
+      "attemptIndex": 45,
+      "runId": "R2",
+      "provider": "groq",
+      "model": "qwen/qwen3.8-27b",
+      "url": "https://api.groq.com/openai/v1/chat/completions",
+      "timestamp": "2026-11-10T14:27:56.634Z",
+      "reservedTokens": 9099,
+      "status": "SUCCESS",
+      "usageSource": "EXACT_PROVIDER",
+      "actualTokens": 3758
+    },
+    {
+      "attemptIndex": 46,
+      "runId": "R2",
+      "provider": "groq",
+      "model": "openai/gpt-oss-20b",
+      "url": "https://api.groq.com/openai/v1/chat/completions",
+      "timestamp": "2026-11-10T14:28:00.163Z",
+      "reservedTokens": 8954,
+      "status": "SUCCESS",
+      "usageSource": "EXACT_PROVIDER",
+      "actualTokens": 4610
+    },
+    {
+      "attemptIndex": 47,
+      "runId": "R2",
+      "provider": "groq",
+      "model": "qwen/qwen3.8-27b",
+      "url": "https://api.groq.com/openai/v1/chat/completions",
+      "timestamp": "2026-11-10T14:28:03.093Z",
+      "reservedTokens": 8952,
+      "status": "SUCCESS",
+      "usageSource": "EXACT_PROVIDER",
+      "actualTokens": 3575
+    },
+    {
+      "attemptIndex": 48,
+      "runId": "R2",
+      "provider": "groq",
+      "model": "openai/gpt-oss-20b",
+      "url": "https://api.groq.com/openai/v1/chat/completions",
+      "timestamp": "2026-11-10T14:28:06.167Z",
+      "reservedTokens": 8997,
+      "status": "SUCCESS",
+      "usageSource": "EXACT_PROVIDER",
+      "actualTokens": 4646
+    },
+    {
+      "attemptIndex": 49,
+      "runId": "R2",
+      "provider": "groq",
+      "model": "qwen/qwen3.8-27b",
+      "url": "https://api.groq.com/openai/v1/chat/completions",
+      "timestamp": "2026-11-10T14:28:08.978Z",
+      "reservedTokens": 8995,
+      "status": "FAILED",
+      "error": "Request failed with status code 429",
+      "httpStatus": 429,
+      "usageSource": "FAILED_REQUEST_RESERVATION_COMMITTED",
+      "committedTokens": 8995
+    },
+    {
+      "attemptIndex": 50,
+      "runId": "R2",
+      "provider": "groq",
+      "model": "openai/gpt-oss-120b",
+      "url": "https://api.groq.com/openai/v1/chat/completions",
+      "timestamp": "2026-11-10T14:28:09.079Z",
+      "reservedTokens": 8998,
+      "status": "SUCCESS",
+      "usageSource": "EXACT_PROVIDER",
+      "actualTokens": 4646
+    },
+    {
+      "attemptIndex": 51,
+      "runId": "R2",
+      "provider": "groq",
+      "model": "openai/gpt-oss-20b",
+      "url": "https://api.groq.com/openai/v1/chat/completions",
+      "timestamp": "2026-11-10T14:28:15.354Z",
+      "reservedTokens": 9247,
+      "status": "SUCCESS",
+      "usageSource": "EXACT_PROVIDER",
+      "actualTokens": 4643
+    },
+    {
+      "attemptIndex": 52,
+      "runId": "R2",
+      "provider": "groq",
+      "model": "qwen/qwen3.8-27b",
+      "url": "https://api.groq.com/openai/v1/chat/completions",
+      "timestamp": "2026-11-10T14:28:18.533Z",
+      "reservedTokens": 9245,
+      "status": "SUCCESS",
+      "usageSource": "EXACT_PROVIDER",
+      "actualTokens": 3995
+    },
+    {
+      "attemptIndex": 53,
+      "runId": "R2",
+      "provider": "groq",
+      "model": "openai/gpt-oss-20b",
+      "url": "https://api.groq.com/openai/v1/chat/completions",
+      "timestamp": "2026-11-10T14:28:22.409Z",
+      "reservedTokens": 9253,
+      "status": "SUCCESS",
+      "usageSource": "EXACT_PROVIDER",
+      "actualTokens": 4738
+    },
+    {
+      "attemptIndex": 54,
+      "runId": "R2",
+      "provider": "groq",
+      "model": "qwen/qwen3.8-27b",
+      "url": "https://api.groq.com/openai/v1/chat/completions",
+      "timestamp": "2026-11-10T14:28:25.212Z",
+      "reservedTokens": 9251,
+      "status": "FAILED",
+      "error": "Request failed with status code 429",
+      "httpStatus": 429,
+      "usageSource": "FAILED_REQUEST_RESERVATION_COMMITTED",
+      "committedTokens": 9251
+    },
+    {
+      "attemptIndex": 55,
+      "runId": "R2",
+      "provider": "groq",
+      "model": "openai/gpt-oss-120b",
+      "url": "https://api.groq.com/openai/v1/chat/completions",
+      "timestamp": "2026-11-10T14:28:25.253Z",
+      "reservedTokens": 9254,
+      "status": "SUCCESS",
+      "usageSource": "EXACT_PROVIDER",
+      "actualTokens": 4738
+    },
+    {
+      "attemptIndex": 56,
+      "runId": "R2",
+      "provider": "groq",
+      "model": "openai/gpt-oss-20b",
+      "url": "https://api.groq.com/openai/v1/chat/completions",
+      "timestamp": "2026-11-10T14:28:31.607Z",
+      "reservedTokens": 9235,
+      "status": "SUCCESS",
+      "usageSource": "EXACT_PROVIDER",
+      "actualTokens": 4885
+    },
+    {
+      "attemptIndex": 57,
+      "runId": "R2",
+      "provider": "groq",
+      "model": "qwen/qwen3.8-27b",
+      "url": "https://api.groq.com/openai/v1/chat/completions",
+      "timestamp": "2026-11-10T14:28:34.099Z",
+      "reservedTokens": 9233,
+      "status": "SUCCESS",
+      "usageSource": "EXACT_PROVIDER",
+      "actualTokens": 3887
+    },
+    {
+      "attemptIndex": 58,
+      "runId": "R2",
+      "provider": "groq",
+      "model": "openai/gpt-oss-20b",
+      "url": "https://api.groq.com/openai/v1/chat/completions",
+      "timestamp": "2026-11-10T14:28:37.261Z",
+      "reservedTokens": 9185,
+      "status": "SUCCESS",
+      "usageSource": "EXACT_PROVIDER",
+      "actualTokens": 4890
+    },
+    {
+      "attemptIndex": 59,
+      "runId": "R2",
+      "provider": "groq",
+      "model": "qwen/qwen3.8-27b",
+      "url": "https://api.groq.com/openai/v1/chat/completions",
+      "timestamp": "2026-11-10T14:28:40.032Z",
+      "reservedTokens": 9183,
+      "status": "SUCCESS",
+      "usageSource": "EXACT_PROVIDER",
+      "actualTokens": 3750
+    },
+    {
+      "attemptIndex": 60,
+      "runId": "R2",
+      "provider": "groq",
+      "model": "openai/gpt-oss-20b",
+      "url": "https://api.groq.com/openai/v1/chat/completions",
+      "timestamp": "2026-11-10T14:28:42.883Z",
+      "reservedTokens": 9140,
+      "status": "SUCCESS",
+      "usageSource": "EXACT_PROVIDER",
+      "actualTokens": 4879
+    },
+    {
+      "attemptIndex": 61,
+      "runId": "R2",
+      "provider": "groq",
+      "model": "qwen/qwen3.8-27b",
+      "url": "https://api.groq.com/openai/v1/chat/completions",
+      "timestamp": "2026-11-10T14:28:45.712Z",
+      "reservedTokens": 9138,
+      "status": "SUCCESS",
+      "usageSource": "EXACT_PROVIDER",
+      "actualTokens": 4202
+    },
+    {
+      "attemptIndex": 62,
+      "runId": "R2",
+      "provider": "groq",
+      "model": "openai/gpt-oss-20b",
+      "url": "https://api.groq.com/openai/v1/chat/completions",
+      "timestamp": "2026-11-10T14:28:49.443Z",
+      "reservedTokens": 8874,
+      "status": "SUCCESS",
+      "usageSource": "EXACT_PROVIDER",
+      "actualTokens": 4696
+    },
+    {
+      "attemptIndex": 63,
+      "runId": "R2",
+      "provider": "groq",
+      "model": "qwen/qwen3.8-27b",
+      "url": "https://api.groq.com/openai/v1/chat/completions",
+      "timestamp": "2026-11-10T14:28:52.330Z",
+      "reservedTokens": 8872,
+      "status": "FAILED",
+      "error": "Request failed with status code 429",
+      "httpStatus": 429,
+      "usageSource": "FAILED_REQUEST_RESERVATION_COMMITTED",
+      "committedTokens": 8872
+    },
+    {
+      "attemptIndex": 64,
+      "runId": "R2",
+      "provider": "groq",
+      "model": "openai/gpt-oss-120b",
+      "url": "https://api.groq.com/openai/v1/chat/completions",
+      "timestamp": "2026-11-10T14:28:52.368Z",
+      "reservedTokens": 8875,
+      "status": "SUCCESS",
+      "usageSource": "EXACT_PROVIDER",
+      "actualTokens": 4696
+    },
+    {
+      "attemptIndex": 65,
+      "runId": "R2",
+      "provider": "groq",
+      "model": "openai/gpt-oss-20b",
+      "url": "https://api.groq.com/openai/v1/chat/completions",
+      "timestamp": "2026-11-10T14:28:58.878Z",
+      "reservedTokens": 8903,
+      "status": "SUCCESS",
+      "usageSource": "EXACT_PROVIDER",
+      "actualTokens": 4536
+    },
+    {
+      "attemptIndex": 66,
+      "runId": "R2",
+      "provider": "groq",
+      "model": "qwen/qwen3.8-27b",
+      "url": "https://api.groq.com/openai/v1/chat/completions",
+      "timestamp": "2026-11-10T14:29:01.702Z",
+      "reservedTokens": 8901,
+      "status": "SUCCESS",
+      "usageSource": "EXACT_PROVIDER",
+      "actualTokens": 3727
+    },
+    {
+      "attemptIndex": 67,
+      "runId": "R2",
+      "provider": "groq",
+      "model": "openai/gpt-oss-20b",
+      "url": "https://api.groq.com/openai/v1/chat/completions",
+      "timestamp": "2026-11-10T14:29:05.414Z",
+      "reservedTokens": 9223,
+      "status": "SUCCESS",
+      "usageSource": "EXACT_PROVIDER",
+      "actualTokens": 4644
+    },
+    {
+      "attemptIndex": 68,
+      "runId": "R2",
+      "provider": "groq",
+      "model": "qwen/qwen3.8-27b",
+      "url": "https://api.groq.com/openai/v1/chat/completions",
+      "timestamp": "2026-11-10T14:29:08.333Z",
+      "reservedTokens": 9221,
+      "status": "FAILED",
+      "error": "Request failed with status code 429",
+      "httpStatus": 429,
+      "usageSource": "FAILED_REQUEST_RESERVATION_COMMITTED",
+      "committedTokens": 9221
+    },
+    {
+      "attemptIndex": 69,
+      "runId": "R2",
+      "provider": "groq",
+      "model": "openai/gpt-oss-120b",
+      "url": "https://api.groq.com/openai/v1/chat/completions",
+      "timestamp": "2026-11-10T14:29:08.373Z",
+      "reservedTokens": 9224,
+      "status": "SUCCESS",
+      "usageSource": "EXACT_PROVIDER",
+      "actualTokens": 4644
+    },
+    {
+      "attemptIndex": 70,
+      "runId": "R2",
+      "provider": "groq",
+      "model": "openai/gpt-oss-20b",
+      "url": "https://api.groq.com/openai/v1/chat/completions",
+      "timestamp": "2026-11-10T14:29:14.869Z",
+      "reservedTokens": 8921,
+      "status": "SUCCESS",
+      "usageSource": "EXACT_PROVIDER",
+      "actualTokens": 4567
+    },
+    {
+      "attemptIndex": 71,
+      "runId": "R2",
+      "provider": "groq",
+      "model": "qwen/qwen3.8-27b",
+      "url": "https://api.groq.com/openai/v1/chat/completions",
+      "timestamp": "2026-11-10T14:29:17.736Z",
+      "reservedTokens": 8919,
+      "status": "SUCCESS",
+      "usageSource": "EXACT_PROVIDER",
+      "actualTokens": 3477
+    },
+    {
+      "attemptIndex": 72,
+      "runId": "R2",
+      "provider": "groq",
+      "model": "openai/gpt-oss-20b",
+      "url": "https://api.groq.com/openai/v1/chat/completions",
+      "timestamp": "2026-11-10T14:29:20.886Z",
+      "reservedTokens": 8847,
+      "status": "SUCCESS",
+      "usageSource": "EXACT_PROVIDER",
+      "actualTokens": 4628
+    },
+    {
+      "attemptIndex": 73,
+      "runId": "R2",
+      "provider": "groq",
+      "model": "qwen/qwen3.8-27b",
+      "url": "https://api.groq.com/openai/v1/chat/completions",
+      "timestamp": "2026-11-10T14:29:23.712Z",
+      "reservedTokens": 8845,
+      "status": "FAILED",
+      "error": "Request failed with status code 429",
+      "httpStatus": 429,
+      "usageSource": "FAILED_REQUEST_RESERVATION_COMMITTED",
+      "committedTokens": 8845
+    },
+    {
+      "attemptIndex": 74,
+      "runId": "R2",
+      "provider": "groq",
+      "model": "openai/gpt-oss-120b",
+      "url": "https://api.groq.com/openai/v1/chat/completions",
+      "timestamp": "2026-11-10T14:29:23.752Z",
+      "reservedTokens": 8848,
+      "status": "FAILED",
+      "error": "Request failed with status code 429",
+      "httpStatus": 429,
+      "usageSource": "FAILED_REQUEST_RESERVATION_COMMITTED",
+      "committedTokens": 8848
+    },
+    {
+      "attemptIndex": 75,
+      "runId": "R2",
+      "provider": "groq",
+      "model": "openai/gpt-oss-20b",
+      "url": "https://api.groq.com/openai/v1/chat/completions",
+      "timestamp": "2026-11-10T14:29:23.801Z",
+      "reservedTokens": 8847,
+      "status": "SUCCESS",
+      "usageSource": "EXACT_PROVIDER",
+      "actualTokens": 4628
+    },
+    {
+      "attemptIndex": 76,
+      "runId": "R2",
+      "provider": "groq",
+      "model": "qwen/qwen3.8-27b",
+      "url": "https://api.groq.com/openai/v1/chat/completions",
+      "timestamp": "2026-11-10T14:29:26.642Z",
+      "reservedTokens": 8845,
+      "status": "SUCCESS",
+      "usageSource": "EXACT_PROVIDER",
+      "actualTokens": 3451
+    },
+    {
+      "attemptIndex": 77,
+      "runId": "R2",
+      "provider": "groq",
+      "model": "openai/gpt-oss-20b",
+      "url": "https://api.groq.com/openai/v1/chat/completions",
+      "timestamp": "2026-11-10T14:29:29.499Z",
+      "reservedTokens": 8898,
+      "status": "SUCCESS",
+      "usageSource": "EXACT_PROVIDER",
+      "actualTokens": 4548
+    },
+    {
+      "attemptIndex": 78,
+      "runId": "R2",
+      "provider": "groq",
+      "model": "qwen/qwen3.8-27b",
+      "url": "https://api.groq.com/openai/v1/chat/completions",
+      "timestamp": "2026-11-10T14:29:32.774Z",
+      "reservedTokens": 8896,
+      "status": "SUCCESS",
+      "usageSource": "EXACT_PROVIDER",
+      "actualTokens": 3831
+    },
+    {
+      "attemptIndex": 79,
+      "runId": "R2",
+      "provider": "groq",
+      "model": "openai/gpt-oss-20b",
+      "url": "https://api.groq.com/openai/v1/chat/completions",
+      "timestamp": "2026-11-10T14:29:36.561Z",
+      "reservedTokens": 8943,
+      "status": "SUCCESS",
+      "usageSource": "EXACT_PROVIDER",
+      "actualTokens": 4512
+    },
+    {
+      "attemptIndex": 80,
+      "runId": "R2",
+      "provider": "groq",
+      "model": "openai/gpt-oss-20b",
+      "url": "https://api.groq.com/openai/v1/chat/completions",
+      "timestamp": "2026-11-10T14:32:18.787Z",
+      "reservedTokens": 5981,
+      "status": "SUCCESS",
+      "usageSource": "EXACT_PROVIDER",
+      "actualTokens": 3133
+    }
+  ]
+}

@@ -1,0 +1,91 @@
+{
+  "introductoryLecture": {
+    "baseline": {
+      "totalDefensibleCapacity": 67,
+      "recommendedQuestionCount": 5,
+      "requestedCount": 10,
+      "deliveredCount": 7,
+      "capacityWarning": "This lecture supports approximately 67 distinct assessment targets. Insufficient evidence for 3 Hard question(s). Recommended count: 5.",
+      "actionOptions": [
+        {
+          "action": "ACCEPT_DEFENSIBLE_COUNT",
+          "label": "Accept defensible question count (67 questions)"
+        },
+        {
+          "action": "ACCEPT_FEASIBLE_COUNT",
+          "label": "Accept 7 Balanced Questions"
+        },
+        {
+          "action": "FILL_WITH_MEDIUM",
+          "label": "Fill Remaining 3 with Deep Medium Questions"
+        },
+        {
+          "action": "ADD_MATERIALS",
+          "label": "Provide additional lecture materials"
+        },
+        {
+          "action": "EXPAND_SCOPE",
+          "label": "Expand lecture scope"
+        },
+        {
+          "action": "CANCEL",
+          "label": "Cancel / Adjust Request"
+        }
+      ]
+    },
+    "change1": {
+      "totalDefensibleCapacity": 12,
+      "recommendedQuestionCount": 5,
+      "distinctConceptCount": 11,
+      "capacityByDifficulty": {
+        "easy": 4,
+        "medium": 8,
+        "hard": 0,
+        "balanced": 12
+      },
+      "recommendedByDifficulty": {
+        "easy": 3,
+        "medium": 5,
+        "hard": 0,
+        "balanced": 5
+      },
+      "plannedTargetsTotal": 10,
+      "fulfilledTargets": 10,
+      "deficitTargets": 0,
+      "capacityWarning": null,
+      "actionOptions": []
+    }
+  },
+  "deepArchitectureGans": {
+    "baseline": {
+      "totalDefensibleCapacity": 95,
+      "recommendedQuestionCount": 20,
+      "requestedCount": 10,
+      "deliveredCount": 10,
+      "capacityWarning": null,
+      "actionOptions": []
+    },
+    "change1": {
+      "totalDefensibleCapacity": 25,
+      "recommendedQuestionCount": 20,
+      "distinctConceptCount": 24,
+      "capacityByDifficulty": {
+        "easy": 9,
+        "medium": 10,
+        "hard": 6,
+        "balanced": 25
+      },
+      "recommendedByDifficulty": {
+        "easy": 7,
+        "medium": 8,
+        "hard": 5,
+        "balanced": 20
+      },
+      "plannedTargetsTotal": 10,
+      "fulfilledTargets": 10,
+      "deficitTargets": 0,
+      "capacityWarning": null,
+      "actionOptions": []
+    }
+  }
+}

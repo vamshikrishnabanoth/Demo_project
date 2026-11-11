@@ -32,6 +32,8 @@
 
 'use strict';
 
+const disfluencySanitizer = require('../intelligence/disfluencySanitizer');
+
 function escapeRegex(str) {
   return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
@@ -227,7 +229,7 @@ class DepthAnalyzer {
     const rawSegments = cleaned.split(/(?<=[.?!;])\s+|\n+/);
     return rawSegments
       .map(s => s.trim())
-      .filter(s => s.length > 3);
+      .filter(s => s.length > 3 && !/^\[(?:VOICE TRANSCRIPT|DOCUMENT CONTENT|CODE SNIPPETS|BOARD OCR)\]$/i.test(s));
   }
 
   /**
@@ -478,7 +480,7 @@ class DepthAnalyzer {
       /\b(stop talking|settle down|be quiet|silence in the (?:class|back))\b/i,
       /\b(roll number(?:s)?|stand up|sit down|attendance|absent|present)\b/i,
       /\b(exam will be (?:held|conducted)|mid-term examination|bring your (?:id|hall tickets|identity cards|calculator))\b/i,
-      /\b(had lunch|cafeteria|traffic was|metro station|weather is nice|yesterday movie|funny haha|party|shopping)\b/i,
+      /\b(tea break|coffee break|take a break|break for tea|lunch break|canteen|cafeteria|had lunch|traffic was|metro station|weather is nice|yesterday movie|funny haha|party|shopping)\b/i,
       /\b(listen carefully|pay attention in the back|benches|can you hear me|mic check|am i audible|silence your phones)\b/i,
       /\b(assignments?\s+submit|submit (?:the|your)?\s*(?:lab\s+)?(?:reports?|assignments?|papers?|homework)|(?:late\s+)?submissions?\s+(?:will\s+)?receive\s+(?:zero\s+)?marks?|deadline\s+is\s+(?:tomorrow|friday|monday|tonight|\w+)|next\s+class\s+we\s+will)\b/i,
       /\b(announcement is (?:very\s+)?important for (?:your\s+)?(?:final\s+)?grades?|important for the (?:exam|test|quiz)|will be (?:on|in) the (?:exam|test)|final grades?|exam marks?)\b/i,
@@ -486,6 +488,17 @@ class DepthAnalyzer {
     ];
     for (const pat of adminPatterns) {
       if (pat.test(lower)) {
+        // Safe Harbor: If an administrative attention cue introduces a genuine academic explanation,
+        // preserve the instructional content rather than discarding the entire segment.
+        const extractedConcepts = this._extractConceptsFromSegment(cleanSeg);
+        const hasInstructionalDef = /\b(is an?|are\s+(?!(?:not|you|we|they|always|never|just|really|actually|simply|sitting|laughing|standing|doing|talking|going)\b)[a-z]+|means|defined as|works by|happens when|occurs when|causes|prevents|guarantees|enforces)\b/i.test(lower);
+        const hasAcademicCore = extractedConcepts.length > 0 && (hasInstructionalDef || this._hasAcademicDomainWord(lower) || this._isCodeOrTechnicalSnippet(cleanSeg));
+
+        if (hasAcademicCore) {
+          // Do not discard! Fall through to allow Step 8 to classify the academic explanation.
+          break;
+        }
+
         return {
           type: 'ADMINISTRATIVE',
           teaching_value: 0.05,
@@ -604,7 +617,7 @@ class DepthAnalyzer {
     // ──────────────────────────────────────────────────────────────────────────
     // Step 8: Core Instructional / Academic Explanations, Rules, Mechanisms
     // ──────────────────────────────────────────────────────────────────────────
-    const hasDefRelation = /\b(is an?|are(?: words)?|means|defined as|refers to|represents|stands for|consists of|composed of|characterized by|types of|come in .* types|known as|named as|classified into|provides?(?:\s+an?)?|delivers?(?:\s+an?)?|acts as|serves as|used (?:to|as|in)|is (?:formally |strictly |mathematically )?(?:defined|characterized|denoted|formulated) as|exists (?:in|as)|enforces?|satisfies?|guarantees?|symbolizes?|illustrates?|explores?|depicts?|conveys?|embodies?|signifies?|articulates?|examines?)\b/i.test(lower);
+    const hasDefRelation = /\b(is an?|are\s+(?!(?:not|you|we|they|always|never|just|really|actually|simply|sitting|laughing|standing|doing|talking|going)\b)[a-z]+|means|defined as|refers to|represents|stands for|consists of|composed of|characterized by|types of|come in .* types|known as|named as|classified into|provides?(?:\s+an?)?|delivers?(?:\s+an?)?|acts as|serves as|used (?:to|as|in)|is (?:formally |strictly |mathematically )?(?:defined|characterized|denoted|formulated) as|exists (?:in|as)|enforces?|satisfies?|guarantees?|symbolizes?|illustrates?|explores?|depicts?|conveys?|embodies?|signifies?|articulates?|examines?)\b/i.test(lower);
     const hasMechRelation = /\b(works by|applies|extract(?:s|ed|ing)?|transform(?:s|ed|ing)?|comput(?:es|ed|ing)?|divid(?:es|ed|ing)?|multiplie(?:s|d)?|calculat(?:es|ed|ing)?|connect(?:s|ed|ing)?|execut(?:es|ed|ing)?|process(?:es|ed|ing)?|generat(?:es|ed|ing)?|allocat(?:es|ed|ing)?|modifie(?:s|d|ying)?|conduc(?:ts|ted|ting)?|converts?|eliminat(?:es|ed|ing)?|reduc(?:es|ed|ing)?|increas(?:es|ed|ing)?|decreas(?:es|ed|ing)?|stores?|retrieves?|passes?|takes?|outputs?|returns?|handles?|implements?|travers(?:es|ed|ing)?|select(?:s|ed|ing)?|partition(?:s|ed|ing)?|discard(?:s|ed|ing)?|project(?:s|ed|ing)?|encod(?:es|ed|ing)?|decod(?:es|ed|ing)?|superpos(?:es|ed|ing)?|entangl(?:es|ed|ing)?|borrow(?:s|ed|ing)?|catalyzes?|inhibits?|regulates?|binds?|secretes?|synthesizes?|activates?|mediates?|triggers?|escalates?|ratifies?|mobilizes?|governs?|produce(?:s|d|ing)?|construct(?:s|ed|ing)?|break(?:s|ing)?|halt(?:s|ed|ing)?|tripl(?:e|es|ed|ing)?|doubl(?:e|es|ed|ing)?|erupt(?:s|ed|ing)?|paralyz(?:e|es|ed|ing)?|enact(?:s|ed|ing)?|ration(?:s|ed|ing)?)\b/i.test(lower);
     const hasRuleRelation = /\b(whenever|therefore|in order to|leads to|results in|prevents|causes|so that|guarantees?|ensures?|requires?|depends on|condition|conditions|properties|invariants?|safe and idempotent|idempotent|greater than|less than|equal to|temporarily changes|cannot have both|trade-offs?|trade off|choice between|consequently|forced to|mathematically impossible|as a result|due to|led to|must\s+(?:return|have|be|start|contain|group)|naming\s+convention)\b/i.test(lower) || /^(?:when|because|faced with)\b.*,/i.test(lower);
     const hasComparisonRelation = /\b(in contrast|compared to|difference between|between .* and|neither .* nor|whereas|while\\s+(?:in\\s+contrast|on\\s+the\\s+other\\s+hand)|faster than|slower than|preferred over|differs? from|unlike|similar to|contrasted with|conflicts? with|counterpart|at the cost of|trade-offs?|trade off)\b/i.test(lower);
@@ -624,7 +637,10 @@ class DepthAnalyzer {
     const hasInstructionalSignal = hasDefRelation || hasMechRelation || hasRuleRelation || hasComparisonRelation || hasDemonstrative || hasTraceExample || hasSocraticCurricular || hasProcRelation || hasDeductiveRelation || hasAlgorithmicRelation || hasCritiqueRelation;
 
     const extractedConcepts = this._extractConceptsFromSegment(cleanSeg);
-    const hasAcademicConcept = extractedConcepts.length > 0 || this._hasAcademicDomainWord(lower) || hasFormalAcademicStructure || hasDeductiveRelation || hasAlgorithmicRelation || hasCritiqueRelation;
+    const hasInstructionalMechanism = hasDefRelation || hasMechRelation || hasComparisonRelation || hasRuleRelation || hasDeductiveRelation || hasAlgorithmicRelation || hasProcRelation;
+    const hasAcademicDomain = this._hasAcademicDomainWord(lower) || hasFormalAcademicStructure || this._isCodeOrTechnicalSnippet(cleanSeg);
+    const hasPedagogicalConcept = extractedConcepts.length > 0 && (hasAcademicDomain || hasInstructionalMechanism);
+    const hasAcademicConcept = hasAcademicDomain || hasPedagogicalConcept || hasCritiqueRelation;
 
     if (hasInstructionalSignal && hasSubstantiveLength && hasAcademicConcept) {
       let contentType = 'CORE_EXPLANATION';
@@ -763,7 +779,10 @@ class DepthAnalyzer {
       'try', 'trying', 'tried', 'put', 'putting', 'check', 'checking', 'checked',
       'ask', 'asking', 'asked', 'say', 'saying', 'said', 'start', 'starting', 'started',
       'stop', 'stopping', 'stopped', 'guess', 'guessing', 'wonder', 'wondering',
-      'suppose', 'supposing', 'supposed', 'remember', 'remembering', 'agree', 'disagree'
+      'suppose', 'supposing', 'supposed', 'remember', 'remembering', 'agree', 'disagree',
+      'hey', 'hello', 'hi', 'bye', 'learn', 'learning', 'learned', 'study', 'studying', 'studied',
+      'something', 'nothing', 'anything', 'everything', 'someone', 'anyone', 'nobody',
+      'people', 'person', 'guys', 'guy', 'folks', 'many', 'few', 'several', 'lot', 'lots'
     ]);
 
     const genericSingleWords = new Set([
@@ -783,7 +802,7 @@ class DepthAnalyzer {
     let phrase = raw.trim().replace(/^[^a-zA-Z0-9]+|[^a-zA-Z0-9]+$/g, '');
     
     // Strip conversational, prepositional, possessive, and auxiliary prefixes iteratively
-    const prefixRegex = /^(?:the|a|an|about|to|in|out|up|down|off|over|under|for|of|and|or|but|if|then|so|yes|yeah|no|into|onto|from|with|by|some|our|your|their|its|his|her|my|let|lets|we|you|now|just|well|look|looks|see|what|which|when|where|why|how|this|that|these|those|there|here|i\s+think|you\s+know|is|are|was|were|be|been|being|have|has|had)\s+/i;
+    const prefixRegex = /^(?:the|a|an|about|to|in|out|up|down|off|over|under|for|of|and|or|but|if|then|so|yes|yeah|no|hey|hello|hi|bye|into|onto|from|with|by|some|our|your|their|its|his|her|my|let|lets|we|you|now|just|well|look|looks|see|what|which|when|where|why|how|this|that|these|those|there|here|i\s+think|you\s+know|is|are|was|were|be|been|being|have|has|had)\s+/i;
     while (prefixRegex.test(phrase)) {
       phrase = phrase.replace(prefixRegex, '').trim();
     }
@@ -798,6 +817,32 @@ class DepthAnalyzer {
     // Filter colloquial contractions or fragment markers (e.g. "s not allowed", "it's done")
     if (/\b(?:isn't|aren't|wasn't|weren't|don't|doesn't|didn't|can't|couldn't|won't|wouldn't|shouldn't|it's|that's|there's|here's|what's|who's)\b/i.test(phrase)) {
       return '';
+    }
+
+    // Filter conversational structures, imperative directives, casual verbs/gerunds, and non-academic venues
+    const lowerTrim = phrase.toLowerCase().trim();
+    const isDomainTermException = lowerTrim === 'not gate' || lowerTrim === 'nosql';
+
+    if (!isDomainTermException) {
+      // 1. Filter conversational action verbs / gerunds (e.g. "sitting", "laughing", "talking", "doing")
+      if (/\b(?:laughing|sitting|talking|joking|sleeping|shouting|standing|wasting|doing|enjoy|enjoying|relax|relaxing|chatting|gossiping|bunking|playing|hanging)\b/i.test(phrase)) {
+        return '';
+      }
+
+      // 2. Filter conversational adverbs or negations at start (e.g. "not doing", "always sitting", "never coming")
+      if (/^(?:not|no|never|always|sometimes|often|rarely|usually|hardly|barely|actually|basically|really)\b/i.test(phrase)) {
+        return '';
+      }
+
+      // 3. Filter imperative classroom directives or conversational prompts
+      if (/^(?:enjoy|have\s+fun|relax|chill|listen|look|see|watch|keep|stop|shut|attend|bunk)\b/i.test(phrase)) {
+        return '';
+      }
+
+      // 4. Filter casual non-academic venues / activities / school administration
+      if (/\b(?:weekend|holidays?|vacations?|cricket|cinema|movies?|canteen|cafeteria|tea\s+break|coffee\s+break|hostels?|homework|last\s+row|first\s+row|back\s+bench|continuous\s+classes|bunking\s+classes?|attending\s+classes?)\b/i.test(phrase)) {
+        return '';
+      }
     }
 
     // Strip trailing predicate adverbs/adjectives (e.g., "mathematically impossible", "available")
@@ -828,7 +873,9 @@ class DepthAnalyzer {
     if (conversationalStopwords.has(words[0].toLowerCase())) return '';
     if (conversationalStopwords.has(words[words.length - 1].toLowerCase())) return '';
 
-    return words.map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
+    const candidate = words.map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
+    if (!disfluencySanitizer.isValidConceptPhrase(candidate)) return '';
+    return candidate;
   }
 
   /**
@@ -1268,12 +1315,19 @@ class DepthAnalyzer {
         isAcademic: true,
         isCurricular: true,
         academicClassification: 'ACADEMIC_TOPIC',
-        teachingValueScore: 90,
+        teachingValueScore: null,
         lectureDepth: {
-          rating: 'Advanced Curriculum',
-          score: 90,
-          characteristics: { conceptExplanation: 'Strong', reasoning: 'Strong', examples: 'Present', procedures: 'Strong' },
-          breakdown: { recommendedQuestionCount: 10, recommendedQuestionsRationale: 'Standard academic curriculum scope' }
+          assessmentType: 'CURRICULAR_SCOPE_ONLY',
+          disclaimer: 'Curriculum topic scope without instructional lecture or document evidence. No teaching depth evaluated.',
+          rating: 'Curriculum Scope Only',
+          score: null,
+          characteristics: { conceptExplanation: 'Syllabus Topic', reasoning: 'Unobserved', examples: 'Unobserved', procedures: 'Unobserved' },
+          breakdown: {
+            recommendedQuestionCount: 10,
+            recommendedQuestionsRationale: 'Standard academic curriculum scope based on entered topic',
+            earnedRubric: [],
+            deductions: []
+          }
         },
         detectedFocus: [raw],
         retainedSegments: [{ text: raw }],
@@ -1290,10 +1344,10 @@ class DepthAnalyzer {
         isCurricular: false,
         academicClassification: 'UNCERTAIN',
         reason: 'Question generation : Non-academic content detected. The provided material is too short to evaluate.',
-        teachingValueScore: 0,
+        teachingValueScore: null,
         lectureDepth: {
           rating: 'Non-Academic',
-          score: 0,
+          score: null,
           characteristics: { conceptExplanation: 'None', reasoning: 'None', examples: 'None', procedures: 'None' }
         },
         detectedFocus: [],
@@ -1581,25 +1635,39 @@ class DepthAnalyzer {
       reasoning = 'Moderate';
     }
 
-    // 3. Multi-Signal Progression
-    const chronoMarkers = ['first', 'second', 'third', 'fourth', 'fifth', 'finally', 'then', 'step', 'after', 'before', 'next', 'pauses', 'transfers', 'restores', 'resumes', 'consequently', 'subsequently', 'ultimately'];
-    const algoMarkers = ['initialize', 'instantiate', 'push', 'pop', 'enqueue', 'dequeue', 'relax', 'swap', 'update', 'traverse', 'iterate', 'while', 'terminate', 'return', 'synthesize', 'catalyze', 'regulate', 'bind', 'secrete', 'convert', 'transport', 'mobilize', 'ratify', 'conclude', 'collapse', 'escalate', 'govern', 'deploy'];
+    // 3. Multi-Signal Progression (Distinguish described operations vs demonstrated multi-step procedures)
+    const chronoMarkers = ['first', 'second', 'third', 'fourth', 'finally', 'then', 'step', 'after', 'before', 'next', 'subsequently', 'ultimately', 'sequentially'];
+    const algoMarkers = ['initialize', 'instantiate', 'push', 'pop', 'enqueue', 'dequeue', 'relax', 'swap', 'update', 'traverse', 'iterate', 'while', 'terminate', 'synthesize', 'catalyze', 'regulate', 'bind', 'secrete', 'convert', 'transport', 'mobilize'];
     const chronoCount = chronoMarkers.filter(m => lowerCurricular.includes(m)).length;
     const algoCount = algoMarkers.filter(m => lowerCurricular.includes(m)).length;
-    const hasAlgorithmicProgression = algoCount >= 3 || (algoCount >= 2 && chronoCount >= 1) || hasAlgorithmicTrace || (hasMech && chronoCount >= 2);
-    const hasProofProgression = hasFormalProof && deductiveCount >= 2;
+    const hasDemonstratedProcedure = hasAlgorithmicTrace || (chronoCount >= 2 && algoCount >= 1) || (chronoCount >= 2 && lowerCurricular.includes('then')) || (chronoCount >= 3);
+    const hasDescribedProcedure = chronoCount >= 1 || algoCount >= 1 || hasMech;
 
     let procedures = 'Light';
-    if (hasAlgorithmicProgression || hasProofProgression || chronoCount >= 3) {
+    if (hasDemonstratedProcedure) {
       procedures = conceptExp === 'Developing' ? 'Moderate' : 'Strong'; // Capped if concept depth is trivial!
-    } else if (chronoCount + algoCount >= 1) {
+    } else if (hasDescribedProcedure) {
       procedures = 'Moderate';
     }
 
-    // 4. Examples & Traces
-    const exampleMarkers = ['for example', 'for instance', 'consider', 'suppose', 'like when', 'example', 'trace', 'given array', 'notice', 'look at'];
-    const hasExplicitExample = exampleMarkers.some(m => lowerCurricular.includes(m));
-    const isAcademicTrace = ((hasTrace || hasExplicitExample) && conceptExp !== 'Developing') || hasExp || hasAnalogy || hasAlgorithmicProgression || (hasFormalProof && deductiveCount >= 2);
+    // 4. Concrete Examples & Traces (Requires concrete data/input progression or genuine execution demonstration)
+    // - Generic example mentions without concrete values are NOT worked examples.
+    // - Analogies alone are NOT worked traces.
+    // - Technical specifications alone are NOT worked traces.
+    const hasConcreteDataProgression = /\b(?:\d+\s*(?:,|->|\.\.)\s*\d+|\b(?:input|sample|values?|trace|dataset)\s*[:=]\s*\[?[0-9a-zA-Z_\s,]*\d+[0-9a-zA-Z_\s,]*\]?|\binsert\s+[a-zA-Z0-9_]+\s*(?:,|then|\s+into)\b|\b(?:given array|trace table|walkthrough of)\b)/i.test(lowerCurricular) ||
+      (/\b(?:for example|for instance|consider|suppose)\b/i.test(lowerCurricular) && /\b\d+\b/.test(lowerCurricular));
+
+    // A plain code listing/type declaration (e.g., struct Node { int key; };) is a structural specification, NOT a worked trace.
+    // Genuine code execution demonstration requires concrete execution calls with arguments/data, formatted I/O with sample data, assertions with values, or step traces.
+    // Bare printf() with variables (e.g. printf("%d", result)), bare 'test' word, bare assert/main declarations do NOT qualify as worked demonstrations without concrete input/output values.
+    const hasGenuineCodeExecutionDemonstration = hasCodeOrTechnical && (
+      /(?:printf\s*\(\s*"[^"]*%[a-z0-9][^"]*"\s*,\s*[^)]*\b\d+\b[^)]*\)|(?:console\.log|System\.out\.print(?:ln)?)\s*\([^)]*\b(?:\d+|"[^"]+"\s*,\s*[^)]*\b\d+\b[^)]*)\)|cout\s*<<\s*[^;]*\b\d+\b[^;]*|\b(?:insert|search|delete|push|pop|enqueue|dequeue|solve|compute|calculate|add|find)\s*\([^)]*\b\d+\b[^)]*\)|\.[a-zA-Z0-9_]+\s*\([^)]*\b\d+\b[^)]*\)|\bassert(?:True|False|Equal|\.strictEqual|\s*\()\s*[^)]*(?:==|!=|<=|>=|<|>)\s*[^)]*\b\d+\b|\bassert\s*\([^)]*\b\d+\b|\b(?:sample_input|sample_output)\s*[:=]\s*[^;\n]+|\b(?:returns?|yields?|prints?|outputs?)\s*[:=]\s*\[?[0-9a-zA-Z_"',\s]*\d+[0-9a-zA-Z_"',\s]*\]?|\b(?:\/\/|#|\/\*)\s*(?:step\s+\d+|trace\s*[:=]|execution|walkthrough\s*[:=])\b)/i.test(lowerCurricular)
+    );
+
+    const hasVerifiedTraceDemonstration = curricularSegments.some(s => s.classification.substanceType === 'ALGORITHMIC_TRACE' || s.classification.substanceType === 'WORKED_EXAMPLE') && /\b(?:\d+|sample|input|output)\b/i.test(lowerCurricular);
+
+    const isAcademicTrace = (hasConcreteDataProgression || hasGenuineCodeExecutionDemonstration || hasVerifiedTraceDemonstration) && conceptExp !== 'Developing';
+
     let examples = 'Light';
     if (isAcademicTrace) {
       examples = 'Present';
@@ -1612,7 +1680,7 @@ class DepthAnalyzer {
     const procedurePoints = procedures === 'Strong' ? 15 : (procedures === 'Moderate' ? 8 : 0);
 
     let depthScore = basePoints + conceptPoints + reasoningPoints + examplePoints + procedurePoints;
-    depthScore = Math.min(100, Math.max(40, depthScore));
+    depthScore = Math.min(100, Math.max(0, depthScore));
 
     const deductions = [];
     if (conceptPoints < 15) {
@@ -1939,7 +2007,7 @@ class DepthAnalyzer {
       isCurricular: true,
       academicClassification: 'ACADEMIC',
       reason: null,
-      teachingValueScore: null, // RETIRED (DEF-TC-01, DEF-TC-04)
+      teachingValueScore: depthScore,
       curricularEvidenceProfile, // THE AUTHORITATIVE OBJECTIVE 4 CONTRACT
       hasDef,
       hasMech,
@@ -1956,8 +2024,8 @@ class DepthAnalyzer {
         assessmentType: 'INTERNAL_CURRICULAR_ANALYSIS',
         disclaimer: 'Automated software estimate derived strictly from transcript text and uploaded materials. Evaluates internal evidence density and assessment capacity. Does NOT measure teacher pedagogical efficacy, delivery quality, or student learning outcomes.',
         rating,
-        score: null, // RETIRED COMPOSITE SCORE (DEF-TC-01, DEF-TC-02, DEF-TC-04)
-        isDeprecated: true,
+        score: depthScore,
+        isDeprecated: false,
         characteristics: {
           conceptExplanation: conceptExp,
           reasoning,

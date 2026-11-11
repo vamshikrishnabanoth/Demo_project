@@ -82,6 +82,26 @@ class DifficultyAwareDistractorValidator {
       pattern: /\b(?:shifts\s+to\s+(?:an\s+)?(?:entirely\s+)?unrelated|random\s+unrelated\s+tokens?|arbitrary\s+external\s+substitutions?)\b/i,
       code: 'ERR_ARBITRARY_NON_MECHANISM',
       reason: 'Distractor introduces an implausible arbitrary non-mechanism'
+    },
+    // Implausible or absurd tree distractors
+    {
+      pattern: /\b(?:avoids?\s+all\s+node\s+comparisons|replaces?\s+(?:the\s+)?in-order\s+successor\s+with\s+a\s+leaf)\b/i,
+      code: 'ERR_IMPLAUSIBLE_TREE_DISTRACTOR',
+      reason: 'Distractor uses an absurd or irrelevant tree operation rather than a plausible algorithmic misconception'
+    },
+    // Corrupted ASR distractor in neural network context
+    {
+      pattern: /\b(?:airpods?|airports?|model\s+pose|background\s+rotation)\b/i,
+      condition: (stem) => /\b(?:neural network|training|loss|optimization|model|gradient)\b/i.test(stem),
+      code: 'ERR_CORRUPTED_ASR_DISTRACTOR',
+      reason: 'Distractor contains an acoustic ASR transcript corruption in neural network context'
+    },
+    // Cross-paradigm / out-of-domain distractor contamination
+    {
+      pattern: /\b(?:external environment interaction|reinforcement learning|environment interaction)\b/i,
+      condition: (stem) => !/\b(?:reinforcement|agent|policy|environment|action space)\b/i.test(stem),
+      code: 'ERR_CROSS_PARADIGM_DISTRACTOR',
+      reason: 'Distractor injects an irrelevant reinforcement learning / environment interaction concept into a non-agentic question'
     }
   ];
 
@@ -208,6 +228,17 @@ class DifficultyAwareDistractorValidator {
       repairHints.push(`RESOLVE_OPTION_AMBIGUITY: ${accidentalKeyDim.details}`);
     }
 
+    // Dimension 8: Distractor Discrepancy & Diversity (Mentor Discrepancy Metric)
+    const discrepancyReport = this.calculateDistractorDiscrepancy(options, correctAnswer, stem);
+    if (discrepancyReport.compositeScore < 0.35) {
+      flaws.push({
+        dimension: 'DISTRACTOR_DISCREPANCY',
+        code: 'ERR_LOW_DISTRACTOR_DISCREPANCY',
+        message: 'Distractor discrepancy score is below threshold; distractors exhibit severe semantic collapse or extreme irrelevance.'
+      });
+      repairHints.push('REBALANCE_DISTRACTOR_DISCREPANCY: Ensure distractors have moderate lexical discrepancy [0.20, 0.85] from key.');
+    }
+
     // ─────────────────────────────────────────────────────────────────────────
     // Overall Verdict Determination
     // ─────────────────────────────────────────────────────────────────────────
@@ -226,7 +257,10 @@ class DifficultyAwareDistractorValidator {
       'ERR_INPUT_SYNTAX_FILLER',
       'ERR_GENERIC_NON_DOMAIN_FILLER',
       'ERR_GIVEAWAY_EXTREME_ADVERB',
-      'ERR_ARBITRARY_NON_MECHANISM'
+      'ERR_ARBITRARY_NON_MECHANISM',
+      'ERR_IMPLAUSIBLE_TREE_DISTRACTOR',
+      'ERR_CORRUPTED_ASR_DISTRACTOR',
+      'ERR_CROSS_PARADIGM_DISTRACTOR'
     ];
     const hasFatalFlaw = flaws.some(f => fatalCodes.includes(f.code));
 
@@ -259,8 +293,10 @@ class DifficultyAwareDistractorValidator {
         difficultyAlignment: difficultyDim,
         noGiveaway: giveawayDim,
         noDuplicateReasoning: duplicateDim,
-        noAccidentalSecondKey: accidentalKeyDim
+        noAccidentalSecondKey: accidentalKeyDim,
+        distractorDiscrepancy: discrepancyReport
       },
+      distractorDiscrepancyReport: discrepancyReport,
       flaws,
       repairHints
     };
@@ -497,7 +533,8 @@ class DifficultyAwareDistractorValidator {
         const isMath = /[$\\]|\b(?:log|O\(|theta\(|Omega\(|\\sum|\\frac)\b/i.test(opt);
         const words = opt.trim().split(/\s+/).length;
         const isComparativePhrase = words <= 20 && opt.length <= 150 && /\b(?:whereas|while|in contrast to)\b/i.test(opt);
-        if (!isCode && !isMath && !isComparativePhrase) {
+        const isAlgorithmicRule = words <= 25 && opt.length <= 155 && /\b(?:when|if|where|for each|in case|even if)\b/i.test(opt);
+        if (!isCode && !isMath && !isComparativePhrase && !isAlgorithmicRule) {
           return {
             passed: false,
             code: 'OPTION_TOO_VERBOSE',
@@ -743,6 +780,128 @@ class DifficultyAwareDistractorValidator {
       }
     }
     return { passed: true, details: 'Options are mutually exclusive; exactly one satisfies the stem' };
+  }
+
+  /**
+   * Formal Mentor Specification: Pre-Test Distractor Discrepancy & Semantic Divergence Analyzer
+   *
+   * Formally models the semantic and cognitive distance between each distractor Di and the key K,
+   * as well as inter-distractor pairwise divergence Di vs Dj.
+   *
+   * Distinction Invariant:
+   * 1. Pre-Test Distractor Discrepancy Index (DDI): Evaluates predicted plausibility, near-miss balance,
+   *    and absence of synonymous ambiguity before administration.
+   * 2. Post-Test Distractor Efficiency (DE) & Item Discrimination (D): Evaluates actual student choices
+   *    using response matrices (implemented in distractorDiscriminationAnalyzer.js).
+   */
+  static calculateDistractorDiscrepancy(options = [], correctAnswer = '', stem = '') {
+    const opts = Array.isArray(options) ? options.map(o => String(o || '').trim()) : [];
+    const key = String(correctAnswer || '').trim();
+    const distractors = opts.filter(o => o.toLowerCase() !== key.toLowerCase());
+
+    const stopWords = new Set(['the', 'a', 'an', 'in', 'on', 'at', 'of', 'for', 'to', 'and', 'or', 'is', 'are', 'was', 'were', 'by', 'with', 'that', 'this', 'from', 'it', 'as']);
+    const tokenize = (text) => {
+      return new Set(
+        String(text || '')
+          .toLowerCase()
+          .replace(/[^a-z0-9_\-\.]/g, ' ')
+          .split(/\s+/)
+          .filter(w => w.length > 1 && !stopWords.has(w))
+      );
+    };
+
+    const keyTokens = tokenize(key);
+    const stemTokens = tokenize(stem);
+
+    const jaccardDistance = (setA, setB) => {
+      if (setA.size === 0 && setB.size === 0) return 0.0;
+      let intersection = 0;
+      for (const item of setA) {
+        if (setB.has(item)) intersection++;
+      }
+      const union = setA.size + setB.size - intersection;
+      if (union === 0) return 0.0;
+      return 1.0 - (intersection / union);
+    };
+
+    // 1. Key Discrepancy: delta(Di, K)
+    const distractorReports = distractors.map((dText, idx) => {
+      const dTokens = tokenize(dText);
+      const deltaKey = parseFloat(jaccardDistance(dTokens, keyTokens).toFixed(3));
+      const stemDist = parseFloat(jaccardDistance(dTokens, stemTokens).toFixed(3));
+
+      // Optimal plausibility range: 0.30 to 0.85
+      let status = 'OPTIMAL_PLAUSIBILITY';
+      let qualityScore = 1.0;
+
+      if (deltaKey <= 0.28) {
+        status = 'RISK_NEAR_SYNONYM_KEY_AMBIGUITY';
+        qualityScore = 0.3;
+      } else if (deltaKey > 0.90) {
+        status = 'RISK_HIGH_DIVERGENCE_IRRELEVANT';
+        qualityScore = 0.5;
+      } else if (deltaKey >= 0.30 && deltaKey <= 0.85) {
+        status = 'OPTIMAL_NEAR_MISS_MISCONCEPTION';
+        qualityScore = 1.0;
+      } else {
+        status = 'ACCEPTABLE_BOUNDED_DISCREPANCY';
+        qualityScore = 0.85;
+      }
+
+      return {
+        distractorIndex: idx + 1,
+        text: dText,
+        discrepancyFromKey: deltaKey,
+        divergenceFromStem: stemDist,
+        plausibilityClassification: status,
+        qualityScore
+      };
+    });
+
+    // 2. Inter-Distractor Discrepancy: delta(Di, Dj)
+    const pairwiseDiscrepancies = [];
+    for (let i = 0; i < distractors.length; i++) {
+      for (let j = i + 1; j < distractors.length; j++) {
+        const d1Tokens = tokenize(distractors[i]);
+        const d2Tokens = tokenize(distractors[j]);
+        const deltaPair = parseFloat(jaccardDistance(d1Tokens, d2Tokens).toFixed(3));
+        pairwiseDiscrepancies.push({
+          pair: `D${i + 1}-D${j + 1}`,
+          discrepancy: deltaPair,
+          isDistinct: deltaPair >= 0.20
+        });
+      }
+    }
+
+    const avgKeyDiscrepancy = distractorReports.length > 0
+      ? parseFloat((distractorReports.reduce((sum, d) => sum + d.discrepancyFromKey, 0) / distractorReports.length).toFixed(3))
+      : 0.0;
+
+    const avgInterDistractorDiscrepancy = pairwiseDiscrepancies.length > 0
+      ? parseFloat((pairwiseDiscrepancies.reduce((sum, p) => sum + p.discrepancy, 0) / pairwiseDiscrepancies.length).toFixed(3))
+      : 0.0;
+
+    const avgQuality = distractorReports.length > 0
+      ? (distractorReports.reduce((sum, d) => sum + d.qualityScore, 0) / distractorReports.length)
+      : 0.0;
+
+    const diversityScore = pairwiseDiscrepancies.length > 0
+      ? (pairwiseDiscrepancies.filter(p => p.isDistinct).length / pairwiseDiscrepancies.length)
+      : 1.0;
+
+    const compositeDDI = parseFloat((avgQuality * 0.7 + diversityScore * 0.3).toFixed(3));
+
+    return {
+      metricName: 'Pre-Test Distractor Discrepancy Index (DDI)',
+      evaluationType: 'PRE_TEST_PREDICTIVE_PLAUSIBILITY',
+      compositeScore: compositeDDI,
+      meanKeyDiscrepancy: avgKeyDiscrepancy,
+      meanInterDistractorDiscrepancy: avgInterDistractorDiscrepancy,
+      targetDiscrepancyRange: '[0.20, 0.85]',
+      distractorAnalyses: distractorReports,
+      pairwiseAnalyses: pairwiseDiscrepancies,
+      distinctionNotice: 'NOTE: Pre-Test DDI models lexical/semantic divergence and near-miss plausibility prior to testing. Empirical post-test distractor discrimination (D) and distractor efficiency (DE) are calculated from student assessment records via DistractorDiscriminationAnalyzer.'
+    };
   }
 }
 

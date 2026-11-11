@@ -1,0 +1,76 @@
+{
+  "metadata": {
+    "sessionId": "canary_staging_live_1794334850708",
+    "timestamp": "2026-11-10T18:22:36.386Z",
+    "durationSec": 105.67,
+    "requestedCount": 5,
+    "requestedDifficulty": "Balanced",
+    "deliveredCount": 3,
+    "pipelineStatus": "COMPLETED_WITH_CAPACITY_DEFICIT",
+    "outboundCalls": 40,
+    "totalTokens": 119431,
+    "tokensPerQuestion": 39810,
+    "difficultyDistribution": {
+      "Unknown": 3
+    }
+  },
+  "teacherAnalysis": {
+    "score": 85,
+    "pedagogicalCritique": {
+      "explanatoryDepth": [
+        "DEFINITION_AND_TERMINOLOGY",
+        "OPERATIONAL_MECHANISM"
+      ],
+      "reasoningDepth": [
+        "INVARIANT_AND_CAUSAL"
+      ],
+      "practicalDemonstrations": [
+        "WORKED_TRACE_OR_CODE"
+      ],
+      "discourseStyle": [
+        "MONOLOGUE_LECTURE"
+      ],
+      "evidenceQuotes": [],
+      "negativeBoundaries": [],
+      "limitationsOfExcerpt": "Automated fallback generated via deterministic evidence analysis."
+    },
+    "actionableGuidance": null
+  },
+  "questions": [
+    {
+      "question": "Which statement accurately defines the ordering invariant of a binary search tree?",
+      "options": [
+        "All keys in the left subtree are greater than the node's key.",
+        "Left subtree keys are strictly less, right subtree keys strictly greater, no duplicates.",
+        "Keys in both subtrees must be less than the node's key.",
+        "Duplicate keys are allowed if they appear in different subtrees."
+      ],
+      "correctAnswer": "Left subtree keys are strictly less, right subtree keys strictly greater, no duplicates.",
+      "explanation": "The invariant requires left keys < node.key, right keys > node.key, and no duplicate keys; other options invert the relation, apply the rule incorrectly, or permit duplicates, contradicting the definition.",
+      "preTestDdi": null
+    },
+    {
+      "question": "When comparing traversals, which statement correctly describes the ordering guarantee of an in-order traversal on any BST?",
+      "options": [
+        "A pre-order traversal (Root, Left, Right) always produces keys in ascending order.",
+        "In-order traversal lists keys in descending order if the tree contains duplicate keys.",
+        "An in-order traversal yields ascending keys only when the BST is perfectly balanced.",
+        "In-order traversal of any valid BST visits nodes in strictly increasing key order."
+      ],
+      "correctAnswer": "In-order traversal of any valid BST visits nodes in strictly increasing key order.",
+      "explanation": "The evidence states that an in-order traversal of any valid BST yields keys in strictly ascending order; other options misattribute the property to pre-order, require balance, or assume duplicates, which contradict the invariant.",
+      "preTestDdi": null
+    },
+    {
+      "options": [
+        "Return the sole non-null child, linking it directly to the parent.",
+        "Return the original node pointer, assuming the parent will still reference it.",
+        "Return the sibling subtree, swapping positions with the deleted node.",
+        "Return NULL, discarding the child and leaving the parent without a subtree."
+      ],
+      "correctAnswer": "Return the sole non-null child, linking it directly to the parent.",
+      "explanation": "The node’s only child must replace the deleted node, so the routine returns that child pointer. Returning NULL would lose the subtree, and returning the original node would point to freed memory; returning a sibling is unrelated.",
+      "preTestDdi": null
+    }
+  ]
+}

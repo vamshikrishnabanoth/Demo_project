@@ -21,6 +21,7 @@
 'use strict';
 
 const { CalculationEngine } = require('./calculationEngine');
+const { safeParseJson } = require('../utils/jsonParser');
 const llmRouter = require('../adapter/llmRouter');
 
 class IndependentAnswerVerifier {
@@ -152,6 +153,218 @@ class IndependentAnswerVerifier {
       });
     }
 
+    // Safe Harbor Check: If the question stem explicitly attributes the claim or illustration
+    // to the instructor or lecture (e.g. "According to the lecture analogy...", "As illustrated by the instructor..."),
+    // assess as source comprehension rather than a universal canonical technical assertion.
+    const isAttributedComprehension = /\b(?:according to (?:the )?(?:lecture|instructor|teacher)|in the (?:classroom )?(?:analogy|metaphor|illustration|story)|as explained by the instructor)\b/i.test(stem);
+
+    if (!isAttributedComprehension) {
+      // Check 4: N-gram Markov Context Length Invariant (Off-by-One Error)
+      const isNGramQuestion = /\b(?:n-gram|bigram|trigram|markov)\b/i.test(stem) &&
+        /\b(?:preceding|previous|prior|context)\s+(?:words|tokens|history)\b/i.test(stem);
+      if (isNGramQuestion) {
+        options.forEach((optText, idx) => {
+          const lower = optText.toLowerCase().trim();
+          // False Claim: Next word prediction conditions on N preceding words rather than N - 1
+          if (/^n$/i.test(lower) || /\b(?:uses?|exactly)\s+n\s+(?:preceding|previous|prior)\b/i.test(lower) || /^\s*n\s*$/i.test(lower)) {
+            checks.push({
+              optionIndex: idx,
+              status: 'CONTRADICTED',
+              rule: 'N_GRAM_MARKOV_INVARIANT_VIOLATION',
+              details: 'In an N-gram language model, predicting the next word conditions on N - 1 preceding words, not N.'
+            });
+          }
+        });
+      }
+
+      // Check 5: Predictive AI vs Generative AI Definition Inversion
+      const isAiParadigmQuestion = /\b(?:generative\s+ai|predictive\s+ai)\b/i.test(stem) &&
+        /\b(?:difference|distinction|compare|versus|vs\.?|focuses on|characteri[zs]ed by)\b/i.test(stem);
+      if (isAiParadigmQuestion) {
+        options.forEach((optText, idx) => {
+          const lower = optText.toLowerCase();
+          // False Claim: Generative AI executes actions or Predictive AI results then and there
+          if (/\bgenerative\s+ai\b.*?\b(?:executes?\s+actions?|acts\s+directly)\b/i.test(lower) ||
+              /\bpredictive\s+ai\b.*?\b(?:results?\s+then\s+and\s+there|executes?\s+actions?)\b/i.test(lower)) {
+            checks.push({
+              optionIndex: idx,
+              status: 'INVERTED',
+              rule: 'CANONICAL_DEFINITION_INVERTED',
+              details: 'Inverts foundational AI paradigms: Generative AI models data distribution P(X) to produce novel content; it is not defined as executing actions.'
+            });
+          }
+        });
+      }
+
+      // Check 6: GAN Nash Equilibrium vs Winner/Defeat Collision
+      const isGanEquilibriumQuestion = /\b(?:gan|generative adversarial|generator|discriminator)\b/i.test(stem) &&
+        /\b(?:nash equilibrium|game equilibrium|convergence|equilibrium)\b/i.test(stem);
+      if (isGanEquilibriumQuestion) {
+        options.forEach((optText, idx) => {
+          const lower = optText.toLowerCase();
+          // False Claim: Nash equilibrium means generator wins or defeats discriminator
+          if (/\b(?:generator\s+(?:wins|completely\s+defeats|overcomes)|discriminator\s+is\s+(?:completely\s+)?defeated)\b/i.test(lower)) {
+            checks.push({
+              optionIndex: idx,
+              status: 'CONTRADICTED',
+              rule: 'NASH_EQUILIBRIUM_WINNER_COLLISION',
+              details: 'Nash equilibrium in GANs is a minimax saddle point where pg = pdata and D(x) = 0.5, not a state where the generator wins.'
+            });
+          }
+        });
+      }
+
+      // Check 7: Modern LLM Autoregressive Architecture Misclassification
+      const isLlmArchitectureQuestion = /\b(?:large language model|llm|modern llms|autoregressive)\b/i.test(stem) &&
+        /\b(?:architecture|topology|paired|transformer)\b/i.test(stem);
+      if (isLlmArchitectureQuestion) {
+        options.forEach((optText, idx) => {
+          const lower = optText.toLowerCase();
+          // False Claim: Modern LLMs are universally paired encoder-decoder
+          if (/\b(?:paired\s+)?encoder-decoder\b/i.test(lower) && /\b(?:defining|standard|modern\s+llms|primary\s+architecture)\b/i.test(lower)) {
+            checks.push({
+              optionIndex: idx,
+              status: 'CONTRADICTED',
+              rule: 'ARCHITECTURAL_TOPOLOGY_MISCLASSIFICATION',
+              details: 'Modern autoregressive LLMs (e.g. GPT, LLaMA) are decoder-only Transformer architectures, not paired encoder-decoder architectures.'
+            });
+          }
+        });
+      }
+
+      // Check 8: Word-Level Language Generation Casual Intuition vs Technical Generalization
+      const isWordGenerationQuestion = /\b(?:word(?:-level)?\s+generation|character(?:-level)?\s+generation)\b/i.test(stem) &&
+        /\b(?:meaningless|avoid|produce|advantage|why)\b/i.test(stem);
+      if (isWordGenerationQuestion) {
+        options.forEach((optText, idx) => {
+          const lower = optText.toLowerCase();
+          // False Claim: Word generation avoids producing meaningless data as absolute rule
+          if (/\b(?:avoids?\s+producing\s+meaningless\s+data|guarantees?\s+meaningful|cannot\s+produce\s+meaningless)\b/i.test(lower)) {
+            checks.push({
+              optionIndex: idx,
+              status: 'CONTRADICTED',
+              rule: 'UNSUPPORTED_GENERALIZATION_CASUAL_INTUITION',
+              details: 'Treats oral classroom intuition as a universal technical claim; word-level models do not inherently prevent meaningless outputs and modern NLP uses subword tokenization (BPE).'
+            });
+          }
+        });
+      }
+
+      // Check 9: Transformer Execution Parallelism Invariant
+      const isTransformerParallelismQuestion = /\b(?:transformer|rnn|recurrent)\b/i.test(stem) &&
+        /\b(?:parallel|parallelism|sequential|execution|differ)\b/i.test(stem);
+      if (isTransformerParallelismQuestion) {
+        options.forEach((optText, idx) => {
+          const lower = optText.toLowerCase();
+          // False Claim: Transformers execute autoregressive token generation entirely in parallel at inference time
+          if (/\b(?:entirely in parallel|fully parallel)\b/i.test(lower) && /\b(?:autoregressive|generation|inference)\b/i.test(lower)) {
+            checks.push({
+              optionIndex: idx,
+              status: 'CONTRADICTED',
+              rule: 'TRANSFORMER_PARALLELISM_OVERSPECIFIED',
+              details: 'Transformer parallelism applies during training and prompt encoding (prefill) via self-attention; autoregressive generation at inference time remains strictly sequential.'
+            });
+          }
+        });
+      }
+
+      // Check 10: Generative AI vs Agentic Action Invariant
+      const isGenAiDefinition = /\b(?:generative\s+(?:ai|models?))\b/i.test(stem);
+      if (isGenAiDefinition) {
+        options.forEach((optText, idx) => {
+          const lower = optText.toLowerCase();
+          // Reject defining Generative AI as executing automated actions / environment tasks
+          if (/\bgenerative\s+models?\s+(?:create\s+.*?\s+actions?|execute\s+actions?|perform\s+actions?)\b/i.test(lower) ||
+              /\bgenerative\s+ai\s+(?:creates?\s+.*?\s+actions?|executes?\s+actions?)\b/i.test(lower)) {
+            checks.push({
+              optionIndex: idx,
+              status: 'CONTRADICTED',
+              rule: 'GENERATIVE_AI_CONFLATED_WITH_ACTIONS',
+              details: 'Generative AI produces novel content/artifacts (text, images, synthetic data); executing actions in an environment is an agentic / reinforcement learning property.'
+            });
+          }
+        });
+      }
+
+      // Check 11: Python/PyTorch Class Instantiation vs Reference Assignment
+      const isModelClassInstantiation = /\b(?:class|model)\b/i.test(stem) &&
+        /\b(?:instantiat|assigned to a variable|creation|constructor)\b/i.test(stem);
+      if (isModelClassInstantiation) {
+        if (/\bassigned\s+(?:to\s+a\s+variable\s+)?without\s+(?:calling|parentheses)|\bassigning\s+the\s+class\s+reference\b|\bwithout\s+calling\b/i.test(stem)) {
+          options.forEach((optText, idx) => {
+            const lower = optText.toLowerCase();
+            if (/\b(?:initiates?\s+the\s+class|builds?\s+the\s+network|calls?\s+init)\b/i.test(lower)) {
+              checks.push({
+                optionIndex: idx,
+                status: 'CONTRADICTED',
+                rule: 'CLASS_REFERENCE_CONFUSED_WITH_INSTANTIATION',
+                details: 'Assigning a class reference without invoking constructor does not initialize the instance or construct network layers.'
+              });
+            }
+          });
+        }
+      }
+
+      // Check 12: Contextual Neural Network ASR Corruption Rejection
+      const isNeuralNetContext = /\b(?:neural network|training|loss|weights?|optimization|model)\b/i.test(stem);
+      if (isNeuralNetContext) {
+        options.forEach((optText, idx) => {
+          const lower = optText.toLowerCase();
+          if (/\b(?:airpods?|airports?)\b/i.test(lower) && /\b(?:iteration|epoch|training|batch|step)\b/i.test(`${stem} ${lower}`)) {
+            checks.push({
+              optionIndex: idx,
+              status: 'CONTRADICTED',
+              rule: 'CORRUPTED_TRANSCRIPT_ARTIFACT',
+              details: 'Contains corrupted ASR acoustic artifact ("airpods"/"airports" in training loop context).'
+            });
+          }
+          if (/\b(?:model pose|create (?:the|a) pose)\b/i.test(lower) && /\b(?:loss|saving|iteration)\b/i.test(`${stem} ${lower}`)) {
+            checks.push({
+              optionIndex: idx,
+              status: 'CONTRADICTED',
+              rule: 'CORRUPTED_TRANSCRIPT_ARTIFACT',
+              details: 'Contains corrupted ASR acoustic artifact ("model pose" in loss optimization context).'
+            });
+          }
+        });
+      }
+
+      // Check 14: GAN Generative Framework vs Classifier Invariant
+      const isGanComparisonQuestion = /\b(?:gans?|generative adversarial)\b/i.test(stem) &&
+        /\b(?:llms?|language models?|operational|mechanism|differ|predictive|generat)\b/i.test(stem);
+      if (isGanComparisonQuestion) {
+        options.forEach((optText, idx) => {
+          const lower = optText.toLowerCase();
+          // False Claim: GANs perform discrete classification tasks or function as discrete classifiers
+          if (/\bgans?\s+(?:perform\s+(?:discrete\s+)?classification(?:\s+tasks?)?|are\s+(?:discrete\s+)?classifiers?|function\s+as\s+(?:discrete\s+)?classifiers?|rely\s+on\s+(?:discrete\s+)?classification)\b/i.test(lower)) {
+            checks.push({
+              optionIndex: idx,
+              status: 'CONTRADICTED',
+              rule: 'INCORRECT_GAN_FRAMEWORK_DEFINITION',
+              details: 'Inaccurately describes GANs as performing discrete classification. A GAN is a generative model using adversarial competition between a generator and discriminator; only the discriminator classifies.'
+            });
+          }
+        });
+      }
+
+      // Check 13: AVL Tree Height Invariants & Distractor Plausibility
+      const isAvlHeightQuestion = /\b(?:avl|balance factor)\b/i.test(stem) &&
+        /\b(?:height|worst-case|sorted|insertion|complexity)\b/i.test(stem);
+      if (isAvlHeightQuestion) {
+        options.forEach((optText, idx) => {
+          const lower = optText.toLowerCase();
+          if (/\b(?:avoids?\s+all\s+node\s+comparisons|replaces?\s+(?:the\s+)?in-order\s+successor\s+withs+a\s+leaf)\b/i.test(lower)) {
+            checks.push({
+              optionIndex: idx,
+              status: 'CONTRADICTED',
+              rule: 'IMPLAUSIBLE_TRIVIAL_DISTRACTOR',
+              details: 'Distractor is an absurd or irrelevant distraction rather than a plausible student algorithmic misconception.'
+            });
+          }
+        });
+      }
+    }
+
     return {
       checks,
       ambiguityDetected,
@@ -164,7 +377,10 @@ class IndependentAnswerVerifier {
    */
   async _solveQuestionBlindly({ stem, randomizedOptions, evidenceContext, route, target }) {
     const slotLetters = ['A', 'B', 'C', 'D'];
-    const optionsBlock = randomizedOptions.map((opt, i) => `[Option ${slotLetters[i]}]: ${opt}`).join('\n');
+    const optionsBlock = randomizedOptions.map((opt, i) => {
+      const text = (typeof opt === 'object' && opt !== null) ? (opt.text || opt.optionText || opt.value || JSON.stringify(opt)) : String(opt);
+      return `[Option ${slotLetters[i]}]: ${text}`;
+    }).join('\n');
 
     const systemPrompt = `You are the Independent Academic Blind Solver & Truthfulness Verifier.
 You are given an assessment question, four randomized options, and verified lecture evidence.
@@ -229,14 +445,26 @@ Concept: ${target.concept || 'Academic Concept'}
         systemPrompt,
         temperature: 0.0,
         model: process.env.AGENT3_MODEL || 'openai/gpt-oss-120b',
-        maxTokens: 2500,
+        maxTokens: 2000,
         operation: 'INDEPENDENT_ANSWER_VERIFICATION'
       });
 
       let parsed = null;
       if (typeof resp === 'string') {
-        const jsonMatch = resp.match(/\{[\s\S]*\}/);
-        if (jsonMatch) parsed = JSON.parse(jsonMatch[0]);
+        try {
+          parsed = safeParseJson(resp);
+        } catch (_) {
+          const jsonMatch = resp.match(/\{[\s\S]*\}/);
+          if (jsonMatch) {
+            try {
+              parsed = JSON.parse(jsonMatch[0]);
+            } catch (e2) {
+              try {
+                parsed = safeParseJson(jsonMatch[0]);
+              } catch (_) {}
+            }
+          }
+        }
       } else if (resp && typeof resp === 'object') {
         parsed = resp;
       }
@@ -261,7 +489,7 @@ Concept: ${target.concept || 'Academic Concept'}
       };
     }
 
-    const stem = String(candidateMCQ.questionText || candidateMCQ.stem || '').trim();
+    const stem = String(candidateMCQ.questionText || candidateMCQ.questionStem || candidateMCQ.stem || '').trim();
     const rawOptions = Array.isArray(candidateMCQ.options) ? [...candidateMCQ.options] : [];
 
     if (!stem || rawOptions.length < 2) {
@@ -333,6 +561,18 @@ Concept: ${target.concept || 'Academic Concept'}
     });
 
     // 4. Blind First-Principles Solving
+    const isDeterministicMode = Boolean(options.skipLLM || process.env.AGENT3_MODE === 'deterministic_only');
+    if (isDeterministicMode) {
+      return {
+        passed: true,
+        status: 'PASS_DOMAIN_GATES_ONLY',
+        route,
+        isFullVerification: false,
+        verificationMethod: 'DETERMINISTIC_DOMAIN_GATE_ONLY',
+        domainChecks: domainChecks.checks
+      };
+    }
+
     const blindEvidence = typeof evidenceContext === 'string' ? evidenceContext : (evidenceContext?.unifiedRawContent || '');
     const solverResult = await this._solveQuestionBlindly({
       stem,

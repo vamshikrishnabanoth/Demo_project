@@ -27,15 +27,14 @@ const lectureIntelligence = require('./intelligence/lectureIntelligence');
 
 class PipelineOrchestrator {
   /**
-   * Computes the bounded iteration ceiling for question generation attempts.
-   * Fixes Defect 1: Scales attempt budget to accommodate primary targets + reserve targets,
-   * providing at least 2x headroom for replacements up to an absolute ceiling of 60.
+   * Computes the strictly bounded iteration ceiling for question generation attempts.
+   * Enforces a tight, non-thrashing ceiling across primary targets + bounded reserves.
    */
   calculateAttemptCeiling(requestedCount, primaryTargetsCount, reserveTargetsCount) {
     const pCount = (typeof primaryTargetsCount === 'number') ? primaryTargetsCount : requestedCount;
     const rCount = (typeof reserveTargetsCount === 'number') ? reserveTargetsCount : Math.ceil(requestedCount / 2);
-    const targetAttemptBudget = pCount + rCount;
-    return Math.min(Math.max(targetAttemptBudget, Math.ceil(requestedCount * 2.0)), 60);
+    // Strict bounded attempt ceiling: maximum primary targets + bounded reserves (capped at 1.6x requestedCount, hard ceiling 12)
+    return Math.min(pCount + rCount, Math.ceil(requestedCount * 1.6), 12);
   }
 
   /**
@@ -132,9 +131,15 @@ class PipelineOrchestrator {
       if (hardDelivered < maxDefensibleHard && hasSpecificEvidence && reserveDepth.supportsHard) {
         return 'Hard';
       }
-      // If Hard cannot be fulfilled, allow eligible Medium reserve to fill the deficit when policy permits
-      console.log(`ℹ️ [Orchestrator] Hard reserve ${reserve.targetId} ("${reserve.concept}") cannot be fulfilled at Hard (hardDelivered: ${hardDelivered}/${maxDefensibleHard}, hasSpecificEvidence: ${hasSpecificEvidence}, supportsHard: ${reserveDepth.supportsHard}). Recalibrating to Medium deficit fill.`);
-      return 'Medium';
+      // If Hard cannot be fulfilled:
+      // In a Balanced assessment, agreed policy allows eligible Medium reserve to fill the deficit rather than leaving the quiz incomplete.
+      if (requestedDifficulty === 'Balanced') {
+        console.log(`ℹ️ [Orchestrator] Hard reserve ${reserve.targetId} ("${reserve.concept}") cannot be fulfilled at Hard (hardDelivered: ${hardDelivered}/${maxDefensibleHard}, hasSpecificEvidence: ${hasSpecificEvidence}, supportsHard: ${reserveDepth.supportsHard}). Recalibrating to Medium deficit fill for Balanced assessment.`);
+        return 'Medium';
+      }
+      // When teacher explicitly requested 'Hard', NEVER silently downgrade to Medium!
+      console.log(`ℹ️ [Orchestrator] Hard reserve ${reserve.targetId} ("${reserve.concept}") cannot be fulfilled at Hard and requestedDifficulty is '${requestedDifficulty}'. Preserving explicit Hard request without silent Medium substitution.`);
+      return 'Hard';
     }
 
     return authoritativePlannedDifficulty;
@@ -573,6 +578,62 @@ class PipelineOrchestrator {
         ...primaryTargets.map(t => normConceptSig(t.concept)),
         ...activeReservePool.map(r => normConceptSig(r.concept))
       ].filter(Boolean));
+
+      // Strict question payload integrity normalizer
+      const normalizeAndValidatePayloadIntegrity = (mcq, target = null) => {
+        if (!mcq || typeof mcq !== 'object' || mcq.isUnfulfilled) {
+          return { isValid: false, reason: 'Candidate MCQ is null or unfulfilled' };
+        }
+        const promptText = String(mcq.question || mcq.questionText || mcq.stem || mcq.prompt || '').trim();
+        if (!promptText || promptText.length < 10) {
+          return { isValid: false, reason: 'Candidate question prompt is missing or shorter than 10 characters' };
+        }
+        if (!Array.isArray(mcq.options) || mcq.options.length !== 4) {
+          return { isValid: false, reason: `Candidate options count must be exactly 4 (found ${Array.isArray(mcq.options) ? mcq.options.length : 0})` };
+        }
+        if (!mcq.correctAnswer && !mcq.correct_answer && mcq.correctAnswerText) {
+          mcq.correctAnswer = mcq.correctAnswerText;
+        }
+        if (!mcq.correctAnswer || typeof mcq.correctAnswer !== 'string' || !mcq.correctAnswer.trim()) {
+          return { isValid: false, reason: 'Candidate missing valid correctAnswer' };
+        }
+        mcq.question = promptText;
+        mcq.questionText = promptText;
+        mcq.stem = promptText;
+        mcq.difficulty = mcq.difficulty || mcq.targetDifficulty || target?.targetDifficulty || mcq.metadata?.targetDifficulty || 'Medium';
+        return { isValid: true, promptText };
+      };
+
+      // Strict repair & replenishment limits
+      const MAX_QUIZ_REPAIRS = Math.min(3, Math.ceil(requestedCount / 2));
+      const MAX_DYNAMIC_RESERVES = Math.min(1, Math.floor(requestedCount * 0.3));
+      let dynamicReserveCounter = 0;
+      const replenishReservePoolIfEmpty = () => {
+        if (activeReservePool.length === 0 && passingQuestions.length < requestedCount && dynamicReserveCounter < MAX_DYNAMIC_RESERVES) {
+          const unusedUnits = (evidencePackage?.teachingUnits || []).filter(u => {
+            const sig = normConceptSig(u.concept || u.topic);
+            return sig && !seenConcepts.has(sig);
+          });
+          if (unusedUnits.length > 0) {
+            const nextUnit = unusedUnits[0];
+            const unitConcept = nextUnit.concept || nextUnit.topic;
+            seenConcepts.add(normConceptSig(unitConcept));
+            dynamicReserveCounter++;
+            const newResId = `R${String(reservePool.length + dynamicReserveCounter).padStart(2, '0')}`;
+            activeReservePool.push({
+              targetId: newResId,
+              concept: unitConcept,
+              subtopic: nextUnit.subtopic || nextUnit.topic || 'Core Mechanism',
+              targetDifficulty: 'Medium',
+              dimension: 'Conceptual',
+              cognitiveLevel: 'Understand',
+              supportingEvidence: nextUnit.verbatimQuote || nextUnit.text || '',
+              instruction: `Require operational reasoning about mechanisms. Test concept: ${unitConcept}.`
+            });
+            console.log(`🔄 [Orchestrator] Replenished activeReservePool with unused teaching unit: "${unitConcept}" (${newResId})`);
+          }
+        }
+      };
       let iterationCount = 0;
       const targetAttemptBudget = primaryTargets.length + activeReservePool.length;
       const MAX_TOTAL_ITERATIONS = this.calculateAttemptCeiling(requestedCount, primaryTargets.length, activeReservePool.length);
@@ -715,7 +776,8 @@ class PipelineOrchestrator {
 
         // 4. Evaluator Audit & Bounded 1-Attempt Repair (Agent 3)
         let evalResult;
-        evalResult = await agent3Evaluator.evaluateAndRepairQuestion(candidateMCQ, currentTarget, evidencePackage, agent2Generator);
+        const allowRepair = (repairMetrics.totalAttempted < MAX_QUIZ_REPAIRS);
+        evalResult = await agent3Evaluator.evaluateAndRepairQuestion(candidateMCQ, currentTarget, evidencePackage, agent2Generator, { allowRepair });
 
         const repairAttempted = Boolean(evalResult.repair?.attempted);
         const repairSuccessful = Boolean(evalResult.repair?.successful);
@@ -808,6 +870,7 @@ class PipelineOrchestrator {
           }
 
           // Auto-promote reserve target to fulfill question count
+          replenishReservePoolIfEmpty();
           if (passingQuestions.length < requestedCount && activeReservePool.length > 0) {
             const nextReserve = activeReservePool.shift();
             const allocatedTier = determineFeasibleReserveTier(nextReserve, tier);
@@ -954,12 +1017,32 @@ class PipelineOrchestrator {
                   macroTopic: currentTarget.macroTopic || currentTarget.subtopic || 'Core Mechanism'
                 };
               }
-              if (evalResult.mcq) {
+              const payloadCheck = normalizeAndValidatePayloadIntegrity(evalResult.mcq, currentTarget);
+              if (!payloadCheck.isValid) {
+                console.warn(`⚠️ [Orchestrator] Target ${currentTarget.targetId} rejected due to payload integrity failure: ${payloadCheck.reason}`);
+                if (byTier[tier]) byTier[tier].rejected++;
+                rejectionReasonsCount['MALFORMED_QUESTION_PAYLOAD'] = (rejectionReasonsCount['MALFORMED_QUESTION_PAYLOAD'] || 0) + 1;
+                const malformedRecord = {
+                  targetId: currentTarget.targetId,
+                  concept: currentTarget.concept,
+                  subtopic: currentTarget.subtopic || 'Core Mechanism',
+                  targetDifficulty: currentTarget.targetDifficulty,
+                  intendedCognitiveOperation: currentTarget.intendedCognitiveOperation,
+                  status: 'REJECTED',
+                  reason: `MALFORMED_PAYLOAD: ${payloadCheck.reason}`,
+                  failureReasons: ['MALFORMED_QUESTION_PAYLOAD'],
+                  attempts: 1 + (repairAttempted ? 1 : 0),
+                  repairAttempted,
+                  repairSuccessful: false
+                };
+                rejectedTargets.push(malformedRecord);
+                targetResults.push(malformedRecord);
+              } else {
                 evalResult.mcq.qOriginId = `${sessionId}_q${String(passingQuestions.length + 1).padStart(2, '0')}_${require('crypto').randomBytes(3).toString('hex')}`;
                 evalResult.mcq.targetId = currentTarget.targetId;
+                passingQuestions.push(evalResult.mcq);
+                if (byTier[tier]) byTier[tier].accepted++;
               }
-              passingQuestions.push(evalResult.mcq);
-              if (byTier[tier]) byTier[tier].accepted++;
 
               targetResults.push({
                 targetId: currentTarget.targetId,
@@ -1015,15 +1098,22 @@ class PipelineOrchestrator {
 
             // Auto-promote reserve target to fulfill question count
             if (passingQuestions.length < requestedCount && activeReservePool.length > 0) {
-              const nextReserve = activeReservePool.shift();
-              const allocatedTier = determineFeasibleReserveTier(nextReserve, tier);
-              nextReserve.targetDifficulty = allocatedTier;
-              const cognitiveBp = agent1Planner.getCognitiveBlueprint(allocatedTier, nextReserve.dimension || 'Conceptual');
-              nextReserve.intendedCognitiveOperation = cognitiveBp.intendedCognitiveOperation;
-              nextReserve.bloomLevel = cognitiveBp.bloomLevel;
-              nextReserve.operationalGuidance = cognitiveBp.operationalGuidance;
-              nextReserve.instruction = `${cognitiveBp.operationalGuidance} Test concept: ${nextReserve.concept}.`;
-              candidateQueue.push(nextReserve);
+              const candidateIdx = activeReservePool.findIndex(r => {
+                if (tier !== 'Hard') return true;
+                const reserveDepth = agent1Planner._detectConceptDepth(r.concept, r.supportingEvidence, evidencePackage);
+                return reserveDepth.supportsHard;
+              });
+              if (candidateIdx !== -1) {
+                const [nextReserve] = activeReservePool.splice(candidateIdx, 1);
+                const allocatedTier = determineFeasibleReserveTier(nextReserve, tier);
+                nextReserve.targetDifficulty = allocatedTier;
+                const cognitiveBp = agent1Planner.getCognitiveBlueprint(allocatedTier, nextReserve.dimension || 'Conceptual');
+                nextReserve.intendedCognitiveOperation = cognitiveBp.intendedCognitiveOperation;
+                nextReserve.bloomLevel = cognitiveBp.bloomLevel;
+                nextReserve.operationalGuidance = cognitiveBp.operationalGuidance;
+                nextReserve.instruction = `${cognitiveBp.operationalGuidance} Test concept: ${nextReserve.concept}.`;
+                candidateQueue.push(nextReserve);
+              }
             }
           }
         } else {
@@ -1066,6 +1156,7 @@ class PipelineOrchestrator {
           });
 
           // Auto-promote reserve target to fulfill question count!
+          replenishReservePoolIfEmpty();
           if (passingQuestions.length < requestedCount && activeReservePool.length > 0) {
             // Determine tier to maintain balance while respecting evidence-supported concept depth:
             let preferredTier = requestedDifficulty;
@@ -1100,77 +1191,112 @@ class PipelineOrchestrator {
           }
         }
 
-        // Replenish from curriculum if candidateQueue and reservePool are empty but target count still unmet
-        if (candidateQueue.length === 0 && activeReservePool.length === 0 && passingQuestions.length < requestedCount && iterationCount < MAX_TOTAL_ITERATIONS) {
-          const neededMore = requestedCount - passingQuestions.length;
-          console.log(`🔄 [Orchestrator] Replenishing ${neededMore} targets from curriculum segments to fulfill requested count ${requestedCount}...`);
-          const fallback = agent1Planner._buildFallbackPlan(
-            sessionInputs.voiceTranscript || evidencePackage.unifiedRawContent || '',
-            requestedDifficulty,
-            neededMore + 5,
-            evidencePackage.categoryWeights || {},
-            evidencePackage.lectureDepth || {},
-            evidencePackage.detectedFocus || [],
-            evidencePackage
-          );
-          for (const ft of (fallback.assessmentTargets || [])) {
-            const cNorm = normConceptSig(ft.concept);
-            if (cNorm && !seenConcepts.has(cNorm)) {
-              seenConcepts.add(cNorm);
-              ft.targetId = `T_REP_0${candidateQueue.length + 1}`;
-              candidateQueue.push(ft);
-              if (candidateQueue.length >= neededMore) break;
-            }
+        // If candidateQueue and activeReservePool are both exhausted, halt cleanly and report honest capacity shortfall
+        if (candidateQueue.length === 0 && activeReservePool.length === 0) {
+          console.log(`ℹ️ [Orchestrator] Candidate queue and reserve pool exhausted (${passingQuestions.length}/${requestedCount} delivered). Bounded attempt budget preserved; reporting honest capacity.`);
+        }
+      }
+
+      // ─────────────────────────────────────────────────────────────────────────
+      // Batch-First High-Efficiency Generation (Requirement 1 & Requirement 9)
+      // Generates primary targets in compact, resilient batches of up to 5,
+      // reducing outbound network calls and token overhead by 70–80%.
+      // ─────────────────────────────────────────────────────────────────────────
+      const BATCH_SIZE = Math.min(5, Math.max(2, parseInt(process.env.GENERATION_BATCH_SIZE, 10) || 5));
+      while (candidateQueue.length > 0 && passingQuestions.length < requestedCount && iterationCount < MAX_TOTAL_ITERATIONS) {
+        if (abortSignal?.aborted) break;
+
+        const needed = requestedCount - passingQuestions.length;
+        const batchTargets = candidateQueue.splice(0, Math.min(BATCH_SIZE, needed));
+        if (batchTargets.length === 0) break;
+
+        iterationCount += batchTargets.length;
+        totalGenerationAttempts += batchTargets.length;
+
+        let batchCandidates = [];
+        try {
+          batchCandidates = await agent2Generator.generateQuestionBatch(batchTargets, evidencePackage);
+        } catch (bErr) {
+          console.warn(`⚠️ [Orchestrator] Batch generation caught: ${bErr.message}. Falling back to single-target processing.`);
+          batchTargets.forEach(t => candidateQueue.unshift(t));
+          break; // Exit batch loop, let worker pool handle individually
+        }
+
+        for (let b = 0; b < batchTargets.length; b++) {
+          if (passingQuestions.length >= requestedCount) break;
+          const target = batchTargets[b];
+          const candidate = batchCandidates[b];
+          const tier = target.targetDifficulty || 'Medium';
+
+          if (byTier[tier]) byTier[tier].generated++;
+
+          if (!candidate || candidate.isUnfulfilled) {
+            if (byTier[tier]) byTier[tier].unfulfilled++;
+            const unfulfilledRecord = {
+              targetId: target.targetId,
+              concept: target.concept,
+              subtopic: target.subtopic || 'General Topic',
+              targetDifficulty: target.targetDifficulty,
+              intendedCognitiveOperation: target.intendedCognitiveOperation,
+              status: candidate?.fulfillmentStatus || 'UNFULFILLED_GENERATION_FAILED',
+              reason: candidate?.message || 'Candidate question formulation failed',
+              attempts: 1,
+              repairAttempted: false,
+              repairSuccessful: false,
+              mcq: candidate || null
+            };
+            await handleTargetOutcome({
+              status: candidate?.fulfillmentStatus === 'UNFULFILLED_CAPACITY_DEFICIT' ? 'DEFICIT' : 'UNFULFILLED',
+              deficitRecord: unfulfilledRecord,
+              unfulfilledRecord,
+              currentTarget: target,
+              tier,
+              targetStartTime: Date.now()
+            });
+            continue;
           }
 
-          // Guaranteed Queue Padding: Decompose curriculum concepts across distinct engineering facets
-          if (candidateQueue.length < neededMore) {
-            const baseConcepts = Array.from(new Set([
-              ...(evidencePackage.detectedFocus || []),
-              ...(Array.isArray(plan?.subtopics) ? plan.subtopics : []),
-              plan?.mainTopic || 'Core Subject Matter'
-            ])).filter(c => c && c.length > 2);
-
-            const replenishmentFacets = [
-              { name: 'Core Foundations & Governing Principles', dim: 'Conceptual', op: 'RECALL' },
-              { name: 'Operational Mechanics & Execution Steps', dim: 'Flow / Trace', op: 'TRACE' },
-              { name: 'State Transitions & Formulations', dim: 'Flow / Trace', op: 'TRACE' },
-              { name: 'Boundary Conditions & Edge Cases', dim: 'Scenario Analysis', op: 'DIAGNOSE' },
-              { name: 'Applied Problem-Solving Scenarios', dim: 'Application', op: 'APPLY' },
-              { name: 'Design Tradeoffs & Comparative Analysis', dim: 'Comparison / Tradeoff', op: 'COMPARE' },
-              { name: 'System Invariants & Bug Diagnostics', dim: 'Cause / Effect', op: 'EXPLAIN' },
-              { name: 'Practical System Behavior', dim: 'Conceptual', op: 'EXPLAIN' }
-            ];
-
-            let facetIndex = iterationCount;
-            let paddingAttempts = 0;
-            while (candidateQueue.length < neededMore && paddingAttempts < 50) {
-              paddingAttempts++;
-              const sub = baseConcepts[facetIndex % baseConcepts.length] || 'Core Subject Matter';
-              const facet = replenishmentFacets[facetIndex % replenishmentFacets.length];
-              facetIndex++;
-              const conceptName = `${sub} (${facet.name})`;
-              const cNorm = normConceptSig(conceptName);
-              if (seenConcepts.has(cNorm)) {
-                continue; // Skip already planned/evaluated concept facet
-              }
-              seenConcepts.add(cNorm);
-              const repTarget = {
-                targetId: `T_REP_0${candidateQueue.length + 1}`,
-                concept: conceptName,
-                subtopic: sub,
-                trajectoryPhase: 'MID',
-                dimension: facet.dim,
-                cognitiveLevel: requestedDifficulty === 'Hard' ? 'Evaluate' : (requestedDifficulty === 'Medium' ? 'Apply' : 'Understand'),
-                targetDifficulty: requestedDifficulty === 'Balanced' ? 'Medium' : (requestedDifficulty || 'Medium'),
-                intendedCognitiveOperation: facet.op,
-                isCapacityLimited: false,
-                supportingEvidence: evidencePackage.unifiedRawContent || evidencePackage.curricularContent || '',
-                instruction: `Assess engineering principles and applications for ${sub}: ${facet.name}.`,
-                negativeBoundaries: evidencePackage.negativeBoundaries || []
-              };
-              candidateQueue.push(repTarget);
+          // Evaluate candidate using agent3Evaluator
+          try {
+            const allowRepair = (repairMetrics.totalAttempted < MAX_QUIZ_REPAIRS);
+            const evalResult = await agent3Evaluator.evaluateAndRepairQuestion(candidate, target, evidencePackage, agent2Generator, { allowRepair });
+            const repairAttempted = Boolean(evalResult.repair?.attempted);
+            const repairSuccessful = Boolean(evalResult.repair?.successful);
+            if (repairAttempted) {
+              repairMetrics.totalAttempted++;
+              totalGenerationAttempts++;
+              if (repairSuccessful) repairMetrics.successfulRepairs++;
+              else repairMetrics.failedRepairs++;
             }
+            await handleTargetOutcome({
+              status: evalResult.status,
+              evalResult,
+              currentTarget: target,
+              tier,
+              repairAttempted,
+              repairSuccessful,
+              targetStartTime: Date.now()
+            });
+          } catch (evalErr) {
+            console.warn(`⚠️ [Orchestrator] Evaluation threw on batch target ${target.targetId}: ${evalErr.message}`);
+            await handleTargetOutcome({
+              status: 'UNFULFILLED',
+              unfulfilledRecord: {
+                targetId: target.targetId,
+                concept: target.concept,
+                subtopic: target.subtopic || 'General Topic',
+                targetDifficulty: target.targetDifficulty,
+                intendedCognitiveOperation: target.intendedCognitiveOperation,
+                status: 'UNFULFILLED_EVALUATION_ERROR',
+                reason: evalErr.message,
+                attempts: 1,
+                repairAttempted: false,
+                repairSuccessful: false
+              },
+              currentTarget: target,
+              tier,
+              targetStartTime: Date.now()
+            });
           }
         }
       }
@@ -1488,8 +1614,11 @@ class PipelineOrchestrator {
               );
 
               if (gCheck.isJustified) {
-                // Ensure answer-key integrity
-                if (Array.isArray(candidateMCQ.options) && candidateMCQ.options.length === 4 && candidateMCQ.options.includes(candidateMCQ.correctAnswer)) {
+                // Ensure payload integrity (non-empty prompt, 4 options, valid key)
+                const payloadCheck = normalizeAndValidatePayloadIntegrity(candidateMCQ, nextReserve);
+                if (!payloadCheck.isValid) {
+                  console.warn(`⚠️ [Orchestrator] Replenishment candidate ${nextReserve.targetId} rejected due to payload integrity failure: ${payloadCheck.reason}`);
+                } else if (Array.isArray(candidateMCQ.options) && candidateMCQ.options.length === 4 && candidateMCQ.options.includes(candidateMCQ.correctAnswer)) {
                   const correctIdx = candidateMCQ.options.indexOf(candidateMCQ.correctAnswer);
                   candidateMCQ.correctAnswerKey = ['A', 'B', 'C', 'D'][correctIdx];
                   candidateMCQ.correct_answer = candidateMCQ.correctAnswerKey;
@@ -1576,8 +1705,28 @@ class PipelineOrchestrator {
       let pipelineStatus = 'COMPLETED';
       let notice = null;
 
+      // Structured target outcome inspection (Zero notice regex evaluation)
+      const hasProviderFailures = unfulfilledTargets.some(u =>
+        u?.status === 'UNFULFILLED_PROVIDER_FAILURE' ||
+        u?.unfulfilledReason === 'PROVIDER_UNAVAILABLE' ||
+        u?.unfulfilledReason === 'PROVIDER_ERROR'
+      );
+
+      const hasDifficultyMismatch = unfulfilledTargets.some(u =>
+        u?.unfulfilledReason === 'DIFFICULTY_UNSUPPORTED' ||
+        u?.status === 'UNFULFILLED_DIFFICULTY_DEFICIT' ||
+        (u?.reason && /difficulty|Hard targets|Bloom|cognitive/i.test(u.reason))
+      ) || (hardCapacityDeficit > 0 && deliveredCount === 0);
+
+      const hasValidationRejections = rejectedTargets.length > 0 && !hasProviderFailures && !hasDifficultyMismatch;
+
       if (deliveredCount === 0) {
-        pipelineStatus = 'FAILED';
+        if (hasProviderFailures) {
+          pipelineStatus = 'FAILED';
+        } else {
+          // Completed cleanly with authentic evidence capacity deficit or difficulty mismatch (0 defensible targets)
+          pipelineStatus = 'COMPLETED_WITH_CAPACITY_DEFICIT';
+        }
         const failureReason = unfulfilledTargets.length > 0
           ? `No grounded questions could be generated. ${unfulfilledTargets.length} target(s) unfulfilled: ${unfulfilledTargets.filter(Boolean).map(u => u?.reason || u?.concept || 'Target unfulfilled').join('; ')}`
           : (rejectedTargets.length > 0
@@ -1604,20 +1753,14 @@ class PipelineOrchestrator {
         notice = null;
       }
 
-      // Truthful shortfall categorization
+      // Truthful shortfall categorization using structured target outcomes
       const isPartial = deliveredCount > 0 && deliveredCount < requestedCount;
       let shortfallCategory = null;
       if (isPartial || deliveredCount < requestedCount) {
-        const hasProviderFailures = unfulfilledTargets.some(u =>
-          u?.status === 'UNFULFILLED_PROVIDER_FAILURE' ||
-          u?.unfulfilledReason === 'PROVIDER_UNAVAILABLE' ||
-          u?.unfulfilledReason === 'PROVIDER_ERROR'
-        ) || (totalGenerationAttempts > 0 && deliveredCount === 0 && Boolean(notice && /rate limit|quota|provider/i.test(notice)));
-
-        const hasValidationRejections = rejectedTargets.length > 0 && !hasProviderFailures;
-
         if (hasProviderFailures) {
           shortfallCategory = 'PROVIDER_ERROR';
+        } else if (hasDifficultyMismatch) {
+          shortfallCategory = 'DIFFICULTY_UNSUPPORTED';
         } else if (hasValidationRejections && unfulfilledTargets.length === 0) {
           shortfallCategory = 'VALIDATION_REJECTION';
         } else {
@@ -1677,18 +1820,36 @@ class PipelineOrchestrator {
 
       let capacityWarning = hasCoverageLimitation
         ? (hasDeficit
-            ? `This lecture supports approximately ${defensibleCapacity} distinct assessment targets. Insufficient evidence for ${totalDeficit} Hard question(s). Recommended count: ${recommendedCount}.`
-            : `This lecture supports approximately ${defensibleCapacity} distinct assessment targets. Generating ${requestedCount} questions assesses these targets across multiple distinct cognitive approaches (${repeatedTargetCount} repeated targets). Review repeated target labels below.`)
+            ? `This lecture supports up to ${defensibleCapacity} distinct evidence-grounded questions. Insufficient evidence for ${totalDeficit} Hard question(s). Recommended quiz size: ${recommendedCount} questions.`
+            : `This lecture supports up to ${defensibleCapacity} distinct assessment targets. Generating ${requestedCount} questions assesses these targets across multiple distinct cognitive approaches (${repeatedTargetCount} repeated targets). Review repeated target labels below.`)
         : null;
 
       if (reallocationWarning) {
         capacityWarning = capacityWarning ? `${capacityWarning} ${reallocationWarning}` : reallocationWarning;
       }
 
+      // FILL_WITH_MEDIUM feasibility verification:
+      // Must only be offered when:
+      // 1. Deficit includes Hard questions
+      // 2. Caller has not already applied FILL_WITH_MEDIUM
+      // 3. Sufficient unused, distinct, defensible Medium opportunities or reserves exist
+      const hardDeficitCount = hardCapacityDeficit > 0 ? hardCapacityDeficit : (requestedDifficulty === 'Hard' ? totalDeficit : 0);
+      const mediumCap = evidencePackage?.lectureIntelligence?.evidenceCapacity?.capacityByDifficulty?.medium ??
+        plan?.capacityDeficitReport?.capacityByDifficulty?.medium ??
+        null;
+      const deliveredMediumCount = validatedQuestions.filter(q => (q.difficulty || q.target?.targetDifficulty || q.metadata?.targetDifficulty) === 'Medium').length;
+      const unusedMediumCapacity = mediumCap !== null ? Math.max(0, mediumCap - deliveredMediumCount) : Infinity;
+      const rawMediumReserves = activeReservePool.filter(r => (r.targetDifficulty === 'Medium' || r.dimension === 'Operational Trace' || r.intendedCognitiveOperation === 'EXPLAIN_MECHANISM')).length;
+      const defensibleMediumReserves = (mediumCap !== null && isFinite(unusedMediumCapacity)) ? Math.min(rawMediumReserves, unusedMediumCapacity) : rawMediumReserves;
+
+      const isFillWithMediumFeasible = hardDeficitCount > 0 &&
+        sessionInputs.deficitPolicy !== 'FILL_WITH_MEDIUM' &&
+        (unusedMediumCapacity >= hardDeficitCount || defensibleMediumReserves >= hardDeficitCount);
+
       const capacityOptions = (hasDeficit || requestedCount > defensibleCapacity) ? [
-        { action: 'ACCEPT_DEFENSIBLE_COUNT', label: `Accept defensible question count (${defensibleCapacity} questions)` },
         { action: 'ACCEPT_FEASIBLE_COUNT', label: `Accept ${deliveredCount} ${requestedDifficulty} Question${deliveredCount === 1 ? '' : 's'}` },
-        { action: 'FILL_WITH_MEDIUM', label: `Fill Remaining ${totalDeficit} with Deep Medium Questions` },
+        ...(isFillWithMediumFeasible ? [{ action: 'FILL_WITH_MEDIUM', label: `Fill Remaining ${hardDeficitCount} with Deep Medium Questions` }] : []),
+        ...(recommendedCount !== deliveredCount ? [{ action: 'ACCEPT_RECOMMENDED_COUNT', label: `Accept recommended quiz size (${recommendedCount} questions)` }] : []),
         { action: 'ADD_MATERIALS', label: 'Provide additional lecture materials' },
         { action: 'EXPAND_SCOPE', label: 'Expand lecture scope' },
         { action: 'CANCEL', label: 'Cancel / Adjust Request' }
@@ -1808,6 +1969,17 @@ class PipelineOrchestrator {
         topicDifficultyMatrix: plan?.topicDifficultyMatrix || null
       };
 
+      // Final payload integrity gate: prune any malformed question missing a valid prompt
+      validatedQuestions = validatedQuestions.filter(q => {
+        const payloadCheck = normalizeAndValidatePayloadIntegrity(q);
+        if (!payloadCheck.isValid) {
+          console.warn(`⚠️ [Orchestrator] Pruned malformed question before delivery: ${payloadCheck.reason}`);
+          return false;
+        }
+        return true;
+      });
+      deliveredCount = validatedQuestions.length;
+
       if (validatedQuestions.length > 0) {
         validatedQuestions.forEach(q => {
           if (!q.metadata) q.metadata = {};
@@ -1913,23 +2085,27 @@ class PipelineOrchestrator {
           };
           return profile;
         })(),
-        tcScore: null,
+        tcScore: (evidencePackage?.hasVoice || Boolean(evidencePackage?.voiceTranscript || evidencePackage?.voiceAnalysis)) ? (plan?.tcScore?.overallScore ?? evidencePackage?.lectureIntelligence?.tcScore ?? evidencePackage?.voiceAnalysis?.teachingValueScore ?? null) : null,
         pdi: (evidencePackage?.pdi !== undefined && evidencePackage?.pdi !== null)
           ? evidencePackage.pdi
           : (evidencePackage?.lectureIntelligence?.pedagogicalDeficitIndex ?? null),
-        teacherAnalysis: (evidencePackage?.voiceAnalysis?.lectureDepth || evidencePackage?.lectureDepth) ? {
-          score: null,
-          isDeprecated: true,
-          rating: (evidencePackage?.voiceAnalysis?.lectureDepth?.rating ?? evidencePackage?.lectureDepth?.rating),
-          characteristics: (evidencePackage?.voiceAnalysis?.lectureDepth?.characteristics ?? evidencePackage?.lectureDepth?.characteristics),
+        teacherAnalysis: (evidencePackage?.voiceAnalysis?.lectureDepth || evidencePackage?.lectureDepth || plan?.tcScore) ? {
+          metricName: 'Teaching Score — Lecturer Delivery Quality',
+          explanatoryCallout: "Evaluates the lecturer's instructional delivery and curriculum depth independently of generated quiz volume.",
+          score: plan?.tcScore?.overallScore ?? evidencePackage?.voiceAnalysis?.lectureDepth?.score ?? null,
+          rating: plan?.tcScore?.rating ?? (evidencePackage?.voiceAnalysis?.lectureDepth?.rating ?? 'Proficient Curricular Delivery'),
+          strengths: plan?.tcScore?.strengths ?? [],
+          suggestions: plan?.tcScore?.suggestions ?? [],
+          dimensions: plan?.tcScore?.dimensions ?? null,
+          characteristics: (evidencePackage?.voiceAnalysis?.lectureDepth?.characteristics ?? evidencePackage?.lectureDepth?.characteristics ?? []),
           deductions: (evidencePackage?.voiceAnalysis?.lectureDepth?.deductions ?? evidencePackage?.lectureDepth?.deductions ?? []),
-          breakdown: (evidencePackage?.voiceAnalysis?.lectureDepth?.breakdown ?? evidencePackage?.lectureDepth?.breakdown ?? null),
+          breakdown: plan?.tcScore?.breakdown ?? (evidencePackage?.voiceAnalysis?.lectureDepth?.breakdown ?? null),
           pedagogicalCritique: evidencePackage?.lectureIntelligence?.pedagogicalCritique || null,
           chapters: evidencePackage?.lectureIntelligence?.chapters || [],
           conceptMap: evidencePackage?.lectureIntelligence?.conceptMap || [],
           evidenceCapacity: evidencePackage?.lectureIntelligence?.evidenceCapacity || null,
           pdi: evidencePackage?.lectureIntelligence?.pedagogicalDeficitIndex ?? evidencePackage?.pdi ?? null,
-          tcScore: null
+          tcScore: (evidencePackage?.hasVoice || Boolean(evidencePackage?.voiceTranscript || evidencePackage?.voiceAnalysis)) ? (plan?.tcScore?.overallScore ?? null) : null
         } : null,
         quizEvaluation: quizEval,
         capacityReport: finalCapacityReport,

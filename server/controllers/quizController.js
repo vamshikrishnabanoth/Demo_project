@@ -2843,7 +2843,7 @@ exports.publishQuiz = async (req, res) => {
                     capacityWarning: qCapReport?.capacityWarning || `This lecture supports approximately ${qCapReport?.totalDefensibleCapacity || 5} distinct assessment targets. Generating ${qCapReport?.requestedCount || 10} questions may produce repeated assessment targets. Recommended count: ${qCapReport?.recommendedQuestionCount || 5}.`,
                     capacityReport: qCapReport,
                     options: qCapReport?.options || [
-                        { action: 'ACCEPT_DEFENSIBLE_COUNT', label: `Accept defensible question count (${qCapReport?.totalDefensibleCapacity || 5} questions)` },
+                        { action: 'ACCEPT_FEASIBLE_COUNT', label: `Accept feasible question count (${questions.length} questions)` },
                         { action: 'ADD_MATERIALS', label: 'Provide additional lecture materials' },
                         { action: 'EXPAND_SCOPE', label: 'Expand lecture scope' }
                     ]
