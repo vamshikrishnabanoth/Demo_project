@@ -213,6 +213,8 @@ export default function CreateQuizTopic() {
     const [lectureModelData, setLectureModelData] = useState(null);
     // Evidence-based teaching score; null when it could not be judged (never a made-up fallback).
     const teachingEval = lectureModelData?.teaching || null;
+    // Largest quiz the server allows (MAX_QUIZ_QUESTIONS, default 30).
+    const maxQuestions = lectureModelData?.maxQuestions || 30;
     // Topics the teacher unticked (left out of the quiz) and her choice when a request exceeds capacity.
     const [excludedTopics, setExcludedTopics] = useState([]);
     const [shortfallPrompt, setShortfallPrompt] = useState(null);
@@ -2294,7 +2296,7 @@ export default function CreateQuizTopic() {
                                         <input
                                             type="range"
                                             min="0"
-                                            max="30"
+                                            max={maxQuestions}
                                             disabled={isGenerating}
                                             value={questionCount}
                                             onChange={(e) => { const v = parseInt(e.target.value, 10); setQuestionCount(Number.isNaN(v) ? 5 : v); }}

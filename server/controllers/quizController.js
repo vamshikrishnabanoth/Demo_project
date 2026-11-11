@@ -727,8 +727,20 @@ const extractText = async (filePath) => {
  * rather than pass raw bytes to the model as if they were lecture text.
  */
 const extractReadableTextFromScan = async (filePath, originalName) => {
+    // Gemini reads scans, photos and handwriting directly (cached by content); OCR is the fallback.
     try {
-        const commonDoc = await DocumentRouter.ingestDocument(filePath, { filename: originalName || path.basename(filePath) });
+        const visionText = await require('../engine/documentRouter/geminiVisionReader').readWithGemini(filePath, originalName || path.basename(filePath));
+        if (visionText && visionText.length >= 20) return visionText;
+    } catch (vErr) {
+        console.warn('[quizController] Vision reader failed, falling back to OCR:', vErr.message);
+    }
+    try {
+        // OCR fallback is bounded: a very large scan should fail clearly, not hang the teacher's upload.
+        const ocrBudgetMs = parseInt(process.env.OCR_FALLBACK_TIMEOUT_MS, 10) || 150000;
+        const commonDoc = await Promise.race([
+            DocumentRouter.ingestDocument(filePath, { filename: originalName || path.basename(filePath) }),
+            new Promise((_, rej) => setTimeout(() => rej(new Error(`OCR took longer than ${Math.round(ocrBudgetMs / 1000)}s`)), ocrBudgetMs))
+        ]);
         const text = (commonDoc && typeof commonDoc.toUnifiedText === 'function') ? commonDoc.toUnifiedText() : '';
         return String(text || '').trim();
     } catch (err) {
@@ -5023,7 +5035,13 @@ exports.getFileMetadata = async (req, res) => {
 
         if (ext === '.pdf') {
             const dataBuffer = fs.readFileSync(absolutePath);
-            try {
+            const { pdfLooksScanned } = require('../engine/documentRouter/geminiVisionReader');
+            const scanCheck = await pdfLooksScanned(dataBuffer);
+            const scanText = scanCheck.scanned ? await extractReadableTextFromScan(absolutePath, req.file.originalname) : '';
+            if (scanText && scanText.length >= 20) {
+                extractedText = scanText;
+                totalCount = scanCheck.pages || (scanText.match(/--- Page \d+ ---/g) || []).length || 1;
+            } else try {
                 const PdfMultimodalExtractor = require('../engine/documentRouter/pdfMultimodalExtractor');
                 const docModel = await PdfMultimodalExtractor.extract(dataBuffer, { filename: path.basename(absolutePath) });
                 totalCount = docModel.totalPages || docModel.pages.length || 1;
@@ -5066,10 +5084,7 @@ exports.getFileMetadata = async (req, res) => {
             }
         } else if (['.jpg', '.jpeg', '.png', '.webp'].includes(ext)) {
             try {
-                const commonDoc = await DocumentRouter.ingestDocument(absolutePath, {
-                    filename: req.file.originalname
-                });
-                extractedText = commonDoc ? commonDoc.toUnifiedText() : '';
+                extractedText = await extractReadableTextFromScan(absolutePath, req.file.originalname);
                 totalCount = 1;
             } catch (imgErr) {
                 console.warn('Image metadata OCR error:', imgErr.message);
@@ -5380,7 +5395,7 @@ function buildAnalysisFromLectureModel(model, wordCount) {
             characteristics: {}
         },
         teachingScore: teaching,
-        lectureModel: lectureModel.toClientPayload(model),
+        lectureModel: { ...lectureModel.toClientPayload(model), maxQuestions: lectureModel.MAX_QUIZ_QUESTIONS },
         lecture_intelligence: {
             title: model.title,
             summary: model.summary,

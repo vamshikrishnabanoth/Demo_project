@@ -28,6 +28,8 @@ const { safeParseJson } = require('../utils/jsonParser');
 const { classifyTextBlock } = require('../../utils/inputKind');
 
 const MODEL_VERSION = 'lecture-model-v1.8';
+// Largest quiz a teacher can request (one setting for server, planner and UI). Default 30: a daily-quiz size.
+const MAX_QUIZ_QUESTIONS = Math.max(1, parseInt(process.env.MAX_QUIZ_QUESTIONS, 10) || 30);
 const CACHE_DIR = path.join(__dirname, '..', '..', 'storage', 'lecture_model_cache');
 const WINDOW_CHARS = 24000;
 const MAX_PARALLEL_WINDOWS = 3;
@@ -1053,10 +1055,10 @@ function computeCapacity(units) {
     total,
     // Recommended leaves headroom for questions that fail validation, capped at the 30-question maximum.
     recommended: {
-      easy: Math.min(30, by.easy),
-      medium: Math.min(30, by.medium),
-      hard: Math.min(30, by.hard),
-      balanced: Math.min(30, total <= 4 ? total : Math.max(3, Math.round(total * 0.75)))
+      easy: Math.min(MAX_QUIZ_QUESTIONS, by.easy),
+      medium: Math.min(MAX_QUIZ_QUESTIONS, by.medium),
+      hard: Math.min(MAX_QUIZ_QUESTIONS, by.hard),
+      balanced: Math.min(MAX_QUIZ_QUESTIONS, total <= 4 ? total : Math.max(3, Math.round(total * 0.75)))
     },
     unitCount: units.length
   };
@@ -1202,7 +1204,7 @@ function allocate(n, weights, caps) {
  * @returns {{ requested, deliverable, byDifficulty, byTopic: [{topic, count}], selected: [...], reserves: [...], shortfall }}
  */
 function planRequest(fullModel, requestedCount, difficulty = 'Balanced', options = {}) {
-  const n = Math.max(0, Math.min(30, Number(requestedCount) || 0));
+  const n = Math.max(0, Math.min(MAX_QUIZ_QUESTIONS, Number(requestedCount) || 0));
   const diffKey = String(difficulty || 'Balanced').toLowerCase();
   // Topics the teacher unticked are left out entirely (their units cannot be selected or used as reserves).
   const excluded = new Set((options.excludeTopics || []).map(t => String(t)));
@@ -1396,6 +1398,7 @@ function getById(id) {
 
 module.exports = {
   MODEL_VERSION,
+  MAX_QUIZ_QUESTIONS,
   TEACHING_DIMENSIONS,
   buildLectureModel,
   buildTopicModel,
