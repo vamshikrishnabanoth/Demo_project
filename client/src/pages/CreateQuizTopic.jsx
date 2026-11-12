@@ -649,9 +649,9 @@ export default function CreateQuizTopic() {
         }
 
         // Client-side preflight check: direct upload limit
-        const MAX_DIRECT_UPLOAD_BYTES = 500 * 1024 * 1024; // 500 MB direct upload ceiling
+        const MAX_DIRECT_UPLOAD_BYTES = 200 * 1024 * 1024; // must match the server's UPLOAD_MAX_MB (default 200)
         if (file.size > MAX_DIRECT_UPLOAD_BYTES) {
-            const warningMsg = `Large audio file (${fileSizeMB} MB) exceeds the 500 MB direct upload limit. Please compress audio (e.g. 16 kHz mono) or use a file under 500 MB.`;
+            const warningMsg = `Large audio file (${fileSizeMB} MB) exceeds the 200 MB upload limit. Please compress the audio (e.g. MP3, 64 kbps mono) or upload a shorter recording.`;
             setInputs(prev => prev.map(item => item.id === id ? {
                 ...item,
                 status: 'error',

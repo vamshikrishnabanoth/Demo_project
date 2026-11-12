@@ -2048,7 +2048,16 @@ app.use((err, req, res, _next) => {
 
     // Multer file upload errors
     if (err.code === 'LIMIT_FILE_SIZE') {
-        return res.status(413).json({ msg: 'File too large. Maximum size is 500MB.' });
+        // Read (and discard) the rest of the upload before answering: behind nginx, an unread request body
+        // can leave the browser waiting forever instead of showing this error.
+        const maxMb = Math.max(10, parseInt(process.env.UPLOAD_MAX_MB, 10) || 200);
+        const reply = () => { if (!res.headersSent) res.status(413).set('Connection', 'close').json({ msg: `File too large. Maximum size is ${maxMb} MB. Please upload a shorter recording or compress it (e.g. MP3, 64 kbps mono).` }); };
+        if (req.readableEnded || req.complete) return reply();
+        req.on('end', reply);
+        req.on('error', reply);
+        req.resume();
+        setTimeout(reply, 30000).unref();
+        return undefined;
     }
     if (err.message && err.message.includes('Invalid file type')) {
         return res.status(400).json({ msg: err.message });
