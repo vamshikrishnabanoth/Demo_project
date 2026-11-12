@@ -108,6 +108,7 @@ function verifyFileMagicBytes(filePath, ext) {
     }
 }
 
+const UPLOAD_MAX_MB = Math.max(10, parseInt(process.env.UPLOAD_MAX_MB, 10) || 200);
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         // Ensure uploads directory exists
@@ -125,11 +126,12 @@ const storage = multer.diskStorage({
 });
 
 // File upload security: Strict types, size limits, and path traversal protection
-// Reconciled production ceiling: 50 MB maximum per upload (verified with reverse proxy and deployment specs)
+// Upload ceiling (UPLOAD_MAX_MB, default 200): long lecture recordings must fit; nginx on the server accepts >70 MB.
 const upload = multer({ 
     storage: storage,
     limits: {
-        fileSize: 50 * 1024 * 1024, // 50 MB production deployment ceiling
+        // A 75-minute phone recording is ~70 MB and a 2.5 h lecture ~150 MB; nginx on the server accepts these.
+        fileSize: UPLOAD_MAX_MB * 1024 * 1024,
         files: 10, // Maximum 10 files per request (for mixed RAG ingestion)
     },
     fileFilter: (req, file, cb) => {
