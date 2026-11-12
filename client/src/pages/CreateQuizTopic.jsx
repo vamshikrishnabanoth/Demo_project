@@ -2228,17 +2228,16 @@ export default function CreateQuizTopic() {
                                             const lvlKey = level.toLowerCase();
                                             const rawRec = recommendedByDifficulty ? recommendedByDifficulty[lvlKey] : null;
                                             const rawCap = capacityByDifficulty ? capacityByDifficulty[lvlKey] : null;
-                                            const baseRec = (recommendedQuestionCount && Number(recommendedQuestionCount) > 0) ? Number(recommendedQuestionCount) : 10;
                                             const isEvidenceLimited = false; // Always support all difficulties for academic lectures
-                                            const recVal = (rawRec !== null && rawRec !== undefined && Number(rawRec) > 0)
-                                                ? Number(rawRec)
-                                                : (rawCap !== null && rawCap !== undefined && Number(rawCap) > 0)
-                                                    ? Number(rawCap)
-                                                    : (level === 'Balanced'
-                                                        ? baseRec
-                                                        : (level === 'Hard'
-                                                            ? Math.max(1, Math.round(baseRec * 0.4))
-                                                            : Math.max(1, Math.round(baseRec * 0.85))));
+                                            // A count is shown only when it comes from an analysis of the teacher's input:
+                                            // the server's recommendation, never above what the kept topics can support.
+                                            // No input (or analysis still running) → no number at all, never a guess.
+                                            const num = (v) => (v !== null && v !== undefined && Number.isFinite(Number(v)) ? Number(v) : null);
+                                            const keptVal = keptCapacity ? num(keptCapacity[lvlKey]) : null;
+                                            const serverVal = num(rawRec) !== null && num(rawRec) > 0 ? num(rawRec) : num(rawCap);
+                                            const analysed = inputs.length > 0 && !depthLoading && (keptVal !== null || serverVal !== null);
+                                            const recVal = !analysed ? null
+                                                : (keptVal !== null ? (serverVal !== null ? Math.min(serverVal, keptVal) : keptVal) : serverVal);
                                             return (
                                                 <button
                                                     key={level}
