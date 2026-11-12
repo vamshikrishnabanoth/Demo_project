@@ -43,14 +43,14 @@ class PipelineOrchestrator {
    * the slot being replaced, preferably from a different teaching point. The reserve keeps its own
    * question angle and instructions (they were planned from the lecture), so nothing is rewritten.
    */
-  takeLectureModelReserve(pool, wantTier, excludeUnitId = null, replacedTarget = null) {
+  takeLectureModelReserve(pool, wantTier, excludeUnitId = null, replacedTarget = null, opts = {}) {
     // A slot that keeps failing at Hard (3 attempts) is filled at Medium rather than looping; fallbacks
     // always go to the adjacent difficulty first, never straight from Hard to Easy.
     const attempts = ((replacedTarget && replacedTarget.slotAttempts) || 0) + 1;
     const slotTier = (replacedTarget && replacedTarget.slotPlannedTier) || wantTier;
     let tier = wantTier;
     const hardSlotAttempts = Math.max(1, parseInt(process.env.HARD_SLOT_ATTEMPTS, 10) || 4);
-    if (tier === 'Hard' && attempts >= hardSlotAttempts) tier = 'Medium';
+    if (tier === 'Hard' && (attempts >= hardSlotAttempts || opts.hardBudgetSpent)) tier = 'Medium';
     // A Hard slot with no other Hard opportunity left retries the same opportunity with a fresh question
     // (fully re-checked; duplicates are still rejected) until its attempt limit.
     if (tier === 'Hard' && replacedTarget && !pool.some(r => r.allocatedTier === 'Hard')) {
@@ -694,6 +694,28 @@ class PipelineOrchestrator {
       const concurrencyLimit = Math.max(1, Math.min(5, parseInt(process.env.GENERATION_CONCURRENCY, 10) || defaultConcurrency));
       let activeWorkers = 0;
       const lmReserveHelper = this;
+      // Hard retries are bounded by time as well as attempts: once the budget is spent, remaining Hard
+      // slots move to Medium (when the teacher allowed filling) instead of looping on a slow provider.
+      const generationStartedAt = Date.now();
+      const HARD_TIME_BUDGET_MS = Math.max(30000, parseInt(process.env.HARD_TIME_BUDGET_MS, 10) || 150000);
+      const fillAllowed = sessionInputs.deficitPolicy === 'FILL_WITH_MEDIUM';
+      const hardBudgetSpent = () => fillAllowed && (Date.now() - generationStartedAt) > HARD_TIME_BUDGET_MS;
+      // Questions rejected ONLY for being "not hard enough" are otherwise valid; when the teacher allowed
+      // filling, they are kept here and used (honestly labelled Medium) before generating anything new.
+      const TIER_ONLY_CODES = new Set(['TIER_COGNITIVE_MISMATCH', 'DISTRACTOR_INSUFFICIENT_COGNITIVE_DEMAND']);
+      const tierSalvage = [];
+      const salvageTierOnly = (target, evalResult) => {
+        if (!fillAllowed || !evalResult || !evalResult.mcq) return false;
+        if ((target.slotPlannedTier || target.targetDifficulty) !== 'Hard') return false;
+        const codes = evalResult.failureReasons || [];
+        if (!codes.length || !codes.every(c => TIER_ONLY_CODES.has(c))) return false;
+        const mcq = evalResult.mcq;
+        mcq.metadata = { ...(mcq.metadata || {}), targetDifficulty: 'Medium', plannedDifficulty: 'Hard', difficultyRelabeled: true, salvagedFromHard: true };
+        mcq.difficulty = 'Medium';
+        mcq.targetId = target.targetId;
+        tierSalvage.push(mcq);
+        return true;
+      };
       const determineFeasibleReserveTier = (reserve, preferredTier) => this.determineFeasibleReserveTier(reserve, preferredTier, {
         agent1Planner,
         evidencePackage,
@@ -924,7 +946,7 @@ class PipelineOrchestrator {
           replenishReservePoolIfEmpty();
           if (passingQuestions.length < requestedCount && plan?.isLectureModelPlan && (activeReservePool.length > 0 || (currentTarget.slotPlannedTier || currentTarget.allocatedTier) === 'Hard')) {
             const wantTier = currentTarget.allocatedTier || currentTarget.plannedDifficulty || tier;
-            const nextReserve = lmReserveHelper.takeLectureModelReserve(activeReservePool, wantTier, currentTarget.lectureUnitId, currentTarget);
+            const nextReserve = lmReserveHelper.takeLectureModelReserve(activeReservePool, wantTier, currentTarget.lectureUnitId, currentTarget, { hardBudgetSpent: wantTier === 'Hard' && hardBudgetSpent() });
             if (nextReserve) {
               candidateQueue.push(nextReserve);
               console.log(`🔄 [Orchestrator] Promoted reserve target ${nextReserve.targetId} ("${nextReserve.concept}") at planned tier ${nextReserve.targetDifficulty} to replace unfulfilled ${wantTier} target ${currentTarget.targetId}`);
@@ -1200,6 +1222,8 @@ class PipelineOrchestrator {
           };
           rejectedTargets.push(rejectedRecord);
           targetResults.push(rejectedRecord);
+          const salvaged = salvageTierOnly(currentTarget, evalResult);
+          if (salvaged) console.log(`♻️ [Orchestrator] Kept ${currentTarget.targetId} as a Medium fallback (rejected only for Hard depth).`);
 
           await trace.recordStage({
             stageOrder: `04_T${currentTarget.targetId}_fail`,
@@ -1217,10 +1241,15 @@ class PipelineOrchestrator {
           replenishReservePoolIfEmpty();
           if (passingQuestions.length < requestedCount && plan?.isLectureModelPlan && (activeReservePool.length > 0 || (currentTarget.slotPlannedTier || currentTarget.allocatedTier) === 'Hard')) {
             const wantTier = currentTarget.allocatedTier || currentTarget.plannedDifficulty || currentTarget.targetDifficulty;
-            const nextReserve = lmReserveHelper.takeLectureModelReserve(activeReservePool, wantTier, currentTarget.lectureUnitId, currentTarget);
-            if (nextReserve) {
-              candidateQueue.push(nextReserve);
-              console.log(`🔄 [Orchestrator] Promoted reserve target ${nextReserve.targetId} ("${nextReserve.concept}") at planned tier ${nextReserve.targetDifficulty} to replace rejected ${wantTier} target ${currentTarget.targetId}`);
+            const budgetSpent = wantTier === 'Hard' && hardBudgetSpent();
+            if (budgetSpent && salvaged) {
+              console.log(`⏱️ [Orchestrator] Hard time budget spent; slot ${currentTarget.targetId} will use its Medium fallback.`);
+            } else {
+              const nextReserve = lmReserveHelper.takeLectureModelReserve(activeReservePool, wantTier, currentTarget.lectureUnitId, currentTarget, { hardBudgetSpent: budgetSpent });
+              if (nextReserve) {
+                candidateQueue.push(nextReserve);
+                console.log(`🔄 [Orchestrator] Promoted reserve target ${nextReserve.targetId} ("${nextReserve.concept}") at planned tier ${nextReserve.targetDifficulty} to replace rejected ${wantTier} target ${currentTarget.targetId}`);
+              }
             }
           } else if (passingQuestions.length < requestedCount && activeReservePool.length > 0) {
             // Determine tier to maintain balance while respecting evidence-supported concept depth:
@@ -1483,6 +1512,16 @@ class PipelineOrchestrator {
       }
       passingQuestions.length = 0;
       passingQuestions.push(...deduplicatedPassing);
+
+      // Fill a Hard shortfall from questions that passed every check except Hard depth (teacher chose
+      // "fill with nearest difficulty"); they are labelled Medium and still go through every later check.
+      for (const mcq of tierSalvage) {
+        if (passingQuestions.length >= requestedCount) break;
+        if (deterministicValidator.checkDuplicateQuestion(mcq, passingQuestions, mcq.metadata).isDuplicate) continue;
+        mcq.qOriginId = `${sessionId}_q${String(passingQuestions.length + 1).padStart(2, '0')}_${require('crypto').randomBytes(3).toString('hex')}`;
+        passingQuestions.push(mcq);
+        console.log(`♻️ [Orchestrator] Used Medium fallback from ${mcq.targetId} to fill a Hard shortfall.`);
+      }
 
       // ──────────────────────────────────────────────────────────────────────────
       // Stage 05: AGENT 3 — QUIZ-LEVEL EVALUATION

@@ -1,137 +1,123 @@
-import { useEffect } from 'react';
-import { X, CheckCircle2, Lightbulb, Quote, ShieldCheck, HelpCircle } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { X, CheckCircle2, ArrowRight, Quote, ChevronDown, ChevronUp, HelpCircle, Loader2 } from 'lucide-react';
 
 /**
- * TeachingScoreModal
- *
- * Explains the evidence-based teaching score from the shared lecture model:
- *  - overall score (average of the rubric dimensions that could be judged) and confidence,
- *  - each dimension: rating, what the evidence shows, quoted + timestamped evidence, one specific suggestion,
- *  - dimensions with too little evidence are shown as such (never filled in).
- * No hardcoded or fallback numbers: if the score is unavailable the modal says why.
+ * Teaching score, readable in ~10 seconds:
+ *   score + one-word verdict + confidence → 3 "keep doing" / 3 "try next" →
+ *   compact rubric rows (tap a row for its quoted, timestamped evidence and suggestion).
+ * Nothing is hardcoded: if the score is not available the window says why.
  */
 
-const RATING_WORD = { 1: 'Needs work', 2: 'Developing', 3: 'Good', 4: 'Excellent' };
+const WORD = { 1: 'Needs work', 2: 'Developing', 3: 'Good', 4: 'Excellent' };
+const verdict = (v) => (v >= 85 ? 'Excellent' : v >= 70 ? 'Good' : v >= 55 ? 'Developing' : 'Needs work');
+const colorFor = (v) => (v === null || v === undefined ? '#94a3b8' : v >= 80 ? '#16a34a' : v >= 60 ? '#d97706' : '#e11d48');
 
-function barColor(rating) {
-    if (!rating) return 'bg-slate-300';
-    if (rating >= 4) return 'bg-emerald-500';
-    if (rating === 3) return 'bg-lime-500';
-    if (rating === 2) return 'bg-amber-500';
-    return 'bg-rose-500';
+function Dots({ rating }) {
+    return (
+        <span className="flex gap-1" aria-label={rating ? `${rating} of 4` : 'not judged'}>
+            {[1, 2, 3, 4].map(i => (
+                <span key={i} className="w-2.5 h-2.5 rounded-full" style={{ background: rating && i <= rating ? colorFor(rating * 25) : '#e2e8f0' }} />
+            ))}
+        </span>
+    );
 }
 
 export default function TeachingScoreModal({ isOpen, onClose, teaching = null, model = null }) {
+    const [open, setOpen] = useState(null);
+    const [showHow, setShowHow] = useState(false);
     useEffect(() => {
         if (!isOpen) return undefined;
         const onKey = (e) => { if (e.key === 'Escape') onClose?.(); };
         window.addEventListener('keydown', onKey);
         return () => window.removeEventListener('keydown', onKey);
     }, [isOpen, onClose]);
-
     if (!isOpen) return null;
     const t = teaching || model?.teaching || null;
+    const score = t && t.available ? t.overall : null;
+    const ringC = 2 * Math.PI * 34;
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-slate-900/50 backdrop-blur-sm" onClick={onClose} role="dialog" aria-modal="true" aria-labelledby="teaching-score-title">
-            <div className="bg-white w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-3xl shadow-2xl" onClick={(e) => e.stopPropagation()}>
-                {/* Header */}
-                <div className="sticky top-0 bg-white/95 backdrop-blur border-b border-slate-100 px-5 py-4 flex items-start justify-between gap-3 z-10">
-                    <div>
-                        <h2 id="teaching-score-title" className="text-base font-black text-slate-900">Teaching score</h2>
-                        <p className="text-xs text-slate-600">{model?.title || 'This lecture'}{t?.level ? ` · ${t.level.charAt(0) + t.level.slice(1).toLowerCase()} level` : ''}</p>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-slate-900/50 backdrop-blur-sm" onClick={onClose} role="dialog" aria-modal="true" aria-labelledby="ts-title">
+            <div className="bg-white w-full max-w-xl max-h-[90vh] overflow-y-auto rounded-3xl shadow-2xl" onClick={(e) => e.stopPropagation()}>
+                <div className="flex items-start justify-between gap-3 px-5 pt-5">
+                    <div className="min-w-0">
+                        <h2 id="ts-title" className="text-base font-black text-slate-900">Teaching score</h2>
+                        <p className="text-xs text-slate-500 truncate">{model?.title || 'This lecture'}</p>
                     </div>
-                    <button type="button" onClick={onClose} className="p-2 rounded-xl hover:bg-slate-100 cursor-pointer" aria-label="Close">
-                        <X size={18} />
-                    </button>
+                    <button type="button" onClick={onClose} className="p-2 rounded-xl hover:bg-slate-100 cursor-pointer" aria-label="Close"><X size={18} /></button>
                 </div>
 
-                <div className="p-5 space-y-5">
-                    {!t || (!t.available && !(t.dimensions && t.dimensions.length)) ? (
-                        <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 text-sm text-slate-700 flex gap-2">
-                            <HelpCircle size={18} className="shrink-0 text-slate-500" />
-                            <span>{t?.reason || 'No teaching score is available for this input yet.'}</span>
-                        </div>
+                <div className="p-5 space-y-4">
+                    {!t || t.pending ? (
+                        <p className="text-sm text-slate-600 flex items-center gap-2">
+                            {t && t.pending ? <><Loader2 size={16} className="animate-spin" /> Preparing the teaching review…</> : <><HelpCircle size={16} /> No teaching score for this input.</>}
+                        </p>
                     ) : (
                         <>
-                            {/* Overall */}
+                            {/* Score + verdict */}
                             <div className="flex items-center gap-4">
-                                <div className={`w-20 h-20 rounded-2xl text-white flex flex-col items-center justify-center shrink-0 ${t.available ? (t.overall >= 80 ? 'bg-emerald-600' : t.overall >= 60 ? 'bg-amber-500' : 'bg-rose-500') : 'bg-slate-400'}`}>
-                                    <span className="text-3xl font-black leading-none">{t.available ? t.overall : '–'}</span>
-                                    <span className="text-[10px] font-bold opacity-80">/ 100</span>
-                                </div>
-                                <div className="text-xs text-slate-700 space-y-1">
-                                    {t.intent && <p><span className="font-bold text-slate-900">What this lecture set out to teach:</span> {t.intent}</p>}
-                                    <p className="flex items-center gap-1.5">
-                                        <ShieldCheck size={13} className="text-slate-500" />
-                                        <span><span className="font-bold capitalize">{String(t.confidence || '').toLowerCase()} confidence</span> — {t.confidenceReason}</span>
-                                    </p>
-                                    {!t.available && t.reason && <p className="text-amber-700 font-bold">{t.reason}</p>}
+                                <span className="relative w-20 h-20 shrink-0">
+                                    <svg viewBox="0 0 80 80" className="w-20 h-20 -rotate-90" aria-hidden="true">
+                                        <circle cx="40" cy="40" r="34" fill="none" stroke="#f1f5f9" strokeWidth="8" />
+                                        <circle cx="40" cy="40" r="34" fill="none" stroke={colorFor(score)} strokeWidth="8" strokeLinecap="round" strokeDasharray={`${score === null ? 0 : (score / 100) * ringC} ${ringC}`} />
+                                    </svg>
+                                    <span className="absolute inset-0 flex flex-col items-center justify-center">
+                                        <span className="text-2xl font-black text-slate-900 leading-none">{score ?? '–'}</span>
+                                        <span className="text-[9px] font-bold text-slate-400">/ 100</span>
+                                    </span>
+                                </span>
+                                <div className="min-w-0 space-y-1">
+                                    <p className="text-lg font-black" style={{ color: colorFor(score) }}>{score === null ? 'Not enough evidence' : verdict(score)}</p>
+                                    <span className="inline-block text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-slate-100 text-slate-600" title={t.confidenceReason}>
+                                        {String(t.confidence || 'low').toLowerCase()} confidence
+                                    </span>
+                                    {t.intent && <p className="text-xs text-slate-600 line-clamp-2">{t.intent}</p>}
                                 </div>
                             </div>
 
-                            {/* Strengths / improvements */}
+                            {/* Keep doing / Try next */}
                             <div className="grid sm:grid-cols-2 gap-3">
-                                <div className="p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200">
-                                    <p className="text-[11px] font-black uppercase tracking-wider text-emerald-800 flex items-center gap-1.5 mb-1.5"><CheckCircle2 size={13} /> Taught well</p>
-                                    <ul className="space-y-1.5 text-xs text-slate-800">
-                                        {(t.strengths || []).map((s, i) => <li key={i}>• {s}</li>)}
-                                        {(!t.strengths || t.strengths.length === 0) && <li className="text-slate-500">No specific strengths identified.</li>}
+                                <div className="rounded-2xl bg-emerald-50 border border-emerald-100 p-3">
+                                    <p className="text-[11px] font-black uppercase tracking-wider text-emerald-800 mb-1.5">Keep doing</p>
+                                    <ul className="space-y-1.5">
+                                        {(t.strengths || []).slice(0, 3).map((s, i) => <li key={i} className="text-xs text-slate-800 flex gap-1.5"><CheckCircle2 size={13} className="text-emerald-600 shrink-0 mt-0.5" /><span className="line-clamp-3">{s}</span></li>)}
                                     </ul>
                                 </div>
-                                <div className="p-3.5 rounded-2xl bg-amber-50 border border-amber-200">
-                                    <p className="text-[11px] font-black uppercase tracking-wider text-amber-800 flex items-center gap-1.5 mb-1.5"><Lightbulb size={13} /> Could improve</p>
-                                    <ul className="space-y-1.5 text-xs text-slate-800">
-                                        {(t.improvements || []).map((s, i) => <li key={i}>• {s}</li>)}
-                                        {(!t.improvements || t.improvements.length === 0) && <li className="text-slate-500">No specific improvements identified.</li>}
+                                <div className="rounded-2xl bg-amber-50 border border-amber-100 p-3">
+                                    <p className="text-[11px] font-black uppercase tracking-wider text-amber-800 mb-1.5">Try next class</p>
+                                    <ul className="space-y-1.5">
+                                        {(t.improvements || []).slice(0, 3).map((s, i) => <li key={i} className="text-xs text-slate-800 flex gap-1.5"><ArrowRight size={13} className="text-amber-600 shrink-0 mt-0.5" /><span className="line-clamp-3">{s}</span></li>)}
                                     </ul>
                                 </div>
                             </div>
 
-                            {/* Dimensions */}
-                            <div className="space-y-3">
-                                <p className="text-[11px] font-black uppercase tracking-wider text-slate-500">How the score was reached</p>
+                            {/* Rubric rows */}
+                            <div className="rounded-2xl border border-slate-200 divide-y divide-slate-100">
                                 {(t.dimensions || []).map((d) => (
-                                    <div key={d.key} className="p-3.5 rounded-2xl border border-slate-200 space-y-2">
-                                        <div className="flex items-center justify-between gap-2">
-                                            <div className="min-w-0">
-                                                <p className="text-sm font-black text-slate-900">{d.label}</p>
-                                                <p className="text-[11px] text-slate-500">{d.question}</p>
-                                            </div>
-                                            <span className="text-right shrink-0">
-                                                <span className="block text-sm font-black text-slate-900">{d.rating ? `${d.score}` : '—'}</span>
-                                                <span className="block text-[10px] font-bold text-slate-500">{d.rating ? RATING_WORD[d.rating] : 'Not enough evidence'}</span>
+                                    <div key={d.key}>
+                                        <button type="button" onClick={() => setOpen(open === d.key ? null : d.key)} className="w-full flex items-center justify-between gap-3 px-3 py-2.5 text-left cursor-pointer hover:bg-slate-50">
+                                            <span className="text-xs font-bold text-slate-800">{d.label}</span>
+                                            <span className="flex items-center gap-2 shrink-0">
+                                                <Dots rating={d.rating} />
+                                                <span className="text-[11px] font-bold text-slate-500 w-20 text-right">{d.rating ? WORD[d.rating] : 'Not judged'}</span>
+                                                {open === d.key ? <ChevronUp size={14} className="text-slate-400" /> : <ChevronDown size={14} className="text-slate-400" />}
                                             </span>
-                                        </div>
-                                        <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                                            <div className={`h-full rounded-full ${barColor(d.rating)}`} style={{ width: `${d.rating ? d.rating * 25 : 0}%` }} />
-                                        </div>
-                                        <p className="text-xs text-slate-700">{d.finding}</p>
-                                        {d.evidence && d.evidence.length > 0 && (
-                                            <ul className="space-y-1">
-                                                {d.evidence.slice(0, 3).map((e, i) => (
-                                                    <li key={i} className="text-[11px] text-slate-600 flex gap-1.5">
-                                                        <Quote size={11} className="shrink-0 mt-0.5 text-slate-400" />
-                                                        <span>
-                                                            {e.where && <span className="font-mono font-bold text-slate-700 mr-1">{e.where}</span>}
-                                                            “{e.quote}”
-                                                        </span>
-                                                    </li>
+                                        </button>
+                                        {open === d.key && (
+                                            <div className="px-3 pb-3 space-y-1.5">
+                                                <p className="text-xs text-slate-700">{d.finding}</p>
+                                                {(d.evidence || []).slice(0, 2).map((e, i) => (
+                                                    <p key={i} className="text-[11px] text-slate-500 flex gap-1.5"><Quote size={11} className="shrink-0 mt-0.5" /><span>{e.where && <span className="font-mono font-bold text-slate-600 mr-1">{e.where}</span>}“{e.quote}”</span></p>
                                                 ))}
-                                            </ul>
-                                        )}
-                                        {d.improvement && (
-                                            <p className="text-xs text-amber-900 bg-amber-50 border border-amber-100 rounded-xl px-2.5 py-1.5 flex gap-1.5">
-                                                <Lightbulb size={13} className="shrink-0 mt-0.5" /> {d.improvement}
-                                            </p>
+                                                {d.improvement && <p className="text-[11px] text-amber-900 bg-amber-50 rounded-lg px-2 py-1 flex gap-1.5"><ArrowRight size={11} className="shrink-0 mt-0.5" />{d.improvement}</p>}
+                                            </div>
                                         )}
                                     </div>
                                 ))}
                             </div>
 
-                            <p className="text-[11px] text-slate-500 leading-relaxed border-t border-slate-100 pt-3">
-                                {t.method} {t.caveat}
-                            </p>
+                            <button type="button" onClick={() => setShowHow(v => !v)} className="text-[11px] font-bold text-slate-500 underline cursor-pointer">How this score works</button>
+                            {showHow && <p className="text-[11px] text-slate-500 leading-relaxed">{t.method} {t.confidenceReason ? `Confidence: ${t.confidenceReason}.` : ''} {t.caveat}</p>}
                         </>
                     )}
                 </div>

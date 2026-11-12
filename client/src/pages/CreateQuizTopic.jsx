@@ -220,6 +220,27 @@ export default function CreateQuizTopic() {
     const [shortfallPrompt, setShortfallPrompt] = useState(null);
     const deficitChoiceRef = useRef(null);
     useEffect(() => { setExcludedTopics([]); deficitChoiceRef.current = null; }, [lectureModelData?.id]);
+    // The teaching score finishes a few seconds after the overview: poll until it is ready (max ~2 min).
+    useEffect(() => {
+        if (!lectureModelData?.id || !lectureModelData?.teaching?.pending) return undefined;
+        let cancelled = false;
+        let tries = 0;
+        const tick = async () => {
+            if (cancelled || tries++ > 40) return;
+            try {
+                const res = await api.get(`/quiz/teaching-score/${lectureModelData.id}`);
+                if (!cancelled && res.data && !res.data.pending && res.data.teaching) {
+                    setLectureModelData(prev => (prev && prev.id === lectureModelData.id
+                        ? { ...prev, teaching: res.data.teaching, level: res.data.level || prev.level, intent: res.data.intent || prev.intent }
+                        : prev));
+                    return;
+                }
+            } catch (_) { /* keep trying quietly */ }
+            if (!cancelled) setTimeout(tick, 3000);
+        };
+        const first = setTimeout(tick, 2500);
+        return () => { cancelled = true; clearTimeout(first); };
+    }, [lectureModelData?.id, lectureModelData?.teaching?.pending]);
     // A new count, difficulty or topic selection needs a fresh decision.
     useEffect(() => { deficitChoiceRef.current = null; }, [difficulty, excludedTopics]);
     const toggleTopic = useCallback((name) => {
