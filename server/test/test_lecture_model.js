@@ -107,6 +107,32 @@ test('Balanced plan follows capacity, not a fixed one-third split, and reports s
   assert.ok(big.shortfallReasons[0].includes('supports 5'));
 });
 
+test('Code questions exist at every difficulty: taught code also gets a one-step Easy code question', () => {
+  const a = sanitiseAngles({ kind: 'CODE', depth: 'DEMONSTRATED', subtopic: 'nested loop', angles: [{ type: 'recall', difficulty: 'easy', focus: 'r' }, { type: 'trace', difficulty: 'medium', focus: 't' }] });
+  assert.ok(a.some(x => x.difficulty === 'easy' && ['output', 'debug'].includes(x.type)));
+  assert.ok(!a.some(x => x.type === 'trace' && x.difficulty === 'easy'));
+});
+
+test('Code read aloud is recognised as code; ordinary explanation is not', () => {
+  const { spokenCodeHits } = lm._internal;
+  assert.ok(spokenCodeHits('for x equal to 0, x less than size, x plus plus. Inside this I declare int count equal to 0 and print f a of x') >= 2);
+  assert.strictEqual(spokenCodeHits('A frequency count array has one index for every possible value, so negative values need a mapping.'), 0);
+});
+
+test('Replacing a question keeps the difficulty, stays on the same point with a new type, and never repeats a used pair', () => {
+  const m = fakeModel();
+  m.units[0].angles.push({ type: 'scenario', difficulty: 'medium', focus: 'f' });
+  const p = lm.planRequest(m, 1, 'Medium', { replace: { unitId: 'U01', type: 'mechanism', difficulty: 'Medium', usedPairs: [{ unitId: 'U01', type: 'mechanism' }] } });
+  assert.strictEqual(p.selected.length, 1);
+  assert.strictEqual(p.selected[0].unit.id, 'U01');
+  assert.strictEqual(p.selected[0].angle.type, 'scenario');
+  assert.ok(p.reserves.length <= 2);
+  const p2 = lm.planRequest(m, 1, 'Medium', { replace: { unitId: 'U01', type: 'mechanism', difficulty: 'Medium',
+    usedPairs: [{ unitId: 'U01', type: 'mechanism' }, { unitId: 'U01', type: 'scenario' }] } });
+  assert.ok(p2.selected.every(s => !(s.unit.id === 'U01' && ['mechanism', 'scenario'].includes(s.angle.type))));
+  assert.ok(p2.selected.every(s => s.difficulty === 'medium' || s.difficulty === 'easy' || s.difficulty === 'hard'));
+});
+
 test('Single-difficulty plan only uses that difficulty', () => {
   const p = lm.planRequest(fakeModel(), 3, 'Hard');
   assert.strictEqual(p.deliverable, 1);
