@@ -47,6 +47,9 @@ jobs:
             echo "Checking git status..."
             git status
 
+            # Clean any ephemeral server changes (like package-lock modified by npm)
+            git checkout -- . 2>/dev/null || true
+
             echo "Pulling latest code from origin main..."
             git fetch origin main
             git checkout main
@@ -54,7 +57,7 @@ jobs:
 
             echo "Installing dependencies and running Prisma generate..."
             cd server
-            npm install --production=false
+            npm install --production=false --no-save
             npx prisma generate
 
             # Determine restart command with fallback
