@@ -27,7 +27,7 @@ const llmRouter = require('../adapter/llmRouter');
 const { safeParseJson } = require('../utils/jsonParser');
 const { classifyTextBlock } = require('../../utils/inputKind');
 
-const MODEL_VERSION = 'lecture-model-v1.8';
+const MODEL_VERSION = 'lecture-model-v1.9';
 // Largest quiz a teacher can request (one setting for server, planner and UI). Default 30: a daily-quiz size.
 const MAX_QUIZ_QUESTIONS = Math.max(1, parseInt(process.env.MAX_QUIZ_QUESTIONS, 10) || 30);
 const CACHE_DIR = path.join(__dirname, '..', '..', 'storage', 'lecture_model_cache');
@@ -191,7 +191,7 @@ function blocksFromSegments(segments, prefix = 'B') {
   return blocks.map((b, i) => ({ ...b, id: `${prefix}${String(i + 1).padStart(2, '0')}` }));
 }
 
-const TERMINAL_PROMPT = /^\s*(?:\$|#|>|PS [A-Za-z]:\\[^>]*>|[A-Za-z]:\\[^>]*>|[\w.-]+@[\w.-]+:[^$#]*[$#]|mysql>|postgres=#|sqlite>)\s*\S/;
+const TERMINAL_PROMPT = /^\s*(?:\$|#|>>>|>|PS [A-Za-z]:\\[^>]*>|[A-Za-z]:\\[^>]*>|[\w.-]+@[\w.-]+:[^$#]*[$#]|mysql>|MariaDB \[[^\]]*\]>|SQL>|[\w-]+=[#>]|sqlite>|In \[\d+\]:)\s*\S/;
 
 /** Terminal sessions: one block per 1-2 commands (with their output), so each command can be its own teaching point. */
 function blocksFromTerminal(raw, source, prefix, label) {
@@ -370,7 +370,14 @@ async function callGeminiDirect({ systemPrompt, prompt, maxTokens, model }) {
 }
 
 async function callJson({ systemPrompt, prompt, maxTokens = 8192, operation }) {
-  const geminiModels = (process.env.LECTURE_MODEL_GEMINI || 'gemini-3.5-flash,gemini-3.6-flash,gemini-3.5-flash-lite,gemini-3.1-flash-lite').split(',').map(s => s.trim()).filter(Boolean);
+  // Free-tier quota is per model, so work is split: the steps where a weak model causes real errors
+  // (Hard questions, the independent answer check, the teaching score) get the strongest model first;
+  // lecture reading starts on other models, leaving the strongest model's daily quota for those steps.
+  const CRITICAL_OPS = new Set(['HARD_BATCH_GENERATION', 'BLIND_ANSWER_CHECK', 'TEACHING_SCORE']);
+  const defaultList = CRITICAL_OPS.has(operation)
+    ? (process.env.GEMINI_CRITICAL_MODELS || 'gemini-3.5-flash,gemini-3.6-flash,gemini-3.5-flash-lite,gemini-3.1-flash-lite')
+    : (process.env.LECTURE_MODEL_GEMINI || 'gemini-3.6-flash,gemini-3.5-flash-lite,gemini-3.5-flash,gemini-3.1-flash-lite');
+  const geminiModels = defaultList.split(',').map(s => s.trim()).filter(Boolean);
   let lastErr = null;
   if (process.env.GEMINI_API_KEY && process.env.DISABLE_GEMINI !== 'true') {
     // Two rounds over the model list: a model that is only rate-limited (429) gets a second chance
@@ -1259,17 +1266,29 @@ function planRequest(fullModel, requestedCount, difficulty = 'Balanced', options
       const k = alloc[topic] || 0;
       // Diversity first: skip a point that was already assessed (same unit, or the same command/idea
       // taught twice, e.g. explained and later demonstrated) while other points are still available.
+      // Variety second: among eligible opportunities, take the question type used least so far in the
+      // quiz (so a quiz is not mostly recall/concept when the lecture also supports traces, outputs,
+      // scenarios, comparisons...). Ties keep the original lecture order.
       const chosen = [];
-      const rest = [];
-      for (const p of pool) {
-        if (chosen.length < k && !selected.some(s => sameTeachingPoint(s.unit, p.unit))) {
-          chosen.push(p); selected.push({ ...p, difficulty: d });
-        } else rest.push(p);
+      const remaining = pool.slice();
+      const typeCount = t => selected.filter(s => s.angle.type === t).length;
+      const pickBest = (allowRepeatPoint) => {
+        let bestIdx = -1, bestScore = Infinity;
+        remaining.forEach((p, i) => {
+          if (!allowRepeatPoint && selected.some(s => sameTeachingPoint(s.unit, p.unit))) return;
+          const score = typeCount(p.angle.type) * 100 + p.rank * 10 + i * 0.01;
+          if (score < bestScore) { bestScore = score; bestIdx = i; }
+        });
+        return bestIdx;
+      };
+      while (chosen.length < k) {
+        let idx = pickBest(false);
+        if (idx === -1) idx = pickBest(true);
+        if (idx === -1) break;
+        const [p] = remaining.splice(idx, 1);
+        chosen.push(p); selected.push({ ...p, difficulty: d });
       }
-      while (chosen.length < k && rest.length) {
-        const p = rest.shift(); chosen.push(p); selected.push({ ...p, difficulty: d });
-      }
-      rest.forEach(p => reserves.push({ ...p, difficulty: d }));
+      remaining.forEach(p => reserves.push({ ...p, difficulty: d }));
       if (k) byTopic[topic] = (byTopic[topic] || 0) + k;
     }
   }

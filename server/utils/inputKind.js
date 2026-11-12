@@ -10,7 +10,9 @@
 
 const TOPIC_MAX_WORDS = 25;
 
-const TERMINAL_LINE = /^\s*(?:\$|#|>|PS [A-Za-z]:\\[^>]*>|[A-Za-z]:\\[^>]*>|[\w.-]+@[\w.-]+:[^$#]*[$#])\s*\S/;
+// Shell prompts (bash, PowerShell, Windows cmd) and database / language consoles teachers paste from
+// (mysql>, MariaDB [db]>, Oracle SQL>, psql db=#, sqlite>, Python >>>, Jupyter In [n]:).
+const TERMINAL_LINE = /^\s*(?:\$|#|>>>|>|PS [A-Za-z]:\\[^>]*>|[A-Za-z]:\\[^>]*>|[\w.-]+@[\w.-]+:[^$#]*[$#]|mysql>|MariaDB \[[^\]]*\]>|SQL>|[\w-]+=[#>]|sqlite>|In \[\d+\]:)\s*\S/;
 const CODE_LINE = /[;{}]\s*$|^\s*(?:def|class|public|private|protected|static|int|void|char|float|double|bool|boolean|String|return|import|from|#include|function|const|let|var|if|else|for|while|switch|case|try|catch|print|printf|System\.out)\b|^\s*(?:SELECT|INSERT|UPDATE|DELETE|CREATE|ALTER|DROP|WITH)\b|=>|->|\)\s*\{/i;
 
 /** True when the text is a short topic name rather than material to assess. */
