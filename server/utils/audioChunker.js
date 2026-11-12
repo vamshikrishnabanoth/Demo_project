@@ -420,7 +420,35 @@ async function segmentAudioUniversal(inputPath, options = {}) {
     };
 
     let sliceSucceeded = false;
-    try {
+    let outExt = null;
+    // Fast path: cut without re-encoding (seconds instead of ~40 s for a 2 h lecture). Whisper accepts
+    // these containers directly; a chunk above Groq's 25 MB upload limit falls back to the re-encode below.
+    const COPY_EXT = { '.mp3': '.mp3', '.m4a': '.m4a', '.aac': '.m4a', '.mp4': '.m4a', '.ogg': '.ogg', '.opus': '.ogg', '.webm': '.webm' };
+    const inExt = path.extname(inputPath).toLowerCase();
+    if (COPY_EXT[inExt] && process.env.AUDIO_FAST_SEGMENT !== 'false') {
+        const copyPattern = path.join(outputDir, `${baseName}_%03d${COPY_EXT[inExt]}`);
+        try {
+            await runFfmpeg([
+                "-y", "-i", inputPath, "-vn", "-map", "0:a:0",
+                "-c:a", "copy",
+                "-f", "segment", "-segment_time", String(segmentSeconds),
+                "-reset_timestamps", "1", copyPattern
+            ], 120000);
+            const made = fs.readdirSync(outputDir).filter(f => f.startsWith(baseName));
+            const tooBig = made.some(f => fs.statSync(path.join(outputDir, f)).size > 24 * 1024 * 1024);
+            if (made.length > 0 && !tooBig) {
+                sliceSucceeded = true;
+                outExt = COPY_EXT[inExt];
+                console.log(`⚡ [UniversalAudioChunker] Cut ${made.length} chunks without re-encoding in ${((Date.now() - startTime) / 1000).toFixed(1)}s.`);
+            } else {
+                made.forEach(f => { try { fs.unlinkSync(path.join(outputDir, f)); } catch (_) {} });
+            }
+        } catch (copyErr) {
+            console.warn(`⚠️ [UniversalAudioChunker] Copy-cut failed (${copyErr.message.slice(0, 120)}); re-encoding instead.`);
+            fs.readdirSync(outputDir).filter(f => f.startsWith(baseName)).forEach(f => { try { fs.unlinkSync(path.join(outputDir, f)); } catch (_) {} });
+        }
+    }
+    if (!sliceSucceeded) try {
         await runFfmpeg([
             "-y", "-i", inputPath,
             "-vn", "-ar", "16000", "-ac", "1",
@@ -447,7 +475,7 @@ async function segmentAudioUniversal(inputPath, options = {}) {
     }
 
     const files = fs.readdirSync(outputDir)
-        .filter(f => f.startsWith(baseName) && (f.endsWith(".m4a") || f.endsWith(".mp3")))
+        .filter(f => f.startsWith(baseName) && (f.endsWith(".m4a") || f.endsWith(".mp3") || (outExt && f.endsWith(outExt))))
         .sort();
 
     if (!sliceSucceeded || files.length === 0) {
