@@ -268,9 +268,19 @@ const normalizeVoiceUploads = (req, res, next) => {
 
 // @route   GET api/quiz/health
 // @desc    Deployment health & version telemetry
+// Deployed commit, so anyone can confirm which code the live server runs (GET /api/quiz/health).
+let DEPLOYED_COMMIT = process.env.GIT_COMMIT || null;
+if (!DEPLOYED_COMMIT) {
+    try {
+        DEPLOYED_COMMIT = require('child_process').execSync('git rev-parse --short HEAD', { cwd: __dirname, stdio: ['ignore', 'pipe', 'ignore'] }).toString().trim();
+    } catch (_) { DEPLOYED_COMMIT = 'unknown'; }
+}
+
 router.get('/health', (req, res) => {
     res.json({
         status: 'OK',
+        commit: DEPLOYED_COMMIT,
+        lectureModel: require('../engine/intelligence/lectureModel').MODEL_VERSION,
         version: 'v2.2-key-pool-fast',
         timestamp: new Date().toISOString(),
         watchdogFloorSec: 360,
