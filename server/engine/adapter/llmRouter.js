@@ -604,7 +604,9 @@ class LLMRouter {
 
                 if (isTPD) {
                   // Prefer actual quota-reset information over assumed fixed duration
-                  const tpdDurationMs = parsedWaitMs ? Math.min(Math.max(parsedWaitMs, 3000), 30000) : 15000;
+                  // A spent daily quota does not come back in 30 s: honour Groq's own reset time (up to an hour)
+                  // so every later call stops paying a round-trip to a route that will refuse it.
+                  const tpdDurationMs = parsedWaitMs ? Math.min(Math.max(parsedWaitMs, 3000), 60 * 60000) : 10 * 60000;
                   this.tpdExhaustedRoutes.set(`${keyIdx}_${currentModel}`, Date.now() + tpdDurationMs);
                   this.modelCooldowns.set(`${keyIdx}_${currentModel}`, Date.now() + tpdDurationMs);
                   console.warn(`⚡ [LLMRouter] Groq Key-${keyIdx + 1} model '${currentModel}' daily token quota exhausted (TPD). Route marked unavailable for ${Math.round(tpdDurationMs / 1000)}s.`);
