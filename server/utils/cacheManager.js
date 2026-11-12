@@ -200,7 +200,7 @@ class CacheManager {
     // Payload Size Cap Verification
     const byteSize = this.getByteSize(data);
     let maxAllowedBytes = config.MAX_CACHE_QUIZ_BYTES;
-    if (category === 'asset' || category === 'transcript') maxAllowedBytes = config.MAX_CACHE_TRANSCRIPT_BYTES;
+    if (category === 'asset' || category === 'transcript' || category === 'transcription') maxAllowedBytes = config.MAX_CACHE_TRANSCRIPT_BYTES;
     else if (category === 'analysis' || category === 'concept') maxAllowedBytes = config.MAX_CACHE_CONCEPT_BYTES;
 
     if (byteSize > maxAllowedBytes) {
