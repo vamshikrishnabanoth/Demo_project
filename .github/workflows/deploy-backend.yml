@@ -1,0 +1,73 @@
+name: Deploy backend to EC2
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'server/**'
+      - 'package.json'
+      - '.github/workflows/deploy-backend.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-backend
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Pull latest code & restart PM2
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to EC2 via SSH
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script_stop: true
+          script: |
+            set -e
+            echo "=== Deploying latest backend to EC2 ==="
+            cd "${{ vars.EC2_APP_DIR }}"
+            
+            # Check for uncommitted changes
+            if [ -n "$(git status --porcelain)" ]; then
+              echo "Error: Uncommitted changes detected on server. Aborting deployment."
+              git status
+              exit 1
+            fi
+
+            echo "Pulling latest code from origin main..."
+            git fetch origin main
+            git checkout main
+            git pull origin main
+
+            echo "Installing packages and generating Prisma client..."
+            cd server
+            npm install --production=false
+            npx prisma generate
+
+            echo "Executing restart command: ${{ vars.RESTART_CMD }}"
+            ${{ vars.RESTART_CMD }}
+            echo "Backend successfully restarted."
+
+      - name: Verify Backend Health
+        run: |
+          echo "Waiting for backend service to stabilize..."
+          sleep 5
+          HEALTH_URL="${{ vars.HEALTH_URL }}"
+          echo "Pinging health endpoint: $HEALTH_URL"
+          
+          for i in {1..12}; do
+            RESPONSE=$(curl -sk "$HEALTH_URL" || true)
+            echo "Attempt $i: $RESPONSE"
+            if echo "$RESPONSE" | grep -q '"status":"OK"'; then
+              echo "✅ Health check passed: Backend is live and healthy!"
+              exit 0
+            fi
+            sleep 5
+          done
+          
+          echo "❌ Health check failed after 60 seconds."
+          exit 1
