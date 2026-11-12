@@ -142,11 +142,16 @@ test('A rejected Medium/Hard slot is refilled with a reserve of the same planned
   assert.strictEqual(orch.lectureModelTierNeeded(plan, delivered), 'Medium');
   // After 3 failed attempts a Hard slot is filled at Medium, never jumping to Easy first.
   const pool2 = [{ targetId: 'R10', allocatedTier: 'Easy' }, { targetId: 'R11', allocatedTier: 'Medium' }, { targetId: 'R12', allocatedTier: 'Hard' }];
-  const r = orch.takeLectureModelReserve(pool2, 'Hard', null, { slotAttempts: 2, slotPlannedTier: 'Hard' });
+  const r = orch.takeLectureModelReserve(pool2, 'Hard', null, { slotAttempts: 3, slotPlannedTier: 'Hard' });
   assert.strictEqual(r.targetId, 'R11');
   assert.strictEqual(r.slotPlannedTier, 'Hard');
   const pool3 = [{ targetId: 'R20', allocatedTier: 'Easy' }, { targetId: 'R21', allocatedTier: 'Medium' }];
   assert.strictEqual(orch.takeLectureModelReserve(pool3, 'Hard', null, null).targetId, 'R21');
+  // No Hard opportunity left: the same Hard opportunity is retried with a fresh question until the limit.
+  const retry = orch.takeLectureModelReserve([], 'Hard', 'U05', { targetId: 'T03', allocatedTier: 'Hard', slotAttempts: 1, slotPlannedTier: 'Hard' });
+  assert.strictEqual(retry.targetDifficulty, 'Hard');
+  assert.strictEqual(retry.targetId, 'T03~2');
+  assert.strictEqual(orch.takeLectureModelReserve([], 'Medium', null, { targetId: 'T04' }), null);
 });
 
 async function asyncTests() {

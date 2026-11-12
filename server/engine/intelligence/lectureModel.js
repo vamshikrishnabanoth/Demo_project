@@ -27,7 +27,7 @@ const llmRouter = require('../adapter/llmRouter');
 const { safeParseJson } = require('../utils/jsonParser');
 const { classifyTextBlock } = require('../../utils/inputKind');
 
-const MODEL_VERSION = 'lecture-model-v1.9';
+const MODEL_VERSION = 'lecture-model-v2.0';
 // Largest quiz a teacher can request (one setting for server, planner and UI). Default 30: a daily-quiz size.
 const MAX_QUIZ_QUESTIONS = Math.max(1, parseInt(process.env.MAX_QUIZ_QUESTIONS, 10) || 30);
 const CACHE_DIR = path.join(__dirname, '..', '..', 'storage', 'lecture_model_cache');
@@ -369,7 +369,7 @@ async function callGeminiDirect({ systemPrompt, prompt, maxTokens, model }) {
   return result.response.text();
 }
 
-async function callJson({ systemPrompt, prompt, maxTokens = 8192, operation }) {
+async function callJson({ systemPrompt, prompt, maxTokens = 8192, operation, models = null, noGroqFallback = false }) {
   // Free-tier quota is per model, so work is split: the steps where a weak model causes real errors
   // (Hard questions, the independent answer check, the teaching score) get the strongest model first;
   // lecture reading starts on other models, leaving the strongest model's daily quota for those steps.
@@ -377,7 +377,7 @@ async function callJson({ systemPrompt, prompt, maxTokens = 8192, operation }) {
   const defaultList = CRITICAL_OPS.has(operation)
     ? (process.env.GEMINI_CRITICAL_MODELS || 'gemini-3.5-flash,gemini-3.6-flash,gemini-3.5-flash-lite,gemini-3.1-flash-lite')
     : (process.env.LECTURE_MODEL_GEMINI || 'gemini-3.6-flash,gemini-3.5-flash-lite,gemini-3.5-flash,gemini-3.1-flash-lite');
-  const geminiModels = defaultList.split(',').map(s => s.trim()).filter(Boolean);
+  const geminiModels = Array.isArray(models) && models.length ? models : defaultList.split(',').map(s => s.trim()).filter(Boolean);
   let lastErr = null;
   if (process.env.GEMINI_API_KEY && process.env.DISABLE_GEMINI !== 'true') {
     // Two rounds over the model list: a model that is only rate-limited (429) gets a second chance
@@ -408,6 +408,9 @@ async function callJson({ systemPrompt, prompt, maxTokens = 8192, operation }) {
         }
       }
     }
+  }
+  if (noGroqFallback) {
+    throw new Error(`Lecture model call failed (${operation}): ${lastErr ? lastErr.message : 'no Gemini model available'}`);
   }
   try {
     const raw = await llmRouter.complete({
@@ -876,7 +879,9 @@ function sanitiseAngles(u) {
     if (u.depth === 'MENTIONED' && (diff !== 'easy' || out.length >= 1)) continue;
     if (diff === 'hard' && u.depth === 'MENTIONED') continue;
     // Pure recall can never be Hard; tracing/predicting output is at least Medium.
-    if (type === 'recall' && diff === 'hard') diff = 'medium';
+    // Hard only where the work is genuinely multi-step: tracing, calculating, predicting output, debugging,
+    // edge cases, or applying ideas together in a scenario. Recall/concept/mechanism/comparison are at most Medium.
+    if (diff === 'hard' && ['recall', 'concept', 'mechanism', 'comparison'].includes(type)) diff = 'medium';
     if (['trace', 'output', 'calculation', 'debug'].includes(type) && diff === 'easy') diff = 'medium';
     if (seenTypes.has(type)) continue;
     seenTypes.add(type);

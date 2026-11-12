@@ -1740,8 +1740,8 @@ ${target.distractorMisconceptions.map(m => `- ${m.concept}: ${m.description}`).j
 
     // Hard = at least two dependent reasoning steps on concrete material written into the stem.
     const HARD_RECIPE = {
-      calculation: 'put all the numbers/vectors/matrices in the stem and ask for a result that needs at least two dependent computations using the taught method (e.g. compute Need, then decide which process can run first; compute an address, then the page/frame it falls in). One subtraction or lookup is NOT Hard.',
-      trace: 'give an initial state and a sequence of at least three operations/steps in the stem, and ask for the final state or the step at which something specific happens. Distractors are the states after a skipped, reordered or off-by-one step.',
+      calculation: 'put all the numbers/vectors/matrices in the stem and ask for a DECISION or INTERPRETATION that depends on at least two dependent computations with the taught method (e.g. compute the test statistic, compare it with the critical value and decide whether to reject H0; compute every Need vector, then decide the first process that can safely run; compute an address, then decide which page/frame is hit). Options are decisions/conclusions with their supporting value, and distractors come from a wrong intermediate step or a wrong comparison. Plugging numbers into one formula is NOT Hard. Put any table value the student needs (critical value, constant, conversion) in the stem.',
+      trace: 'give an initial state and a sequence of at least three operations/steps in the stem, and ask for the final state, the step at which something specific happens, or a decision that depends on that state (e.g. "is the system safe after step 3?"). Distractors are the states after a skipped, reordered or off-by-one step.',
       output: 'give a short code fragment or command sequence (inside the stem) whose result depends on at least two interacting lines or a non-obvious rule taught in class; ask what it prints/does.',
       debug: 'give a short fragment or command sequence with one subtle mistake whose effect only shows after following two or more steps; ask what goes wrong or why.',
       edge_case: 'give a concrete boundary situation (exact values or state) where the student must apply two taught rules together to decide what happens; not a definition of the boundary.',
@@ -1816,6 +1816,27 @@ Output ONLY a JSON array (no markdown fences, no commentary) of objects with thi
   "questionArchetype": "${isCodeOrCli ? 'CODE_EXECUTION' : 'CONCEPTUAL_CONTRAST'}"
 }`;
 
+    // Hard targets (batched on their own) get a dedicated prompt: the daily-quiz prompt above pushes models
+    // towards short one-step stems, which is why "Hard" requests produced formula-recognition or lookup questions.
+    const allHardBatch = validTargets.length > 0 && validTargets.every(t => t.targetDifficulty === 'Hard');
+    const HARD_SYSTEM_PROMPT = `You are a senior university examiner writing HARD multiple-choice questions from a teacher's own material.
+Write exactly ${validTargets.length} questions, one per target, as a JSON array.
+
+A Hard question makes the student carry out AT LEAST TWO DEPENDENT reasoning steps on concrete material that is written in the question (values, a table, a small dataset, code, commands or a situation), ending in a result or decision that cannot be reached without every step. Only the method taught in the evidence may be needed.
+
+For EACH target, in this order:
+1. "solutionSteps": design the problem first — 2 to 5 steps, each using the result of the previous one (e.g. "compute SE = ...", "z = ...", "compare with 1.96 → reject H0"). Do every calculation exactly.
+2. Decide the correct final answer from those steps.
+3. Write "questionText" containing EVERY value, table value (critical values, constants), code line or state the student needs, with the data on separate lines; the prose sentence itself stays under 40 words.
+4. Options are final results/decisions in parallel form. Each distractor is the result of ONE specific wrong step (skipped step, wrong formula variant, wrong comparison, off-by-one) — name it in "distractorRationale".
+
+NEVER write: "which formula is correct", "what is the definition", a single lookup (e.g. degrees of freedom alone), one substitution into one formula, or anything answerable without doing the steps. Length or difficult vocabulary is not difficulty.
+Exactly one option is correct; "correctAnswer" is copied character-for-character from "options" and "correctAnswerIndex" points to it.
+
+Output ONLY a JSON array of objects:
+{"targetId":"…","solutionSteps":["step 1","step 2"],"answerReasoning":"…","questionText":"…","options":["…","…","…","…"],"correctAnswerIndex":0,"correctAnswer":"…","distractorRationale":["…","…","…"],"explanation":"…","questionArchetype":"MULTI_STEP_REASONING"}`;
+    const effectiveSystemPrompt = allHardBatch ? HARD_SYSTEM_PROMPT : systemPrompt;
+
     const userPrompt = `[BATCH GENERATION REQUEST - ${validTargets.length} TARGETS]
 
 ${targetsBlock}
@@ -1832,13 +1853,37 @@ Generate a JSON array of exactly ${validTargets.length} distinct, rigorous MCQs 
       const hasHard = validTargets.some(t => t.targetDifficulty === 'Hard');
       if (hasHard && process.env.HARD_GENERATION_PROVIDER !== 'groq' && process.env.GEMINI_API_KEY) {
         try {
+          // Strong Gemini models only — the light models write single-step "Hard" questions and wrong keys.
           const r = await require('../intelligence/lectureModel')._internal.callJson({
-            systemPrompt, prompt: userPrompt, maxTokens: Math.max(maxTokens, 6000), operation: 'HARD_BATCH_GENERATION'
+            systemPrompt: effectiveSystemPrompt, prompt: userPrompt, maxTokens: Math.max(maxTokens, 6000), operation: 'HARD_BATCH_GENERATION',
+            models: (process.env.HARD_GEMINI_MODELS || 'gemini-3.5-flash,gemini-3.6-flash').split(',').map(x => x.trim()).filter(Boolean),
+            noGroqFallback: true
           });
           responseText = JSON.stringify(r.data);
           console.log(`🧠 [Agent 2 Batch] Batch with Hard targets generated by ${r.provider}:${r.model}.`);
         } catch (strongErr) {
-          console.warn(`⚠️ [Agent 2 Batch] Strong-model batch failed (${strongErr.message.slice(0, 120)}); using default model.`);
+          console.warn(`⚠️ [Agent 2 Batch] Strong Gemini unavailable for Hard batch (${strongErr.message.slice(0, 120)}); using gpt-oss-120b with full reasoning.`);
+        }
+      }
+      // Without strong Gemini quota, Hard questions are written by Groq's reasoning model with full reasoning
+      // effort (it works the multi-step problem out before writing the question), never by a light model.
+      if (!responseText && hasHard && process.env.GROQ_API_KEY) {
+        try {
+          responseText = await llmRouter.complete({
+            prompt: userPrompt,
+            systemPrompt: effectiveSystemPrompt,
+            temperature: 0.2,
+            model: 'openai/gpt-oss-120b',
+            groqModels: ['openai/gpt-oss-120b'],
+            reasoningEffort: process.env.HARD_REASONING_EFFORT || 'high',
+            sessionId: evidencePackage?.sessionId,
+            maxTokens: Math.min(6500, Math.max(3500, validTargets.length * 2200)),
+            operation: 'HARD_BATCH_GENERATION',
+            signal: evidencePackage?.abortSignal || options?.abortSignal
+          });
+          console.log(`🧠 [Agent 2 Batch] Batch with Hard targets generated by groq:openai/gpt-oss-120b (reasoning ${process.env.HARD_REASONING_EFFORT || 'high'}).`);
+        } catch (reasonErr) {
+          console.warn(`⚠️ [Agent 2 Batch] Reasoning model unavailable for Hard batch (${reasonErr.message.slice(0, 120)}).`);
         }
       }
       if (!responseText) responseText = await llmRouter.complete({
@@ -1921,6 +1966,12 @@ Generate a JSON array of exactly ${validTargets.length} distinct, rigorous MCQs 
       const target = validTargets[i];
       const tid = String(target.targetId).trim().toUpperCase();
       let rawMCQ = returnedMap.get(tid) || parsedArray[i];
+      // Hard gate: a "Hard" candidate whose own solution has fewer than two dependent steps is not Hard —
+      // drop it here (its slot is retried) instead of spending a review call on it.
+      if (allHardBatch && rawMCQ && (!Array.isArray(rawMCQ.solutionSteps) || rawMCQ.solutionSteps.filter(s => String(s || '').trim().length > 3).length < 2)) {
+        console.warn(`⚠️ [Agent 2 Batch] Hard candidate for ${target.targetId} has fewer than 2 solution steps; discarded.`);
+        rawMCQ = null;
+      }
 
       if (!rawMCQ || !rawMCQ.questionText || !Array.isArray(rawMCQ.options) || rawMCQ.options.length < 4) {
         console.warn(`⚠️ [Agent 2 Batch] Target ${target.targetId} missing or invalid in batch. Generating single targeted item...`);

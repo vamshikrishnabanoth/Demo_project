@@ -466,7 +466,7 @@ export default function CreateQuizTopic() {
                         documents: materialDocs,
                         hasTimingData: voiceSegs.length > 0 && voiceSegs.some(s => s.start !== null && s.start !== undefined),
                         forceRefresh: depthRetryCount > 0
-                    }, { timeout: 180000 });
+                    }, { timeout: 300000 });
                     if (res.data && res.data.isAcademic) {
                         const analysisPayload = {
                             signature: currentSignature,
@@ -2266,12 +2266,23 @@ export default function CreateQuizTopic() {
                                     <div className="p-3 rounded-xl bg-orange-50/70 border border-orange-200/70 text-[11px] font-medium text-slate-700 flex items-start gap-2">
                                         <Info size={14} className="text-[#ea580c] shrink-0 mt-0.5" />
                                         <p className="leading-snug">
-                                            {difficulty === 'Easy' && `Easy Focus (${recEasyVal} Qs recommended) · Formulates questions strictly on the terms and core definitions you introduced in class.`}
-                                            {difficulty === 'Medium' && `Medium Focus (${recMedVal} Qs recommended) · Formulates questions on operational mechanisms, execution workflows, and practical examples explained in class.`}
-                                            {difficulty === 'Hard' && (recHardVal > 0
-                                                ? `Hard Focus (${recHardVal} Qs recommended) · Formulates questions on architectural tradeoffs, causal dynamics, and comparative synthesis from your lecture.`
-                                                : `Hard Focus (0 Qs recommended) · Your material focused on foundational definitions without causal tradeoffs. Hard is evidence-limited to prevent AI hallucination.`)}
-                                            {difficulty === 'Balanced' && `Balanced Focus (${recBalancedVal} Qs recommended) · Blends foundational terms (${recEasyVal} Easy), mechanisms (${recMedVal} Medium), and tradeoffs (${recHardVal} Hard) across your entire syllabus.`}
+                                            {keptCapacity ? (
+                                                <>
+                                                    {difficulty === 'Easy' && `Easy: up to ${keptCapacity.easy} questions that check a definition, command or fact you taught.`}
+                                                    {difficulty === 'Medium' && `Medium: up to ${keptCapacity.medium} questions that apply, trace, compare or explain something you taught.`}
+                                                    {difficulty === 'Hard' && (keptCapacity.hard > 0
+                                                        ? `Hard: up to ${keptCapacity.hard} questions that need several steps of reasoning on what you taught (traces, calculations, edge cases, scenarios).`
+                                                        : 'Hard: your input has no material for genuinely multi-step questions, so none are offered.')}
+                                                    {difficulty === 'Balanced' && `Balanced: a mix in proportion to what you taught — up to ${keptCapacity.easy} easy, ${keptCapacity.medium} medium and ${keptCapacity.hard} hard.`}
+                                                </>
+                                            ) : (
+                                                <>
+                                                    {difficulty === 'Easy' && 'Easy: questions that check definitions, commands and facts.'}
+                                                    {difficulty === 'Medium' && 'Medium: questions that apply, trace, compare or explain.'}
+                                                    {difficulty === 'Hard' && 'Hard: questions that need several steps of reasoning.'}
+                                                    {difficulty === 'Balanced' && 'Balanced: a mix of easy, medium and hard.'}
+                                                </>
+                                            )}
                                         </p>
                                     </div>
                                 </div>

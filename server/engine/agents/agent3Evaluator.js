@@ -77,9 +77,10 @@ function isGenuineMultiStepHard(candidateMCQ = {}, target = {}) {
 /** The keyword classifier calls data-heavy stems "RECALL"; several data lines or vectors mean there is work to do. */
 function hasSubstantialData(candidateMCQ = {}) {
   const stem = String(candidateMCQ.questionText || candidateMCQ.questionStem || '');
-  const vectors = (stem.match(/[\[(]\s*-?\d+\s*(?:,\s*-?\d+\s*)+[\])]/g) || []).length;
+  const vectors = (stem.match(/[\[({]\s*-?\d+(?:\.\d+)?\s*(?:,\s*-?\d+(?:\.\d+)?\s*)+[\])}]/g) || []).length;
   const dataLines = stem.split('\n').filter(l => /\d/.test(l) && l.trim().length > 3).length;
-  return vectors >= 3 || dataLines >= 3 || /```[\s\S]*\n[\s\S]*\n[\s\S]*```/.test(stem);
+  const numbers = (stem.match(/-?\d+(?:\.\d+)?/g) || []).length;
+  return vectors >= 2 || dataLines >= 3 || numbers >= 6 || /```[\s\S]*\n[\s\S]*\n[\s\S]*```/.test(stem);
 }
 
 const OPTION_VERDICTS = {
@@ -481,7 +482,7 @@ EVALUATION DIRECTIVES:
    - Evaluate the actual cognitive operation demanded by the question:
      * Easy (RECALL/RECOGNIZE): Factual recall, definition recognition.
      * Medium (COMPARE/TRACE/EXPLAIN_MECHANISM): Operational mechanism, sequential state transitions, comparative tradeoffs.
-     * Hard (APPLY/DIAGNOSE/PREDICT_CONSTRAINT): Concrete scenario diagnosis, constraint resolution, fault prediction — and also a genuinely multi-step trace or calculation on concrete data given in the stem (e.g. running an algorithm over several steps, or combining two taught rules). A single-step lookup or one arithmetic operation is not Hard; length or vocabulary never makes a question Hard.
+     * Hard (APPLY/DIAGNOSE/PREDICT_CONSTRAINT): judged RELATIVE TO THE LECTURE — the most demanding kind of question the taught material supports. It is Hard when the student must carry out at least two DEPENDENT reasoning steps on concrete material in the stem to reach the answer: e.g. a complete hypothesis test (compute the statistic, compare with the critical value, decide), a full algorithm trace over several steps (Banker's safety check, page replacement), computing several values and then deciding, diagnosing a bug, or combining two taught rules. Scenario/fault diagnosis is one kind of Hard, not a requirement. NOT Hard: recognising a formula or definition, a single lookup (e.g. degrees of freedom alone), or one substitution into one formula. Length or vocabulary never makes a question Hard.
    - Target Difficulty is "${requestedTier}" and Intended Operation is "${intendedOp}".
    - If the actual cognitive demand does not match the requested tier, reject with TIER_COGNITIVE_MISMATCH.
 6b. TRANSFORMATION OF ANALOGIES INTO TECHNICAL ASSESSMENTS (CRITERION D):

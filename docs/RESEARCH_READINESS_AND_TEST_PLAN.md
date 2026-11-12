@@ -50,6 +50,30 @@ Measured on 231 real generated questions, then improved:
 
 What *not* to do: report only the good runs, or present Hard-question quality as solved.
 
+### How to prove Hard-question capability without a GPU server
+
+Hard questions are now produced by a dedicated path: Hard targets are batched separately, use a Hard-only prompt that
+forces the model to write its own **solution steps first** (≥ 2 dependent steps; fewer → discarded before review),
+run on the strongest available model (Gemini 3.5-flash, else Groq `gpt-oss-120b` with full reasoning — never a light
+model), and are accepted only if the reviewer judges them Hard *relative to the lecture* and the independent check agrees.
+
+Evidence so far (handwritten statistics notes, 5 Hard requested, free tier): **0/11 candidates passed → 2/5 delivered**
+after the dedicated path, e.g. a complete two-sample z-test decision (|z| = 9.906 vs 2.33 → reject H0) and a Welch
+t-statistic from raw data (−2.04, hand-verified). Both confirmed by the independent check.
+
+**Experiment E6b — Hard capability benchmark** (put this in the paper instead of hiding the limitation):
+- 6–8 deep lectures/materials (statistics, OS algorithms, DBMS queries, code-heavy labs).
+- For each: request Hard questions; log *every* candidate (accepted and rejected) with the model that wrote it.
+- Report: acceptance rate per candidate, expert-confirmed **correctness** and **hardness** of accepted items (precision),
+  number of solution steps, time per accepted Hard item.
+- Baseline: the same lectures with a single "write 5 hard MCQs" prompt to the same model; experts rate both blind.
+- The claim to test: *every Hard item the system delivers is correct and genuinely multi-step* (high precision), at the
+  cost of yield and time — a stronger, defensible claim than "it always delivers N Hard questions".
+
+### Generation time (measured)
+10 Balanced questions from the 2 h 12 min OS lecture: **116.5 s** (batches of a round are generated and checked in parallel).
+Hard-only requests take longer (≈ 3 min for 5) because every Hard candidate needs the reasoning model and a full check.
+
 ---
 
 ## 5. What you need to be sure of with people (short checklist)

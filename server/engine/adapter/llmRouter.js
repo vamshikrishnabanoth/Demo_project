@@ -129,7 +129,7 @@ class LLMRouter {
    * Route completion request to active LLM provider with intelligent failover.
    * @param {Object} params - { prompt, systemPrompt, temperature, responseFormat, model, sessionId }
    */
-  async complete({ prompt, systemPrompt = '', temperature = 0.3, responseFormat = 'json', model = null, sessionId = null, maxTokens = null, operation = null, signal = null, abortSignal = null }) {
+  async complete({ prompt, systemPrompt = '', temperature = 0.3, responseFormat = 'json', model = null, sessionId = null, maxTokens = null, operation = null, signal = null, abortSignal = null, reasoningEffort = null, groqModels = null }) {
     const effectiveSignal = signal || abortSignal;
     if (!this.groqApiKey && process.env.GROQ_API_KEY) {
       this.groqApiKey = process.env.GROQ_API_KEY;
@@ -183,7 +183,9 @@ class LLMRouter {
           maxTokens,
           operation,
           signal: effectiveSignal,
-          groqSleepBudget
+          groqSleepBudget,
+          reasoningEffort,
+          groqModels
         });
       } catch (err) {
         errors.push(`Groq (${err.message})`);
@@ -310,7 +312,7 @@ class LLMRouter {
   }
 
   /** Call Groq Cloud API with configured model, multi-key pool, and bounded rate-limit backoff */
-  async _callGroqWithRetry({ prompt, userPrompt, systemPrompt, temperature, primaryModel, fallbackModel, sessionId = null, maxTokens = null, operation = null, signal = null, abortSignal = null, groqSleepBudget = null }) {
+  async _callGroqWithRetry({ prompt, userPrompt, systemPrompt, temperature, primaryModel, fallbackModel, sessionId = null, maxTokens = null, operation = null, signal = null, abortSignal = null, groqSleepBudget = null, reasoningEffort = null, groqModels = null }) {
     prompt = prompt || userPrompt || '';
     const effectiveSignal = signal || abortSignal;
     const sleepBudget = groqSleepBudget || { spent: 0, max: RATE_LIMIT_WAIT_BUDGET_MS };
@@ -344,7 +346,8 @@ class LLMRouter {
     const baseModels = configuredModels.length > 0
       ? configuredModels
       : ['qwen/qwen3.8-27b', 'openai/gpt-oss-120b', 'openai/gpt-oss-20b'];
-    const modelsToTry = configuredModels.length > 0
+    // A caller can pin the model list (e.g. Hard questions: only the strong reasoning model).
+    const modelsToTry = Array.isArray(groqModels) && groqModels.length > 0 ? groqModels : configuredModels.length > 0
       ? configuredModels
       : Array.from(new Set([primaryModel, ...baseModels, fallbackModel].filter(Boolean)));
     const totalKeys = keys.length;
@@ -425,7 +428,7 @@ class LLMRouter {
               max_tokens: resolvedMaxTokens || 2500
             };
             if (currentModel.startsWith('openai/gpt-oss')) {
-              requestPayload.reasoning_effort = GPT_OSS_REASONING_EFFORT;
+              requestPayload.reasoning_effort = reasoningEffort || GPT_OSS_REASONING_EFFORT;
             }
             // Groq json_object is only officially supported on llama models; qwen and gpt-oss models fail validation if response_format is passed
             if (currentModel.includes('llama')) {

@@ -1257,8 +1257,16 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
                 result.questions.forEach(q => { const d = String(q.difficulty || q.metadata?.targetDifficulty || '').toLowerCase(); if (got[d] !== undefined) got[d]++; });
                 const gaps = ['hard', 'medium'].filter(d => (lmPlanInfo.byDifficulty[d] || 0) > got[d]);
                 if (gaps.length) {
+                    const missing = gaps.reduce((n, d) => n + lmPlanInfo.byDifficulty[d] - got[d], 0);
+                    const plannedTotal = (lmPlanInfo.byDifficulty.easy || 0) + (lmPlanInfo.byDifficulty.medium || 0) + (lmPlanInfo.byDifficulty.hard || 0);
+                    const filledElsewhere = Math.max(0, Math.min(missing, result.questions.length - (plannedTotal - missing)));
+                    const tail = filledElsewhere >= missing
+                        ? `The remaining slot${missing === 1 ? ' was' : 's were'} filled at the nearest difficulty`
+                        : (filledElsewhere > 0
+                            ? `${filledElsewhere} slot${filledElsewhere === 1 ? ' was' : 's were'} filled at the nearest difficulty and ${missing - filledElsewhere} could not be produced`
+                            : `${missing} question${missing === 1 ? '' : 's'} could not be produced at that difficulty`);
                     const mixNote = gaps.map(d => `Planned ${lmPlanInfo.byDifficulty[d]} ${d}; ${got[d]} passed the quality checks`).join('. ') +
-                        `. The remaining slot${gaps.reduce((n, d) => n + lmPlanInfo.byDifficulty[d] - got[d], 0) === 1 ? ' was' : 's were'} filled at the nearest difficulty (delivered: ${got.easy} easy, ${got.medium} medium, ${got.hard} hard).`;
+                        `. ${tail} (delivered: ${got.easy} easy, ${got.medium} medium, ${got.hard} hard).`;
                     result.notice = result.notice ? `${result.notice} ${mixNote}` : mixNote;
                 }
             }

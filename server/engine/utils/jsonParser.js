@@ -86,6 +86,13 @@ function safeParseJson(rawText, fallback = undefined) {
 
       try {
         return JSON.parse(repaired);
+      } catch (_) {
+        // 5e. Math/LaTeX in answers (e.g. "\sigma", "\frac", "\(") produces invalid JSON escapes:
+        // keep the backslash as a literal character instead of rejecting the whole response.
+        repaired = repaired.replace(/\\(?!["\\/bfnrt]|u[0-9a-fA-F]{4})/g, '\\\\');
+      }
+      try {
+        return JSON.parse(repaired);
       } catch (finalErr) {
         if (fallback !== undefined) return fallback;
         throw new SyntaxError(

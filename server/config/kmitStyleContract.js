@@ -397,7 +397,10 @@ const KMIT_STYLE_CONTRACT = {
     // 2. Check stem length runaway boundary (excluding fenced code blocks) (Fatal)
     // Code, commands and data the question legitimately needs (unfenced code lines, drawn trees,
     // list states, tables) do not count towards the prose word limit.
-    const looksLikeCodeOrData = (line) => /[;{}]|^\s{2,}\S|\b\w+\s*\(.*\)\s*$|<->|->|=>|\[[^\]]*\]|^\s*[\/\\|]|^\s*\$\s|^\s*(?:root|left|right|node|stack|queue|input|output)\b.*:/i.test(line);
+    // Data lines a calculation/trace question legitimately needs ("n1=6400, x1=67.85", "P1: Allocation 0 1 0",
+    // "Available: 3 3 2") also count as data, not prose.
+    const looksLikeCodeOrData = (line) => /[;{}]|^\s{2,}\S|\b\w+\s*\(.*\)\s*$|<->|->|=>|\[[^\]]*\]|^\s*[\/\\|]|^\s*\$\s|^\s*(?:root|left|right|node|stack|queue|input|output)\b.*:/i.test(line) ||
+      /\b\w+\s*=\s*-?\d/.test(line) || ((line.match(/-?\d+(?:\.\d+)?/g) || []).length >= 3 && line.split(/\s+/).length <= 20);
     const proseStem = qText.replace(/```[\s\S]*?```/g, '')
       .split('\n')
       .filter((line, idx, all) => idx === all.length - 1 || !looksLikeCodeOrData(line))

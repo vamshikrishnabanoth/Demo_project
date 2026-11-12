@@ -49,7 +49,16 @@ class PipelineOrchestrator {
     const attempts = ((replacedTarget && replacedTarget.slotAttempts) || 0) + 1;
     const slotTier = (replacedTarget && replacedTarget.slotPlannedTier) || wantTier;
     let tier = wantTier;
-    if (tier === 'Hard' && attempts >= 3) tier = 'Medium';
+    const hardSlotAttempts = Math.max(1, parseInt(process.env.HARD_SLOT_ATTEMPTS, 10) || 4);
+    if (tier === 'Hard' && attempts >= hardSlotAttempts) tier = 'Medium';
+    // A Hard slot with no other Hard opportunity left retries the same opportunity with a fresh question
+    // (fully re-checked; duplicates are still rejected) until its attempt limit.
+    if (tier === 'Hard' && replacedTarget && !pool.some(r => r.allocatedTier === 'Hard')) {
+      const retry = { ...replacedTarget, targetId: `${String(replacedTarget.targetId).replace(/~\d+$/, '')}~${attempts}`,
+        targetDifficulty: 'Hard', slotAttempts: attempts, slotPlannedTier: slotTier };
+      return retry;
+    }
+    if (pool.length === 0) return null;
     const ADJACENT = { Hard: ['Hard', 'Medium', 'Easy'], Medium: ['Medium', 'Easy', 'Hard'], Easy: ['Easy', 'Medium', 'Hard'] };
     let idx = -1;
     for (const t of (ADJACENT[tier] || [tier])) {
@@ -913,11 +922,13 @@ class PipelineOrchestrator {
 
           // Auto-promote reserve target to fulfill question count
           replenishReservePoolIfEmpty();
-          if (passingQuestions.length < requestedCount && activeReservePool.length > 0 && plan?.isLectureModelPlan) {
+          if (passingQuestions.length < requestedCount && plan?.isLectureModelPlan && (activeReservePool.length > 0 || (currentTarget.slotPlannedTier || currentTarget.allocatedTier) === 'Hard')) {
             const wantTier = currentTarget.allocatedTier || currentTarget.plannedDifficulty || tier;
             const nextReserve = lmReserveHelper.takeLectureModelReserve(activeReservePool, wantTier, currentTarget.lectureUnitId, currentTarget);
-            candidateQueue.push(nextReserve);
-            console.log(`🔄 [Orchestrator] Promoted reserve target ${nextReserve.targetId} ("${nextReserve.concept}") at planned tier ${nextReserve.targetDifficulty} to replace unfulfilled ${wantTier} target ${currentTarget.targetId}`);
+            if (nextReserve) {
+              candidateQueue.push(nextReserve);
+              console.log(`🔄 [Orchestrator] Promoted reserve target ${nextReserve.targetId} ("${nextReserve.concept}") at planned tier ${nextReserve.targetDifficulty} to replace unfulfilled ${wantTier} target ${currentTarget.targetId}`);
+            }
           } else if (passingQuestions.length < requestedCount && activeReservePool.length > 0) {
             const nextReserve = activeReservePool.shift();
             const allocatedTier = determineFeasibleReserveTier(nextReserve, tier);
@@ -1204,11 +1215,13 @@ class PipelineOrchestrator {
 
           // Auto-promote reserve target to fulfill question count!
           replenishReservePoolIfEmpty();
-          if (passingQuestions.length < requestedCount && activeReservePool.length > 0 && plan?.isLectureModelPlan) {
+          if (passingQuestions.length < requestedCount && plan?.isLectureModelPlan && (activeReservePool.length > 0 || (currentTarget.slotPlannedTier || currentTarget.allocatedTier) === 'Hard')) {
             const wantTier = currentTarget.allocatedTier || currentTarget.plannedDifficulty || currentTarget.targetDifficulty;
             const nextReserve = lmReserveHelper.takeLectureModelReserve(activeReservePool, wantTier, currentTarget.lectureUnitId, currentTarget);
-            candidateQueue.push(nextReserve);
-            console.log(`🔄 [Orchestrator] Promoted reserve target ${nextReserve.targetId} ("${nextReserve.concept}") at planned tier ${nextReserve.targetDifficulty} to replace rejected ${wantTier} target ${currentTarget.targetId}`);
+            if (nextReserve) {
+              candidateQueue.push(nextReserve);
+              console.log(`🔄 [Orchestrator] Promoted reserve target ${nextReserve.targetId} ("${nextReserve.concept}") at planned tier ${nextReserve.targetDifficulty} to replace rejected ${wantTier} target ${currentTarget.targetId}`);
+            }
           } else if (passingQuestions.length < requestedCount && activeReservePool.length > 0) {
             // Determine tier to maintain balance while respecting evidence-supported concept depth:
             let preferredTier = requestedDifficulty;
@@ -1255,23 +1268,16 @@ class PipelineOrchestrator {
       // reducing outbound network calls and token overhead by 70–80%.
       // ─────────────────────────────────────────────────────────────────────────
       const BATCH_SIZE = Math.min(5, Math.max(2, parseInt(process.env.GENERATION_BATCH_SIZE, 10) || 5));
-      while (candidateQueue.length > 0 && passingQuestions.length < requestedCount && iterationCount < MAX_TOTAL_ITERATIONS) {
-        if (abortSignal?.aborted) break;
-
-        const needed = requestedCount - passingQuestions.length;
-        const batchTargets = candidateQueue.splice(0, Math.min(BATCH_SIZE, needed));
-        if (batchTargets.length === 0) break;
-
-        iterationCount += batchTargets.length;
-        totalGenerationAttempts += batchTargets.length;
-
+      // Speed without dropping any check: every slot still needed in a round ("wave") is split into batches
+      // that are generated and checked in parallel (spread across provider keys/models). Outcomes are then
+      // recorded one by one, in order, exactly as before. GENERATION_PARALLEL_BATCHES=1 restores sequential batches.
+      const PARALLEL_BATCHES = Math.max(1, Math.min(4, parseInt(process.env.GENERATION_PARALLEL_BATCHES, 10) || 3));
+      const runBatch = async (batchTargets) => {
         let batchCandidates = [];
         try {
           batchCandidates = await agent2Generator.generateQuestionBatch(batchTargets, evidencePackage);
         } catch (bErr) {
-          console.warn(`⚠️ [Orchestrator] Batch generation caught: ${bErr.message}. Falling back to single-target processing.`);
-          batchTargets.forEach(t => candidateQueue.unshift(t));
-          break; // Exit batch loop, let worker pool handle individually
+          return { batchTargets, error: bErr };
         }
 
         // Evaluate every candidate of the batch concurrently (each evaluation is an independent LLM call);
@@ -1297,12 +1303,42 @@ class PipelineOrchestrator {
         const parallelEvals = batchTargets.map((t, b) => {
           const c = batchCandidates[b];
           if (!c || c.isUnfulfilled) return Promise.resolve(null);
-          const allowRepair = repairSlotsGiven++ < batchRepairAllowance;
+          // A failed Hard question always gets its one repair attempt (re-checked in full); others share the quiz budget.
+          const allowRepair = t.targetDifficulty === 'Hard' ? true : (repairSlotsGiven++ < batchRepairAllowance);
           return agent3Evaluator.evaluateAndRepairQuestion(c, t, evidencePackage, agent2Generator, { allowRepair, precomputedCriticResponse: precomputed[b] })
             .then(evalResult => ({ evalResult }), evalErr => ({ evalErr }));
         });
         const settledEvals = await Promise.all(parallelEvals);
+        return { batchTargets, batchCandidates, settledEvals };
+      };
 
+      let batchFallback = false;
+      while (!batchFallback && candidateQueue.length > 0 && passingQuestions.length < requestedCount && iterationCount < MAX_TOTAL_ITERATIONS) {
+        if (abortSignal?.aborted) break;
+
+        const needed = requestedCount - passingQuestions.length;
+        const waveTargets = candidateQueue.splice(0, Math.min(needed, BATCH_SIZE * PARALLEL_BATCHES));
+        if (waveTargets.length === 0) break;
+        iterationCount += waveTargets.length;
+        totalGenerationAttempts += waveTargets.length;
+
+        // Hard targets go in their own small batches (≤2): they use the stronger reasoning model, whose
+        // longer reasoning must fit the provider's per-minute token budget, and they do not delay easy ones.
+        const waveBatches = [];
+        const hardTargets = waveTargets.filter(t => t.targetDifficulty === 'Hard');
+        const otherTargets = waveTargets.filter(t => t.targetDifficulty !== 'Hard');
+        for (let i = 0; i < otherTargets.length; i += BATCH_SIZE) waveBatches.push(otherTargets.slice(i, i + BATCH_SIZE));
+        for (let i = 0; i < hardTargets.length; i += 2) waveBatches.push(hardTargets.slice(i, i + 2));
+        const waveResults = await Promise.all(waveBatches.map(runBatch));
+
+        for (const waveResult of waveResults) {
+        if (waveResult.error) {
+          console.warn(`⚠️ [Orchestrator] Batch generation caught: ${waveResult.error.message}. Falling back to single-target processing.`);
+          waveResult.batchTargets.forEach(t => candidateQueue.unshift(t));
+          batchFallback = true; // let the worker pool handle these individually
+          continue;
+        }
+        const { batchTargets, batchCandidates, settledEvals } = waveResult;
         for (let b = 0; b < batchTargets.length; b++) {
           if (passingQuestions.length >= requestedCount) break;
           const target = batchTargets[b];
@@ -1380,6 +1416,7 @@ class PipelineOrchestrator {
               targetStartTime: Date.now()
             });
           }
+        }
         }
       }
 
