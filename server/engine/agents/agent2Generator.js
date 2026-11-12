@@ -81,6 +81,7 @@ class Agent2Generator {
     const correctText = mcq.correctAnswer;
 
     // Fisher-Yates crypto shuffle
+    const original = [...mcq.options];
     const shuffled = [...mcq.options];
     for (let i = shuffled.length - 1; i > 0; i--) {
       const j = crypto.randomInt(0, i + 1);
@@ -88,6 +89,14 @@ class Agent2Generator {
     }
 
     mcq.options = shuffled;
+    // Explanations written before the shuffle may say "Option 1 ..." or "option C ..."; point them at the new letters.
+    const remapRefs = (text) => (typeof text !== 'string' ? text : text.replace(/\b(options?)\s*\(?([1-4A-D])\)?(?=[\s,.;:)]|$)/gi, (m, word, ref) => {
+      const oldIdx = /[1-4]/.test(ref) ? Number(ref) - 1 : 'ABCD'.indexOf(ref.toUpperCase());
+      const newIdx = oldIdx >= 0 ? shuffled.indexOf(original[oldIdx]) : -1;
+      return newIdx >= 0 ? `${word} ${'ABCD'[newIdx]}` : m;
+    }));
+    if (mcq.explanation) mcq.explanation = remapRefs(mcq.explanation);
+    if (mcq.answerReasoning) mcq.answerReasoning = remapRefs(mcq.answerReasoning);
     mcq.correctAnswer = correctText;
     mcq.correctAnswerText = correctText;
 
@@ -1761,7 +1770,7 @@ ${target.distractorMisconceptions.map(m => `- ${m.concept}: ${m.description}`).j
     const targetsBlock = validTargets.map((t, idx) => {
       const tier = t.targetDifficulty || 'Medium';
       const op = t.intendedCognitiveOperation || (tier === 'Easy' ? 'RECALL' : (tier === 'Medium' ? 'COMPARE' : 'DIAGNOSE'));
-      let ctx = getTargetEvidenceContext(t, evidencePackage, 1200);
+      let ctx = getTargetEvidenceContext(t, evidencePackage, t.distractorStrategy === 'LECTURE_MISCONCEPTIONS' ? 2600 : 1200); // lecture-model targets carry the full passage for their point
       if (!ctx || ctx.length < 20) {
         ctx = t.supportingEvidence || (typeof evidencePackage === 'string' ? evidencePackage : (evidencePackage?.unifiedRawContent || ''));
       }

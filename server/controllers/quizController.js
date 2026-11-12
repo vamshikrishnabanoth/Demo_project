@@ -1241,12 +1241,18 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
                     const m = tid.match(/^([TR])(\d+)/);
                     const u = m ? (m[1] === 'T' ? lmUnitsForReview.primary : lmUnitsForReview.reserve)[parseInt(m[2], 10) - 1] : null;
                     if (!u) continue;
+                    // The label says what the question actually is: a planned code question that came out without
+                    // any code (e.g. "why is count declared inside the loop?") is shown as a concept question.
+                    const stemTxt = String(q.question || q.questionText || '');
+                    const showsCode = /```|`[^`]+`|\n\s*\S.*[;{}()=<>\[\]]/.test(stemTxt);
+                    const shownType = ['output', 'debug', 'trace'].includes(u.questionAngle) && !showsCode ? 'concept' : u.questionAngle;
                     q.lectureSource = {
                         lectureModelId: lectureModelId || null,
                         unitId: u.lectureUnitId || null,
                         topic: u.topic,
                         subtopic: u.subtopic,
-                        questionType: u.questionAngle,
+                        questionType: shownType,
+                        plannedQuestionType: u.questionAngle,
                         time: u.lectureTime || null,
                         slides: u.lectureSlides || [],
                         plannedDifficulty: u.plannedDifficulty,
@@ -1286,7 +1292,7 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
                         const plan = lectureModel.planRequest(lmForGate, 1, r.question.difficulty || 'Medium', {
                             excludeTopics: Array.isArray(lmOptions.excludeTopics) ? lmOptions.excludeTopics : [],
                             replace: { unitId: (lecturePairOf(lmForGate, r.question) || {}).unitId || null, subtopic: r.question.lectureSource?.subtopic || null,
-                                type: r.question.lectureSource?.questionType || null, difficulty: r.question.difficulty || 'Medium',
+                                type: r.question.lectureSource?.plannedQuestionType || r.question.lectureSource?.questionType || null, difficulty: r.question.difficulty || 'Medium',
                                 usedPairs: [r.question, ...others].map(q => lecturePairOf(lmForGate, q)).filter(Boolean).concat(reserved) }
                         });
                         const pick = plan.selected[0];
@@ -1305,6 +1311,11 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
                     }
                 }
                 result.questions = accepted;
+                const relabeled = accepted.filter(q => q.qualityGate && q.qualityGate.relabeled);
+                if (relabeled.length) {
+                    const rn = `${relabeled.length} question${relabeled.length === 1 ? '' : 's'} labelled Hard ${relabeled.length === 1 ? 'was' : 'were'} relabelled Medium by the quality gate (${relabeled.length === 1 ? 'it needs' : 'they need'} only one reasoning step).`;
+                    result.notice = result.notice ? `${result.notice} ${rn}` : rn;
+                }
                 const firstPassRejected = gate.rejected.length;
                 result.qualityGate = {
                     checked: Boolean(gate.model),
@@ -5528,7 +5539,8 @@ function lecturePairOf(lm, q) {
     const s = (q && q.lectureSource) || {};
     const unit = (s.unitId && lm.units.find(u => u.id === s.unitId))
         || lm.units.find(u => String(u.subtopic).toLowerCase() === String(s.subtopic || '').toLowerCase());
-    return unit && s.questionType ? { unitId: unit.id, type: s.questionType } : null;
+    const type = s.plannedQuestionType || s.questionType;
+    return unit && type ? { unitId: unit.id, type } : null;
 }
 
 /**
@@ -5549,7 +5561,7 @@ async function replaceOneFromLecture(lm, question, others = [], { excludedTopics
     const generated = await generateQuestions(null, null, 1, difficulty, null, null, inputs, null, taskId, null, null, 'MIXED',
         'FILL_WITH_MEDIUM', null, 'ALLOW_SCOPE_SUPPLEMENTARY',
         { id: lm.id, excludeTopics: Array.isArray(excludedTopics) ? excludedTopics : [],
-          replace: { unitId: origin ? origin.unitId : null, subtopic: src.subtopic || null, type: src.questionType || null, difficulty, usedPairs },
+          replace: { unitId: origin ? origin.unitId : null, subtopic: src.subtopic || null, type: src.plannedQuestionType || src.questionType || null, difficulty, usedPairs },
           skipGate: !gateContext, gateContext: gateContext || [] });
     const newQ = Array.isArray(generated) ? generated[0] || null : null;
     const task = getTask(taskId) || {};

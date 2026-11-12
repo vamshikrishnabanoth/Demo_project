@@ -133,6 +133,27 @@ test('Replacing a question keeps the difficulty, stays on the same point with a 
   assert.ok(p2.selected.every(s => s.difficulty === 'medium' || s.difficulty === 'easy' || s.difficulty === 'hard'));
 });
 
+test('A teaching point\'s evidence fills small gaps between cited blocks and keeps every block when trimmed', () => {
+  const blocks = ['B1', 'B2', 'B3', 'B4'].map((id, i) => ({ id, source: 'SPEECH', start: i * 60, end: i * 60 + 59, text: `${id} ` + 'x'.repeat(1000) }));
+  const model = { blocks };
+  const txt = lm.unitEvidenceText(model, { blocks: ['B1', 'B3', 'B4'] }, 2400);
+  assert.ok(txt.includes('B2 '), 'the skipped middle block is included');
+  ['B1 ', 'B3 ', 'B4 '].forEach(b => assert.ok(txt.includes(b), `${b} kept after trimming`));
+  assert.ok(txt.length <= 2400 + 8);
+});
+
+test('Shuffling options keeps explanation references pointing at the right options', () => {
+  const gen = require('../engine/agents/agent2Generator');
+  for (let k = 0; k < 10; k++) {
+    const q = { options: ['right answer', 'wrong two', 'wrong three', 'wrong four'], correctAnswer: 'right answer', explanation: 'Option 1 is right; option 3 is a near miss.' };
+    gen.shuffleOptions(q);
+    const m = q.explanation.match(/Option ([A-D]) is right; option ([A-D])/);
+    assert.ok(m, q.explanation);
+    assert.strictEqual(q.options['ABCD'.indexOf(m[1])], 'right answer');
+    assert.strictEqual(q.options['ABCD'.indexOf(m[2])], 'wrong three');
+  }
+});
+
 test('Single-difficulty plan only uses that difficulty', () => {
   const p = lm.planRequest(fakeModel(), 3, 'Hard');
   assert.strictEqual(p.deliverable, 1);
@@ -239,6 +260,17 @@ async function gateTests() {
       const r3 = out.rejected.find(r => r.question === unjudged);
       assert.deepStrictEqual(r3.criteria, ['NOT_VALIDATED']);
       assert.ok(r2.reasons.length > 0 && twoRight.qualityGate.status === 'REJECTED');
+    });
+    lm._internal.callJson = async () => ({ model: 'stub', data: { results: [
+      { q: 1, answer: 'A', alsoDefensible: [], grounded: true, correct: true, distractorsValid: true, plausible: true, aligned: true, complete: true, consistent: true, clear: true, fair: true, explanationOk: true, steps: 1, problems: [] },
+      { q: 2, answer: 'A', alsoDefensible: [], grounded: true, correct: true, distractorsValid: true, plausible: true, aligned: true, complete: true, consistent: false, clear: true, fair: true, explanationOk: true, steps: 3, problems: ['state after index 2 ignores indices 0 and 1'] }
+    ], duplicates: [] } });
+    const oneStepHard = mk('Input 1, 1, 1. What is the frequency array?', ['[0, 3, 0]', '[3, 0, 0]', '[1, 1, 1]', '[0, 0, 3]'], '[0, 3, 0]', { difficulty: 'Hard' });
+    const badState = mk('Input [2, 0, 2]; auxiliary []; processing index 2. What happens?', ['a', 'b', 'c', 'd'], 'a', { difficulty: 'Hard' });
+    const cal = await finalQualityGate([oneStepHard, badState], {});
+    test('A one-step question labelled Hard is relabelled Medium; an inconsistent state is rejected', () => {
+      assert.ok(cal.accepted.includes(oneStepHard) && oneStepHard.difficulty === 'Medium' && oneStepHard.qualityGate.relabeled);
+      assert.ok(cal.rejected.some(r => r.question === badState && r.criteria.includes('COMPLETENESS')));
     });
     lm._internal.callJson = async () => { throw new Error('provider down'); };
     const down = await finalQualityGate([mk('Which is a valid statement?', ['a', 'b', 'c', 'd'], 'a')], {});

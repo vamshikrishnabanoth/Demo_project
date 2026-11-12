@@ -1509,12 +1509,39 @@ const ANGLE_TO_OPERATION = {
 };
 
 /** Converts planned angles to the teaching-unit shape the existing planner/generator consume. */
+/**
+ * The teacher's words for one teaching point: cited speech blocks in time order, with small gaps between them
+ * filled (a reader may cite 15:14 and 17:26 but skip the 16:23 block where the decisive trace happens), then cited
+ * material. When too long, every block keeps an equal share (head-only truncation used to drop the end of a point).
+ */
+function unitEvidenceText(model, unit, maxChars = 2400) {
+  if (!model || !unit) return '';
+  const blocks = model.blocks || [];
+  const idx = Object.fromEntries(blocks.map((b, i) => [b.id, i]));
+  const cited = (unit.blocks || []).filter(id => idx[id] !== undefined);
+  const speech = cited.filter(id => blocks[idx[id]].source === 'SPEECH').map(id => idx[id]).sort((a, b) => a - b);
+  const chosen = [];
+  speech.forEach((pos, k) => {
+    if (k > 0) {
+      const prev = speech[k - 1];
+      if (pos - prev > 1 && pos - prev <= 3) for (let g = prev + 1; g < pos; g++) chosen.push(g);
+    }
+    chosen.push(pos);
+  });
+  cited.filter(id => blocks[idx[id]].source !== 'SPEECH').forEach(id => chosen.push(idx[id]));
+  const parts = [...new Set(chosen)].map(i => blocks[i] && blocks[i].text).filter(Boolean);
+  if (!parts.length) return unit.quote || '';
+  const total = parts.reduce((n, t) => n + t.length + 1, 0);
+  if (total <= maxChars) return parts.join('\n');
+  const share = Math.max(200, Math.floor(maxChars / parts.length) - 2);
+  return parts.map(t => (t.length > share ? `${t.slice(0, share)}…` : t)).join('\n').slice(0, maxChars + parts.length);
+}
+
 function toTeachingUnits(model, plan) {
-  const blockMap = Object.fromEntries((model.blocks || []).map(b => [b.id, b]));
   const make = (p, i, isReserve) => {
     const u = p.unit;
     const a = p.angle;
-    const passage = u.blocks.map(id => blockMap[id] && blockMap[id].text).filter(Boolean).join('\n').slice(0, 1100);
+    const passage = unitEvidenceText(model, u, 2400);
     const tier = p.difficulty.charAt(0).toUpperCase() + p.difficulty.slice(1);
     return {
       claimId: `${u.id}_${a.type}`,
@@ -1609,5 +1636,6 @@ module.exports = {
   toClientPayload,
   getById,
   // exported for tests
+  unitEvidenceText,
   _internal: { spokenCodeHits, buildBlocks, buildWindows, quoteSupported, sanitiseAngles, computeCapacity, allocate, buildSegments, consolidateUnits, callJson }
 };
