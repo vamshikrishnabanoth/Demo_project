@@ -433,7 +433,7 @@ export default function CreateQuizText() {
         }
         setRegeneratingIdx(idx);
         try {
-            const slim = (q) => ({ difficulty: q.difficulty, lectureSource: q.lectureSource || null });
+            const slim = (q) => ({ difficulty: q.difficulty, lectureSource: q.lectureSource || null, question: String(q.question || q.questionText || "").slice(0, 300) });
             const res = await api.post('/quiz/replace-question', {
                 lectureModelId,
                 question: slim(current),
@@ -1344,6 +1344,29 @@ export default function CreateQuizText() {
                                     </div>
                                 ) : (
                                     <div className="space-y-10">
+                                        {(() => {
+                                            const qg = location.state?.pipelineResult?.qualityGate;
+                                            if (!qg || !Array.isArray(qg.rejected) || qg.rejected.length === 0) return null;
+                                            return (
+                                                <details className="px-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-700">
+                                                    <summary className="cursor-pointer font-bold text-slate-800">
+                                                        Quality gate: {qg.rejectedFirstPass} of {qg.generated} rejected{qg.replaced ? `, ${qg.replaced} replaced` : ''} — tap to see why
+                                                    </summary>
+                                                    <p className="pt-2 text-slate-500">These were generated but failed at least one check (correctness, grounding, single answer, distractors, completeness, wording…). They are not in your quiz.</p>
+                                                    <ul className="pt-2 space-y-2">
+                                                        {qg.rejected.map((r, i) => (
+                                                            <li key={i} className="rounded-xl bg-white border border-slate-200 p-2.5">
+                                                                <p className="font-semibold text-slate-800">{r.question}</p>
+                                                                {r.lectureSource?.time && <p className="text-slate-500">at {r.lectureSource.time} · {r.lectureSource.subtopic}</p>}
+                                                                <ul className="list-disc pl-5 text-rose-700">
+                                                                    {(r.reasons || []).slice(0, 4).map((why, k) => <li key={k}>{String(why).replace(/^[A-Z_]+: /, '')}</li>)}
+                                                                </ul>
+                                                            </li>
+                                                        ))}
+                                                    </ul>
+                                                </details>
+                                            );
+                                        })()}
                                         {questions.map((q, idx) => (
                                             <div key={q.tempId || q._id || q.id || idx} className="relative">
                                                 {/* Regenerating overlay */}

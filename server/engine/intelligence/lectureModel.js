@@ -27,7 +27,7 @@ const llmRouter = require('../adapter/llmRouter');
 const { safeParseJson } = require('../utils/jsonParser');
 const { classifyTextBlock } = require('../../utils/inputKind');
 
-const MODEL_VERSION = 'lecture-model-v2.3';
+const MODEL_VERSION = 'lecture-model-v2.4';
 // Largest quiz a teacher can request (one setting for server, planner and UI). Default 30: a daily-quiz size.
 const MAX_QUIZ_QUESTIONS = Math.max(1, parseInt(process.env.MAX_QUIZ_QUESTIONS, 10) || 30);
 const CACHE_DIR = path.join(__dirname, '..', '..', 'storage', 'lecture_model_cache');
@@ -385,7 +385,7 @@ async function callJson({ systemPrompt, prompt, maxTokens = 8192, operation, mod
   // Free-tier quota is per model, so work is split: the steps where a weak model causes real errors
   // (Hard questions, the independent answer check, the teaching score) get the strongest model first;
   // lecture reading starts on other models, leaving the strongest model's daily quota for those steps.
-  const CRITICAL_OPS = new Set(['HARD_BATCH_GENERATION', 'BLIND_ANSWER_CHECK', 'TEACHING_SCORE']);
+  const CRITICAL_OPS = new Set(['HARD_BATCH_GENERATION', 'BLIND_ANSWER_CHECK', 'FINAL_QUALITY_GATE', 'TEACHING_SCORE']);
   const defaultList = CRITICAL_OPS.has(operation)
     ? (process.env.GEMINI_CRITICAL_MODELS || 'gemini-3.5-flash,gemini-3.6-flash,gemini-3.5-flash-lite,gemini-3.1-flash-lite')
     : (process.env.LECTURE_MODEL_GEMINI || 'gemini-3.6-flash,gemini-3.5-flash-lite,gemini-3.5-flash,gemini-3.1-flash-lite');
@@ -521,6 +521,7 @@ Return this JSON:
       "statement": "1-2 sentences: the precise point that was taught, in your own words",
       "quote": "verbatim words from one of the cited blocks",
       "depth": "MENTIONED (only named) | EXPLAINED (explained) | DEMONSTRATED (worked example, code, trace or calculation shown)",
+      "importance": "CORE (part of the subject being taught) | ASIDE (a passing remark: platforms or tools mentioned in passing, career/exam/admin talk, motivation, anecdotes, analogies used only as a story)",
       "angles": [ { "type": "one of ${ANGLE_TYPES.join('|')}", "difficulty": "easy|medium|hard", "focus": "the specific thing one question would test" } ],
       "misconceptions": ["a specific wrong belief a student could have about this point"]
     }
@@ -782,6 +783,7 @@ async function buildLectureModel(opts = {}) {
     u.id = `U${String(i + 1).padStart(2, '0')}`;
     u.kind = UNIT_KINDS.includes(String(u.kind).toUpperCase()) ? String(u.kind).toUpperCase() : 'DEFINITION';
     u.depth = ['MENTIONED', 'EXPLAINED', 'DEMONSTRATED'].includes(String(u.depth).toUpperCase()) ? String(u.depth).toUpperCase() : 'EXPLAINED';
+    u.importance = String(u.importance || '').toUpperCase() === 'ASIDE' ? 'ASIDE' : 'CORE';
     const srcTypes = new Set(u.blocks.map(id => blockMap[id].source));
     u.source = srcTypes.has('SPEECH') && srcTypes.has('MATERIAL') ? 'BOTH' : (srcTypes.has('SPEECH') ? 'SPOKEN' : 'MATERIAL');
     const timedBlocks = u.blocks.map(id => blockMap[id]).filter(b => b.start !== null && b.start !== undefined);
@@ -950,6 +952,9 @@ Return {"title":"short title","notes":"the notes text, with headings on their ow
 }
 
 function sanitiseAngles(u) {
+  // Passing remarks (a platform mentioned, admin or career talk, anecdotes) are kept on the lecture map
+  // but never assessed.
+  if (u.importance === 'ASIDE') return [];
   const out = [];
   const seenTypes = new Set();
   const isCodeish = CODE_KINDS.has(u.kind) || u.hasCode;
