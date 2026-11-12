@@ -83,10 +83,11 @@ function sourceFor(q, lm) {
   const unit = (s.unitId && lm.units.find(u => u.id === s.unitId))
     || lm.units.find(u => s.subtopic && String(u.subtopic).toLowerCase() === String(s.subtopic).toLowerCase());
   if (!unit) return null;
-  const blockMap = Object.fromEntries((lm.blocks || []).map(b => [b.id, b]));
-  const text = (unit.blocks || []).map(id => blockMap[id] && blockMap[id].text).filter(Boolean).join(' ');
-  const statement = unit.statement ? `Taught point: ${unit.statement}\n` : '';
-  return `${statement}${text}`.slice(0, 1800);
+  // Full passage for the point (gaps between cited blocks filled). The reader's one-line summary is shown but
+  // marked as fallible: the transcript is the authority (a wrong summary once misled generator and judge alike).
+  const text = lectureModel.unitEvidenceText(lm, unit, 3000);
+  const summary = unit.statement ? `\n(Reader's one-line summary, may be imprecise — trust the transcript above: ${unit.statement})` : '';
+  return `${text}${summary}`;
 }
 
 function buildPrompt(items, mode, otherStems) {
@@ -109,7 +110,10 @@ For EACH question:
 1. Solve it yourself from the question and options only, as a strong student would, ignoring KEY: one line of working, then your letter ("answer"), and any OTHER letters an expert could also defend as correct ("alsoDefensible").
 2. Then judge strictly (true only if fully satisfied):
  - grounded: as defined above.
- - correct: KEY is technically correct (concepts, calculations, code, outputs).
+ - correct: KEY is technically correct (concepts, calculations, code, outputs). For ANY claim about what code or an algorithm does (what it counts, skips, misses, prints, which elements are affected), trace it yourself on a small example — the one in SOURCE if there is one — before accepting it. A key that is half right ("skips earlier elements but misses LATER ones" when it actually misses earlier ones) is not correct.
+ - alsoDefensible (in step 1): look at each wrong option on its own and ask whether a teacher who taught SOURCE would also accept it. "Why/purpose/motivation" questions often have two acceptable answers; list them.
+ - consistent: any data, state or trace given in the question is internally consistent (e.g. the state "after processing index 2" must reflect indices 0 and 1). Count an inconsistency as complete=false.
+ - steps: how many dependent reasoning steps a strong student needs to reach the answer (1 = recall or one direct application).
  - distractorsValid: every wrong option is clearly wrong; none is correct, equivalent in meaning to another option or the key (e.g. "counts only elements after x" vs "skips elements before x"), duplicated, nonsensical or unrelated.
  - plausible: every wrong option is a realistic student misconception, not a throwaway.
  - aligned: the options directly answer the question asked.
@@ -121,7 +125,7 @@ For EACH question:
 4. "fact": the single fact or skill the KEY establishes, in at most 8 words (e.g. "linear search per element gives O(n^2)").
 Then compare the "fact" of every question with every other question (including OTHER QUESTIONS) and list "duplicates": pairs whose correct answers establish the same fact, even if worded differently or asked from a different angle, so a student who knows one answer knows the other. A definition and a computation that uses it are NOT duplicates.
 
-Return JSON only: {"results":[{"q":1,"working":"...","answer":"B","alsoDefensible":[],"grounded":true,"correct":true,"distractorsValid":true,"plausible":true,"aligned":true,"complete":true,"clear":true,"fair":true,"explanationOk":true,"problems":[],"fact":"..."}],"duplicates":[[1,3]]}`;
+Return JSON only: {"results":[{"q":1,"working":"...","answer":"B","alsoDefensible":[],"grounded":true,"correct":true,"distractorsValid":true,"plausible":true,"aligned":true,"complete":true,"clear":true,"fair":true,"explanationOk":true,"steps":1,"problems":[],"fact":"..."}],"duplicates":[[1,3]]}`;
 }
 
 async function judgeBatch(items, mode, otherStems) {
@@ -182,9 +186,17 @@ async function finalQualityGate(questions, opts = {}) {
       if (r.plausible === false) add('DISTRACTOR_PLAUSIBILITY');
       if (r.aligned === false) add('ALIGNMENT');
       if (r.complete === false) add('COMPLETENESS');
+      else if (r.consistent === false) add('COMPLETENESS', 'The data or state given in the question is inconsistent.');
       if (r.clear === false) add('WORDING');
       if (r.fair === false) add('FAIRNESS');
       if (r.explanationOk === false) add('EXPLANATION');
+      // Criterion 10 (difficulty fits): a "Hard" question needing fewer than two dependent steps keeps its place
+      // only under its true label — it is relabelled Medium (and reported), never passed off as Hard.
+      const steps = Number(r.steps);
+      const label = String(item.q.difficulty || item.q.metadata?.targetDifficulty || '');
+      if (label === 'Hard' && Number.isFinite(steps) && steps < 2) {
+        item.relabel = { from: 'Hard', to: 'Medium', reason: `needs ${steps} reasoning step${steps === 1 ? '' : 's'}, not the two or more a Hard question requires` };
+      }
     }
   }));
 
@@ -223,6 +235,12 @@ async function finalQualityGate(questions, opts = {}) {
       model: [...models].join(', ') || null,
       grounding: mode
     };
+    if (codes.length === 0 && item.relabel) {
+      item.q.difficulty = item.relabel.to;
+      if (item.q.metadata) item.q.metadata.targetDifficulty = item.relabel.to;
+      if (item.q.lectureSource) item.q.lectureSource.measuredDifficulty = item.relabel.to;
+      item.q.qualityGate.relabeled = item.relabel;
+    }
     if (codes.length === 0) {
       // Keep the independent solve as the review badge the teacher already sees.
       item.q.independentCheck = { status: 'AGREES', model: [...models][0] || null };
