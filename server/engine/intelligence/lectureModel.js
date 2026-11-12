@@ -31,14 +31,15 @@ const MODEL_VERSION = 'lecture-model-v2.2';
 // Largest quiz a teacher can request (one setting for server, planner and UI). Default 30: a daily-quiz size.
 const MAX_QUIZ_QUESTIONS = Math.max(1, parseInt(process.env.MAX_QUIZ_QUESTIONS, 10) || 30);
 const CACHE_DIR = path.join(__dirname, '..', '..', 'storage', 'lecture_model_cache');
-const WINDOW_CHARS = 24000;
-const MAX_PARALLEL_WINDOWS = 3;
+const WINDOW_CHARS = 12000; // smaller windows: faster per call, more in parallel, fits Groq's per-minute token limit
+const MAX_PARALLEL_WINDOWS = 6;
 const memoryCache = new Map();
 const modelCooldownUntil = new Map();
 const rateLimitedUntil = new Map();
 // A model that keeps answering 429 has usually spent its daily free quota: stop asking it for a while
 // instead of paying two failed round-trips on every call (that alone added minutes to a quiz).
 const consecutive429 = new Map();
+const lastSuccessAt = new Map();
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Rubric (shared with the UI through the payload)
@@ -380,29 +381,43 @@ async function callJson({ systemPrompt, prompt, maxTokens = 8192, operation, mod
   const defaultList = CRITICAL_OPS.has(operation)
     ? (process.env.GEMINI_CRITICAL_MODELS || 'gemini-3.5-flash,gemini-3.6-flash,gemini-3.5-flash-lite,gemini-3.1-flash-lite')
     : (process.env.LECTURE_MODEL_GEMINI || 'gemini-3.6-flash,gemini-3.5-flash-lite,gemini-3.5-flash,gemini-3.1-flash-lite');
-  const geminiModels = Array.isArray(models) && models.length ? models : defaultList.split(',').map(s => s.trim()).filter(Boolean);
+  const listed = Array.isArray(models) && models.length ? models : defaultList.split(",").map(s => s.trim()).filter(Boolean);
+  // Models that answered in the last 10 minutes go first (stable sort keeps the configured order otherwise).
+  const recent = (m) => ((lastSuccessAt.get(m) || 0) > Date.now() - 10 * 60000 ? 0 : 1);
+  const geminiModels = (Array.isArray(models) && models.length) || CRITICAL_OPS.has(operation) ? listed : [...listed].sort((a, b) => recent(a) - recent(b));
+  const timing = process.env.LECTURE_MODEL_TIMING !== 'false';
+  // Reading steps are on the teacher's critical path: never sit waiting on a busy Gemini model.
+  const readingStep = /^LECTURE_MODEL_/.test(operation);
   let lastErr = null;
-  if (process.env.GEMINI_API_KEY && process.env.DISABLE_GEMINI !== 'true') {
-    // Two rounds over the model list: a model that is only rate-limited (429) gets a second chance
-    // after its retry delay; an overloaded model (503) is skipped for a minute.
+  let settled = false;
+
+  const geminiPath = async () => {
+    if (!process.env.GEMINI_API_KEY || process.env.DISABLE_GEMINI === 'true') throw new Error('Gemini disabled');
+    // Two rounds over the model list: a model that is only briefly rate-limited (429) gets a second chance
+    // after a short retry delay; a model that errors otherwise is benched for a minute.
     for (let round = 0; round < 2; round++) {
       for (const geminiModel of geminiModels) {
+        if (settled) throw new Error('superseded');
         if ((modelCooldownUntil.get(geminiModel) || 0) > Date.now()) continue;
         const waitUntil = rateLimitedUntil.get(geminiModel) || 0;
         if (waitUntil > Date.now()) {
           if (round === 0) continue;
-          await new Promise(r => setTimeout(r, Math.min(25000, waitUntil - Date.now())));
+          const wait = waitUntil - Date.now();
+          if (readingStep && wait > 5000) continue; // Groq answers faster than waiting out a long retry delay
+          await new Promise(r => setTimeout(r, Math.min(25000, wait)));
         }
         try {
-          const raw = await withTimeout(callGeminiDirect({ systemPrompt, prompt, maxTokens, model: geminiModel }), 150000, 'Gemini lecture model timeout');
-          consecutive429.delete(geminiModel);
+          const callStart = Date.now();
+          const raw = await withTimeout(callGeminiDirect({ systemPrompt, prompt, maxTokens, model: geminiModel }), readingStep ? 60000 : 150000, 'Gemini lecture model timeout');
+          consecutive429.delete(geminiModel); lastSuccessAt.set(geminiModel, Date.now());
           const parsed = safeParseJson(raw, null);
+          if (timing) console.log(`[LectureModel] ${operation} via ${geminiModel}: ${((Date.now() - callStart) / 1000).toFixed(1)}s, ${prompt.length} chars in, ${String(raw || '').length} chars out`);
           if (parsed) return { data: parsed, provider: 'gemini', model: geminiModel };
           lastErr = new Error('Gemini returned unparseable JSON');
         } catch (e) {
           lastErr = e;
           const msg = String(e.message || '');
-          console.warn(`[LectureModel] ${operation} via ${geminiModel} failed (round ${round + 1}): ${msg.slice(0, 160)}`);
+          if (!settled) console.warn(`[LectureModel] ${operation} via ${geminiModel} failed (round ${round + 1}): ${msg.slice(0, 160)}`);
           if (/429|RESOURCE_EXHAUSTED|Too Many Requests/i.test(msg)) {
             const m = msg.match(/retry(?:Delay)?["\s:]*(?:in\s*)?(\d+(?:\.\d+)?)s/i);
             rateLimitedUntil.set(geminiModel, Date.now() + Math.min(30000, (m ? parseFloat(m[1]) : 10) * 1000 + 500));
@@ -414,28 +429,52 @@ async function callJson({ systemPrompt, prompt, maxTokens = 8192, operation, mod
               consecutive429.delete(geminiModel);
               console.warn(`[LectureModel] ${geminiModel} looks out of quota; skipping it for ${daily ? 30 : 10} min.`);
             }
-          } else if (/503|overloaded|UNAVAILABLE|high demand/i.test(msg)) {
-            modelCooldownUntil.set(geminiModel, Date.now() + 60000);
+          } else if (!/unparseable/i.test(msg)) {
+            // Overloaded (503), internal errors, timeouts, dropped connections: bench the model for a minute
+            // so parallel calls stop paying 10-20 s for the same failure.
+            modelCooldownUntil.set(geminiModel, Date.now() + 5 * 60000);
           }
         }
       }
     }
-  }
-  if (noGroqFallback) {
-    throw new Error(`Lecture model call failed (${operation}): ${lastErr ? lastErr.message : 'no Gemini model available'}`);
-  }
-  try {
+    throw lastErr || new Error('no Gemini model available');
+  };
+
+  const groqPath = async () => {
+    const groqStart = Date.now();
     const raw = await llmRouter.complete({
       prompt, systemPrompt, temperature: 0, responseFormat: 'json', maxTokens, operation,
       model: process.env.LECTURE_MODEL_GROQ || 'openai/gpt-oss-120b'
     });
     const parsed = safeParseJson(raw, null);
+    if (timing) console.log(`[LectureModel] ${operation} via groq: ${((Date.now() - groqStart) / 1000).toFixed(1)}s`);
     if (parsed) return { data: parsed, provider: 'groq', model: process.env.LECTURE_MODEL_GROQ || 'openai/gpt-oss-120b' };
     throw new Error('Groq returned unparseable JSON');
-  } catch (e) {
-    throw new Error(`Lecture model call failed (${operation}): ${lastErr ? lastErr.message + ' | ' : ''}${e.message}`);
+  };
+
+  const fail = (e) => new Error(`Lecture model call failed (${operation}): ${lastErr ? lastErr.message + ' | ' : ''}${e ? e.message : ''}`);
+  if (noGroqFallback) {
+    try { return await geminiPath(); } catch (e) { throw new Error(`Lecture model call failed (${operation}): ${(lastErr || e).message}`); }
   }
+  if (!readingStep) {
+    try { return await geminiPath(); } catch (_) { /* fall through to Groq */ }
+    try { return await groqPath(); } catch (e) { throw fail(e); }
+  }
+
+  // Reading steps: if Gemini has not answered within LECTURE_HEDGE_MS, Groq starts on the same request
+  // and whichever valid answer arrives first is used (a slow or failing model can no longer stall reading).
+  const HEDGE_MS = Math.max(2000, parseInt(process.env.LECTURE_HEDGE_MS, 10) || 10000);
+  return new Promise((resolve, reject) => {
+    let pending = 2;
+    let groqStarted = false;
+        const win = (r) => { if (!settled) { settled = true; clearTimeout(hedgeTimer); resolve(r); } };
+    const lose = (e) => { if (--pending === 0 && !settled) { settled = true; reject(fail(e)); } };
+    const startGroq = () => { if (groqStarted || settled) return; groqStarted = true; groqPath().then(win, lose); };
+    const hedgeTimer = setTimeout(() => { if (!settled) { if (timing) console.log(`[LectureModel] ${operation}: Gemini slow after ${HEDGE_MS / 1000}s, starting Groq in parallel`); startGroq(); } }, HEDGE_MS);
+    geminiPath().then(win, (e) => { clearTimeout(hedgeTimer); lose(e); startGroq(); });
+  });
 }
+
 
 function withTimeout(promise, ms, msg) {
   let t;
@@ -600,6 +639,8 @@ async function buildLectureModel(opts = {}) {
     }
   });
   await Promise.all(workers);
+  const stageMs = { windows: Date.now() - t0 };
+  const stamp = (name, since) => { stageMs[name] = Date.now() - since; };
   if (failedWindows.length === windows.length) {
     throw new Error('The analysis service is busy right now; none of the lecture could be read. Please retry in a minute.');
   }
@@ -617,6 +658,7 @@ async function buildLectureModel(opts = {}) {
   results.forEach(res => (res && res.units || []).forEach(u => (u.blocks || []).forEach(id => citedIds.add(id))));
   const failedBlockIds = new Set(failedWindows.flatMap(i => [...windows[i].speech, ...windows[i].material].map(b => b.id)));
   const uncovered = allBlocks.filter(b => !citedIds.has(b.id) && !failedBlockIds.has(b.id) && (wordCount(b.text) >= 45 || (b.kind && wordCount(b.text) >= 4)));
+  const tCoverage = Date.now();
   if (uncovered.length >= 2 || (uncovered.length === 1 && allBlocks.length <= 3)) {
     const extraWindows = buildWindows(uncovered.filter(b => b.source === 'SPEECH'), uncovered.filter(b => b.source === 'MATERIAL'));
     const extra = await Promise.all(extraWindows.map(w =>
@@ -632,6 +674,8 @@ async function buildLectureModel(opts = {}) {
     });
     console.log(`[LectureModel] Coverage pass re-read ${uncovered.length} uncited block(s).`);
   }
+  stamp('coverage', tCoverage);
+  const tExpand = Date.now();
 
   // 4a''. Expansion pass for small/medium inputs whose map is too coarse for their size
   // (weaker fallback models tend to lump a whole program or session into 2-3 points).
@@ -744,7 +788,10 @@ async function buildLectureModel(opts = {}) {
   });
 
   // Duplicate teaching points and variant topic names are consolidated in one small call; ids renumbered.
+  stamp('expand', tExpand);
+  const tConsolidate = Date.now();
   finalUnits = await consolidateUnits(finalUnits, usage);
+  stamp('consolidate', tConsolidate);
   finalUnits.forEach((u, i) => {
     u.id = `U${String(i + 1).padStart(2, '0')}`;
     const timedBlocks = u.blocks.map(id => blockMap[id]).filter(b => b.start !== null && b.start !== undefined);
@@ -797,7 +844,10 @@ async function buildLectureModel(opts = {}) {
     totalWords, usage, hasSpeech: speech.length > 0,
     rawArtifactOnly: speech.length === 0 && material.length > 0 && material.filter(b => b.kind).length / material.length >= 0.6
   }).catch(e => ({ available: false, reason: `The teaching review could not be completed: ${e.message}` }));
+  const tDescribe = Date.now();
   const meta = await describeLecture({ title, segments: segmentsOut, units: finalUnits, inputDescription, usage });
+  stamp('describe', tDescribe);
+  console.log(`[LectureModel] Read in ${((Date.now() - t0) / 1000).toFixed(1)}s — ${Object.entries(stageMs).map(([k, v]) => `${k} ${(v / 1000).toFixed(1)}s`).join(', ')} (${windows.length} windows)`);
   const teaching = opts.deferTeachingScore ? { available: false, pending: true, reason: 'The teaching review is still being prepared.' } : await teachingPromise;
 
   const lecture = {
@@ -836,6 +886,7 @@ async function buildLectureModel(opts = {}) {
       droppedUnverifiedUnits: droppedUnits,
       droppedUnverifiedObservations: droppedObs,
       buildMs: Date.now() - t0,
+      stageMs,
       builtAt: new Date().toISOString()
     }
   };
