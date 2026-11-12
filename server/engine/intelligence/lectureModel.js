@@ -27,7 +27,7 @@ const llmRouter = require('../adapter/llmRouter');
 const { safeParseJson } = require('../utils/jsonParser');
 const { classifyTextBlock } = require('../../utils/inputKind');
 
-const MODEL_VERSION = 'lecture-model-v2.0';
+const MODEL_VERSION = 'lecture-model-v2.2';
 // Largest quiz a teacher can request (one setting for server, planner and UI). Default 30: a daily-quiz size.
 const MAX_QUIZ_QUESTIONS = Math.max(1, parseInt(process.env.MAX_QUIZ_QUESTIONS, 10) || 30);
 const CACHE_DIR = path.join(__dirname, '..', '..', 'storage', 'lecture_model_cache');
@@ -36,6 +36,9 @@ const MAX_PARALLEL_WINDOWS = 3;
 const memoryCache = new Map();
 const modelCooldownUntil = new Map();
 const rateLimitedUntil = new Map();
+// A model that keeps answering 429 has usually spent its daily free quota: stop asking it for a while
+// instead of paying two failed round-trips on every call (that alone added minutes to a quiz).
+const consecutive429 = new Map();
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Rubric (shared with the UI through the payload)
@@ -392,6 +395,7 @@ async function callJson({ systemPrompt, prompt, maxTokens = 8192, operation, mod
         }
         try {
           const raw = await withTimeout(callGeminiDirect({ systemPrompt, prompt, maxTokens, model: geminiModel }), 150000, 'Gemini lecture model timeout');
+          consecutive429.delete(geminiModel);
           const parsed = safeParseJson(raw, null);
           if (parsed) return { data: parsed, provider: 'gemini', model: geminiModel };
           lastErr = new Error('Gemini returned unparseable JSON');
@@ -402,6 +406,14 @@ async function callJson({ systemPrompt, prompt, maxTokens = 8192, operation, mod
           if (/429|RESOURCE_EXHAUSTED|Too Many Requests/i.test(msg)) {
             const m = msg.match(/retry(?:Delay)?["\s:]*(?:in\s*)?(\d+(?:\.\d+)?)s/i);
             rateLimitedUntil.set(geminiModel, Date.now() + Math.min(30000, (m ? parseFloat(m[1]) : 10) * 1000 + 500));
+            const n = (consecutive429.get(geminiModel) || 0) + 1;
+            consecutive429.set(geminiModel, n);
+            const daily = /PerDay|per day|daily/i.test(msg);
+            if (daily || n >= 2) {
+              modelCooldownUntil.set(geminiModel, Date.now() + (daily ? 30 : 10) * 60000);
+              consecutive429.delete(geminiModel);
+              console.warn(`[LectureModel] ${geminiModel} looks out of quota; skipping it for ${daily ? 30 : 10} min.`);
+            }
           } else if (/503|overloaded|UNAVAILABLE|high demand/i.test(msg)) {
             modelCooldownUntil.set(geminiModel, Date.now() + 60000);
           }
@@ -520,12 +532,12 @@ Return:
       "key": "clarity",
       "rating": 1-4 or null if there is not enough evidence,
       "evidence": ["O3", "U5"],
-      "finding": "one sentence on what the evidence shows, naming the specific topic",
-      "improvement": "one short, specific, actionable suggestion naming the unit/topic and what to add (or null if rating is 4)"
+      "finding": "one sentence (max 20 words) on what the evidence shows, naming the specific topic",
+      "improvement": "one specific, actionable suggestion in max 18 words naming the topic and what to add (or null if rating is 4)"
     }
   ],
-  "strengths": ["2-3 specific strengths, each naming the topic"],
-  "improvements": ["2-3 specific improvements, each naming the topic and exactly what was missing"]
+  "strengths": ["2-3 specific strengths, max 15 words each, each naming the topic"],
+  "improvements": ["2-3 specific next steps, max 15 words each, each naming the topic (never a unit id) and exactly what to add"]
 }
 Every rating must cite at least one evidence id from the lists above. For accuracy, cite the units you checked and only lower the rating for an error you can name.`;
 }
@@ -744,6 +756,9 @@ async function buildLectureModel(opts = {}) {
   const seenFocus = [];
   for (const u of finalUnits) {
     u.angles = u.angles.filter(a => {
+      // System-added angles share one template sentence (only the subtopic differs), so text similarity
+      // says nothing about them; they are unique per unit by construction.
+      if (a.inferred) return true;
       const dup = seenFocus.find(f => f.type === a.type && jaccard(f.focus, a.focus) >= 0.7);
       if (dup) return false;
       seenFocus.push(a);
@@ -776,15 +791,14 @@ async function buildLectureModel(opts = {}) {
     units: finalUnits,
     observations
   };
-  const [meta, teachingResult] = await Promise.all([
-    describeLecture({ title, segments: segmentsOut, units: finalUnits, inputDescription, usage }),
-    scoreTeaching(lectureForReview, {
-      totalWords, usage, hasSpeech: speech.length > 0,
-      rawArtifactOnly: speech.length === 0 && material.length > 0 && material.filter(b => b.kind).length / material.length >= 0.6
-    })
-      .catch(e => ({ available: false, reason: `The teaching review could not be completed: ${e.message}` }))
-  ]);
-  const teaching = teachingResult;
+  // The teaching review can finish in the background (opts.deferTeachingScore): the teacher sees the overview
+  // as soon as it is ready and the score a few seconds later (GET /api/quiz/teaching-score/:id).
+  const teachingPromise = scoreTeaching(lectureForReview, {
+    totalWords, usage, hasSpeech: speech.length > 0,
+    rawArtifactOnly: speech.length === 0 && material.length > 0 && material.filter(b => b.kind).length / material.length >= 0.6
+  }).catch(e => ({ available: false, reason: `The teaching review could not be completed: ${e.message}` }));
+  const meta = await describeLecture({ title, segments: segmentsOut, units: finalUnits, inputDescription, usage });
+  const teaching = opts.deferTeachingScore ? { available: false, pending: true, reason: 'The teaching review is still being prepared.' } : await teachingPromise;
 
   const lecture = {
     title: meta.title || title || (topics[0] && topics[0].name) || 'Lecture',
@@ -826,7 +840,17 @@ async function buildLectureModel(opts = {}) {
     }
   };
   // Incomplete models are kept in memory for generation but not persisted, so a retry re-reads them.
-  if (unreadParts.length) memoryCache.set(key, model); else writeCache(key, model);
+  const persist = () => { if (unreadParts.length) memoryCache.set(key, model); else writeCache(key, model); };
+  persist();
+  if (opts.deferTeachingScore) {
+    teachingPromise.then(t => {
+      model.teaching = t;
+      if (t && t.level) model.level = t.level;
+      if (t && t.intent) model.intent = t.intent;
+      model.audit.teachingMs = Date.now() - t0;
+      persist();
+    });
+  }
   return model;
 }
 
@@ -898,6 +922,24 @@ function sanitiseAngles(u) {
     } else if (only.difficulty === 'easy') {
       const applied = isCodeish ? 'output' : (u.kind === 'COMPARISON' ? 'comparison' : 'application');
       out.push({ type: applied, difficulty: 'medium', focus: `Apply ${u.subtopic} to a short concrete case like the one taught`, inferred: true });
+    }
+  }
+  // Hard opportunity (lecture-relative): anything the teacher actually explained or demonstrated beyond a
+  // definition supports one multi-step question — a trace for code/algorithms, a multi-step calculation for
+  // formulas, and for explained mechanisms/comparisons/applications a what-if or diagnosis scenario that needs
+  // reasoning through the mechanism. Plain definitions get none, so introductory lectures stay low on Hard.
+  if (u.depth !== 'MENTIONED' && u.kind !== 'DEFINITION' && !out.some(a => a.difficulty === 'hard') && out.length < 4) {
+    const hardType = isCodeish ? 'trace'
+      : ((u.kind === 'CALCULATION' || u.hasFormula) ? 'calculation'
+        : (u.kind === 'EDGE_CASE' ? 'edge_case'
+          : (['MECHANISM', 'COMPARISON', 'APPLICATION', 'EXAMPLE'].includes(u.kind) ? 'scenario' : null)));
+    if (hardType && !out.some(a => a.type === hardType)) {
+      const focus = hardType === 'scenario'
+        ? `What-if / diagnosis: reason through how ${u.subtopic} behaves in a new concrete situation (e.g. a changed condition or a failure) using what was taught`
+        : (hardType === 'trace' ? `Trace ${u.subtopic} over several steps on a concrete input`
+          : (hardType === 'calculation' ? `Multi-step calculation with ${u.subtopic} ending in a decision`
+            : `Boundary case of ${u.subtopic} that needs two taught rules together`));
+      out.push({ type: hardType, difficulty: 'hard', focus, inferred: true });
     }
   }
   return out;
@@ -1133,6 +1175,14 @@ async function scoreTeaching(lecture, { totalWords, usage, hasSpeech, rawArtifac
     };
   });
 
+  // Teachers never see internal ids: "In Unit U04, add…" becomes "Dimensionality alignment (12:40): add…".
+  const unitById = new Map(lecture.units.map(u => [u.id, u]));
+  const unitName = (id) => { const u = unitById.get(String(id).toUpperCase()); return u ? `${u.subtopic}${u.time ? ` (${u.time})` : ''}` : 'this part'; };
+  const humanise = (txt) => String(txt || '')
+    .replace(/^\s*(?:in|for|at)?\s*(?:unit\s+)?(U\d{2})\b\s*[,:]?\s*/i, (m, id) => `${unitName(id)}: `)
+    .replace(/\b(?:unit\s+)?(U\d{2})\b/gi, (m, id) => unitName(id))
+    .replace(/^./, c => c.toUpperCase());
+  dims.forEach(d => { d.finding = humanise(d.finding); if (d.improvement) d.improvement = humanise(d.improvement); });
   const assessed = dims.filter(d => d.rating !== null);
   const verifiedEvidence = new Set(assessed.flatMap(d => d.evidence.map(e => e.id))).size;
   let confidence = 'LOW';
@@ -1160,8 +1210,8 @@ async function scoreTeaching(lecture, { totalWords, usage, hasSpeech, rawArtifac
     level: lecture.level,
     intent: lecture.intent,
     dimensions: dims,
-    strengths: (r.data.strengths || []).filter(s => typeof s === 'string').slice(0, 3),
-    improvements: (r.data.improvements || []).filter(s => typeof s === 'string').slice(0, 3),
+    strengths: (r.data.strengths || []).filter(s => typeof s === 'string').slice(0, 3).map(humanise),
+    improvements: (r.data.improvements || []).filter(s => typeof s === 'string').slice(0, 3).map(humanise),
     reviewModel: r.model,
     caveat: 'This reflects the evidence in this one input, judged against a fixed rubric. It is a feedback aid, not a measure of a teacher\'s overall ability.'
   };
@@ -1320,7 +1370,15 @@ function planRequest(fullModel, requestedCount, difficulty = 'Balanced', options
     byDifficulty: byDiff,
     byTopic: Object.entries(byTopic).map(([topic, count]) => ({ topic, count })),
     selected,
-    reserves: reserves.filter(r => wanted.has(r.difficulty)),
+    // Reserves of the requested difficulties first; when the teacher allows filling (default), reserves of the
+    // nearest other difficulty follow as a last resort, so a failed Hard slot becomes a Medium question with a
+    // notice instead of a failed quiz.
+    reserves: [
+      ...reserves.filter(r => wanted.has(r.difficulty)),
+      ...(options.fillOtherTiers && diffKey !== 'balanced'
+        ? reserves.filter(r => !wanted.has(r.difficulty)).sort((a, b) => (a.difficulty === 'medium' ? 0 : 1) - (b.difficulty === 'medium' ? 0 : 1))
+        : [])
+    ],
     shortfall: Math.max(0, shortfall),
     filledFromOtherTiers,
     excludedTopics: [...excluded],

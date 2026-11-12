@@ -299,6 +299,7 @@ router.post('/transcribe', auth, upload.single('file'), verifyUploadedFile, quiz
 // @route   POST api/quiz/analyze-depth
 // @desc    Analyze lecture text/transcript for pedagogical depth and focus
 router.post('/analyze-depth', auth, quizController.analyzeDepth);
+router.get('/teaching-score/:id', auth, quizController.getTeachingScore);
 
 // @route   POST api/quiz/file-metadata
 // @desc    Get total pages / slides metadata for an uploaded file

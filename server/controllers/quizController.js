@@ -5421,6 +5421,13 @@ function buildAnalysisFromLectureModel(model, wordCount) {
     };
 }
 
+/** Teaching score of a lecture model; it finishes a few seconds after the overview (see deferTeachingScore). */
+exports.getTeachingScore = async (req, res) => {
+    const lm = lectureModel.getById(String(req.params.id || ''));
+    if (!lm) return res.status(404).json({ msg: 'Lecture analysis not found. Please re-add the material.' });
+    return res.json({ pending: Boolean(lm.teaching && lm.teaching.pending), teaching: lm.teaching || null, level: lm.level, intent: lm.intent });
+};
+
 exports.analyzeDepth = async (req, res) => {
     try {
         const { text, title, segments, modality, hasTimingData, forceRefresh } = req.body;
@@ -5487,7 +5494,8 @@ exports.analyzeDepth = async (req, res) => {
                     documents,
                     title: sanitizeLectureTitle(title || ''),
                     modality,
-                    forceRefresh: Boolean(forceRefresh)
+                    forceRefresh: Boolean(forceRefresh),
+                    deferTeachingScore: true
                 });
                 if (model && model.ok && model.units.length >= 1) {
                     const payload = buildAnalysisFromLectureModel(model, wordCount);
