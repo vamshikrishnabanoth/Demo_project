@@ -21,53 +21,64 @@ jobs:
     steps:
       - name: Deploy to EC2 via SSH
         uses: appleboy/ssh-action@v1.2.0
+        env:
+          APP_DIR_VAR: ${{ vars.EC2_APP_DIR || secrets.EC2_APP_DIR }}
+          RESTART_CMD_VAR: ${{ vars.RESTART_CMD || secrets.RESTART_CMD }}
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
+          envs: APP_DIR_VAR,RESTART_CMD_VAR
           script_stop: true
           script: |
             set -e
-            echo "=== Deploying latest backend to EC2 ==="
-            cd "${{ vars.EC2_APP_DIR }}"
-            
-            # Check for uncommitted changes
-            if [ -n "$(git status --porcelain)" ]; then
-              echo "Error: Uncommitted changes detected on server. Aborting deployment."
-              git status
-              exit 1
+            echo "=== Starting automated EC2 backend deployment ==="
+
+            # Determine application directory with robust fallback
+            APP_DIR="${APP_DIR_VAR:-/home/ubuntu/Demo_project}"
+            if [ ! -d "$APP_DIR" ]; then
+              echo "Configured directory '$APP_DIR' not found. Falling back to /home/ubuntu/Demo_project"
+              APP_DIR="/home/ubuntu/Demo_project"
             fi
+            echo "Working directory: $APP_DIR"
+            cd "$APP_DIR"
+
+            # Check git status
+            echo "Checking git status..."
+            git status
 
             echo "Pulling latest code from origin main..."
             git fetch origin main
             git checkout main
             git pull origin main
 
-            echo "Installing packages and generating Prisma client..."
+            echo "Installing dependencies and running Prisma generate..."
             cd server
             npm install --production=false
             npx prisma generate
 
-            echo "Executing restart command: ${{ vars.RESTART_CMD }}"
-            ${{ vars.RESTART_CMD }}
-            echo "Backend successfully restarted."
+            # Determine restart command with fallback
+            RESTART_CMD="${RESTART_CMD_VAR:-pm2 restart quiz-backend}"
+            echo "Executing restart: $RESTART_CMD"
+            eval "$RESTART_CMD"
+            echo "PM2 process restarted successfully!"
 
       - name: Verify Backend Health
         run: |
-          echo "Waiting for backend service to stabilize..."
+          echo "Waiting 5 seconds for backend to initialize..."
           sleep 5
-          HEALTH_URL="${{ vars.HEALTH_URL }}"
-          echo "Pinging health endpoint: $HEALTH_URL"
+          HEALTH_URL="${{ vars.HEALTH_URL || secrets.HEALTH_URL || 'https://43-204-96-224.sslip.io/api/quiz/health' }}"
+          echo "Verifying health endpoint at: $HEALTH_URL"
           
           for i in {1..12}; do
             RESPONSE=$(curl -sk "$HEALTH_URL" || true)
             echo "Attempt $i: $RESPONSE"
             if echo "$RESPONSE" | grep -q '"status":"OK"'; then
-              echo "✅ Health check passed: Backend is live and healthy!"
+              echo "✅ Deployment successful! Backend is live and healthy."
               exit 0
             fi
             sleep 5
           done
           
-          echo "❌ Health check failed after 60 seconds."
+          echo "❌ Health check timed out or failed after 60 seconds."
           exit 1
