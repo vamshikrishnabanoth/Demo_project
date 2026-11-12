@@ -1254,11 +1254,92 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
                     };
                 }
             }
+            // ── Final Quality Gate (non-negotiable): every question must pass every criterion on its own.
+            // Failed questions are rejected with their reasons; for lecture inputs one bounded replacement round
+            // (validated again) refills the slots; the notice states exactly what was delivered and why.
+            if (process.env.DISABLE_QUALITY_GATE !== 'true' && !lmOptions.skipGate) {
+                const { finalQualityGate, describeRejections } = require('../engine/validators/finalQualityGate');
+                const lmForGate = lmCandidate && lmCandidate.ok ? lmCandidate : null;
+                const GATE_TIMEOUT_MS = Math.max(30000, parseInt(process.env.QUALITY_GATE_TIMEOUT_MS, 10) || 150000);
+                const runGate = (qs, context) => Promise.race([
+                    finalQualityGate(qs, { lectureModel: lmForGate, context }),
+                    new Promise(resolve => setTimeout(() => resolve({
+                        accepted: [], model: null, ms: GATE_TIMEOUT_MS,
+                        rejected: qs.map(q => { q.qualityGate = { status: 'REJECTED', criteria: ['NOT_VALIDATED'], reasons: ['NOT_VALIDATED: The validation service did not answer in time.'] }; return { question: q, reasons: q.qualityGate.reasons, criteria: ['NOT_VALIDATED'] }; })
+                    }), GATE_TIMEOUT_MS))
+                ]);
+                if (taskId) updateTaskStage(taskId, 7, 'Final Quality Gate');
+                const generatedCount = result.questions.length;
+                const gate = await runGate(result.questions, Array.isArray(lmOptions.gateContext) ? lmOptions.gateContext : []);
+                const accepted = gate.accepted.slice();
+                const allRejected = gate.rejected.slice();
+                let replacedOk = 0;
+                // One replacement round for lecture inputs (not inside a replacement itself): picks are reserved up
+                // front so parallel replacements never chase the same teaching point and question type.
+                if (gate.rejected.length > 0 && lmForGate && Array.isArray(lmForGate.units) && !lmOptions.replace) {
+                    const MAX_REPLACE = Math.max(0, parseInt(process.env.QUALITY_GATE_MAX_REPLACEMENTS, 10) || 5);
+                    const toReplace = gate.rejected.slice(0, MAX_REPLACE);
+                    const everyone = [...accepted, ...gate.rejected.map(r => r.question)];
+                    const reserved = [];
+                    const jobs = toReplace.map((r) => {
+                        const others = everyone.filter(q => q !== r.question);
+                        const plan = lectureModel.planRequest(lmForGate, 1, r.question.difficulty || 'Medium', {
+                            excludeTopics: Array.isArray(lmOptions.excludeTopics) ? lmOptions.excludeTopics : [],
+                            replace: { unitId: (lecturePairOf(lmForGate, r.question) || {}).unitId || null, subtopic: r.question.lectureSource?.subtopic || null,
+                                type: r.question.lectureSource?.questionType || null, difficulty: r.question.difficulty || 'Medium',
+                                usedPairs: [r.question, ...others].map(q => lecturePairOf(lmForGate, q)).filter(Boolean).concat(reserved) }
+                        });
+                        const pick = plan.selected[0];
+                        if (!pick) return Promise.resolve(null);
+                        const extraUsed = reserved.slice();
+                        reserved.push({ unitId: pick.unit.id, type: pick.angle.type });
+                        return replaceOneFromLecture(lmForGate, r.question, others, { excludedTopics: lmOptions.excludeTopics || [], extraUsed })
+                            .then(x => x.question).catch(() => null);
+                    });
+                    const fresh = (await Promise.all(jobs)).filter(Boolean);
+                    if (fresh.length) {
+                        const gate2 = await runGate(fresh, accepted);
+                        replacedOk = gate2.accepted.length;
+                        accepted.push(...gate2.accepted);
+                        allRejected.push(...gate2.rejected);
+                    }
+                }
+                result.questions = accepted;
+                const firstPassRejected = gate.rejected.length;
+                result.qualityGate = {
+                    checked: Boolean(gate.model),
+                    model: gate.model,
+                    generated: generatedCount,
+                    rejectedFirstPass: firstPassRejected,
+                    replaced: replacedOk,
+                    delivered: accepted.length,
+                    ms: gate.ms,
+                    rejected: allRejected.map(r => ({
+                        question: r.question.question || r.question.questionText || '',
+                        options: r.question.options || [],
+                        key: r.question.correctAnswer ?? r.question.correct_answer ?? null,
+                        difficulty: r.question.difficulty || null,
+                        lectureSource: r.question.lectureSource || null,
+                        criteria: r.criteria,
+                        reasons: r.reasons
+                    }))
+                };
+                if (firstPassRejected > 0) {
+                    const short = Math.max(0, (sessionInputs.count || generatedCount) - accepted.length);
+                    const gateNote = `Quality gate: ${firstPassRejected} of ${generatedCount} generated question${generatedCount === 1 ? '' : 's'} rejected (${describeRejections(gate.rejected)})` +
+                        (lmForGate && !lmOptions.replace ? `; ${replacedOk} replaced with validated questions` : '') +
+                        (short > 0 ? `. Delivering ${accepted.length} of ${sessionInputs.count || generatedCount} requested — nothing that failed a check is included.` : '.');
+                    result.notice = result.notice ? `${result.notice} ${gateNote}` : gateNote;
+                    if (short > 0) result.isPartial = true;
+                }
+                console.log(`[QualityGate] ${gate.model ? `judged by ${gate.model}` : 'not judged'}: ${generatedCount} generated, ${firstPassRejected} rejected, ${replacedOk} replaced, ${accepted.length} delivered (${(gate.ms / 1000).toFixed(1)}s)`);
+                if (result.questions.length === 0) result.error = result.notice || 'No question passed the final quality gate.';
+            }
             // Say plainly when fewer questions of a planned difficulty passed than were planned.
             if (lmPlanInfo && lmPlanInfo.byDifficulty) {
                 const got = { easy: 0, medium: 0, hard: 0 };
                 result.questions.forEach(q => { const d = String(q.difficulty || q.metadata?.targetDifficulty || '').toLowerCase(); if (got[d] !== undefined) got[d]++; });
-                const gaps = ['hard', 'medium'].filter(d => (lmPlanInfo.byDifficulty[d] || 0) > got[d]);
+                const gaps = ['hard', 'medium', 'easy'].filter(d => (lmPlanInfo.byDifficulty[d] || 0) > got[d]);
                 if (gaps.length) {
                     const missing = gaps.reduce((n, d) => n + lmPlanInfo.byDifficulty[d] - got[d], 0);
                     const plannedTotal = (lmPlanInfo.byDifficulty.easy || 0) + (lmPlanInfo.byDifficulty.medium || 0) + (lmPlanInfo.byDifficulty.hard || 0);
@@ -1274,7 +1355,8 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
                 }
             }
             // Independent answer check by a different model family; flags go to the teacher's review (bounded to 30 s).
-            if (process.env.DISABLE_BLIND_CHECK !== 'true') {
+            // Superseded by the Final Quality Gate; used only if the gate is switched off by configuration.
+            if (process.env.DISABLE_BLIND_CHECK !== 'true' && process.env.DISABLE_QUALITY_GATE === 'true') {
                 try {
                     const { blindAnswerCheck } = require('../engine/validators/blindAnswerCheck');
                     const summary = await Promise.race([
@@ -4087,6 +4169,8 @@ exports.generateQuizQuestions = async (req, res) => {
                 deliveredCount:  finalQuestions.length,
                 // Capacity, difficulty mix and per-topic allocation decided from the shared lecture model.
                 lectureModelPlan: (finalTaskObj && finalTaskObj.lectureModelPlan) || null,
+                // Final Quality Gate report: what was rejected and why (kept for traceability, shown in review).
+                qualityGate:     (finalTaskObj && finalTaskObj.pipelineResult?.qualityGate) || null,
                 groundedCount:   (finalTaskObj && finalTaskObj.pipelineResult?.groundedCount) ?? (finalTaskObj && finalTaskObj.groundedCount) ?? finalQuestions.filter(q => q.provenance !== 'SCOPE_SUPPLEMENTARY' && !q.isSupplementary).length,
                 supplementaryCount: (finalTaskObj && finalTaskObj.pipelineResult?.supplementaryCount) ?? (finalTaskObj && finalTaskObj.supplementaryCount) ?? finalQuestions.filter(q => q.provenance === 'SCOPE_SUPPLEMENTARY' || q.isSupplementary).length,
                 distinctTargetCount: (finalTaskObj && finalTaskObj.pipelineResult?.distinctTargetCount) ?? (finalTaskObj && finalTaskObj.distinctTargetCount) ?? new Set(finalQuestions.map(q => q.conceptTested || q.target?.concept || q.concept || '').filter(Boolean)).size,
@@ -5425,34 +5509,8 @@ function buildAnalysisFromLectureModel(model, wordCount) {
 }
 
 /** Teaching score of a lecture model; it finishes a few seconds after the overview (see deferTeachingScore). */
-/**
- * Replace one question with a different one from the same lecture, at the same difficulty.
- * Traced back to the teaching point it came from (unit id, or subtopic for older quizzes); a question type not
- * yet used there is chosen, avoiding every (point, type) pair already in the quiz. The lecture text comes from
- * the saved lecture analysis, so the browser sends only small metadata. One question = one pipeline run with
- * every check (grounding, critic, independent answer check); at most two spare opportunities are tried.
- * The teacher's reason is logged for the pilot study (which questions teachers reject, and why).
- */
-exports.replaceQuestion = async (req, res) => {
-    const startedAt = Date.now();
-    const { lectureModelId, question = {}, otherQuestions = [], reason = null, excludedTopics = [] } = req.body || {};
-    const lm = lectureModelId ? lectureModel.getById(String(lectureModelId)) : null;
-    if (!lm || !lm.ok || !Array.isArray(lm.units) || lm.units.length === 0) {
-        return res.status(404).json({ msg: 'The lecture analysis for this quiz is no longer available, so this question cannot be traced back. Edit it by hand, or re-add the material and generate again.' });
-    }
-    const src = question.lectureSource || {};
-    const difficulty = ['Easy', 'Medium', 'Hard'].includes(question.difficulty) ? question.difficulty
-        : (['Easy', 'Medium', 'Hard'].includes(src.measuredDifficulty) ? src.measuredDifficulty : 'Medium');
-    const unitBySubtopic = (s) => lm.units.find(u => String(u.subtopic).toLowerCase() === String(s || '').toLowerCase());
-    const pairOf = (q) => {
-        const s = (q && q.lectureSource) || {};
-        const unit = (s.unitId && lm.units.find(u => u.id === s.unitId)) || unitBySubtopic(s.subtopic);
-        return unit && s.questionType ? { unitId: unit.id, type: s.questionType } : null;
-    };
-    const usedPairs = [question, ...(Array.isArray(otherQuestions) ? otherQuestions : [])].map(pairOf).filter(Boolean);
-    const origin = (src.unitId && lm.units.find(u => u.id === src.unitId)) || unitBySubtopic(src.subtopic);
-
-    // Rebuild the inputs from the saved lecture analysis (timed speech blocks + material blocks).
+/** Inputs rebuilt from a saved lecture analysis (timed speech blocks + material blocks). */
+function inputsFromLectureModel(lm) {
     const blocks = Array.isArray(lm.blocks) ? lm.blocks : [];
     const speech = blocks.filter(b => b.source === 'SPEECH');
     const material = blocks.filter(b => b.source !== 'SPEECH');
@@ -5462,20 +5520,66 @@ exports.replaceQuestion = async (req, res) => {
             segments: speech.map(b => ({ start: b.start, end: b.end, text: b.text })) });
     }
     if (material.length) inputs.push({ type: 'document', source_name: lm.title || 'Material', content: material.map(b => b.text).join('\n\n') });
-    if (!inputs.length) return res.status(404).json({ msg: 'The lecture text for this quiz is no longer available.' });
+    return inputs;
+}
 
-    const taskId = createTask({ userId: req.user?.id, questionCount: 1, textLength: inputs.reduce((n, i) => n + i.content.length, 0) });
+/** The (teaching point, question type) pair a question came from, resolved against the lecture model. */
+function lecturePairOf(lm, q) {
+    const s = (q && q.lectureSource) || {};
+    const unit = (s.unitId && lm.units.find(u => u.id === s.unitId))
+        || lm.units.find(u => String(u.subtopic).toLowerCase() === String(s.subtopic || '').toLowerCase());
+    return unit && s.questionType ? { unitId: unit.id, type: s.questionType } : null;
+}
+
+/**
+ * One different question from the same lecture, traced back to `question`'s teaching point, at its difficulty.
+ * `extraUsed` reserves pairs already promised to other replacements in the same round.
+ * `gateContext`: when given, the new question is validated by the Final Quality Gate inside the run (with these
+ * questions as duplicate context); when omitted the caller validates it.
+ */
+async function replaceOneFromLecture(lm, question, others = [], { excludedTopics = [], extraUsed = [], gateContext = null, userId = null } = {}) {
+    const src = question.lectureSource || {};
+    const difficulty = ['Easy', 'Medium', 'Hard'].includes(question.difficulty) ? question.difficulty
+        : (['Easy', 'Medium', 'Hard'].includes(src.measuredDifficulty) ? src.measuredDifficulty : 'Medium');
+    const usedPairs = [question, ...others].map(q => lecturePairOf(lm, q)).filter(Boolean).concat(extraUsed);
+    const origin = lecturePairOf(lm, question);
+    const inputs = inputsFromLectureModel(lm);
+    if (!inputs.length) return { question: null, difficulty, msg: 'The lecture text for this quiz is no longer available.' };
+    const taskId = createTask({ userId, questionCount: 1, textLength: inputs.reduce((n, i) => n + i.content.length, 0) });
+    const generated = await generateQuestions(null, null, 1, difficulty, null, null, inputs, null, taskId, null, null, 'MIXED',
+        'FILL_WITH_MEDIUM', null, 'ALLOW_SCOPE_SUPPLEMENTARY',
+        { id: lm.id, excludeTopics: Array.isArray(excludedTopics) ? excludedTopics : [],
+          replace: { unitId: origin ? origin.unitId : null, subtopic: src.subtopic || null, type: src.questionType || null, difficulty, usedPairs },
+          skipGate: !gateContext, gateContext: gateContext || [] });
+    const newQ = Array.isArray(generated) ? generated[0] || null : null;
+    const task = getTask(taskId) || {};
+    return { question: newQ, difficulty, msg: newQ ? null : (task.pipelineNotice || null) };
+}
+
+/**
+ * Replace one question with a different one from the same lecture, at the same difficulty.
+ * Traced back to the teaching point it came from (unit id, or subtopic for older quizzes); a question type not
+ * yet used there is chosen, avoiding every (point, type) pair already in the quiz. The lecture text comes from
+ * the saved lecture analysis, so the browser sends only small metadata. One question = one pipeline run with
+ * every check, including the Final Quality Gate against the rest of the quiz; at most two spare opportunities.
+ * The teacher's reason is logged for the pilot study (which questions teachers reject, and why).
+ */
+exports.replaceQuestion = async (req, res) => {
+    const startedAt = Date.now();
+    const { lectureModelId, question = {}, otherQuestions = [], reason = null, excludedTopics = [] } = req.body || {};
+    const lm = lectureModelId ? lectureModel.getById(String(lectureModelId)) : null;
+    if (!lm || !lm.ok || !Array.isArray(lm.units) || lm.units.length === 0) {
+        return res.status(404).json({ msg: 'The lecture analysis for this quiz is no longer available, so this question cannot be traced back. Edit it by hand, or re-add the material and generate again.' });
+    }
+    const others = Array.isArray(otherQuestions) ? otherQuestions : [];
+    const src = question.lectureSource || {};
     try {
-        const generated = await generateQuestions(null, null, 1, difficulty, null, null, inputs, null, taskId, null, null, 'MIXED',
-            'FILL_WITH_MEDIUM', null, 'ALLOW_SCOPE_SUPPLEMENTARY',
-            { id: lm.id, excludeTopics: Array.isArray(excludedTopics) ? excludedTopics : [],
-              replace: { unitId: origin ? origin.id : null, subtopic: src.subtopic || null, type: src.questionType || null, difficulty, usedPairs } });
-        const newQ = Array.isArray(generated) ? generated[0] : null;
+        const r = await replaceOneFromLecture(lm, question, others, { excludedTopics, gateContext: others, userId: req.user?.id || null });
+        const newQ = r.question;
         const ms = Date.now() - startedAt;
-        console.log(`[ReplaceQuestion] user=${req.user?.id || '?'} reason=${reason || 'none'} from="${src.subtopic || '?'}/${src.questionType || '?'}" ${difficulty} -> ${newQ ? `"${newQ.lectureSource?.subtopic || '?'}/${newQ.lectureSource?.questionType || '?'}"` : 'none'} in ${(ms / 1000).toFixed(1)}s`);
+        console.log(`[ReplaceQuestion] user=${req.user?.id || '?'} reason=${reason || 'none'} from="${src.subtopic || '?'}/${src.questionType || '?'}" ${r.difficulty} -> ${newQ ? `"${newQ.lectureSource?.subtopic || '?'}/${newQ.lectureSource?.questionType || '?'}"` : 'none'} in ${(ms / 1000).toFixed(1)}s`);
         if (!newQ) {
-            const task = getTask(taskId) || {};
-            return res.status(422).json({ msg: task.pipelineNotice || 'No different question passed the quality checks for this part of the lecture. Try again, or edit the question by hand.' });
+            return res.status(422).json({ msg: r.msg || 'No different question passed the quality checks for this part of the lecture. Try again, or edit the question by hand.' });
         }
         newQ.replacement = { reason: reason || null, replacedSubtopic: src.subtopic || null, replacedType: src.questionType || null, at: new Date().toISOString(), ms };
         return res.json({ question: newQ, ms });

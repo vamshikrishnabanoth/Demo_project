@@ -206,7 +206,52 @@ async function asyncTests() {
   }
 }
 
-asyncTests().then(() => {
+async function gateTests() {
+  const { finalQualityGate, deterministicProblems } = require('../engine/validators/finalQualityGate');
+  const mk = (stem, options, key, extra = {}) => ({ question: stem, options, correctAnswer: key, difficulty: 'Easy', ...extra });
+  test('Gate format check: exactly four distinct options and a valid key; code questions must show the code', () => {
+    assert.ok(deterministicProblems(mk('Which is right here?', ['a', 'b', 'c'], 'a')).some(p => p.code === 'FORMAT'));
+    assert.ok(deterministicProblems(mk('Which is right here?', ['a', 'b', 'b', 'c'], 'a')).some(p => p.code === 'FORMAT'));
+    assert.ok(deterministicProblems(mk('Which is right here?', ['a', 'b', 'c', 'd'], 'z')).some(p => p.code === 'FORMAT'));
+    const noCode = mk('What does this loop print for the array 2, 0, 2?', ['a', 'b', 'c', 'd'], 'a', { lectureSource: { questionType: 'output' } });
+    assert.ok(deterministicProblems(noCode).some(p => p.code === 'COMPLETENESS'));
+    const conditionOnly = mk("When the condition i >= x is met, what happens to the inner loop?", ['a', 'b', 'c', 'd'], 'a');
+    assert.ok(deterministicProblems(conditionOnly).some(p => p.code === 'COMPLETENESS'));
+    const dataNotCode = mk('Given the data set 1 0 1 0 0 2, what size should the frequency array be?', ['2', '3', '6', '7'], '3', { lectureSource: { questionType: 'output' } });
+    assert.strictEqual(deterministicProblems(dataNotCode).length, 0);
+    const withCode = mk('What does this print?\nint count = 0;\ncount++;\nprintf("%d", count);', ['0', '1', '2', 'Error'], '1', { lectureSource: { questionType: 'output' } });
+    assert.strictEqual(deterministicProblems(withCode).length, 0);
+  });
+  const original = lm._internal.callJson;
+  try {
+    lm._internal.callJson = async () => ({ model: 'stub', data: { results: [
+      { q: 1, answer: 'B', alsoDefensible: [], grounded: true, correct: true, distractorsValid: true, plausible: true, aligned: true, complete: true, clear: true, fair: true, explanationOk: true, problems: [] },
+      { q: 2, answer: 'C', alsoDefensible: ['A'], grounded: true, correct: true, distractorsValid: false, plausible: true, aligned: true, complete: true, clear: true, fair: true, explanationOk: true, problems: ['A and C mean the same'] }
+    ], duplicates: [] } });
+    const good = mk('Why is count declared inside the outer loop?', ['Compiler rule', 'To reset it for each element', 'To save memory', 'To keep it cumulative'], 'To reset it for each element');
+    const twoRight = mk('Why does starting the inner loop from x fail?', ['It only counts elements after x', 'It counts twice', 'It skips elements before x', 'Infinite loop'], 'It skips elements before x');
+    const unjudged = mk('What is a frequency count array?', ['w', 'x', 'y', 'z'], 'w');
+    const out = await finalQualityGate([good, twoRight, unjudged], {});
+    test('Gate keeps a fully valid question and rejects equivalent distractors and unjudged questions, with reasons', () => {
+      assert.deepStrictEqual(out.accepted, [good]);
+      const r2 = out.rejected.find(r => r.question === twoRight);
+      assert.ok(r2.criteria.includes('SINGLE_ANSWER') && r2.criteria.includes('DISTRACTOR_VALIDITY'));
+      const r3 = out.rejected.find(r => r.question === unjudged);
+      assert.deepStrictEqual(r3.criteria, ['NOT_VALIDATED']);
+      assert.ok(r2.reasons.length > 0 && twoRight.qualityGate.status === 'REJECTED');
+    });
+    lm._internal.callJson = async () => { throw new Error('provider down'); };
+    const down = await finalQualityGate([mk('Which is a valid statement?', ['a', 'b', 'c', 'd'], 'a')], {});
+    test('If the gate cannot validate, nothing is delivered as if it were correct', () => {
+      assert.strictEqual(down.accepted.length, 0);
+      assert.ok(down.rejected[0].criteria.includes('NOT_VALIDATED'));
+    });
+  } finally {
+    lm._internal.callJson = original;
+  }
+}
+
+asyncTests().then(gateTests).then(() => {
 const passed = results.filter(Boolean).length;
 console.log(`\n🏁 ${passed} / ${results.length} tests passed`);
 process.exit(passed === results.length ? 0 : 1);
