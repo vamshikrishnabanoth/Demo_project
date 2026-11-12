@@ -28,6 +28,7 @@ const original = {
   generateQuestionBatch: agent2Generator.generateQuestionBatch,
   generateQuestion: agent2Generator.generateQuestion,
   evaluateAndRepairQuestion: agent3Evaluator.evaluateAndRepairQuestion,
+  batchCriticResponses: agent3Evaluator.batchCriticResponses,
   evaluateQuizSet: agent3Evaluator.evaluateQuizSet,
   verifyQuizGrounding: groundingGate.verifyQuizGrounding,
   checkJustification: groundingGate._checkJustification,
@@ -96,6 +97,8 @@ function installStubs({ primary, reserves, evaluate }) {
   };
   agent2Generator.generateQuestionBatch = async (targets) => targets.map(gen);
   agent2Generator.generateQuestion = async (t) => gen(t);
+  // No real LLM calls: the batched audit returns no verdicts, so every item uses the stubbed single evaluation.
+  agent3Evaluator.batchCriticResponses = async (items) => items.map(() => null);
   agent3Evaluator.evaluateAndRepairQuestion = async (mcq, target) => {
     const verdict = evaluate(mcq, target);
     if (verdict === 'FAIL') {
@@ -119,6 +122,7 @@ function restoreStubs() {
   agent2Generator.generateQuestionBatch = original.generateQuestionBatch;
   agent2Generator.generateQuestion = original.generateQuestion;
   agent3Evaluator.evaluateAndRepairQuestion = original.evaluateAndRepairQuestion;
+  agent3Evaluator.batchCriticResponses = original.batchCriticResponses;
   agent3Evaluator.evaluateQuizSet = original.evaluateQuizSet;
   groundingGate.verifyQuizGrounding = original.verifyQuizGrounding;
   groundingGate._checkJustification = original.checkJustification;
