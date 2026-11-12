@@ -27,7 +27,7 @@ const llmRouter = require('../adapter/llmRouter');
 const { safeParseJson } = require('../utils/jsonParser');
 const { classifyTextBlock } = require('../../utils/inputKind');
 
-const MODEL_VERSION = 'lecture-model-v2.2';
+const MODEL_VERSION = 'lecture-model-v2.3';
 // Largest quiz a teacher can request (one setting for server, planner and UI). Default 30: a daily-quiz size.
 const MAX_QUIZ_QUESTIONS = Math.max(1, parseInt(process.env.MAX_QUIZ_QUESTIONS, 10) || 30);
 const CACHE_DIR = path.join(__dirname, '..', '..', 'storage', 'lecture_model_cache');
@@ -116,6 +116,14 @@ const TEACHING_DIMENSIONS = [
 const UNIT_KINDS = ['DEFINITION', 'MECHANISM', 'EXAMPLE', 'CODE', 'COMMAND', 'CALCULATION', 'ALGORITHM_TRACE', 'COMPARISON', 'EDGE_CASE', 'APPLICATION'];
 const ANGLE_TYPES = ['recall', 'concept', 'mechanism', 'trace', 'output', 'calculation', 'debug', 'comparison', 'edge_case', 'application', 'scenario'];
 const CODE_KINDS = new Set(['CODE', 'COMMAND', 'ALGORITHM_TRACE']);
+// Code read aloud in a lecture: loop headers, declarations, increments and print calls said in words.
+const SPOKEN_CODE_PATTERNS = [
+  /\b(?:for|while)\s*\(?\s*\w+\s*(?:equal to|equals|=|less than|<)/i, /\bplus plus\b|\+\+|\bminus minus\b/i,
+  /\b(?:int|float|double|char|string|bool|var|let|const)\s+\w+\s*(?:equal to|equals|=)/i, /\bprint\s?f\b|\bprintln\b|system\.out|\bcout\b|\bprint\(/i,
+  /\bif\s*\(?\s*\w+(?:\s+of\s+\w+)?\s*(?:equal equal|==|double equal|is equal to)/i, /\breturn\s+\w+\s*;|\bdef\s+\w+\(|\bfunction\s+\w+\(/i,
+  /\b\w+\s+of\s+(?:i|j|x|0|1)\b.*\b(?:equal to|==|=)/i
+];
+function spokenCodeHits(text) { return SPOKEN_CODE_PATTERNS.filter(re => re.test(text || '')).length; }
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Small helpers
@@ -781,7 +789,7 @@ async function buildLectureModel(opts = {}) {
     u.time = fmtTime(u.start);
     const slides = u.blocks.map(id => blockMap[id].slide).filter(Boolean);
     u.slides = Array.from(new Set(slides));
-    u.hasCode = CODE_KINDS.has(u.kind) || /```|;\s*$|^\s*\$ /m.test(u.blocks.map(id => blockMap[id].text).join('\n')) && (u.angles || []).some(a => ['trace', 'output', 'debug'].includes(a.type));
+    u.hasCode = CODE_KINDS.has(u.kind) || spokenCodeHits(u.blocks.map(id => blockMap[id].text).join(' ')) >= 2 || /```|;\s*$|^\s*\$ /m.test(u.blocks.map(id => blockMap[id].text).join('\n')) && (u.angles || []).some(a => ['trace', 'output', 'debug'].includes(a.type));
     u.hasFormula = u.kind === 'CALCULATION' || (u.angles || []).some(a => a.type === 'calculation');
     u.angles = sanitiseAngles(u);
     u.misconceptions = (u.misconceptions || []).filter(m => typeof m === 'string' && m.trim().length > 5).slice(0, 4);
@@ -957,7 +965,9 @@ function sanitiseAngles(u) {
     // Hard only where the work is genuinely multi-step: tracing, calculating, predicting output, debugging,
     // edge cases, or applying ideas together in a scenario. Recall/concept/mechanism/comparison are at most Medium.
     if (diff === 'hard' && ['recall', 'concept', 'mechanism', 'comparison'].includes(type)) diff = 'medium';
-    if (['trace', 'output', 'calculation', 'debug'].includes(type) && diff === 'easy') diff = 'medium';
+    // Multi-step work (tracing, calculating) is at least Medium; a one-step code question (what one line
+    // prints or does, one obvious mistake) can be Easy, so code questions exist at every difficulty.
+    if (['trace', 'calculation'].includes(type) && diff === 'easy') diff = 'medium';
     if (seenTypes.has(type)) continue;
     seenTypes.add(type);
     out.push({ type, difficulty: diff, focus: String(a.focus || '').trim() || `${type} of ${u.subtopic}` });
@@ -992,6 +1002,13 @@ function sanitiseAngles(u) {
             : `Boundary case of ${u.subtopic} that needs two taught rules together`));
       out.push({ type: hardType, difficulty: 'hard', focus, inferred: true });
     }
+  }
+  // Easy code opportunity: taught code (pasted, shown or dictated) also supports a one-step question at Easy.
+  if (isCodeish && u.depth !== 'MENTIONED' && out.length < 4 && !out.some(a => a.difficulty === 'easy' && ['output', 'debug'].includes(a.type))) {
+    const easyType = !out.some(a => a.type === 'output') ? 'output' : (!out.some(a => a.type === 'debug') ? 'debug' : null);
+    if (easyType) out.push({ type: easyType, difficulty: 'easy', focus: easyType === 'output'
+      ? `One step: what a single taught line or statement of ${u.subtopic} prints, returns or does (no loop tracing)`
+      : `One obvious mistake in a 1-3 line fragment of ${u.subtopic} as taught`, inferred: true });
   }
   return out;
 }
@@ -1327,6 +1344,45 @@ function planRequest(fullModel, requestedCount, difficulty = 'Balanced', options
   })();
   const cap = model.capacity.byDifficulty;
 
+  // Replacing one question: same difficulty, traced back to the teaching point it came from, with a
+  // question type not used there yet; then other points of the same topic; then anywhere in the lecture.
+  // Every (point, type) pair already in the quiz is avoided, so the new question is genuinely different.
+  if (options.replace) {
+    const r = options.replace;
+    const d = ['easy', 'medium', 'hard'].includes(diffKey) ? diffKey : String(r.difficulty || 'medium').toLowerCase();
+    const used = new Set((r.usedPairs || []).map(x => `${x.unitId}|${x.type}`));
+    const usedUnits = new Set((r.usedPairs || []).map(x => x.unitId));
+    const origin = model.units.find(u => u.id === r.unitId)
+      || model.units.find(u => r.subtopic && String(u.subtopic).toLowerCase() === String(r.subtopic).toLowerCase());
+    const typeUse = {};
+    (r.usedPairs || []).forEach(x => { typeUse[x.type] = (typeUse[x.type] || 0) + 1; });
+    const candidates = model.units.flatMap(u => u.angles.map((a, ai) => ({ unit: u, angle: a, rank: ai })))
+      .filter(p => !used.has(`${p.unit.id}|${p.angle.type}`) && !(origin && p.unit.id === origin.id && p.angle.type === r.type));
+    const near = { easy: ['medium'], medium: ['easy', 'hard'], hard: ['medium'] }[d] || [];
+    const score = (p) => {
+      const tier = p.angle.difficulty === d ? 0 : (near.includes(p.angle.difficulty) ? 1 : 2);
+      // Same point first; then points no other question covers (same topic, then anywhere); covered points last.
+      const covered = usedUnits.has(p.unit.id) && !(origin && p.unit.id === origin.id);
+      const place = origin && p.unit.id === origin.id ? 0
+        : ((origin && p.unit.topic === origin.topic ? 1 : 2) + (covered ? 2 : 0));
+      return tier * 1000 + place * 100 + (typeUse[p.angle.type] || 0) * 10 + p.rank;
+    };
+    const ranked = candidates.filter(p => p.angle.difficulty === d || near.includes(p.angle.difficulty)).sort((a, b) => score(a) - score(b));
+    const pick = ranked.slice(0, 1).map(p => ({ ...p, difficulty: p.angle.difficulty }));
+    // Two reserves at most: a replacement should cost one question's worth of calls, not a quiz's.
+    const spare = ranked.slice(1, 3).map(p => ({ ...p, difficulty: p.angle.difficulty }));
+    const byDiffR = { easy: 0, medium: 0, hard: 0 };
+    pick.forEach(p => { byDiffR[p.difficulty]++; });
+    return {
+      requested: 1, difficulty, deliverable: pick.length, byDifficulty: byDiffR,
+      byTopic: pick.map(p => ({ topic: p.unit.topic, count: 1 })), selected: pick, reserves: spare,
+      shortfall: pick.length ? 0 : 1, filledFromOtherTiers: pick.length && pick[0].difficulty !== d ? 1 : 0,
+      excludedTopics: [...excluded],
+      shortfallReasons: pick.length ? [] : ['Every question opportunity in this lecture is already used in the quiz.'],
+      replaceOrigin: origin ? { unitId: origin.id, subtopic: origin.subtopic, sameUnit: pick.length > 0 && pick[0].unit.id === origin.id } : null
+    };
+  }
+
   // 1. Difficulty mix
   let byDiff;
   let filledFromOtherTiers = 0;
@@ -1526,7 +1582,15 @@ function writeCache(key, data) {
 
 function getById(id) {
   if (!id || !/^[a-f0-9]{64}$/.test(id)) return null;
-  return readCache(id);
+  // An existing quiz keeps working with the analysis it was made from, even after the reader is upgraded
+  // (a new upload is re-read with the current version; this lookup only serves quizzes already generated).
+  const current = readCache(id);
+  if (current) return current;
+  try {
+    const f = path.join(CACHE_DIR, `${id}.json`);
+    if (fs.existsSync(f)) { const data = JSON.parse(fs.readFileSync(f, 'utf8')); if (data && data.ok) return data; }
+  } catch (_) {}
+  return null;
 }
 
 module.exports = {
@@ -1540,5 +1604,5 @@ module.exports = {
   toClientPayload,
   getById,
   // exported for tests
-  _internal: { buildBlocks, buildWindows, quoteSupported, sanitiseAngles, computeCapacity, allocate, buildSegments, consolidateUnits, callJson }
+  _internal: { spokenCodeHits, buildBlocks, buildWindows, quoteSupported, sanitiseAngles, computeCapacity, allocate, buildSegments, consolidateUnits, callJson }
 };

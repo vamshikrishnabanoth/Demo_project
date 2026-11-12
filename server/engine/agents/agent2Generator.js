@@ -1773,7 +1773,7 @@ Target ID: ${t.targetId}
 Concept: ${t.concept}
 Required difficulty: ${TIER_DEMAND[tier] || TIER_DEMAND.Medium}
 Cognitive operation: ${op}
-${t.questionAngle && QUESTION_ANGLE_GUIDE[t.questionAngle] ? `Question type: ${QUESTION_ANGLE_GUIDE[t.questionAngle]}\n` : ''}${tier === 'Hard' ? `HARD RECIPE (mandatory): ${HARD_RECIPE[t.questionAngle] || HARD_RECIPE.default} Write the data on separate lines (e.g. "P1: Allocation [0,1,0], Max [7,5,3]" or code lines) so the prose sentence stays under 35 words.\n` : ''}Learning objective: ${t.instruction || t.operationalGuidance || 'Test conceptual and applied understanding.'}
+${t.questionAngle && QUESTION_ANGLE_GUIDE[t.questionAngle] ? `Question type: ${QUESTION_ANGLE_GUIDE[t.questionAngle]}\n` : ''}${tier === 'Hard' ? `HARD RECIPE (mandatory): ${HARD_RECIPE[t.questionAngle] || HARD_RECIPE.default} Write the data on separate lines (e.g. "P1: Allocation [0,1,0], Max [7,5,3]" or code lines) so the prose sentence stays under 35 words.\n` : ''}${tier === 'Easy' && ['output', 'debug'].includes(t.questionAngle) ? `EASY CODE (mandatory): put 1-3 lines of the code exactly as taught (reconstruct it from the teacher's words if it was read aloud) on separate lines in the stem; the answer must follow from ONE rule taught in class (what one statement prints or does, or one obvious mistake) - no loop tracing, no state over several steps.\n` : ''}Learning objective: ${t.instruction || t.operationalGuidance || 'Test conceptual and applied understanding.'}
 ${misconceptions}Evidence (the ONLY source of truth for this question):
 ${(ctx || '').slice(0, 1200).trim()}
 `;

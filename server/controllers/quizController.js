@@ -1108,7 +1108,8 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
             if (lm && lm.ok && lm.units && lm.units.length > 0) {
                 const lmPlan = lectureModel.planRequest(lm, parseInt(count, 10) || 0, difficulty || 'Balanced', {
                     excludeTopics: Array.isArray(lmOptions.excludeTopics) ? lmOptions.excludeTopics : [],
-                    fillOtherTiers: (deficitPolicy || 'FILL_WITH_MEDIUM') === 'FILL_WITH_MEDIUM'
+                    fillOtherTiers: (deficitPolicy || 'FILL_WITH_MEDIUM') === 'FILL_WITH_MEDIUM',
+                    replace: lmOptions.replace || null
                 });
                 const lmUnits = lectureModel.toTeachingUnits(lm, lmPlan);
                 if (lmUnits.primary.length > 0) {
@@ -1241,6 +1242,8 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
                     const u = m ? (m[1] === 'T' ? lmUnitsForReview.primary : lmUnitsForReview.reserve)[parseInt(m[2], 10) - 1] : null;
                     if (!u) continue;
                     q.lectureSource = {
+                        lectureModelId: lectureModelId || null,
+                        unitId: u.lectureUnitId || null,
                         topic: u.topic,
                         subtopic: u.subtopic,
                         questionType: u.questionAngle,
@@ -5422,6 +5425,66 @@ function buildAnalysisFromLectureModel(model, wordCount) {
 }
 
 /** Teaching score of a lecture model; it finishes a few seconds after the overview (see deferTeachingScore). */
+/**
+ * Replace one question with a different one from the same lecture, at the same difficulty.
+ * Traced back to the teaching point it came from (unit id, or subtopic for older quizzes); a question type not
+ * yet used there is chosen, avoiding every (point, type) pair already in the quiz. The lecture text comes from
+ * the saved lecture analysis, so the browser sends only small metadata. One question = one pipeline run with
+ * every check (grounding, critic, independent answer check); at most two spare opportunities are tried.
+ * The teacher's reason is logged for the pilot study (which questions teachers reject, and why).
+ */
+exports.replaceQuestion = async (req, res) => {
+    const startedAt = Date.now();
+    const { lectureModelId, question = {}, otherQuestions = [], reason = null, excludedTopics = [] } = req.body || {};
+    const lm = lectureModelId ? lectureModel.getById(String(lectureModelId)) : null;
+    if (!lm || !lm.ok || !Array.isArray(lm.units) || lm.units.length === 0) {
+        return res.status(404).json({ msg: 'The lecture analysis for this quiz is no longer available, so this question cannot be traced back. Edit it by hand, or re-add the material and generate again.' });
+    }
+    const src = question.lectureSource || {};
+    const difficulty = ['Easy', 'Medium', 'Hard'].includes(question.difficulty) ? question.difficulty
+        : (['Easy', 'Medium', 'Hard'].includes(src.measuredDifficulty) ? src.measuredDifficulty : 'Medium');
+    const unitBySubtopic = (s) => lm.units.find(u => String(u.subtopic).toLowerCase() === String(s || '').toLowerCase());
+    const pairOf = (q) => {
+        const s = (q && q.lectureSource) || {};
+        const unit = (s.unitId && lm.units.find(u => u.id === s.unitId)) || unitBySubtopic(s.subtopic);
+        return unit && s.questionType ? { unitId: unit.id, type: s.questionType } : null;
+    };
+    const usedPairs = [question, ...(Array.isArray(otherQuestions) ? otherQuestions : [])].map(pairOf).filter(Boolean);
+    const origin = (src.unitId && lm.units.find(u => u.id === src.unitId)) || unitBySubtopic(src.subtopic);
+
+    // Rebuild the inputs from the saved lecture analysis (timed speech blocks + material blocks).
+    const blocks = Array.isArray(lm.blocks) ? lm.blocks : [];
+    const speech = blocks.filter(b => b.source === 'SPEECH');
+    const material = blocks.filter(b => b.source !== 'SPEECH');
+    const inputs = [];
+    if (speech.length) {
+        inputs.push({ type: 'voice', source_name: lm.title || 'Lecture', content: speech.map(b => b.text).join(' '),
+            segments: speech.map(b => ({ start: b.start, end: b.end, text: b.text })) });
+    }
+    if (material.length) inputs.push({ type: 'document', source_name: lm.title || 'Material', content: material.map(b => b.text).join('\n\n') });
+    if (!inputs.length) return res.status(404).json({ msg: 'The lecture text for this quiz is no longer available.' });
+
+    const taskId = createTask({ userId: req.user?.id, questionCount: 1, textLength: inputs.reduce((n, i) => n + i.content.length, 0) });
+    try {
+        const generated = await generateQuestions(null, null, 1, difficulty, null, null, inputs, null, taskId, null, null, 'MIXED',
+            'FILL_WITH_MEDIUM', null, 'ALLOW_SCOPE_SUPPLEMENTARY',
+            { id: lm.id, excludeTopics: Array.isArray(excludedTopics) ? excludedTopics : [],
+              replace: { unitId: origin ? origin.id : null, subtopic: src.subtopic || null, type: src.questionType || null, difficulty, usedPairs } });
+        const newQ = Array.isArray(generated) ? generated[0] : null;
+        const ms = Date.now() - startedAt;
+        console.log(`[ReplaceQuestion] user=${req.user?.id || '?'} reason=${reason || 'none'} from="${src.subtopic || '?'}/${src.questionType || '?'}" ${difficulty} -> ${newQ ? `"${newQ.lectureSource?.subtopic || '?'}/${newQ.lectureSource?.questionType || '?'}"` : 'none'} in ${(ms / 1000).toFixed(1)}s`);
+        if (!newQ) {
+            const task = getTask(taskId) || {};
+            return res.status(422).json({ msg: task.pipelineNotice || 'No different question passed the quality checks for this part of the lecture. Try again, or edit the question by hand.' });
+        }
+        newQ.replacement = { reason: reason || null, replacedSubtopic: src.subtopic || null, replacedType: src.questionType || null, at: new Date().toISOString(), ms };
+        return res.json({ question: newQ, ms });
+    } catch (err) {
+        console.error('[ReplaceQuestion] failed:', err.message);
+        return res.status(500).json({ msg: `Could not replace the question: ${err.message}` });
+    }
+};
+
 exports.getTeachingScore = async (req, res) => {
     const lm = lectureModel.getById(String(req.params.id || ''));
     if (!lm) return res.status(404).json({ msg: 'Lecture analysis not found. Please re-add the material.' });

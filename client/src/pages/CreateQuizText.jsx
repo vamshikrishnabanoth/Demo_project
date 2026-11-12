@@ -3,7 +3,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import api from '../utils/api';
 import DashboardLayout from '../components/DashboardLayout';
-import { Type, Loader2, Plus, CheckCircle, Clock, Upload, ArrowLeft, Users, Clipboard, Code, Zap, BookOpen, AlertTriangle, Send, Save, Sparkles, Award, X, ShieldCheck, ClipboardList, Trophy, Puzzle, Info, ChevronDown, ChevronUp, ChevronRight, Activity, Layers, FileText, Target, BarChart3 } from 'lucide-react';
+import { Type, Loader2, Plus, CheckCircle, Clock, Upload, ArrowLeft, Users, Clipboard, Code, Zap, BookOpen, AlertTriangle, Send, Save, Sparkles, Award, X, ShieldCheck, ClipboardList, Trophy, Puzzle, Info, ChevronDown, ChevronUp, ChevronRight, Activity, Layers, FileText, Target, BarChart3, RefreshCw } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import StudentAssignDrawer from '../components/quiz/StudentAssignDrawer';
 import toast from 'react-hot-toast';
@@ -422,19 +422,25 @@ export default function CreateQuizText() {
     };
 
     // ─── INDIVIDUAL QUESTION REGENERATION ───────────────────────────────────
-    const handleRegenerateQuestion = useCallback(async (idx) => {
+    // Replaces one question with a different one traced back to the same part of the lecture, at the same
+    // difficulty (server: POST /quiz/replace-question). Only small metadata is sent; the lecture text is on the server.
+    const handleRegenerateQuestion = useCallback(async (idx, reason = null) => {
+        const current = questions[idx] || {};
+        const lectureModelId = current.lectureSource?.lectureModelId || location.state?.lectureModelPlan?.lectureModelId || null;
+        if (!lectureModelId) {
+            toast.error('This question has no saved lecture to trace back to. Edit it by hand, or generate again from the material.');
+            return;
+        }
         setRegeneratingIdx(idx);
         try {
-            // Use the stored title/topic as context for regeneration
-            const payload = {
-                topic:         location.state?.title || title || 'General Knowledge',
-                type:          'topic',
-                questionCount: 1,
-                difficulty:    'Medium',
-                deficitPolicy: 'FILL_WITH_MEDIUM'
-            };
-            const res = await api.post('/quiz/generate', payload, { timeout: 300000 });
-            const [newQ] = res.data.questions || [];
+            const slim = (q) => ({ difficulty: q.difficulty, lectureSource: q.lectureSource || null });
+            const res = await api.post('/quiz/replace-question', {
+                lectureModelId,
+                question: slim(current),
+                otherQuestions: questions.filter((_, i) => i !== idx).map(slim),
+                reason
+            }, { timeout: 180000 });
+            const newQ = res.data?.question;
             if (newQ) {
                 const updated = [...questions];
                 updated[idx] = newQ;
@@ -449,16 +455,25 @@ export default function CreateQuizText() {
                     };
                     setAgentReport(updatedReport);
                 }
-                toast.success(`Question ${idx + 1} regenerated`);
+                const where = newQ.lectureSource ? ` (${newQ.lectureSource.time ? `at ${newQ.lectureSource.time}, ` : ''}${String(newQ.lectureSource.questionType || '').replace('_', ' ')})` : '';
+                toast.success(`Question ${idx + 1} replaced${where}`);
             } else {
-                toast.error('Could not regenerate — try editing manually');
+                toast.error('Could not replace it — try again or edit by hand');
             }
         } catch (err) {
-            toast.error('Regeneration failed — try editing manually');
+            toast.error(err.response?.data?.msg || 'Replacing failed — try again or edit by hand', { duration: 6000 });
         } finally {
             setRegeneratingIdx(null);
         }
-    }, [questions, agentReport, title, location.state]);
+    }, [questions, agentReport, location.state]);
+    const [replaceMenuIdx, setReplaceMenuIdx] = useState(null);
+    const REPLACE_REASONS = [
+        { key: 'too_easy', label: 'Too easy' },
+        { key: 'wrong_or_unclear', label: 'Wrong or unclear' },
+        { key: 'duplicate', label: 'Duplicate' },
+        { key: 'off_topic', label: 'Not important' },
+        { key: 'other', label: 'Just different' }
+    ];
 
     // ─── ACTUAL SUBMISSION (called from modal confirm) ────────────────────────
     const handleSubmit = async () => {
@@ -1336,7 +1351,7 @@ export default function CreateQuizText() {
                                                     <div className="absolute inset-0 z-10 flex items-center justify-center rounded-[2.5rem] bg-[var(--bg-primary)]/80 backdrop-blur-sm border border-[var(--bg-accent)]/30">
                                                         <div className="flex items-center gap-3 text-[var(--bg-accent)]">
                                                             <Loader2 size={20} className="animate-spin" />
-                                                            <span className="font-black text-sm uppercase tracking-widest">Regenerating Q{idx + 1}…</span>
+                                                            <span className="font-black text-sm uppercase tracking-widest">Finding a different question for Q{idx + 1}…</span>
                                                         </div>
                                                     </div>
                                                 )}
@@ -1376,6 +1391,29 @@ export default function CreateQuizText() {
                                                             )}
                                                         </div>
                                                     </details>
+                                                )}
+                                                {q.lectureSource && (q.lectureSource.lectureModelId || location.state?.lectureModelPlan?.lectureModelId) && (
+                                                    <div className="mb-2 flex flex-wrap items-center gap-2">
+                                                        {replaceMenuIdx === idx ? (
+                                                            <>
+                                                                <span className="text-xs font-bold text-slate-600">Why replace it?</span>
+                                                                {REPLACE_REASONS.map(r => (
+                                                                    <button key={r.key} type="button" disabled={regeneratingIdx !== null}
+                                                                        onClick={() => { setReplaceMenuIdx(null); handleRegenerateQuestion(idx, r.key); }}
+                                                                        className="px-3 py-1 rounded-full text-xs font-bold border border-slate-300 bg-white hover:border-[var(--bg-accent)] hover:text-[var(--bg-accent)] cursor-pointer disabled:opacity-50">
+                                                                        {r.label}
+                                                                    </button>
+                                                                ))}
+                                                                <button type="button" onClick={() => setReplaceMenuIdx(null)} className="p-1 rounded-full text-slate-400 hover:text-slate-700 cursor-pointer" aria-label="Cancel"><X size={14} /></button>
+                                                            </>
+                                                        ) : (
+                                                            <button type="button" disabled={regeneratingIdx !== null} onClick={() => setReplaceMenuIdx(idx)}
+                                                                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border border-slate-200 bg-white text-slate-700 hover:border-[var(--bg-accent)] hover:text-[var(--bg-accent)] cursor-pointer disabled:opacity-50"
+                                                                title="Get a different question from the same part of the lecture, at the same difficulty">
+                                                                <RefreshCw size={12} /> Replace this question
+                                                            </button>
+                                                        )}
+                                                    </div>
                                                 )}
                                                 <QuizQuestionEditor
                                                     index={idx}
