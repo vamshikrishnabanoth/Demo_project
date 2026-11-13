@@ -73,6 +73,10 @@ function deterministicProblems(q) {
     const showsCode = /```|`[^`]+`|\n\s*\S.*[;{}()=<>\[\]]|^\s*(?:\$|>>>|#include|for\s*\(|while\s*\(|if\s*\(|int\s|def\s|print)/m.test(stem);
     if (talksAboutCode && !showsCode) problems.push({ code: 'COMPLETENESS', detail: 'It refers to code but does not show the code.' });
   }
+  // A question must stand on its own: "what did the instructor emphasize during the walkthrough?" cannot be answered
+  // by a student who missed that class, and tests memory of the session rather than the subject.
+  const refersToClass = /\b(?:the|our|your) (?:instructor|teacher|lecturer|professor|presenter|speaker|trainer)\b|\b(?:during|in|from) the (?:live )?(?:coding )?(?:walkthrough|demo(?:nstration)?|lecture|class|session|video|recording)\b|\bin (?:today's |this |the )?class\b|\bas (?:discussed|explained|shown|mentioned|taught) (?:in|during|earlier|before|above)\b/i.test(stem);
+  if (refersToClass) problems.push({ code: 'COMPLETENESS', detail: 'It refers to the class or the instructor, so a student who missed the class cannot answer it from the question alone.' });
   return problems;
 }
 
@@ -114,6 +118,7 @@ For EACH question:
  - alsoDefensible (in step 1): look at each wrong option on its own and ask whether a teacher who taught SOURCE would also accept it. "Why/purpose/motivation" questions often have two acceptable answers; list them.
  - consistent: any data, state or trace given in the question is internally consistent (e.g. the state "after processing index 2" must reflect indices 0 and 1). Count an inconsistency as complete=false.
  - steps: how many dependent reasoning steps a strong student needs to reach the answer (1 = recall or one direct application).
+ - level: "recall" if the answer is a fact, definition or statement given (nearly) word for word in SOURCE, so remembering it is enough; "apply" if the student must use what was taught on the given case (compute, trace, predict, choose, explain why); "analyze" if it needs several dependent steps, combining ideas or diagnosing.
  - distractorsValid: every wrong option is clearly wrong; none is correct, equivalent in meaning to another option or the key (e.g. "counts only elements after x" vs "skips elements before x"), duplicated, nonsensical or unrelated.
  - plausible: every wrong option is a realistic student misconception, not a throwaway.
  - aligned: the options directly answer the question asked.
@@ -125,7 +130,7 @@ For EACH question:
 4. "fact": the single fact or skill the KEY establishes, in at most 8 words (e.g. "linear search per element gives O(n^2)").
 Then compare the "fact" of every question with every other question (including OTHER QUESTIONS) and list "duplicates": pairs whose correct answers establish the same fact, even if worded differently or asked from a different angle, so a student who knows one answer knows the other. A definition and a computation that uses it are NOT duplicates.
 
-Return JSON only: {"results":[{"q":1,"working":"...","answer":"B","alsoDefensible":[],"grounded":true,"correct":true,"distractorsValid":true,"plausible":true,"aligned":true,"complete":true,"clear":true,"fair":true,"explanationOk":true,"steps":1,"problems":[],"fact":"..."}],"duplicates":[[1,3]]}`;
+Return JSON only: {"results":[{"q":1,"working":"...","answer":"B","alsoDefensible":[],"grounded":true,"correct":true,"distractorsValid":true,"plausible":true,"aligned":true,"complete":true,"clear":true,"fair":true,"explanationOk":true,"steps":1,"level":"apply","problems":[],"fact":"..."}],"duplicates":[[1,3]]}`;
 }
 
 async function judgeBatch(items, mode, otherStems) {
@@ -196,6 +201,9 @@ async function finalQualityGate(questions, opts = {}) {
       const label = String(item.q.difficulty || item.q.metadata?.targetDifficulty || '');
       if (label === 'Hard' && Number.isFinite(steps) && steps < 2) {
         item.relabel = { from: 'Hard', to: 'Medium', reason: `needs ${steps} reasoning step${steps === 1 ? '' : 's'}, not the two or more a Hard question requires` };
+      } else if (label === 'Medium' && String(r.level || '').toLowerCase() === 'recall') {
+        // A "Medium" question answered by remembering a sentence from the lecture is honestly an Easy question.
+        item.relabel = { from: 'Medium', to: 'Easy', reason: 'is answered by recalling a statement from the lecture; Medium needs applying it' };
       }
     }
   }));

@@ -220,11 +220,31 @@ const _rawTranscribeAudioWithTimestamps = async (filePath) => {
                 const clientEntry = whisperPool[(keyHintIndex + attempt) % whisperPool.length];
                 try {
                     const uploadFile = await toFile(fs.createReadStream(audioInputPath), path.basename(audioInputPath));
-                    return await clientEntry.client.audio.transcriptions.create({
+                    const data = await clientEntry.client.audio.transcriptions.create({
                         file: uploadFile,
                         model: modelName,
                         response_format: "verbose_json"
                     });
+                    // Code-mixed classes (Hindi/Telugu/Tamil-English) come back in native script, where the lecture
+                    // reader's word-for-word quote check fails and teaching points are lost. Whisper's translate mode
+                    // gives the same lecture in English with timestamps (numbers, code and terms kept); the original
+                    // transcript is kept alongside. TRANSLATE_NON_LATIN_SPEECH=off disables it.
+                    if (process.env.TRANSLATE_NON_LATIN_SPEECH !== 'off' && nonLatinShare(data && data.text) >= 0.2) {
+                        try {
+                            const tr = await clientEntry.client.audio.translations.create({
+                                file: await toFile(fs.createReadStream(audioInputPath), path.basename(audioInputPath)),
+                                model: process.env.STT_TRANSLATE_MODEL || 'whisper-large-v3',
+                                response_format: "verbose_json"
+                            });
+                            if (tr && typeof tr.text === 'string' && tr.text.trim().length > 20) {
+                                console.log(`🌐 [STT] ${Math.round(nonLatinShare(data.text) * 100)}% non-Latin script (${data.language || 'unknown'}); using Whisper's English translation for reading.`);
+                                return { ...tr, language: 'en', translatedFrom: data.language || 'non-Latin', originalText: data.text };
+                            }
+                        } catch (trErr) {
+                            console.warn(`⚠️ [STT] English translation failed (${trErr.message}); keeping the original-script transcript.`);
+                        }
+                    }
+                    return data;
                 } catch (err) {
                     lastError = err;
                     const status = err.status || err.statusCode || (err.response && err.response.status);
@@ -324,6 +344,8 @@ const _rawTranscribeAudioWithTimestamps = async (filePath) => {
                             duration: duration,
                             duration_formatted: formatTs(duration),
                             language: data.language || 'en',
+                            translatedFrom: data.translatedFrom || null,
+                            originalText: data.originalText || null,
                             model: actualModel,
                             sttProvider: actualProvider,
                             hasRealTimestamps: hasRealTs,
@@ -1327,7 +1349,14 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
                 result.questions = accepted;
                 const relabeled = accepted.filter(q => q.qualityGate && q.qualityGate.relabeled);
                 if (relabeled.length) {
-                    const rn = `${relabeled.length} question${relabeled.length === 1 ? '' : 's'} labelled Hard ${relabeled.length === 1 ? 'was' : 'were'} relabelled Medium by the quality gate (${relabeled.length === 1 ? 'it needs' : 'they need'} only one reasoning step).`;
+                    const hm = relabeled.filter(q => q.qualityGate.relabeled.from === 'Hard');
+                    const me = relabeled.filter(q => q.qualityGate.relabeled.from === 'Medium');
+                    const parts = [];
+                    if (hm.length) parts.push(`${hm.length} question${hm.length === 1 ? '' : 's'} labelled Hard ${hm.length === 1 ? 'was' : 'were'} relabelled Medium by the quality gate (${hm.length === 1 ? 'it needs' : 'they need'} only one reasoning step)`);
+                    if (me.length) parts.push(`${me.length} question${me.length === 1 ? '' : 's'} labelled Medium ${me.length === 1 ? 'was' : 'were'} relabelled Easy (answered by recalling a statement from the lecture)`);
+                    let rn = `${parts.join('; ')}.`;
+                    // Say why when Hard questions could only be written by a lighter fallback model.
+                    if (hm.some(q => q.metadata && q.metadata.hardWriter === 'fallback')) rn += ' The stronger AI models were at their daily limit, so a lighter model wrote these Hard questions; generating again later usually gives real Hard questions.';
                     result.notice = result.notice ? `${result.notice} ${rn}` : rn;
                 }
                 const firstPassRejected = gate.rejected.length;
@@ -5548,6 +5577,15 @@ function inputsFromLectureModel(lm) {
     return inputs;
 }
 
+/** Share of letters that are not Latin script (0 for English, ~0.6+ for a Devanagari/Telugu transcript). */
+function nonLatinShare(text) {
+    const s = String(text || '');
+    const letters = (s.match(/\p{L}/gu) || []).length;
+    if (letters < 50) return 0;
+    const latin = (s.match(/\p{Script=Latin}/gu) || []).length;
+    return (letters - latin) / letters;
+}
+
 /**
  * A teacher's correction of the detected teaching style, kept (without user identity) as labelled data for
  * evaluating style detection: what the system detected next to what the teacher said it was.
@@ -6273,7 +6311,8 @@ exports.transcribe = async (req, res) => {
             segments: result ? (result.segments || []) : [],
             duration: result ? (result.duration || 0) : null,
             duration_formatted: result ? (result.duration_formatted || null) : null,
-            language: result ? (result.language || 'en') : 'en'
+            language: result ? (result.language || 'en') : 'en',
+            translatedFrom: result ? (result.translatedFrom || null) : null
         });
     } catch (err) {
         console.error('Error in transcribe controller:', err.message);
@@ -6818,3 +6857,6 @@ exports.approveQuiz = async (req, res) => {
 
 // Exposed for integration tests and evaluation harnesses (not routed).
 exports._generateQuestions = generateQuestions;
+// Exposed for the input smoke tests (same extraction a teacher's upload goes through).
+exports._extractTextWithRange = extractTextWithRange;
+exports._extractReadableTextFromScan = extractReadableTextFromScan;

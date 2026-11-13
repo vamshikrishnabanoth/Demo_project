@@ -129,7 +129,64 @@ class LLMRouter {
    * Route completion request to active LLM provider with intelligent failover.
    * @param {Object} params - { prompt, systemPrompt, temperature, responseFormat, model, sessionId }
    */
-  async complete({ prompt, systemPrompt = '', temperature = 0.3, responseFormat = 'json', model = null, sessionId = null, maxTokens = null, operation = null, signal = null, abortSignal = null, reasoningEffort = null, groqModels = null }) {
+  /** Which provider/model actually answered, per operation (the requested model is not always the one that served). */
+  _recordServed(operation, provider, model) {
+    if (!this.servedStats) this.servedStats = {};
+    const op = operation || 'OTHER';
+    const key = `${provider}:${model || '?'}`;
+    this.servedStats[op] = this.servedStats[op] || {};
+    this.servedStats[op][key] = (this.servedStats[op][key] || 0) + 1;
+  }
+
+  getServedStats() { return JSON.parse(JSON.stringify(this.servedStats || {})); }
+
+  resetServedStats() { this.servedStats = {}; }
+
+  /** Short human-readable reason for the current outage (null when providers are answering). */
+  getOutage() {
+    return this.outage && this.outage.until > Date.now() ? this.outage : null;
+  }
+
+  async complete(params) {
+    // Circuit breaker: when every provider has just failed, further calls fail at once for a short window instead
+    // of each walking the whole key/model cascade again (which used to burn every key's quota in minutes).
+    const outage = this.getOutage();
+    if (outage && outage.quota) {
+      // Daily limits reset in hours: fail at once with the reason instead of burning every remaining target.
+      const err = new Error(`NO_LLM_PROVIDER_AVAILABLE: ${outage.message} (circuit open for ${Math.ceil((outage.until - Date.now()) / 1000)}s more)`);
+      err.code = 'NO_LLM_PROVIDER_AVAILABLE';
+      throw err;
+    }
+    if (outage) {
+      // A short "busy" outage usually clears in seconds: wait it out (without hammering the providers), then try.
+      const sig = params && (params.signal || params.abortSignal);
+      await this._sleep(Math.max(0, outage.until - Date.now()), sig);
+    }
+    try {
+      return await this._complete(params);
+    } catch (err) {
+      if (err && err.code === 'NO_LLM_PROVIDER_AVAILABLE') {
+        const reset = String(err.message).match(/retry in ([\dhms.]+)/i);
+        // Only a daily limit with a long reset counts as a quota outage; per-minute throttling (429 with a short
+        // retry) and "busy" errors are transient.
+        const longReset = reset && /h|[1-9]\d+m/.test(reset[1]);
+        const quota = /per day|TPD|daily/i.test(err.message) || Boolean(longReset);
+        const windowMs = quota
+          ? Math.max(5000, parseInt(process.env.LLM_OUTAGE_WINDOW_MS, 10) || 60000)
+          : Math.max(3000, parseInt(process.env.LLM_BUSY_WINDOW_MS, 10) || 15000);
+        this.outage = {
+          quota,
+          until: Date.now() + windowMs,
+          message: quota ? `Daily AI usage limits are reached on every configured model${reset ? `; the first resets in about ${reset[1].replace(/\.\d+s$/, 's')}` : ''}.` : 'Every AI provider failed just now (service busy or unreachable).',
+          at: new Date().toISOString()
+        };
+        console.error(`⛔ [LLMRouter] Circuit open for ${Math.round(windowMs / 1000)}s: ${this.outage.message}`);
+      }
+      throw err;
+    }
+  }
+
+  async _complete({ prompt, systemPrompt = '', temperature = 0.3, responseFormat = 'json', model = null, sessionId = null, maxTokens = null, operation = null, signal = null, abortSignal = null, reasoningEffort = null, groqModels = null, noGeminiFallback = false }) {
     const effectiveSignal = signal || abortSignal;
     if (!this.groqApiKey && process.env.GROQ_API_KEY) {
       this.groqApiKey = process.env.GROQ_API_KEY;
@@ -188,13 +245,16 @@ class LLMRouter {
           groqModels
         });
       } catch (err) {
+        // A cancelled request must not be re-sent to another provider.
+        if (err && err.code === 'REQUEST_CANCELLED' || (effectiveSignal && effectiveSignal.aborted)) throw err;
         errors.push(`Groq (${err.message})`);
         console.warn(`⚠️ [LLMRouter] Groq provider failed: ${err.message}. Trying Gemini fallback...`);
       }
     }
 
     // 2. Try Gemini Provider (Cloud Fallback for Groq 429 / failure)
-    if (process.env.DISABLE_GEMINI !== 'true' && preferredProvider !== 'gemini' && (this.geminiApiKey || process.env.GEMINI_API_KEY)) {
+    // noGeminiFallback: a caller that pinned a strong model (e.g. Hard questions) must not be served by a light one.
+    if (!noGeminiFallback && process.env.DISABLE_GEMINI !== 'true' && preferredProvider !== 'gemini' && (this.geminiApiKey || process.env.GEMINI_API_KEY)) {
       // Explicit fallback-size check: prevent submitting an unbounded oversized payload
       const totalPromptBytes = Buffer.byteLength(String(prompt || '') + String(systemPrompt || ''), 'utf8');
       const MAX_FALLBACK_PAYLOAD_BYTES = 500000; // 500 KB absolute sanity ceiling
@@ -358,8 +418,16 @@ class LLMRouter {
     const startKeyOffset = (this.currentKeyIndex++) % totalKeys;
 
     // Up to 20 passes across the pool with bounded cooldown sleep if keys are temporarily throttled
+    const cancelSignal = signal || abortSignal;
     for (let poolAttempt = 0; poolAttempt < 20; poolAttempt++) {
       for (let offset = 0; offset < totalKeys; offset++) {
+        // A cancelled request (its caller timed out or the teacher cancelled) stops here. Without this check every
+        // remaining key x model was tried with the dead signal, each failing instantly, for up to 20 passes.
+        if (cancelSignal && cancelSignal.aborted) {
+          const cancelled = new Error('canceled: the request was cancelled by its caller');
+          cancelled.code = 'REQUEST_CANCELLED';
+          throw cancelled;
+        }
         const keyIdx = (startKeyOffset + offset) % totalKeys;
         const key = keys[keyIdx];
         // Check if key was permanently invalidated (e.g. 401/403)
@@ -378,6 +446,11 @@ class LLMRouter {
         for (let mIdx = 0; mIdx < modelsToTry.length; mIdx++) {
           const currentModel = modelsToTry[mIdx];
           const isLastModel = mIdx === modelsToTry.length - 1;
+          if (cancelSignal && cancelSignal.aborted) {
+            const cancelled = new Error('canceled: the request was cancelled by its caller');
+            cancelled.code = 'REQUEST_CANCELLED';
+            throw cancelled;
+          }
 
           // Check if this specific model is currently in short-term cooldown on this key
           // Check if route is in 12-hour TPD exhaustion
@@ -498,6 +571,7 @@ class LLMRouter {
                 } catch (_) {}
               }
 
+              this._recordServed(operation, 'groq', currentModel);
               return content;
             } catch (err) {
               lastErr = err;
@@ -558,6 +632,7 @@ class LLMRouter {
                   this.modelCooldowns.delete(`${keyIdx}_${currentModel}`);
                   this.currentKeyIndex = (keyIdx + 1) % totalKeys;
                   keySucceeded = true;
+                  this._recordServed(operation, 'groq', currentModel);
                   return content;
                 } catch (retryErr) {
                   console.warn(`⚠️ [LLMRouter] Relaxed JSON retry failed: ${retryErr.message}`);
@@ -743,7 +818,7 @@ class LLMRouter {
   /**
    * Call Google Gemini API as cloud fallback when Groq hits 429/failures.
    */
-  async _callGemini({ prompt, systemPrompt = '', temperature = 0.3, responseFormat = 'json', model = null, sessionId = null, maxTokens = null, signal = null, abortSignal = null }) {
+  async _callGemini({ prompt, systemPrompt = '', temperature = 0.3, responseFormat = 'json', model = null, sessionId = null, maxTokens = null, signal = null, abortSignal = null, operation = null }) {
     const effectiveSignal = signal || abortSignal;
     let resolvedMaxTokens = parseInt(maxTokens, 10);
     if (isNaN(resolvedMaxTokens) || resolvedMaxTokens <= 0) {
@@ -831,6 +906,7 @@ class LLMRouter {
           } catch (_) {}
         }
 
+        this._recordServed(operation, 'gemini', geminiModelName);
         return text.trim();
       } catch (err) {
         lastErr = err;

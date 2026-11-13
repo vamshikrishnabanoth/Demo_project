@@ -1317,7 +1317,9 @@ class PipelineOrchestrator {
         // calculation, trace, output, debug and code questions keep their own call (where mistakes are likely).
         // Each batched verdict still passes through the same per-question fail-closed parsing. AGENT3_BATCH_CRITIC=false turns it off.
         const precomputed = new Array(batchTargets.length).fill(null);
-        if (process.env.AGENT3_BATCH_CRITIC !== 'false') {
+        // Lean lecture path: the Final Quality Gate is the semantic check, so no batched critic call is made up front.
+        const leanLecture = process.env.LECTURE_LEAN_PATH === 'on' && batchTargets.every(t => t.lectureUnitId);
+        if (process.env.AGENT3_BATCH_CRITIC !== 'false' && !leanLecture) {
           const eligible = batchTargets.map((t, b) => ({ t, b, c: batchCandidates[b] })).filter(({ t, c }) =>
             c && !c.isUnfulfilled &&
             ['Easy', 'Medium'].includes(t.targetDifficulty || 'Medium') &&
@@ -1950,7 +1952,8 @@ class PipelineOrchestrator {
         }
         if (hasProviderFailures) {
           const providerCount = unfulfilledTargets.filter(u => u?.status === 'UNFULFILLED_PROVIDER_FAILURE' || u?.unfulfilledReason === 'PROVIDER_UNAVAILABLE' || u?.unfulfilledReason === 'PROVIDER_ERROR').length;
-          noticeParts.push(`${providerCount} question(s) could not be generated because the AI provider failed or was rate-limited; retrying may succeed.`);
+          const outage = (() => { try { return require('./adapter/llmRouter').getOutage(); } catch (_) { return null; } })();
+          noticeParts.push(`${providerCount} question(s) could not be generated because the AI provider failed or was rate-limited${outage ? ` (${outage.message})` : ''}; retrying may succeed.`);
         }
         const capacityUnfulfilled = unfulfilledTargets.filter(u => u && u.status !== 'UNFULFILLED_PROVIDER_FAILURE' && u.unfulfilledReason !== 'PROVIDER_UNAVAILABLE' && u.unfulfilledReason !== 'PROVIDER_ERROR');
         if (capacityUnfulfilled.length > 0) {
