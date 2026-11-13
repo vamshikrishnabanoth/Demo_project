@@ -1106,12 +1106,24 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
                 sessionInputs.inputModality = 'UNIFIED';
             }
             if (lm && lm.ok && lm.units && lm.units.length > 0) {
+                // Teaching style (PDI v2): each teaching point prefers the question types that fit how it was taught
+                // (theory, code walkthrough, worked problems, examples, revision) and how closely the slides were
+                // followed; a teacher's correction replaces the detected style. STYLE_GUIDED_PLANNING=off disables it.
+                const styleGuided = lmOptions.styleGuided !== undefined ? Boolean(lmOptions.styleGuided) : process.env.STYLE_GUIDED_PLANNING !== 'off';
+                const styleOverride = lectureModel.teachingStyle.normaliseOverride(lmOptions.styleOverride);
+                if (styleOverride && !lmOptions.replace) recordStyleCorrection(lm, styleOverride);
+                // The original input-based index is still recorded (not used) as the baseline for evaluation.
+                let pdiBaseline = null;
+                try { pdiBaseline = require('../engine/pdiRouter').route(sessionInputs); } catch (_) { /* baseline only */ }
                 const lmPlan = lectureModel.planRequest(lm, parseInt(count, 10) || 0, difficulty || 'Balanced', {
                     excludeTopics: Array.isArray(lmOptions.excludeTopics) ? lmOptions.excludeTopics : [],
                     fillOtherTiers: (deficitPolicy || 'FILL_WITH_MEDIUM') === 'FILL_WITH_MEDIUM',
-                    replace: lmOptions.replace || null
+                    replace: lmOptions.replace || null,
+                    styleGuided,
+                    styleOverride
                 });
-                const lmUnits = lectureModel.toTeachingUnits(lm, lmPlan);
+                const lmUnits = lectureModel.toTeachingUnits(lm, lmPlan, { styleGuided, styleOverride });
+                if (styleGuided && lm.teachingStyle) console.log(`[TeachingStyle] ${lectureModel.teachingStyle.describeProfile(lm.teachingStyle)}${styleOverride ? ` (teacher corrected: ${JSON.stringify(styleOverride)})` : ''}`);
                 if (lmUnits.primary.length > 0) {
                     sessionInputs.teachingUnits = lmUnits.all;
                     lmUnitsForReview = lmUnits;
@@ -1124,7 +1136,9 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
                         capacity: lm.capacity.byDifficulty,
                         capacityTotal: lm.capacity.total,
                         shortfall: lmPlan.shortfall,
-                        shortfallReasons: lmPlan.shortfallReasons
+                        shortfallReasons: lmPlan.shortfallReasons,
+                        teachingStyle: styleGuided ? { profile: lm.teachingStyle || null, override: styleOverride } : null,
+                        pdiBaseline: pdiBaseline ? { representation: pdiBaseline.selected_representation, index: pdiBaseline.pedagogical_delivery_index } : null
                     };
                     console.log(`[LectureModel] Reusing lecture model ${lectureModelId.slice(0, 10)}: ${lmUnits.primary.length} targets + ${lmUnits.reserve.length} reserves (${JSON.stringify(lmPlan.byDifficulty)}).`);
                 }
@@ -1299,7 +1313,7 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
                         if (!pick) return Promise.resolve(null);
                         const extraUsed = reserved.slice();
                         reserved.push({ unitId: pick.unit.id, type: pick.angle.type });
-                        return replaceOneFromLecture(lmForGate, r.question, others, { excludedTopics: lmOptions.excludeTopics || [], extraUsed })
+                        return replaceOneFromLecture(lmForGate, r.question, others, { excludedTopics: lmOptions.excludeTopics || [], extraUsed, styleOverride: lmOptions.styleOverride || null })
                             .then(x => x.question).catch(() => null);
                     });
                     const fresh = (await Promise.all(jobs)).filter(Boolean);
@@ -4077,7 +4091,7 @@ exports.generateQuizQuestions = async (req, res) => {
 
             let finalQuestions = [];
             if (parsedInputs && parsedInputs.length > 0) {
-                finalQuestions = await generateQuestions(null, null, questionCount, difficulty, source_material_id, blendedRatios, parsedInputs, parsedTopicWeights, taskId, callbackUrl, parsedIsolatedNarratives, derivedStyle, deficitPolicy, explicitModality, reqCapacityPolicy, req.body.lectureModelId ? { id: req.body.lectureModelId, excludeTopics: (() => { try { const v = typeof req.body.excludedTopics === 'string' ? JSON.parse(req.body.excludedTopics) : req.body.excludedTopics; return Array.isArray(v) ? v.map(String).slice(0, 50) : []; } catch (_) { return []; } })() } : null);
+                finalQuestions = await generateQuestions(null, null, questionCount, difficulty, source_material_id, blendedRatios, parsedInputs, parsedTopicWeights, taskId, callbackUrl, parsedIsolatedNarratives, derivedStyle, deficitPolicy, explicitModality, reqCapacityPolicy, req.body.lectureModelId ? { id: req.body.lectureModelId, excludeTopics: (() => { try { const v = typeof req.body.excludedTopics === 'string' ? JSON.parse(req.body.excludedTopics) : req.body.excludedTopics; return Array.isArray(v) ? v.map(String).slice(0, 50) : []; } catch (_) { return []; } })(), styleOverride: (() => { try { const v = typeof req.body.styleOverride === 'string' ? JSON.parse(req.body.styleOverride) : req.body.styleOverride; return v && typeof v === 'object' ? v : null; } catch (_) { return null; } })() } : null);
             } else if (req.file) {
                 if (isVoiceSource && extractedText) {
                     const voiceInput = [{
@@ -5534,6 +5548,23 @@ function inputsFromLectureModel(lm) {
     return inputs;
 }
 
+/**
+ * A teacher's correction of the detected teaching style, kept (without user identity) as labelled data for
+ * evaluating style detection: what the system detected next to what the teacher said it was.
+ */
+function recordStyleCorrection(lm, override) {
+    try {
+        const dir = path.join(__dirname, '..', 'storage');
+        if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+        const detected = lm.teachingStyle || null;
+        fs.appendFileSync(path.join(dir, 'style_corrections.jsonl'), JSON.stringify({
+            at: new Date().toISOString(), lectureModelId: lm.id, title: lm.title,
+            detected: detected ? { mix: detected.mix, dominant: detected.dominant, slideUse: detected.slideUse } : null,
+            corrected: override
+        }) + '\n');
+    } catch (e) { console.warn('[TeachingStyle] could not record correction:', e.message); }
+}
+
 /** The (teaching point, question type) pair a question came from, resolved against the lecture model. */
 function lecturePairOf(lm, q) {
     const s = (q && q.lectureSource) || {};
@@ -5549,7 +5580,7 @@ function lecturePairOf(lm, q) {
  * `gateContext`: when given, the new question is validated by the Final Quality Gate inside the run (with these
  * questions as duplicate context); when omitted the caller validates it.
  */
-async function replaceOneFromLecture(lm, question, others = [], { excludedTopics = [], extraUsed = [], gateContext = null, userId = null } = {}) {
+async function replaceOneFromLecture(lm, question, others = [], { excludedTopics = [], extraUsed = [], gateContext = null, userId = null, styleOverride = null } = {}) {
     const src = question.lectureSource || {};
     const difficulty = ['Easy', 'Medium', 'Hard'].includes(question.difficulty) ? question.difficulty
         : (['Easy', 'Medium', 'Hard'].includes(src.measuredDifficulty) ? src.measuredDifficulty : 'Medium');
@@ -5562,7 +5593,7 @@ async function replaceOneFromLecture(lm, question, others = [], { excludedTopics
         'FILL_WITH_MEDIUM', null, 'ALLOW_SCOPE_SUPPLEMENTARY',
         { id: lm.id, excludeTopics: Array.isArray(excludedTopics) ? excludedTopics : [],
           replace: { unitId: origin ? origin.unitId : null, subtopic: src.subtopic || null, type: src.plannedQuestionType || src.questionType || null, difficulty, usedPairs },
-          skipGate: !gateContext, gateContext: gateContext || [] });
+          skipGate: !gateContext, gateContext: gateContext || [], styleOverride });
     const newQ = Array.isArray(generated) ? generated[0] || null : null;
     const task = getTask(taskId) || {};
     return { question: newQ, difficulty, msg: newQ ? null : (task.pipelineNotice || null) };
@@ -5578,7 +5609,7 @@ async function replaceOneFromLecture(lm, question, others = [], { excludedTopics
  */
 exports.replaceQuestion = async (req, res) => {
     const startedAt = Date.now();
-    const { lectureModelId, question = {}, otherQuestions = [], reason = null, excludedTopics = [] } = req.body || {};
+    const { lectureModelId, question = {}, otherQuestions = [], reason = null, excludedTopics = [], styleOverride = null } = req.body || {};
     const lm = lectureModelId ? lectureModel.getById(String(lectureModelId)) : null;
     if (!lm || !lm.ok || !Array.isArray(lm.units) || lm.units.length === 0) {
         return res.status(404).json({ msg: 'The lecture analysis for this quiz is no longer available, so this question cannot be traced back. Edit it by hand, or re-add the material and generate again.' });
@@ -5586,7 +5617,7 @@ exports.replaceQuestion = async (req, res) => {
     const others = Array.isArray(otherQuestions) ? otherQuestions : [];
     const src = question.lectureSource || {};
     try {
-        const r = await replaceOneFromLecture(lm, question, others, { excludedTopics, gateContext: others, userId: req.user?.id || null });
+        const r = await replaceOneFromLecture(lm, question, others, { excludedTopics, gateContext: others, userId: req.user?.id || null, styleOverride });
         const newQ = r.question;
         const ms = Date.now() - startedAt;
         console.log(`[ReplaceQuestion] user=${req.user?.id || '?'} reason=${reason || 'none'} from="${src.subtopic || '?'}/${src.questionType || '?'}" ${r.difficulty} -> ${newQ ? `"${newQ.lectureSource?.subtopic || '?'}/${newQ.lectureSource?.questionType || '?'}"` : 'none'} in ${(ms / 1000).toFixed(1)}s`);

@@ -27,7 +27,9 @@ const llmRouter = require('../adapter/llmRouter');
 const { safeParseJson } = require('../utils/jsonParser');
 const { classifyTextBlock } = require('../../utils/inputKind');
 
-const MODEL_VERSION = 'lecture-model-v2.4';
+const teachingStyle = require('./teachingStyle');
+
+const MODEL_VERSION = 'lecture-model-v2.5';
 // Largest quiz a teacher can request (one setting for server, planner and UI). Default 30: a daily-quiz size.
 const MAX_QUIZ_QUESTIONS = Math.max(1, parseInt(process.env.MAX_QUIZ_QUESTIONS, 10) || 30);
 const CACHE_DIR = path.join(__dirname, '..', '..', 'storage', 'lecture_model_cache');
@@ -511,7 +513,7 @@ ${blocks}
 
 Return this JSON:
 {
-  "segments": [ { "from": "B01", "to": "B03", "title": "3-6 word title", "description": "one short plain sentence stating what was taught, starting with the content itself (e.g. 'Four benefits of IPC: ...', 'Traces git add moving a file to the staging area') — never start with 'The lecture' or 'The instructor'" } ],
+  "segments": [ { "from": "B01", "to": "B03", "title": "3-6 word title", "description": "one short plain sentence stating what was taught, starting with the content itself (e.g. 'Four benefits of IPC: ...', 'Traces git add moving a file to the staging area') — never start with 'The lecture' or 'The instructor'", "delivery": "how this part was taught: CONCEPTUAL (explaining ideas, definitions, differences, why) | CODE (walking through code, a notebook, commands or a tool live) | NUMERICAL (solving a problem or derivation step by step with numbers) | EXAMPLE (teaching mainly through a concrete example, analogy or real-life scenario) | REVISION (quick recap or exam-style revision of points)" } ],
   "units": [
     {
       "topic": "macro topic (reuse the same name for the same topic)",
@@ -521,7 +523,8 @@ Return this JSON:
       "statement": "1-2 sentences: the precise point that was taught, in your own words",
       "quote": "verbatim words from one of the cited blocks",
       "depth": "MENTIONED (only named) | EXPLAINED (explained) | DEMONSTRATED (worked example, code, trace or calculation shown)",
-      "importance": "CORE (part of the subject being taught) | ASIDE (a passing remark: platforms or tools mentioned in passing, career/exam/admin talk, motivation, anecdotes, analogies used only as a story)",
+      "importance": "CORE (part of the subject being taught) | ASIDE (a passing remark: platforms or tools mentioned in passing, career/exam/admin talk, motivation, anecdotes that explain nothing)",
+      "teacherExample": "the concrete example, analogy, scenario or numbers the teacher used to teach THIS point, in one short sentence (null if none). An analogy or example that explains a point belongs to that point (CORE), not to an ASIDE",
       "angles": [ { "type": "one of ${ANGLE_TYPES.join('|')}", "difficulty": "easy|medium|hard", "focus": "the specific thing one question would test" } ],
       "misconceptions": ["a specific wrong belief a student could have about this point"]
     }
@@ -533,7 +536,7 @@ Return this JSON:
 }
 
 How to fill it:
-- segments: cover every speech block in order (if there are speech blocks). Make a new segment whenever the idea being taught changes — typically every 1-3 minutes, so a ${win.speech.length}-block window usually has about ${Math.max(1, Math.round(win.speech.length / 2))} segments. For material-only input, make one segment per section/slide group instead. Titles name the specific idea (e.g. "git add and the staging area"), never generic ("Introduction", "Practical demonstration").
+- segments: cover every speech block in order (if there are speech blocks). Make a new segment whenever the idea being taught changes — typically every 1-3 minutes, so a ${win.speech.length}-block window usually has about ${Math.max(1, Math.round(win.speech.length / 2))} segments. For material-only input, make one segment per section/slide group instead. Titles name the specific idea (e.g. "git add and the staging area"), never generic ("Introduction", "Practical demonstration"). Label each segment's delivery by how THAT part was taught (a class often mixes, e.g. theory first, then a notebook demo, then a worked problem); judge from what the teacher is doing, not from the subject.
 - units: be thorough and fine-grained. Make one unit for EACH distinct teachable point: every definition, every command or flag explained, every step of a procedure, every rule, every example worked through, every comparison, every warning or edge case. Every block that is not chatter must be cited by at least one unit. For code or terminal sessions, each command (with its flags and its output or state change) and each code construct is its own unit. A substantive block usually contains 1-3 units; this window has ${win.speech.length + win.material.length} blocks, so expect roughly ${Math.max(2, Math.round((win.speech.length + win.material.length) * 1.3))} units or more if the content is dense (fewer only if much of it is chatter). Do not create units for things only listed in a slide title and never discussed. If the same point is explained and later demonstrated (or repeated), make ONE unit that cites all of those blocks.
 - For code, SQL or terminal material, think like a teacher setting a lab quiz: the exact output of the whole program/session, the effect of each important call or command (and its flags), what each key line or keyword does and why it is there, what happens for a boundary or invalid input, and what goes wrong if one line is changed. Each of these is its own unit or angle.
 - angles: give every EXPLAINED or DEMONSTRATED unit 2-4 angles; only angles this unit's content really supports, each testing something different (max 4):
@@ -795,6 +798,7 @@ async function buildLectureModel(opts = {}) {
     u.hasFormula = u.kind === 'CALCULATION' || (u.angles || []).some(a => a.type === 'calculation');
     u.angles = sanitiseAngles(u);
     u.misconceptions = (u.misconceptions || []).filter(m => typeof m === 'string' && m.trim().length > 5).slice(0, 4);
+    u.teacherExample = typeof u.teacherExample === 'string' && u.teacherExample.trim().length > 8 && !/^null$/i.test(u.teacherExample.trim()) ? u.teacherExample.trim().slice(0, 300) : null;
   });
 
   // Duplicate teaching points and variant topic names are consolidated in one small call; ids renumbered.
@@ -887,6 +891,7 @@ async function buildLectureModel(opts = {}) {
     contradictions,
     capacity,
     teaching,
+    teachingStyle: null,
     incomplete: unreadParts.length ? { unreadParts, message: `Part of the input could not be read because the analysis service was busy (${unreadParts.join('; ')}). Retry to include it.` } : null,
     blocks: allBlocks.map(b => ({ id: b.id, source: b.source, start: b.start, end: b.end, slide: b.slide || null, text: b.text })),
     audit: {
@@ -900,6 +905,8 @@ async function buildLectureModel(opts = {}) {
       builtAt: new Date().toISOString()
     }
   };
+  // How the lecture was taught (per part and overall) and how closely it followed the slides: no extra AI call.
+  try { model.teachingStyle = teachingStyle.buildProfile(model); } catch (e) { console.warn('[LectureModel] teaching style skipped:', e.message); }
   // Incomplete models are kept in memory for generation but not persisted, so a retry re-reads them.
   const persist = () => { if (unreadParts.length) memoryCache.set(key, model); else writeCache(key, model); };
   persist();
@@ -1058,6 +1065,7 @@ function buildSegments(rawSegments, speech, material, blockMap, units) {
     return {
       title: String(s.title || '').trim() || 'Section',
       description: String(s.description || '').trim(),
+      delivery: teachingStyle.normMode(s.delivery),
       source: from.source,
       start: from.source === 'SPEECH' ? from.start : null,
       end: from.source === 'SPEECH' ? end : null,
@@ -1348,6 +1356,12 @@ function planRequest(fullModel, requestedCount, difficulty = 'Balanced', options
     return { ...fullModel, units, topics: fullModel.topics.filter(t => !excluded.has(t.name)), capacity: computeCapacity(units) };
   })();
   const cap = model.capacity.byDifficulty;
+  // Teaching style (PDI v2): each point prefers the question types that fit how it was taught. Older readings
+  // without style labels get them from the unit kinds. STYLE_GUIDED_PLANNING=off turns it off (ablation).
+  const styleGuided = options.styleGuided !== undefined ? Boolean(options.styleGuided) : process.env.STYLE_GUIDED_PLANNING !== 'off';
+  if (styleGuided && !fullModel.teachingStyle) { try { fullModel.teachingStyle = teachingStyle.buildProfile(fullModel); } catch (_) {} }
+  const styleOverride = teachingStyle.normaliseOverride(options.styleOverride);
+  const preferOf = (u) => (styleGuided ? teachingStyle.preferFor(u, styleOverride) : null);
 
   // Replacing one question: same difficulty, traced back to the teaching point it came from, with a
   // question type not used there yet; then other points of the same topic; then anywhere in the lecture.
@@ -1443,7 +1457,10 @@ function planRequest(fullModel, requestedCount, difficulty = 'Balanced', options
         let bestIdx = -1, bestScore = Infinity;
         remaining.forEach((p, i) => {
           if (!allowRepeatPoint && selected.some(s => sameTeachingPoint(s.unit, p.unit))) return;
-          const score = typeCount(p.angle.type) * 100 + p.rank * 10 + i * 0.01;
+          // Style preference: below variety (100 per repeat) but above the lecture's own angle order (10 per rank).
+          const prefer = preferOf(p.unit);
+          const styleBonus = prefer && prefer.includes(p.angle.type) ? 40 : 0;
+          const score = typeCount(p.angle.type) * 100 + p.rank * 10 - styleBonus + i * 0.01;
           if (score < bestScore) { bestScore = score; bestIdx = i; }
         });
         return bestIdx;
@@ -1514,12 +1531,22 @@ const ANGLE_TO_OPERATION = {
  * filled (a reader may cite 15:14 and 17:26 but skip the 16:23 block where the decisive trace happens), then cited
  * material. When too long, every block keeps an equal share (head-only truncation used to drop the end of a point).
  */
-function unitEvidenceText(model, unit, maxChars = 2400) {
+function unitEvidenceText(model, unit, maxChars = 2400, { neighbours = 0 } = {}) {
   if (!model || !unit) return '';
   const blocks = model.blocks || [];
   const idx = Object.fromEntries(blocks.map((b, i) => [b.id, i]));
   const cited = (unit.blocks || []).filter(id => idx[id] !== undefined);
   const speech = cited.filter(id => blocks[idx[id]].source === 'SPEECH').map(id => idx[id]).sort((a, b) => a - b);
+  // neighbours > 0 (example-taught points): also the classroom exchange just before and after the point (student answers, the
+  // teacher's follow-up), which is where in-class misconceptions and worked examples usually are.
+  if (neighbours > 0 && speech.length) {
+    for (let n = 1; n <= neighbours; n++) {
+      const before = speech[0] - n; const after = speech[speech.length - 1] + n;
+      if (before >= 0 && blocks[before].source === 'SPEECH') speech.unshift(before);
+      if (after < blocks.length && blocks[after].source === 'SPEECH') speech.push(after);
+    }
+    speech.sort((a, b) => a - b);
+  }
   const chosen = [];
   speech.forEach((pos, k) => {
     if (k > 0) {
@@ -1537,11 +1564,16 @@ function unitEvidenceText(model, unit, maxChars = 2400) {
   return parts.map(t => (t.length > share ? `${t.slice(0, share)}…` : t)).join('\n').slice(0, maxChars + parts.length);
 }
 
-function toTeachingUnits(model, plan) {
+function toTeachingUnits(model, plan, opts = {}) {
+  // Teaching style (PDI v2): the question writer is told how each point was taught (and the teacher's own example).
+  const styleGuided = opts.styleGuided !== undefined ? Boolean(opts.styleGuided) : process.env.STYLE_GUIDED_PLANNING !== 'off';
+  const styleOverride = teachingStyle.normaliseOverride(opts.styleOverride);
   const make = (p, i, isReserve) => {
     const u = p.unit;
     const a = p.angle;
-    const passage = unitEvidenceText(model, u, 2400);
+    // Examples often span the exchange around the point, so example-taught points also get the neighbouring block.
+    const exampleTaught = styleGuided && teachingStyle.unitMode(u, styleOverride) === 'EXAMPLE';
+    const passage = unitEvidenceText(model, u, exampleTaught ? 2800 : 2400, { neighbours: exampleTaught ? 1 : 0 });
     const tier = p.difficulty.charAt(0).toUpperCase() + p.difficulty.slice(1);
     return {
       claimId: `${u.id}_${a.type}`,
@@ -1564,6 +1596,8 @@ function toTeachingUnits(model, plan) {
       questionAngle: a.type,
       angleFocus: a.focus,
       lectureMisconceptions: u.misconceptions || [],
+      teachingStyleNote: styleGuided ? teachingStyle.noteFor(u, model.teachingStyle, styleOverride) : null,
+      teachingMode: styleGuided ? teachingStyle.unitMode(u, styleOverride) : null,
       lectureUnitId: u.id,
       lectureTime: u.time,
       lectureSlides: u.slides,
@@ -1583,8 +1617,9 @@ function toClientPayload(model) {
     ...rest,
     units: model.units.map(u => ({
       id: u.id, topic: u.topic, subtopic: u.subtopic, kind: u.kind, depth: u.depth, source: u.source,
-      time: u.time, slides: u.slides, statement: u.statement, quote: u.quote, angles: u.angles
-    }))
+      time: u.time, slides: u.slides, statement: u.statement, quote: u.quote, angles: u.angles, delivery: u.delivery || null
+    })),
+    teachingStyleText: model.teachingStyle ? teachingStyle.describeProfile(model.teachingStyle) : null
   };
 }
 
@@ -1637,5 +1672,6 @@ module.exports = {
   getById,
   // exported for tests
   unitEvidenceText,
+  teachingStyle,
   _internal: { spokenCodeHits, buildBlocks, buildWindows, quoteSupported, sanitiseAngles, computeCapacity, allocate, buildSegments, consolidateUnits, callJson }
 };

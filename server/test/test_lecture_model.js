@@ -283,6 +283,84 @@ async function gateTests() {
   }
 }
 
+// ── Teaching style (PDI v2) ───────────────────────────────────────────────────
+const ts = lm.teachingStyle;
+function styleModel() {
+  const ang = (types) => types.map(t => ({ type: t, difficulty: 'medium', focus: `${t} focus` }));
+  const units = [
+    { id: 'U01', topic: 'Lists', subtopic: 'what a list is', kind: 'DEFINITION', depth: 'EXPLAINED', importance: 'CORE', blocks: ['B01'], statement: 'A list holds items.', angles: ang(['concept', 'output']), misconceptions: [] },
+    { id: 'U02', topic: 'Lists', subtopic: 'append in a loop', kind: 'CODE', depth: 'DEMONSTRATED', importance: 'CORE', blocks: ['B03'], statement: 'append adds to the end.', angles: ang(['recall', 'output']), misconceptions: [], hasCode: true, teacherExample: 'appending the marks of five students in a for loop' },
+    { id: 'U03', topic: 'Lists', subtopic: 'slicing', kind: 'DEFINITION', depth: 'EXPLAINED', importance: 'CORE', blocks: ['B05'], statement: 'Slicing returns a new list.', angles: ang(['recall', 'concept']), misconceptions: [] }
+  ];
+  const segments = [
+    { title: 'Lists', start: 0, end: 600, delivery: 'CONCEPTUAL', unitIds: ['U01', 'U03'] },
+    { title: 'Notebook demo', start: 600, end: 1000, delivery: 'CODE', unitIds: ['U02'] }
+  ];
+  return { ok: true, units, segments, topics: [{ name: 'Lists', share: 100 }], capacity: computeCapacity(units),
+    blocks: [{ id: 'B01', source: 'SPEECH', text: 'so a list holds items right? any questions' }, { id: 'B03', source: 'SPEECH', text: 'run this cell and append each mark' }, { id: 'B05', source: 'SPEECH', text: 'slicing gives a new list remember this for the exam' }] };
+}
+
+test('Teaching style: each part of the lecture is labelled, and the mix follows teaching time', () => {
+  const m = styleModel();
+  const p = ts.buildProfile(m);
+  assert.strictEqual(p.basis, 'time');
+  assert.strictEqual(p.mix.CONCEPTUAL, 60); assert.strictEqual(p.mix.CODE, 40);
+  assert.strictEqual(p.dominant, 'CONCEPTUAL');
+  assert.strictEqual(m.units[1].delivery, 'CODE');
+  assert.strictEqual(p.slideUse.label, 'NO_MATERIAL');
+  assert.ok(/Concept explanation 60% · Code walkthrough 40% · Taught without slides/.test(ts.describeProfile(p)));
+});
+
+test('Teaching style: older readings without labels fall back to how each point was taught', () => {
+  const m = styleModel(); m.segments.forEach(s => { delete s.delivery; });
+  const p = ts.buildProfile(m);
+  assert.strictEqual(m.units[1].delivery, 'CODE'); assert.strictEqual(m.units[1].deliverySource, 'kind');
+  assert.strictEqual(p.basis, 'units');
+});
+
+test('Slide use: reading the slides aloud, using them as an outline, and explaining beyond them are told apart', () => {
+  const slide = 'Gradient descent updates each weight by subtracting the learning rate times the gradient of the loss. A learning rate that is too large makes the loss diverge, while a learning rate that is too small makes training very slow. Stochastic gradient descent uses one sample per update and mini batch gradient descent uses a small batch of samples per update.';
+  const mat = { id: 'D01', source: 'MATERIAL', text: slide };
+  const reads = ts.slideReliance([{ id: 'B01', source: 'SPEECH', text: `okay so ${slide} okay` }, mat]);
+  const beyond = ts.slideReliance([{ id: 'B01', source: 'SPEECH', text: 'imagine you are walking down a hill in fog and you feel the ground with your feet and take a small step where it slopes down, if you jump too far you overshoot the valley and climb the other side' }, mat]);
+  assert.strictEqual(reads.label, 'READS', JSON.stringify(reads));
+  assert.strictEqual(beyond.label, 'BEYOND', JSON.stringify(beyond));
+  assert.strictEqual(ts.slideReliance([{ id: 'B01', source: 'SPEECH', text: 'hello class' }]).label, 'NO_MATERIAL');
+});
+
+test('Slide use from the reading: points taught with the slides vs only in speech', () => {
+  const m = styleModel();
+  m.blocks.push({ id: 'D01', source: 'MATERIAL', text: 'Lists. '.repeat(60) });
+  m.units.forEach(u => { u.source = 'SPOKEN'; });
+  assert.strictEqual(ts.buildProfile(m).slideUse.label, 'BEYOND');
+  m.units.forEach(u => { u.source = 'BOTH'; });
+  const p = ts.buildProfile(m);
+  assert.strictEqual(p.slideUse.label, 'READS'); assert.strictEqual(p.slideUse.basis, 'reading');
+});
+
+test('Planning prefers the question type that fits how each point was taught (code part → output, theory part → concept)', () => {
+  const m = styleModel(); m.teachingStyle = ts.buildProfile(m);
+  const plan = lm.planRequest(m, 2, 'Medium', {});
+  const byUnit = Object.fromEntries(plan.selected.map(s => [s.unit.id, s.angle.type]));
+  assert.strictEqual(byUnit.U02, 'output', JSON.stringify(byUnit));
+  assert.strictEqual(byUnit.U01, 'concept', JSON.stringify(byUnit));
+  const off = lm.planRequest(styleModel(), 2, 'Medium', { styleGuided: false });
+  assert.ok(off.selected.some(s => s.unit.id === 'U02' && s.angle.type === 'recall'), 'without style the lecture\'s own angle order is used');
+});
+
+test('A teacher correction replaces the detected style, and the writer gets the teacher\'s own example', () => {
+  const m = styleModel(); m.teachingStyle = ts.buildProfile(m);
+  const override = ts.normaliseOverride({ modes: ['revision'], slideUse: 'beyond' });
+  assert.deepStrictEqual(override, { modes: ['REVISION'], slideUse: 'BEYOND' });
+  assert.strictEqual(ts.unitMode(m.units[1], override), 'REVISION');
+  const plan = lm.planRequest(m, 3, 'Medium', { styleOverride: override });
+  const units = lm.toTeachingUnits(m, plan, { styleOverride: override });
+  const code = units.primary.find(t => t.lectureUnitId === 'U02');
+  assert.ok(/quick revision/.test(code.teachingStyleNote) && /beyond the slides/.test(code.teachingStyleNote));
+  assert.ok(/marks of five students/.test(code.teachingStyleNote));
+  assert.strictEqual(ts.normaliseOverride({ modes: ['nonsense'] }), null);
+});
+
 asyncTests().then(gateTests).then(() => {
 const passed = results.filter(Boolean).length;
 console.log(`\n🏁 ${passed} / ${results.length} tests passed`);

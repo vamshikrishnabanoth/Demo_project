@@ -218,8 +218,10 @@ export default function CreateQuizTopic() {
     // Topics the teacher unticked (left out of the quiz) and her choice when a request exceeds capacity.
     const [excludedTopics, setExcludedTopics] = useState([]);
     const [shortfallPrompt, setShortfallPrompt] = useState(null);
+    // The teacher's correction of how the class was taught (null = use what was detected).
+    const [styleOverride, setStyleOverride] = useState(null);
     const deficitChoiceRef = useRef(null);
-    useEffect(() => { setExcludedTopics([]); deficitChoiceRef.current = null; }, [lectureModelData?.id]);
+    useEffect(() => { setExcludedTopics([]); setStyleOverride(null); deficitChoiceRef.current = null; }, [lectureModelData?.id]);
     // The teaching score finishes a few seconds after the overview: poll until it is ready (max ~2 min).
     useEffect(() => {
         if (!lectureModelData?.id || !lectureModelData?.teaching?.pending) return undefined;
@@ -1453,6 +1455,7 @@ export default function CreateQuizTopic() {
         if (lectureModelData?.id && !lectureModelData.isTopicOnly) {
             formData.append('lectureModelId', lectureModelData.id);
             if (excludedTopics.length > 0) formData.append('excludedTopics', JSON.stringify(excludedTopics));
+            if (styleOverride) formData.append('styleOverride', JSON.stringify(styleOverride));
         }
         formData.append('capacityPolicy', capacityPolicy);
 
@@ -2205,6 +2208,8 @@ export default function CreateQuizTopic() {
                                         onOpenScore={() => setShowTeachingScoreModal(true)}
                                         excludedTopics={excludedTopics}
                                         onToggleTopic={toggleTopic}
+                                        styleOverride={styleOverride}
+                                        onChangeStyle={setStyleOverride}
                                     />
                                 )}
                             </>
