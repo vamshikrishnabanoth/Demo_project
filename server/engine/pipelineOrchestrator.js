@@ -1359,7 +1359,10 @@ class PipelineOrchestrator {
         const hardTargets = waveTargets.filter(t => t.targetDifficulty === 'Hard');
         const otherTargets = waveTargets.filter(t => t.targetDifficulty !== 'Hard');
         for (let i = 0; i < otherTargets.length; i += BATCH_SIZE) waveBatches.push(otherTargets.slice(i, i + BATCH_SIZE));
-        for (let i = 0; i < hardTargets.length; i += 2) waveBatches.push(hardTargets.slice(i, i + 2));
+        // One Hard target per request by default: Groq's free tier gives gpt-oss-120b 8,000 tokens per minute per key,
+        // and prompt + reasoning + answer for two Hard questions does not fit (429 or an empty answer).
+        const HARD_BATCH = Math.max(1, Math.min(3, parseInt(process.env.HARD_BATCH_SIZE, 10) || 1));
+        for (let i = 0; i < hardTargets.length; i += HARD_BATCH) waveBatches.push(hardTargets.slice(i, i + HARD_BATCH));
         const waveResults = await Promise.all(waveBatches.map(runBatch));
 
         for (const waveResult of waveResults) {

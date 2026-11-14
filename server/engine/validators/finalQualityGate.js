@@ -118,7 +118,7 @@ For EACH question:
  - alsoDefensible (in step 1): look at each wrong option on its own and ask whether a teacher who taught SOURCE would also accept it. "Why/purpose/motivation" questions often have two acceptable answers; list them.
  - consistent: any data, state or trace given in the question is internally consistent (e.g. the state "after processing index 2" must reflect indices 0 and 1). Count an inconsistency as complete=false.
  - steps: how many dependent reasoning steps a strong student needs to reach the answer (1 = recall or one direct application).
- - level: "recall" if the answer is a fact, definition or statement given (nearly) word for word in SOURCE, so remembering it is enough; "apply" if the student must use what was taught on the given case (compute, trace, predict, choose, explain why); "analyze" if it needs several dependent steps, combining ideas or diagnosing.
+ - level: "recall" ONLY if the question asks the student to restate a fact, definition, value, name or statement (what is X, which term, what does X stand for, what value does X hold). "apply" if the question gives a situation, case, data or code and asks what happens, what to choose or why — even when the lecture discussed the same example. "analyze" if it needs several dependent steps, combining ideas or diagnosing.
  - distractorsValid: every wrong option is clearly wrong; none is correct, equivalent in meaning to another option or the key (e.g. "counts only elements after x" vs "skips elements before x"), duplicated, nonsensical or unrelated.
  - plausible: every wrong option is a realistic student misconception, not a throwaway.
  - aligned: the options directly answer the question asked.

@@ -389,8 +389,10 @@ async function callJson({ systemPrompt, prompt, maxTokens = 8192, operation, mod
   // lecture reading starts on other models, leaving the strongest model's daily quota for those steps.
   const CRITICAL_OPS = new Set(['HARD_BATCH_GENERATION', 'BLIND_ANSWER_CHECK', 'FINAL_QUALITY_GATE', 'TEACHING_SCORE']);
   const defaultList = CRITICAL_OPS.has(operation)
-    ? (process.env.GEMINI_CRITICAL_MODELS || 'gemini-3.5-flash,gemini-3.6-flash,gemini-3.5-flash-lite,gemini-3.1-flash-lite')
-    : (process.env.LECTURE_MODEL_GEMINI || 'gemini-3.6-flash,gemini-3.5-flash-lite,gemini-3.5-flash,gemini-3.1-flash-lite');
+    // Free tier: gemini-3.5-flash / 3.6-flash allow ~20 requests a day (used up in minutes), the flash-lite models
+    // ~500. The lite models go first everywhere; the strong ones are a last resort (set GEMINI_CRITICAL_MODELS with a paid key).
+    ? (process.env.GEMINI_CRITICAL_MODELS || 'gemini-3.5-flash-lite,gemini-3.1-flash-lite,gemini-3.5-flash,gemini-3.6-flash')
+    : (process.env.LECTURE_MODEL_GEMINI || 'gemini-3.5-flash-lite,gemini-3.1-flash-lite,gemini-3.6-flash,gemini-3.5-flash');
   const listed = Array.isArray(models) && models.length ? models : defaultList.split(",").map(s => s.trim()).filter(Boolean);
   // Models that answered in the last 10 minutes go first (stable sort keeps the configured order otherwise).
   const recent = (m) => ((lastSuccessAt.get(m) || 0) > Date.now() - 10 * 60000 ? 0 : 1);

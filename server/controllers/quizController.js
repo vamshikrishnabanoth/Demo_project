@@ -229,7 +229,11 @@ const _rawTranscribeAudioWithTimestamps = async (filePath) => {
                     // reader's word-for-word quote check fails and teaching points are lost. Whisper's translate mode
                     // gives the same lecture in English with timestamps (numbers, code and terms kept); the original
                     // transcript is kept alongside. TRANSLATE_NON_LATIN_SPEECH=off disables it.
-                    if (process.env.TRANSLATE_NON_LATIN_SPEECH !== 'off' && nonLatinShare(data && data.text) >= 0.2) {
+                    // Trigger: Whisper heard a language other than English, or the text is partly in another script
+                    // (a Telugu-English class can come back as English with Devanagari/Tamil-script stretches).
+                    const heardLang = String((data && data.language) || '').toLowerCase();
+                    const nonEnglish = heardLang && !['en', 'english'].includes(heardLang);
+                    if (process.env.TRANSLATE_NON_LATIN_SPEECH !== 'off' && (nonEnglish || nonLatinShare(data && data.text) >= (parseFloat(process.env.TRANSLATE_NON_LATIN_SHARE) || 0.08))) {
                         try {
                             const tr = await clientEntry.client.audio.translations.create({
                                 file: await toFile(fs.createReadStream(audioInputPath), path.basename(audioInputPath)),
@@ -669,18 +673,29 @@ const parsePptOrPptx = async (filePath) => {
     // Binary PPT fallback or direct PPT handling (PowerPoint 97-2003 OLE2)
     const buffer = fs.readFileSync(filePath);
     const textParts = [];
+    // Only runs that read like words: printable byte runs inside embedded images ("JFIF Exif $3br %&'()*…") are
+    // not slide text and must never reach the model as lecture material.
+    const looksLikeText = (s) => {
+        const words = s.match(/[A-Za-z]{2,}/g) || [];
+        if (words.length < 3) return false;
+        const letters = (s.match(/[A-Za-z\s]/g) || []).length;
+        const vowelWords = words.filter(w => /[aeiouAEIOU]/.test(w)).length;
+        return letters / s.length >= 0.75 && vowelWords / words.length >= 0.6;
+    };
     const asciiMatches = buffer.toString('binary').match(/[\x20-\x7E\t\r\n]{4,}/g) || [];
     for (const match of asciiMatches) {
         const cleaned = match.trim();
-        if (cleaned.length >= 4) textParts.push(cleaned);
+        if (cleaned.length >= 4 && looksLikeText(cleaned)) textParts.push(cleaned);
     }
     const u16Str = buffer.toString('utf16le');
     const u16Matches = u16Str.match(/[\u0020-\u007E\t\r\n]{4,}/g) || [];
     for (const match of u16Matches) {
         const cleaned = match.trim();
-        if (cleaned.length >= 4 && !textParts.includes(cleaned)) textParts.push(cleaned);
+        if (cleaned.length >= 4 && looksLikeText(cleaned) && !textParts.includes(cleaned)) textParts.push(cleaned);
     }
-    return textParts.join('\n');
+    // PowerPoint template and package boilerplate is not lecture content.
+    const BOILERPLATE = /\.xml\b|\.rels\b|^PK\b|xmlPK|Click to edit Master|^(?:Second|Third|Fourth|Fifth) level$|^Office Theme$|^Default Design$/i;
+    return textParts.filter(t => !BOILERPLATE.test(t)).join('\n');
 };
 
 // Text Extraction Helper with Multimodal Pipeline Router
@@ -803,6 +818,23 @@ const extractTextWithRange = async (filePath, startPage = 1, endPage = 999) => {
             const s = Math.max(0, (start - 1) * chunksPerSlide);
             const e = Math.min(chunks.length, end * chunksPerSlide);
             return chunks.slice(s, e).join('\n');
+        }
+
+        // Scanned / handwritten PDF (almost no text layer): read it with the vision reader straight away. Running the
+        // page-by-page OCR below first took minutes per page on handwriting (a 66-page scan never finished) and
+        // reads handwriting badly; OCR stays as the time-limited fallback inside extractReadableTextFromScan.
+        if (ext === '.pdf') {
+            try {
+                const scan = await require('../engine/documentRouter/geminiVisionReader').pdfLooksScanned(fs.readFileSync(filePath));
+                if (scan && scan.scanned) {
+                    console.log(`📷 [quizController] ${path.basename(filePath)} looks scanned (${scan.pages} pages, ${String(scan.text || '').trim().length} chars of text layer); reading it with the vision reader.`);
+                    const visionText = await extractReadableTextFromScan(filePath, path.basename(filePath));
+                    if (visionText && visionText.trim().length >= 20) return visionText;
+                    return String(scan.text || '');
+                }
+            } catch (scanErr) {
+                console.warn(`⚠️ [quizController] Scan check failed (${scanErr.message}); using normal extraction.`);
+            }
         }
 
         // Multimodal Ingestion with page scoping
@@ -6216,7 +6248,7 @@ const transcribeAudioWithTimestamps = async (filePath) => {
         if (filePath && fs.existsSync(filePath)) {
             const fileBuffer = fs.readFileSync(filePath);
             audioHash = crypto.createHash('sha256').update(fileBuffer).digest('hex');
-            const cacheKey = `transcription:${audioHash}`;
+            const cacheKey = `transcription:${require("../config/cacheConfig").WHISPER_VERSION}:${audioHash}`;
             const cached = cacheManager.get(cacheKey);
             if (cached && cached.text && cached.text.trim().length >= 5) {
                 console.log(`⚡ [AUDIO CACHE HIT] Returned cached transcription for hash ${audioHash.substring(0, 10)} (${cached.segments?.length || 0} segments)`);
@@ -6231,7 +6263,7 @@ const transcribeAudioWithTimestamps = async (filePath) => {
 
     if (result && result.text && result.text.trim().length >= 5 && audioHash) {
         try {
-            const cacheKey = `transcription:${audioHash}`;
+            const cacheKey = `transcription:${require("../config/cacheConfig").WHISPER_VERSION}:${audioHash}`;
             cacheManager.set(cacheKey, result, {
                 category: 'transcription',
                 qualityScore: 1.0,

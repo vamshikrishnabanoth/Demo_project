@@ -186,7 +186,7 @@ class LLMRouter {
     }
   }
 
-  async _complete({ prompt, systemPrompt = '', temperature = 0.3, responseFormat = 'json', model = null, sessionId = null, maxTokens = null, operation = null, signal = null, abortSignal = null, reasoningEffort = null, groqModels = null, noGeminiFallback = false }) {
+  async _complete({ prompt, systemPrompt = '', temperature = 0.3, responseFormat = 'json', model = null, sessionId = null, maxTokens = null, operation = null, signal = null, abortSignal = null, reasoningEffort = null, groqModels = null, noGeminiFallback = false, rateLimitWaitMs = null }) {
     const effectiveSignal = signal || abortSignal;
     if (!this.groqApiKey && process.env.GROQ_API_KEY) {
       this.groqApiKey = process.env.GROQ_API_KEY;
@@ -196,7 +196,7 @@ class LLMRouter {
     }
 
     const errors = [];
-    const groqSleepBudget = { spent: 0, max: RATE_LIMIT_WAIT_BUDGET_MS };
+    const groqSleepBudget = { spent: 0, max: rateLimitWaitMs || RATE_LIMIT_WAIT_BUDGET_MS };
 
     // Resolve model cleanly: use active models on user key
     let primaryModel = process.env.GROQ_MODEL || 'qwen/qwen3.8-27b';
