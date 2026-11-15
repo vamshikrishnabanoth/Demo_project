@@ -242,11 +242,11 @@ class Agent3Evaluator {
       return preAudit;
     }
 
-    // Lean lecture path (LECTURE_LEAN_PATH=on): a lecture question that passes every deterministic check skips this
+    // Lean lecture path (default; LECTURE_LEAN_PATH=off restores the per-question critic): a lecture question that passes every deterministic check skips this
     // per-question AI critic; the Final Quality Gate then checks all its criteria (and more) with the lecture passage,
     // ten questions per call, and rejected questions are replaced. Questions failing a deterministic check still get
     // the critic's bounded repair below.
-    if (target && target.lectureUnitId && process.env.LECTURE_LEAN_PATH === 'on' && preAudit.passed && (preAudit.failureReasons || []).length === 0) {
+    if (target && target.lectureUnitId && process.env.LECTURE_LEAN_PATH !== 'off' && preAudit.passed && (preAudit.failureReasons || []).length === 0) {
       preAudit.verificationMethod = 'DETERMINISTIC_AUDIT_FINAL_GATE_DEFERRED';
       preAudit.isFallback = false;
       preAudit.isLLMVerified = false;

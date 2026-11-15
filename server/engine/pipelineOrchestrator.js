@@ -1318,7 +1318,7 @@ class PipelineOrchestrator {
         // Each batched verdict still passes through the same per-question fail-closed parsing. AGENT3_BATCH_CRITIC=false turns it off.
         const precomputed = new Array(batchTargets.length).fill(null);
         // Lean lecture path: the Final Quality Gate is the semantic check, so no batched critic call is made up front.
-        const leanLecture = process.env.LECTURE_LEAN_PATH === 'on' && batchTargets.every(t => t.lectureUnitId);
+        const leanLecture = process.env.LECTURE_LEAN_PATH !== 'off' && batchTargets.every(t => t.lectureUnitId);
         if (process.env.AGENT3_BATCH_CRITIC !== 'false' && !leanLecture) {
           const eligible = batchTargets.map((t, b) => ({ t, b, c: batchCandidates[b] })).filter(({ t, c }) =>
             c && !c.isUnfulfilled &&
