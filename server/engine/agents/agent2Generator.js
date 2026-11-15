@@ -143,10 +143,38 @@ class Agent2Generator {
    * 4. Reject the question if there is no match or more than one match.
    * 5. Never guess or fuzzy-reassign an incorrect answer key.
    */
+  /**
+   * Models sometimes write the options into the stem as well ("…? A. x B. y C. z D. w"). After shuffling, those
+   * letters no longer match the real options, so a student sees two conflicting "A"s. When the embedded list is
+   * the same as the options, it is cut from the stem (the options array is the source of truth).
+   */
+  stripEmbeddedOptions(mcq) {
+    if (!Array.isArray(mcq.options) || mcq.options.length < 3) return;
+    for (const field of ['questionText', 'question']) if (typeof mcq[field] === 'string') this._stripEmbeddedOptionsIn(mcq, field);
+  }
+
+  _stripEmbeddedOptionsIn(mcq, field) {
+    const stem = mcq[field];
+    const m = stem.match(/(?:^|\s)\(?A[.)]\s+\S/);
+    if (!m) return;
+    const start = m.index + (m[0].match(/^\s/) ? 1 : 0);
+    const tail = stem.slice(start);
+    const parts = tail.split(/(?:^|\s)\(?[A-D][.)]\s+/).map(s => s.trim()).filter(Boolean);
+    if (parts.length < 3) return;
+    const norm = (s) => String(s || '').toLowerCase().replace(/[\s`'".;,]+/g, ' ').trim();
+    const opts = new Set(mcq.options.map(norm));
+    const matched = parts.filter(p => opts.has(norm(p))).length;
+    if (matched >= 3) {
+      const cut = stem.slice(0, start).trim();
+      if (cut.length >= 12) mcq[field] = cut;
+    }
+  }
+
   normalizeCorrectAnswer(mcq) {
     if (!mcq || mcq.isUnfulfilled || !Array.isArray(mcq.options) || mcq.options.length === 0) {
       return;
     }
+    this.stripEmbeddedOptions(mcq);
 
     const stripOptionPrefix = (str) => {
       if (typeof str !== 'string') return '';
