@@ -77,6 +77,12 @@ function deterministicProblems(q) {
   // by a student who missed that class, and tests memory of the session rather than the subject.
   const refersToClass = /\b(?:the|our|your) (?:instructor|teacher|lecturer|professor|presenter|speaker|trainer)\b|\b(?:during|in|from) the (?:live )?(?:coding )?(?:walkthrough|demo(?:nstration)?|lecture|class|session|video|recording)\b|\bin (?:today's |this |the )?class\b|\bas (?:discussed|explained|shown|mentioned|taught) (?:in|during|earlier|before|above)\b/i.test(stem);
   if (refersToClass) problems.push({ code: 'COMPLETENESS', detail: 'It refers to the class or the instructor, so a student who missed the class cannot answer it from the question alone.' });
+  // "According to the quick answer check / the notes / the slides …": tests the document, not the subject.
+  const refersToMaterial = /\baccording to the (?:notes|slides?|material|document|text|passage|handout|ppt|presentation|quick (?:answer )?check|summary|table|example given|lecture notes)\b|\b(?:in|from) the (?:quick (?:answer )?check|handout|given notes|uploaded (?:notes|document|material))\b/i.test(stem);
+  if (refersToMaterial) problems.push({ code: 'COMPLETENESS', detail: 'It refers to the uploaded material itself ("according to the notes/slides"), not to the subject.' });
+  // Options written into the question text as well ("… A. … B. … C. …") show the answers twice and break shuffling.
+  const listsOptions = /(?:^|\s)\(?A[.)]\s+\S[\s\S]*?\s\(?B[.)]\s+\S[\s\S]*?\s\(?C[.)]\s+\S/.test(stem);
+  if (listsOptions) problems.push({ code: 'FORMAT', detail: 'The options are also written inside the question text.' });
   return problems;
 }
 
