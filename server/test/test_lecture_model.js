@@ -361,7 +361,65 @@ test('A teacher correction replaces the detected style, and the writer gets the 
   assert.strictEqual(ts.normaliseOverride({ modes: ['nonsense'] }), null);
 });
 
-asyncTests().then(gateTests).then(() => {
+async function blindTests() {
+  const { blindAnswerCheck, blindRejections, _buildPrompt } = require('../engine/validators/blindAnswerCheck');
+  const router = require('../engine/adapter/llmRouter');
+  const model = { units: [{ id: 'U01', subtopic: 'Paging', blocks: [] }] };
+  const original = lm.unitEvidenceText;
+  lm.unitEvidenceText = (m, u) => (u.id === 'U01' ? 'Page size is 4 KB; 8 MB needs 2048 pages.' : '');
+  const mk = (stem, options, key) => ({ question: stem, options, correctAnswer: key, lectureSource: { unitId: 'U01' } });
+  const wrongKey = mk('8 MB with 4 KB pages needs how many pages?', ['512', '2048', '4096', '1024'], '1024');
+  const twoRight = mk('Which is a special number value?', ['undefined', 'Infinity', 'null', 'NaN'], 'Infinity');
+  const fine = mk('What is the page size?', ['1 KB', '2 KB', '4 KB', '8 KB'], '4 KB');
+  const reveals = mk('It prints 3. What does it print?', ['1', '2', '3', '4'], '3');
+  const realComplete = router.complete;
+  let prompts = [];
+  try {
+    router.complete = async ({ prompt, noGeminiFallback }) => {
+      prompts.push({ prompt, noGeminiFallback });
+      return JSON.stringify({ answers: [
+        { q: 1, answer: 'B', alsoDefensible: [] }, { q: 2, answer: 'B', alsoDefensible: ['D'], note: 'NaN is also a number' },
+        { q: 3, answer: 'C', alsoDefensible: [] }, { q: 4, answer: 'C', alsoDefensible: [], stemRevealsAnswer: true }
+      ] });
+    };
+    const qs = [wrongKey, twoRight, fine, reveals];
+    const s = await blindAnswerCheck(qs, { lectureModel: model, batchSize: 4, passageChars: 1000 });
+    const plain = _buildPrompt([fine], { lm: model, passageChars: 0, detectDuplicates: false });
+    test('Blind check (lecture path) shows the teacher\'s passage, never falls back to Gemini, and finds a wrong key and a second answer', () => {
+      assert.ok(s.checked);
+      assert.strictEqual(prompts.length, 1);
+      assert.ok(/LECTURE PASSAGE[^\n]*2048 pages/.test(prompts[0].prompt));
+      assert.ok(!/LECTURE PASSAGE/.test(plain), 'no passage by default');
+      assert.ok(!/duplicates/.test(prompts[0].prompt), 'no near-duplicate request on the lecture path');
+      assert.strictEqual(prompts[0].noGeminiFallback, true);
+      assert.strictEqual(wrongKey.independentCheck.status, 'DISAGREES');
+      assert.strictEqual(twoRight.independentCheck.status, 'POSSIBLY_AMBIGUOUS');
+      assert.strictEqual(fine.independentCheck.status, 'AGREES');
+    });
+    test('Blind rejections: wrong key and two answers are rejected for refill; stem-reveals and agreed questions are kept', () => {
+      const split = blindRejections(qs);
+      assert.deepStrictEqual(split.keep, [fine, reveals]);
+      assert.deepStrictEqual(split.rejected.map(r => r.criteria[0]), ['TECHNICAL_CORRECTNESS', 'SINGLE_ANSWER']);
+      assert.strictEqual(wrongKey.qualityGate.status, 'REJECTED');
+    });
+    router.complete = async () => { throw new Error('rate limited'); };
+    const busy = [mk('Q?', ['a', 'b', 'c', 'd'], 'a')];
+    const s2 = await blindAnswerCheck(busy, { lectureModel: model });
+    test('Blind check unavailable: questions are NOT_CHECKED and the gate verdict stands', () => {
+      assert.strictEqual(s2.checked, false);
+      assert.strictEqual(busy[0].independentCheck.status, 'NOT_CHECKED');
+      assert.strictEqual(blindRejections(busy).keep.length, 1);
+    });
+    test('Blind check prompt without a lecture model keeps the near-duplicate request (legacy path)', () => {
+      assert.ok(/duplicates/.test(_buildPrompt([fine], { lm: null, detectDuplicates: true })));
+    });
+  } finally {
+    router.complete = realComplete;
+    lm.unitEvidenceText = original;
+  }
+}
+
+asyncTests().then(gateTests).then(blindTests).then(() => {
 const passed = results.filter(Boolean).length;
 console.log(`\n🏁 ${passed} / ${results.length} tests passed`);
 process.exit(passed === results.length ? 0 : 1);

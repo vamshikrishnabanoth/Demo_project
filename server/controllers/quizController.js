@@ -1335,13 +1335,32 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
                 const { finalQualityGate, describeRejections } = require('../engine/validators/finalQualityGate');
                 const lmForGate = lmCandidate && lmCandidate.ok ? lmCandidate : null;
                 const GATE_TIMEOUT_MS = Math.max(30000, parseInt(process.env.QUALITY_GATE_TIMEOUT_MS, 10) || 150000);
-                const runGate = (qs, context) => Promise.race([
+                const runGateOnly = (qs, context) => Promise.race([
                     finalQualityGate(qs, { lectureModel: lmForGate, context }),
                     new Promise(resolve => setTimeout(() => resolve({
                         accepted: [], model: null, ms: GATE_TIMEOUT_MS,
                         rejected: qs.map(q => { q.qualityGate = { status: 'REJECTED', criteria: ['NOT_VALIDATED'], reasons: ['NOT_VALIDATED: The validation service did not answer in time.'] }; return { question: q, reasons: q.qualityGate.reasons, criteria: ['NOT_VALIDATED'] }; })
                     }), GATE_TIMEOUT_MS))
                 ]);
+                // Lecture inputs: a key-blind reasoning solve (with the teacher's passage) runs next to the gate. A different
+                // key or a second defensible option rejects the question, so the replacement round refills it. If the check
+                // is unavailable (rate limit) the gate's verdict stands. BLIND_CHECK=off disables it.
+                const blindOn = Boolean(lmForGate) && process.env.BLIND_CHECK !== 'off';
+                const runGate = async (qs, context) => {
+                    if (!blindOn) return runGateOnly(qs, context);
+                    const { blindAnswerCheck, blindRejections } = require('../engine/validators/blindAnswerCheck');
+                    const BLIND_TIMEOUT_MS = Math.max(20000, parseInt(process.env.BLIND_CHECK_TIMEOUT_MS, 10) || 120000);
+                    const [g, b] = await Promise.all([
+                        runGateOnly(qs, context),
+                        Promise.race([
+                            blindAnswerCheck(qs, { lectureModel: lmForGate }).catch(e => ({ checked: false, flagged: 0, reason: e.message })),
+                            new Promise(resolve => setTimeout(() => resolve({ checked: false, flagged: 0, reason: 'timeout' }), BLIND_TIMEOUT_MS))
+                        ])
+                    ]);
+                    const split = blindRejections(g.accepted);
+                    console.log(`[BlindCheck] ${b.checked ? `checked with ${b.model}` : `not run: ${b.reason}`}; ${split.rejected.length} gate-passed question(s) rejected`);
+                    return { ...g, accepted: split.keep, rejected: [...g.rejected, ...split.rejected], blind: b };
+                };
                 if (taskId) updateTaskStage(taskId, 7, 'Final Quality Gate');
                 const generatedCount = result.questions.length;
                 const gate = await runGate(result.questions, Array.isArray(lmOptions.gateContext) ? lmOptions.gateContext : []);
@@ -1400,6 +1419,7 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
                     replaced: replacedOk,
                     delivered: accepted.length,
                     ms: gate.ms,
+                    blindCheck: gate.blind ? { checked: gate.blind.checked, model: gate.blind.model || null, reason: gate.blind.reason || null } : null,
                     rejected: allRejected.map(r => ({
                         question: r.question.question || r.question.questionText || '',
                         options: r.question.options || [],
