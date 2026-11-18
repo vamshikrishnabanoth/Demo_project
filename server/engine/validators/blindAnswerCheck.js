@@ -73,14 +73,14 @@ function answersOf(d) {
 }
 
 /** Apply one batch's answers to its questions; returns the number flagged. */
-function applyAnswers(list, d, model) {
+function applyAnswers(list, d, model, field = 'independentCheck') {
   let flagged = 0;
   const answers = answersOf(d);
   list.forEach((q, i) => {
     const a = answers.find(x => Number(x.q) === i + 1) || answers[i];
     const k = keyIndex(q);
     if (!a || typeof a.answer !== 'string') {
-      q.independentCheck = { status: 'NOT_CHECKED', reason: 'No answer returned for this question.' };
+      q[field] = { status: 'NOT_CHECKED', reason: 'No answer returned for this question.' };
       return;
     }
     const blind = 'ABCD'.indexOf(a.answer.trim().toUpperCase().charAt(0));
@@ -89,15 +89,15 @@ function applyAnswers(list, d, model) {
       .filter(x => x >= 0 && x !== blind);
     if (blind !== k) {
       flagged++;
-      q.independentCheck = { status: 'DISAGREES', model, blindAnswer: q.options[blind] ?? null, working: a.working || '', reason: `An independent model chose "${q.options[blind] ?? a.answer}" instead of the key. Please check this question.` };
+      q[field] = { status: 'DISAGREES', model, blindAnswer: q.options[blind] ?? null, working: a.working || '', reason: `An independent model chose "${q.options[blind] ?? a.answer}" instead of the key. Please check this question.` };
     } else if (also.length > 0) {
       flagged++;
-      q.independentCheck = { status: 'POSSIBLY_AMBIGUOUS', model, otherDefensible: also.map(x => q.options[x]), reason: a.note || 'Another option may also be defensible.' };
+      q[field] = { status: 'POSSIBLY_AMBIGUOUS', model, otherDefensible: also.map(x => q.options[x]), reason: a.note || 'Another option may also be defensible.' };
     } else if (a.stemRevealsAnswer === true) {
       flagged++;
-      q.independentCheck = { status: 'POSSIBLY_AMBIGUOUS', model, stemReveals: true, reason: 'The question text already shows the answer (e.g. the output it asks for). Consider removing that part.' };
+      q[field] = { status: 'POSSIBLY_AMBIGUOUS', model, stemReveals: true, reason: 'The question text already shows the answer (e.g. the output it asks for). Consider removing that part.' };
     } else {
-      q.independentCheck = { status: 'AGREES', model };
+      q[field] = { status: 'AGREES', model };
     }
   });
   return flagged;
@@ -114,6 +114,8 @@ async function blindAnswerCheck(questions, opts = {}) {
   const lm = opts.lectureModel && Array.isArray(opts.lectureModel.units) ? opts.lectureModel : null;
 
   if (lm) {
+    // Own field: the Final Quality Gate runs in parallel and writes its own verdict to independentCheck.
+    const FIELD = 'blindCheck';
     const size = Math.max(1, opts.batchSize || parseInt(process.env.BLIND_CHECK_BATCH, 10) || 5);
     // No passage by default. Measured on the 188 release-check questions (2026-11-17): with the teacher's passage the
     // solver deferred to the lecture (a Docker key the teacher stated wrongly was then "agreed"), caught 5 of 10 real
@@ -126,10 +128,10 @@ async function blindAnswerCheck(questions, opts = {}) {
       try {
         const res = await callReasoner(buildPrompt(b, { lm, passageChars, detectDuplicates: false }));
         model = res.model;
-        flagged += applyAnswers(b, res.data, res.model);
+        flagged += applyAnswers(b, res.data, res.model, FIELD);
       } catch (e) {
         failures++; lastErr = e;
-        b.forEach(q => { q.independentCheck = { status: 'NOT_CHECKED', reason: 'Independent check unavailable (provider busy).' }; });
+        b.forEach(q => { q[FIELD] = { status: 'NOT_CHECKED', reason: 'Independent check unavailable (provider busy).' }; });
       }
     }));
     return { checked: failures < batches.length, flagged, model, ...(failures ? { reason: `${failures} of ${batches.length} batches not checked: ${lastErr && lastErr.message}` } : {}) };
@@ -172,7 +174,7 @@ async function blindAnswerCheck(questions, opts = {}) {
 function blindRejections(accepted) {
   const keep = []; const rejected = [];
   for (const q of accepted) {
-    const c = q.independentCheck;
+    const c = q.blindCheck;
     if (c && c.status === 'DISAGREES') {
       const reason = `TECHNICAL_CORRECTNESS: An independent key-blind solve chose "${c.blindAnswer}" instead of the key${c.working ? ` (${String(c.working).slice(0, 200)})` : ''}.`;
       q.qualityGate = { ...(q.qualityGate || {}), status: 'REJECTED', criteria: ['TECHNICAL_CORRECTNESS'], reasons: [reason] };

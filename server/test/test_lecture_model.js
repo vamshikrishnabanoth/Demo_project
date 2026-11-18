@@ -392,11 +392,12 @@ async function blindTests() {
       assert.ok(!/LECTURE PASSAGE/.test(plain), 'no passage by default');
       assert.ok(!/duplicates/.test(prompts[0].prompt), 'no near-duplicate request on the lecture path');
       assert.strictEqual(prompts[0].noGeminiFallback, true);
-      assert.strictEqual(wrongKey.independentCheck.status, 'DISAGREES');
-      assert.strictEqual(twoRight.independentCheck.status, 'POSSIBLY_AMBIGUOUS');
-      assert.strictEqual(fine.independentCheck.status, 'AGREES');
+      assert.strictEqual(wrongKey.blindCheck.status, 'DISAGREES');
+      assert.strictEqual(twoRight.blindCheck.status, 'POSSIBLY_AMBIGUOUS');
+      assert.strictEqual(fine.blindCheck.status, 'AGREES');
     });
     test('Blind rejections: wrong key and two answers are rejected for refill; stem-reveals and agreed questions are kept', () => {
+      wrongKey.independentCheck = { status: 'AGREES', model: 'gate' }; // the parallel gate writes its own field
       const split = blindRejections(qs);
       assert.deepStrictEqual(split.keep, [fine, reveals]);
       assert.deepStrictEqual(split.rejected.map(r => r.criteria[0]), ['TECHNICAL_CORRECTNESS', 'SINGLE_ANSWER']);
@@ -407,7 +408,7 @@ async function blindTests() {
     const s2 = await blindAnswerCheck(busy, { lectureModel: model });
     test('Blind check unavailable: questions are NOT_CHECKED and the gate verdict stands', () => {
       assert.strictEqual(s2.checked, false);
-      assert.strictEqual(busy[0].independentCheck.status, 'NOT_CHECKED');
+      assert.strictEqual(busy[0].blindCheck.status, 'NOT_CHECKED');
       assert.strictEqual(blindRejections(busy).keep.length, 1);
     });
     test('Blind check prompt without a lecture model keeps the near-duplicate request (legacy path)', () => {
