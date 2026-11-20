@@ -1335,8 +1335,8 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
                 const { finalQualityGate, describeRejections } = require('../engine/validators/finalQualityGate');
                 const lmForGate = lmCandidate && lmCandidate.ok ? lmCandidate : null;
                 const GATE_TIMEOUT_MS = Math.max(30000, parseInt(process.env.QUALITY_GATE_TIMEOUT_MS, 10) || 150000);
-                const runGateOnly = (qs, context) => Promise.race([
-                    finalQualityGate(qs, { lectureModel: lmForGate, context }),
+                const runGateOnly = (qs, context, depth) => Promise.race([
+                    finalQualityGate(qs, { lectureModel: lmForGate, context, depth }),
                     new Promise(resolve => setTimeout(() => resolve({
                         accepted: [], model: null, ms: GATE_TIMEOUT_MS,
                         rejected: qs.map(q => { q.qualityGate = { status: 'REJECTED', criteria: ['NOT_VALIDATED'], reasons: ['NOT_VALIDATED: The validation service did not answer in time.'] }; return { question: q, reasons: q.qualityGate.reasons, criteria: ['NOT_VALIDATED'] }; })
@@ -1347,12 +1347,12 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
                 // is unavailable (rate limit) the gate's verdict stands. BLIND_CHECK=off disables it.
                 const blindOn = Boolean(lmForGate) && process.env.BLIND_CHECK !== 'off';
                 const lectureFlags = [];
-                const runGate = async (qs, context) => {
-                    if (!blindOn) return runGateOnly(qs, context);
+                const runGate = async (qs, context, depth) => {
+                    if (!blindOn) return runGateOnly(qs, context, depth);
                     const { blindAnswerCheck, blindRejections } = require('../engine/validators/blindAnswerCheck');
                     const BLIND_TIMEOUT_MS = Math.max(20000, parseInt(process.env.BLIND_CHECK_TIMEOUT_MS, 10) || 120000);
                     const [g, b] = await Promise.all([
-                        runGateOnly(qs, context),
+                        runGateOnly(qs, context, depth),
                         Promise.race([
                             blindAnswerCheck(qs, { lectureModel: lmForGate }).catch(e => ({ checked: false, flagged: 0, reason: e.message })),
                             new Promise(resolve => setTimeout(() => resolve({ checked: false, flagged: 0, reason: 'timeout' }), BLIND_TIMEOUT_MS))
@@ -1375,7 +1375,8 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
                 // One replacement round for lecture inputs (not inside a replacement itself): picks are reserved up
                 // front so parallel replacements never chase the same teaching point and question type.
                 if (gate.rejected.length > 0 && lmForGate && Array.isArray(lmForGate.units) && !lmOptions.replace) {
-                    const MAX_REPLACE = Math.max(0, parseInt(process.env.QUALITY_GATE_MAX_REPLACEMENTS, 10) || 5);
+                    // Shallow questions are now rejected (not relabelled) on the first pass, so allow enough replacements for them.
+                    const MAX_REPLACE = Math.max(0, parseInt(process.env.QUALITY_GATE_MAX_REPLACEMENTS, 10) || Math.max(5, Math.ceil(0.7 * (sessionInputs.count || generatedCount))));
                     const toReplace = gate.rejected.slice(0, MAX_REPLACE);
                     const everyone = [...accepted, ...gate.rejected.map(r => r.question)];
                     const reserved = [];
@@ -1396,7 +1397,7 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
                     });
                     const fresh = (await Promise.all(jobs)).filter(Boolean);
                     if (fresh.length) {
-                        const gate2 = await runGate(fresh, accepted);
+                        const gate2 = await runGate(fresh, accepted, 'relabel'); // replacements: a shallow one keeps its slot under its true label
                         replacedOk = gate2.accepted.length;
                         accepted.push(...gate2.accepted);
                         allRejected.push(...gate2.rejected);

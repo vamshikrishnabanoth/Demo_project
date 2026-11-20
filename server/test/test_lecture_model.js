@@ -268,9 +268,23 @@ async function gateTests() {
     const oneStepHard = mk('Input 1, 1, 1. What is the frequency array?', ['[0, 3, 0]', '[3, 0, 0]', '[1, 1, 1]', '[0, 0, 3]'], '[0, 3, 0]', { difficulty: 'Hard' });
     const badState = mk('Input [2, 0, 2]; auxiliary []; processing index 2. What happens?', ['a', 'b', 'c', 'd'], 'a', { difficulty: 'Hard' });
     const cal = await finalQualityGate([oneStepHard, badState], {});
-    test('A one-step question labelled Hard is relabelled Medium; an inconsistent state is rejected', () => {
-      assert.ok(cal.accepted.includes(oneStepHard) && oneStepHard.difficulty === 'Medium' && oneStepHard.qualityGate.relabeled);
+    test('First pass: a one-step question labelled Hard is rejected for depth (to be rewritten deeper); an inconsistent state is rejected', () => {
+      assert.ok(cal.rejected.some(r => r.question === oneStepHard && r.criteria.includes('DEPTH')));
+      assert.strictEqual(oneStepHard.difficulty, 'Hard');
       assert.ok(cal.rejected.some(r => r.question === badState && r.criteria.includes('COMPLETENESS')));
+    });
+    const oneStepHard2 = mk('Input 1, 1, 1. What is the frequency array?', ['[0, 3, 0]', '[3, 0, 0]', '[1, 1, 1]', '[0, 0, 3]'], '[0, 3, 0]', { difficulty: 'Hard' });
+    const cal2 = await finalQualityGate([oneStepHard2], { depth: 'relabel' });
+    test('Replacement pass: a one-step "Hard" replacement keeps its slot, relabelled Medium', () => {
+      assert.ok(cal2.accepted.includes(oneStepHard2) && oneStepHard2.difficulty === 'Medium' && oneStepHard2.qualityGate.relabeled);
+    });
+    lm._internal.callJson = async () => ({ model: 'stub', data: { results: [
+      { q: 1, answer: 'A', alsoDefensible: [], grounded: true, correct: true, distractorsValid: true, plausible: true, aligned: true, complete: true, consistent: true, clear: true, fair: true, explanationOk: true, steps: 1, level: 'recall', trivial: true, problems: [] }
+    ], duplicates: [] } });
+    const trivia = mk('What is the default dropout rate in the positional encoding constructor?', ['0.1', '0.2', '0.5', '0.0'], '0.1');
+    const tv = await finalQualityGate([trivia], {});
+    test('An Easy question on an incidental detail (e.g. a default value) is rejected for depth', () => {
+      assert.ok(tv.rejected.some(r => r.question === trivia && r.criteria.includes('DEPTH')));
     });
     lm._internal.callJson = async () => { throw new Error('provider down'); };
     const down = await finalQualityGate([mk('Which is a valid statement?', ['a', 'b', 'c', 'd'], 'a')], {});

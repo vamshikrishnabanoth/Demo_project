@@ -40,7 +40,8 @@ const CRITERIA = {
   DUPLICATE: 'It tests the same point and skill as another question in the quiz',
   FAIRNESS: 'It relies on a misleading trick',
   EXPLANATION: 'The explanation is inaccurate or does not match the key',
-  NOT_VALIDATED: 'It could not be validated, so it is not delivered'
+  NOT_VALIDATED: 'It could not be validated, so it is not delivered',
+  DEPTH: 'Too shallow for its level, or it checks an incidental detail instead of an idea that was taught'
 };
 
 const CODE_TYPES = new Set(['output', 'debug', 'trace']);
@@ -124,6 +125,7 @@ For EACH question:
  - alsoDefensible (in step 1): look at each wrong option on its own and ask whether a teacher who taught SOURCE would also accept it. "Why/purpose/motivation" questions often have two acceptable answers; list them.
  - consistent: any data, state or trace given in the question is internally consistent (e.g. the state "after processing index 2" must reflect indices 0 and 1). Count an inconsistency as complete=false.
  - steps: how many dependent reasoning steps a strong student needs to reach the answer (1 = recall or one direct application).
+ - trivial: true if the question only checks an incidental detail (a default value, a number, name or setting mentioned in passing) or can be answered from the wording of the question or mere familiarity with the term, without understanding the idea that was taught — i.e. it would NOT separate a student who listened to the explanation from one who did not.
  - level: "recall" ONLY if the question asks the student to restate a fact, definition, value, name or statement (what is X, which term, what does X stand for, what value does X hold). "apply" if the question gives a situation, case, data or code and asks what happens, what to choose or why — even when the lecture discussed the same example. "analyze" if it needs several dependent steps, combining ideas or diagnosing.
  - distractorsValid: every wrong option is clearly wrong; none is correct, equivalent in meaning to another option or the key (e.g. "counts only elements after x" vs "skips elements before x"), duplicated, nonsensical or unrelated.
  - plausible: every wrong option is a realistic student misconception, not a throwaway.
@@ -136,7 +138,7 @@ For EACH question:
 4. "fact": the single fact or skill the KEY establishes, in at most 8 words (e.g. "linear search per element gives O(n^2)").
 Then compare the "fact" of every question with every other question (including OTHER QUESTIONS) and list "duplicates": pairs whose correct answers establish the same fact, even if worded differently or asked from a different angle, so a student who knows one answer knows the other. A definition and a computation that uses it are NOT duplicates.
 
-Return JSON only: {"results":[{"q":1,"working":"...","answer":"B","alsoDefensible":[],"grounded":true,"correct":true,"distractorsValid":true,"plausible":true,"aligned":true,"complete":true,"clear":true,"fair":true,"explanationOk":true,"steps":1,"level":"apply","problems":[],"fact":"..."}],"duplicates":[[1,3]]}`;
+Return JSON only: {"results":[{"q":1,"working":"...","answer":"B","alsoDefensible":[],"grounded":true,"correct":true,"distractorsValid":true,"plausible":true,"aligned":true,"complete":true,"clear":true,"fair":true,"explanationOk":true,"steps":1,"level":"apply","trivial":false,"problems":[],"fact":"..."}],"duplicates":[[1,3]]}`;
 }
 
 async function judgeBatch(items, mode, otherStems) {
@@ -205,11 +207,22 @@ async function finalQualityGate(questions, opts = {}) {
       // only under its true label — it is relabelled Medium (and reported), never passed off as Hard.
       const steps = Number(r.steps);
       const label = String(item.q.difficulty || item.q.metadata?.targetDifficulty || '');
+      // Depth. First pass (opts.depth !== 'relabel'): a question shallower than its level, or one that checks an incidental
+      // detail, is REJECTED so the replacement round writes a deeper one at the same planned level. Relabelling it down
+      // (the old behaviour) kept the count but silently turned planned Hard/Medium questions into Easy ones.
+      // Replacement pass (opts.depth === 'relabel'): keep the slot under its true label rather than deliver fewer questions.
+      const strictDepth = opts.depth !== 'relabel';
       if (label === 'Hard' && Number.isFinite(steps) && steps < 2) {
         item.relabel = { from: 'Hard', to: 'Medium', reason: `needs ${steps} reasoning step${steps === 1 ? '' : 's'}, not the two or more a Hard question requires` };
       } else if (label === 'Medium' && String(r.level || '').toLowerCase() === 'recall') {
         // A "Medium" question answered by remembering a sentence from the lecture is honestly an Easy question.
         item.relabel = { from: 'Medium', to: 'Easy', reason: 'is answered by recalling a statement from the lecture; Medium needs applying it' };
+      }
+      if (strictDepth && item.relabel) {
+        add('DEPTH', `Planned ${label} but it ${item.relabel.reason}.`);
+        item.relabel = null;
+      } else if (strictDepth && r.trivial === true) {
+        add('DEPTH', 'Checks an incidental detail or is answerable without understanding the taught idea.');
       }
     }
   }));
@@ -274,7 +287,7 @@ function describeRejections(rejected) {
     GROUNDING: 'not supported by the lecture', TECHNICAL_CORRECTNESS: 'incorrect answer or content', SINGLE_ANSWER: 'more than one correct answer',
     DISTRACTOR_VALIDITY: 'an invalid wrong option', ALIGNMENT: 'options not answering the question', COMPLETENESS: 'missing information',
     WORDING: 'unclear wording', FORMAT: 'wrong option format', DISTRACTOR_PLAUSIBILITY: 'implausible wrong options',
-    DUPLICATE: 'duplicate of another question', FAIRNESS: 'a misleading trick', EXPLANATION: 'an inaccurate explanation', NOT_VALIDATED: 'could not be validated'
+    DUPLICATE: 'duplicate of another question', FAIRNESS: 'a misleading trick', EXPLANATION: 'an inaccurate explanation', NOT_VALIDATED: 'could not be validated', DEPTH: 'too shallow for its level'
   };
   return Object.entries(counts).sort((a, b) => b[1] - a[1]).map(([c, n]) => `${n} ${label[c] || c}`).join(', ');
 }

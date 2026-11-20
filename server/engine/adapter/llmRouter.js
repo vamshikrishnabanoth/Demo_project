@@ -242,7 +242,8 @@ class LLMRouter {
           signal: effectiveSignal,
           groqSleepBudget,
           reasoningEffort,
-          groqModels
+          groqModels,
+          noGeminiFallback
         });
       } catch (err) {
         // A cancelled request must not be re-sent to another provider.
@@ -372,7 +373,7 @@ class LLMRouter {
   }
 
   /** Call Groq Cloud API with configured model, multi-key pool, and bounded rate-limit backoff */
-  async _callGroqWithRetry({ prompt, userPrompt, systemPrompt, temperature, primaryModel, fallbackModel, sessionId = null, maxTokens = null, operation = null, signal = null, abortSignal = null, groqSleepBudget = null, reasoningEffort = null, groqModels = null }) {
+  async _callGroqWithRetry({ prompt, userPrompt, systemPrompt, temperature, primaryModel, fallbackModel, sessionId = null, maxTokens = null, operation = null, signal = null, abortSignal = null, groqSleepBudget = null, reasoningEffort = null, groqModels = null, noGeminiFallback = false }) {
     prompt = prompt || userPrompt || '';
     const effectiveSignal = signal || abortSignal;
     const sleepBudget = groqSleepBudget || { spent: 0, max: RATE_LIMIT_WAIT_BUDGET_MS };
@@ -745,7 +746,9 @@ class LLMRouter {
         }
       }
 
-      const hasGemini = process.env.DISABLE_GEMINI !== 'true' && Boolean((this.geminiApiKey || process.env.GEMINI_API_KEY) && (!this.geminiCooldownUntil || Date.now() >= this.geminiCooldownUntil));
+      // A caller that forbids the Gemini fallback (Hard questions, the blind check) waits out Groq's per-minute limit
+      // within its rateLimitWaitMs budget instead of failing fast to a provider it will never use.
+      const hasGemini = !noGeminiFallback && process.env.DISABLE_GEMINI !== 'true' && Boolean((this.geminiApiKey || process.env.GEMINI_API_KEY) && (!this.geminiCooldownUntil || Date.now() >= this.geminiCooldownUntil));
 
       // 1. ALL ELIGIBLE ROUTES TPD-EXHAUSTED
       if (unattemptedCount === 0 && tpmBackoffCount === 0 && tpdExhaustedCount > 0) {

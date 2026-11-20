@@ -1762,7 +1762,7 @@ ${target.distractorMisconceptions.map(m => `- ${m.concept}: ${m.description}`).j
     );
 
     const QUESTION_ANGLE_GUIDE = {
-      recall: 'check a taught definition, term, command or fact directly',
+      recall: 'check a taught definition, term, command or fact by its meaning or effect (not its name or a value mentioned in passing)',
       concept: 'check understanding of what an idea means or implies (not word-for-word recall)',
       mechanism: 'ask how or why something works the way it was explained',
       trace: 'give a short concrete input/state and ask for the state after following the taught steps',
@@ -1789,8 +1789,8 @@ ${target.distractorMisconceptions.map(m => `- ${m.concept}: ${m.description}`).j
 
     // Build evidence context per target (bounded to ~1200 chars per target to avoid prompt bloat)
     const TIER_DEMAND = {
-      Easy: 'Easy — one-step understanding: recognise a correct definition, property or direct fact that was taught. The student still has to think; no trick wording.',
-      Medium: 'Medium — the student must apply or trace something: follow the steps of a procedure, predict the state or output after an operation, compare two taught mechanisms, or explain why a rule holds. A pure definition is NOT Medium.',
+      Easy: 'Easy — one step, but it must check that the student understood an idea the teacher explained (what it means, why it is used, what it does or prevents). A student who listened answers it; one who only half-heard the words, or knows the term only by name, picks a distractor. NEVER ask an incidental detail (a default value, a number, name or parameter mentioned in passing) or something answerable from the wording of the question or general familiarity with the term.',
+      Medium: 'Medium — the student must apply or trace something: follow the steps of a procedure, predict the state or output after an operation, compare two taught mechanisms, or explain why a rule holds. It must NOT be answerable by remembering one sentence from the lecture; give a situation, data or code to work on.',
       Hard: 'Hard — multi-step reasoning on a NEW concrete situation built only from taught material: an edge case, a what-if change, diagnosing a bug or wrong result, or combining two taught ideas. Length or vocabulary does not make a question Hard.'
     };
 
@@ -1798,7 +1798,13 @@ ${target.distractorMisconceptions.map(m => `- ${m.concept}: ${m.description}`).j
     const targetsBlock = validTargets.map((t, idx) => {
       const tier = t.targetDifficulty || 'Medium';
       const op = t.intendedCognitiveOperation || (tier === 'Easy' ? 'RECALL' : (tier === 'Medium' ? 'COMPARE' : 'DIAGNOSE'));
-      let ctx = getTargetEvidenceContext(t, evidencePackage, t.distractorStrategy === 'LECTURE_MISCONCEPTIONS' ? 2600 : 1200); // lecture-model targets carry the full passage for their point
+      // Lecture-model targets carry the teacher's full passage for their point (up to 2,400-2,800 chars). It used to be
+      // cut to 1,200 chars here, so the writer saw half of the explanation and fell back to recall questions. Deeper
+      // tiers now get the whole passage plus room for related retrieved context (other parts of the lecture to combine).
+      const ctxCap = t.lectureUnitId
+        ? ({ Easy: 2000, Medium: 2800, Hard: 3600 }[tier] || 2800)
+        : (t.distractorStrategy === 'LECTURE_MISCONCEPTIONS' ? 2600 : 1200);
+      let ctx = getTargetEvidenceContext(t, evidencePackage, Math.max(ctxCap, t.distractorStrategy === 'LECTURE_MISCONCEPTIONS' ? 2600 : 0));
       if (!ctx || ctx.length < 20) {
         ctx = t.supportingEvidence || (typeof evidencePackage === 'string' ? evidencePackage : (evidencePackage?.unifiedRawContent || ''));
       }
@@ -1813,7 +1819,7 @@ Cognitive operation: ${op}
 ${t.questionAngle && QUESTION_ANGLE_GUIDE[t.questionAngle] ? `Question type: ${QUESTION_ANGLE_GUIDE[t.questionAngle]}\n` : ''}${tier === 'Hard' ? `HARD RECIPE (mandatory): ${HARD_RECIPE[t.questionAngle] || HARD_RECIPE.default} Write the data on separate lines (e.g. "P1: Allocation [0,1,0], Max [7,5,3]" or code lines) so the prose sentence stays under 35 words.\n` : ''}${tier === 'Easy' && ['output', 'debug'].includes(t.questionAngle) ? `EASY CODE (mandatory): put 1-3 lines of the code exactly as taught (reconstruct it from the teacher's words if it was read aloud) on separate lines in the stem; the answer must follow from ONE rule taught in class (what one statement prints or does, or one obvious mistake) - no loop tracing, no state over several steps.\n` : ''}${t.teachingStyleNote ? `${t.teachingStyleNote}
 ` : ''}Learning objective: ${t.instruction || t.operationalGuidance || 'Test conceptual and applied understanding.'}
 ${misconceptions}Evidence (the ONLY source of truth for this question):
-${(ctx || '').slice(0, 1200).trim()}
+${(ctx || '').slice(0, Math.max(ctxCap, t.distractorStrategy === 'LECTURE_MISCONCEPTIONS' ? 2600 : 0)).trim()}
 `;
     }).join('\n');
 
@@ -1921,10 +1927,12 @@ Generate a JSON array of exactly ${validTargets.length} distinct, rigorous MCQs 
           const tpmBudget = parseInt(process.env.HARD_TPM_BUDGET, 10) || 7600;
           const promptTokens = Math.ceil((String(effectiveSystemPrompt || '').length + String(userPrompt || '').length) / 3.2);
           const room = tpmBudget - promptTokens;
-          const hardMaxTokens = Math.max(1800, Math.min(6500, room, validTargets.length * 4500));
-          const effort = process.env.HARD_REASONING_EFFORT || (hardMaxTokens < 3200 ? 'medium' : 'high');
+          // Use all the room the minute allows: high reasoning on a Hard problem easily spends 4,500 tokens and then
+          // returns an empty answer.
+          const hardMaxTokens = Math.max(1800, Math.min(6500, room));
+          let effort = process.env.HARD_REASONING_EFFORT || (hardMaxTokens < 3200 ? 'medium' : 'high');
           console.log(`🧠 [Agent 2 Batch] Hard request: ~${promptTokens} prompt tokens, ${hardMaxTokens} for reasoning+answer (${effort}).`);
-          responseText = await llmRouter.complete({
+          const callHard = () => llmRouter.complete({
             prompt: userPrompt,
             systemPrompt: effectiveSystemPrompt,
             temperature: 0.2,
@@ -1939,8 +1947,17 @@ Generate a JSON array of exactly ${validTargets.length} distinct, rigorous MCQs 
             rateLimitWaitMs: parseInt(process.env.HARD_RATE_LIMIT_WAIT_MS, 10) || 150000,
             signal: evidencePackage?.abortSignal || options?.abortSignal
           });
+          try {
+            responseText = await callHard();
+          } catch (firstErr) {
+            // Reasoning used up the whole token allowance and left no answer: retry once with medium reasoning.
+            if (effort !== 'high' || !/empty content/i.test(firstErr.message || '')) throw firstErr;
+            effort = 'medium';
+            console.warn('⚠️ [Agent 2 Batch] Hard answer was empty after high reasoning; retrying with medium reasoning.');
+            responseText = await callHard();
+          }
           hardWriter = 'reasoning';
-          console.log(`🧠 [Agent 2 Batch] Batch with Hard targets generated by groq:openai/gpt-oss-120b (reasoning ${process.env.HARD_REASONING_EFFORT || 'high'}).`);
+          console.log(`🧠 [Agent 2 Batch] Batch with Hard targets generated by groq:openai/gpt-oss-120b (reasoning ${effort}).`);
         } catch (reasonErr) {
           console.warn(`⚠️ [Agent 2 Batch] Reasoning model unavailable for Hard batch (${reasonErr.message.slice(0, 120)}).`);
         }
