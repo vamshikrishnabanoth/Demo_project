@@ -188,4 +188,34 @@ function blindRejections(accepted) {
   return { keep, rejected };
 }
 
-module.exports = { blindAnswerCheck, blindRejections, _buildPrompt: buildPrompt };
+/**
+ * "Was the lecture itself wrong here?" For questions the key-blind solve disputed, solve once more WITH the teacher's
+ * passage. If the passage-based answer matches the key while the subject-knowledge answer does not, the key follows
+ * what the lecture said and the lecture point itself may be technically wrong (e.g. "EXPOSE 80 makes the port
+ * available to the host"). The question is still replaced; the point is reported to the teacher to double-check.
+ * @returns {Promise<Array<{subtopic, time, lectureSays, standardAnswer, working, question}>>}
+ */
+async function lectureDiscrepancies(disputed, lm, { max = 3 } = {}) {
+  if (!lm || !Array.isArray(disputed) || !disputed.length) return [];
+  const found = [];
+  await Promise.all(disputed.slice(0, max).map(async (q) => {
+    const c = q.blindCheck || {};
+    if (c.status !== 'DISAGREES') return;
+    const passage = passageFor(q, lm, 1600);
+    if (!passage) return;
+    const probe = { ...q, blindCheck: undefined };
+    try {
+      const prompt = `${buildPrompt([probe], { lm, passageChars: 1600, detectDuplicates: false })}\nFor this check answer as the LECTURE PASSAGE teaches it (what a student who learned only from this passage would choose), even if you think the passage is imprecise.`;
+      const res = await callReasoner(prompt);
+      const a = answersOf(res.data)[0];
+      const byLecture = a && typeof a.answer === 'string' ? 'ABCD'.indexOf(a.answer.trim().toUpperCase().charAt(0)) : -1;
+      if (byLecture >= 0 && byLecture === keyIndex(q)) {
+        const s = q.lectureSource || {};
+        found.push({ subtopic: s.subtopic || null, time: s.time || null, lectureSays: q.options[byLecture], standardAnswer: c.blindAnswer, working: c.working || '', question: q.question || q.questionText || '' });
+      }
+    } catch (_) { /* best effort: no flag */ }
+  }));
+  return found;
+}
+
+module.exports = { blindAnswerCheck, blindRejections, lectureDiscrepancies, _buildPrompt: buildPrompt };

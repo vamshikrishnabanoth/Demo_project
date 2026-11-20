@@ -1346,6 +1346,7 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
                 // key or a second defensible option rejects the question, so the replacement round refills it. If the check
                 // is unavailable (rate limit) the gate's verdict stands. BLIND_CHECK=off disables it.
                 const blindOn = Boolean(lmForGate) && process.env.BLIND_CHECK !== 'off';
+                const lectureFlags = [];
                 const runGate = async (qs, context) => {
                     if (!blindOn) return runGateOnly(qs, context);
                     const { blindAnswerCheck, blindRejections } = require('../engine/validators/blindAnswerCheck');
@@ -1359,6 +1360,10 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
                     ]);
                     const split = blindRejections(g.accepted);
                     console.log(`[BlindCheck] ${b.checked ? `checked with ${b.model}` : `not run: ${b.reason}`}; ${split.rejected.length} gate-passed question(s) rejected`);
+                    // Disputed keys that follow the lecture's own words → a lecture point for the teacher to double-check.
+                    const { lectureDiscrepancies } = require('../engine/validators/blindAnswerCheck');
+                    const disc = await lectureDiscrepancies(split.rejected.map(r => r.question), lmForGate).catch(() => []);
+                    if (disc.length) lectureFlags.push(...disc);
                     return { ...g, accepted: split.keep, rejected: [...g.rejected, ...split.rejected], blind: b };
                 };
                 if (taskId) updateTaskStage(taskId, 7, 'Final Quality Gate');
@@ -1420,6 +1425,7 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
                     delivered: accepted.length,
                     ms: gate.ms,
                     blindCheck: gate.blind ? { checked: gate.blind.checked, model: gate.blind.model || null, reason: gate.blind.reason || null } : null,
+                    lectureFlags,
                     rejected: allRejected.map(r => ({
                         question: r.question.question || r.question.questionText || '',
                         options: r.question.options || [],
@@ -1437,6 +1443,24 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
                         (short > 0 ? `. Delivering ${accepted.length} of ${sessionInputs.count || generatedCount} requested — nothing that failed a check is included.` : '.');
                     result.notice = result.notice ? `${result.notice} ${gateNote}` : gateNote;
                     if (short > 0) result.isPartial = true;
+                }
+                if (lectureFlags.length) {
+                    const pts = lectureFlags.map(f => `"${f.subtopic || 'a point'}"${f.time ? ` (around ${f.time})` : ''}: the lecture suggests "${f.lectureSays}", but the standard answer is "${f.standardAnswer}"`).join('; ');
+                    const ln = `Please double-check ${lectureFlags.length === 1 ? 'this point' : 'these points'} in your lecture — ${pts}. Questions on ${lectureFlags.length === 1 ? 'it were' : 'them were'} replaced.`;
+                    result.notice = result.notice ? `${result.notice} ${ln}` : ln;
+                    result.lectureFlags = lectureFlags;
+                }
+                // Coverage: share of the lecture's teaching points that this quiz asks about.
+                if (lmForGate && Array.isArray(lmForGate.units) && lmForGate.units.length) {
+                    const asked = new Set(accepted.map(q => q.lectureSource && q.lectureSource.unitId).filter(Boolean));
+                    const covered = lmForGate.units.filter(u => asked.has(u.id));
+                    result.coverage = {
+                        teachingPoints: lmForGate.units.length,
+                        covered: covered.length,
+                        percent: Math.round(100 * covered.length / lmForGate.units.length),
+                        notAsked: lmForGate.units.filter(u => !asked.has(u.id)).map(u => u.subtopic).slice(0, 30)
+                    };
+                    result.qualityGate.coverage = { teachingPoints: result.coverage.teachingPoints, covered: result.coverage.covered, percent: result.coverage.percent };
                 }
                 console.log(`[QualityGate] ${gate.model ? `judged by ${gate.model}` : 'not judged'}: ${generatedCount} generated, ${firstPassRejected} rejected, ${replacedOk} replaced, ${accepted.length} delivered (${(gate.ms / 1000).toFixed(1)}s)`);
                 if (result.questions.length === 0) result.error = result.notice || 'No question passed the final quality gate.';

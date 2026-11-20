@@ -110,7 +110,7 @@ async function readWithGemini(filePath, originalName = '') {
     }
   }
 
-  const models = (process.env.VISION_READER_MODELS || 'gemini-3.5-flash-lite,gemini-3.1-flash-lite,gemini-3.5-flash,gemini-3.6-flash')
+  const models = (process.env.VISION_READER_MODELS || 'gemini-3.5-flash-lite,gemini-3.1-flash-lite')
     .split(',').map(s => s.trim()).filter(Boolean);
 
   // Long scans (e.g. 60+ handwritten pages) are read as parallel page ranges of the same uploaded file instead of

@@ -411,6 +411,18 @@ async function blindTests() {
       assert.strictEqual(busy[0].blindCheck.status, 'NOT_CHECKED');
       assert.strictEqual(blindRejections(busy).keep.length, 1);
     });
+    const { lectureDiscrepancies } = require('../engine/validators/blindAnswerCheck');
+    const expose = mk('What does EXPOSE 80 do?', ['Needs -p to publish', 'Makes port 80 available to the host', 'Firewall rule', 'Runs on 80'], 'Makes port 80 available to the host');
+    expose.lectureSource = { unitId: 'U01', subtopic: 'Dockerfile EXPOSE', time: '12:30' };
+    expose.blindCheck = { status: 'DISAGREES', blindAnswer: 'Needs -p to publish', working: 'EXPOSE only documents' };
+    const typo = mk('2 + 8 = ?', ['11', '10', '12', '9'], '11'); typo.blindCheck = { status: 'DISAGREES', blindAnswer: '10' };
+    router.complete = async ({ prompt }) => JSON.stringify({ answers: [{ q: 1, answer: /EXPOSE/.test(prompt) ? 'B' : 'B' }] });
+    const flags = await lectureDiscrepancies([expose, typo], model);
+    test('Lecture discrepancy: a disputed key that matches what the lecture says is flagged for the teacher; a plain wrong key is not', () => {
+      assert.strictEqual(flags.length, 1);
+      assert.strictEqual(flags[0].subtopic, 'Dockerfile EXPOSE');
+      assert.strictEqual(flags[0].standardAnswer, 'Needs -p to publish');
+    });
     test('Blind check prompt without a lecture model keeps the near-duplicate request (legacy path)', () => {
       assert.ok(/duplicates/.test(_buildPrompt([fine], { lm: null, detectDuplicates: true })));
     });
