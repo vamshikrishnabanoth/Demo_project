@@ -1375,32 +1375,40 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
                 // One replacement round for lecture inputs (not inside a replacement itself): picks are reserved up
                 // front so parallel replacements never chase the same teaching point and question type.
                 if (gate.rejected.length > 0 && lmForGate && Array.isArray(lmForGate.units) && !lmOptions.replace) {
-                    // Shallow questions are now rejected (not relabelled) on the first pass, so allow enough replacements for them.
+                    // Shallow questions are rejected (not relabelled) on the first pass, so allow enough replacements for them.
                     const MAX_REPLACE = Math.max(0, parseInt(process.env.QUALITY_GATE_MAX_REPLACEMENTS, 10) || Math.max(5, Math.ceil(0.7 * (sessionInputs.count || generatedCount))));
-                    const toReplace = gate.rejected.slice(0, MAX_REPLACE);
-                    const everyone = [...accepted, ...gate.rejected.map(r => r.question)];
-                    const reserved = [];
-                    const jobs = toReplace.map((r) => {
-                        const others = everyone.filter(q => q !== r.question);
-                        const plan = lectureModel.planRequest(lmForGate, 1, r.question.difficulty || 'Medium', {
-                            excludeTopics: Array.isArray(lmOptions.excludeTopics) ? lmOptions.excludeTopics : [],
-                            replace: { unitId: (lecturePairOf(lmForGate, r.question) || {}).unitId || null, subtopic: r.question.lectureSource?.subtopic || null,
-                                type: r.question.lectureSource?.plannedQuestionType || r.question.lectureSource?.questionType || null, difficulty: r.question.difficulty || 'Medium',
-                                usedPairs: [r.question, ...others].map(q => lecturePairOf(lmForGate, q)).filter(Boolean).concat(reserved) }
+                    // Up to two replacement rounds: a replacement that is itself caught by a check gets one more try, so
+                    // the teacher still receives the number of questions asked for. Every round is validated in full.
+                    const ROUNDS = Math.max(1, parseInt(process.env.QUALITY_GATE_REPLACEMENT_ROUNDS, 10) || 2);
+                    const target = sessionInputs.count || generatedCount;
+                    const tried = gate.rejected.map(r => r.question);
+                    let pending = gate.rejected.slice(0, MAX_REPLACE);
+                    for (let round = 0; round < ROUNDS && pending.length && accepted.length < target; round++) {
+                        const everyone = [...accepted, ...tried];
+                        const reserved = [];
+                        const jobs = pending.slice(0, Math.max(0, target - accepted.length)).map((r) => {
+                            const others = everyone.filter(q => q !== r.question);
+                            const plan = lectureModel.planRequest(lmForGate, 1, r.question.difficulty || 'Medium', {
+                                excludeTopics: Array.isArray(lmOptions.excludeTopics) ? lmOptions.excludeTopics : [],
+                                replace: { unitId: (lecturePairOf(lmForGate, r.question) || {}).unitId || null, subtopic: r.question.lectureSource?.subtopic || null,
+                                    type: r.question.lectureSource?.plannedQuestionType || r.question.lectureSource?.questionType || null, difficulty: r.question.difficulty || 'Medium',
+                                    usedPairs: [r.question, ...others].map(q => lecturePairOf(lmForGate, q)).filter(Boolean).concat(reserved) }
+                            });
+                            const pick = plan.selected[0];
+                            if (!pick) return Promise.resolve(null);
+                            const extraUsed = reserved.slice();
+                            reserved.push({ unitId: pick.unit.id, type: pick.angle.type });
+                            return replaceOneFromLecture(lmForGate, r.question, others, { excludedTopics: lmOptions.excludeTopics || [], extraUsed, styleOverride: lmOptions.styleOverride || null })
+                                .then(x => x.question).catch(() => null);
                         });
-                        const pick = plan.selected[0];
-                        if (!pick) return Promise.resolve(null);
-                        const extraUsed = reserved.slice();
-                        reserved.push({ unitId: pick.unit.id, type: pick.angle.type });
-                        return replaceOneFromLecture(lmForGate, r.question, others, { excludedTopics: lmOptions.excludeTopics || [], extraUsed, styleOverride: lmOptions.styleOverride || null })
-                            .then(x => x.question).catch(() => null);
-                    });
-                    const fresh = (await Promise.all(jobs)).filter(Boolean);
-                    if (fresh.length) {
-                        const gate2 = await runGate(fresh, accepted, 'relabel'); // replacements: a shallow one keeps its slot under its true label
-                        replacedOk = gate2.accepted.length;
-                        accepted.push(...gate2.accepted);
-                        allRejected.push(...gate2.rejected);
+                        const fresh = (await Promise.all(jobs)).filter(Boolean);
+                        if (!fresh.length) break;
+                        const gateN = await runGate(fresh, accepted, 'relabel'); // replacements: a shallow one keeps its slot under its true label
+                        replacedOk += gateN.accepted.length;
+                        accepted.push(...gateN.accepted);
+                        allRejected.push(...gateN.rejected);
+                        tried.push(...fresh);
+                        pending = gateN.rejected;
                     }
                 }
                 result.questions = accepted;
