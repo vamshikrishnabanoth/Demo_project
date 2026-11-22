@@ -29,7 +29,7 @@ const { classifyTextBlock } = require('../../utils/inputKind');
 
 const teachingStyle = require('./teachingStyle');
 
-const MODEL_VERSION = 'lecture-model-v2.5';
+const MODEL_VERSION = 'lecture-model-v2.6';
 // Largest quiz a teacher can request (one setting for server, planner and UI). Default 30: a daily-quiz size.
 const MAX_QUIZ_QUESTIONS = Math.max(1, parseInt(process.env.MAX_QUIZ_QUESTIONS, 10) || 30);
 const CACHE_DIR = path.join(__dirname, '..', '..', 'storage', 'lecture_model_cache');
@@ -504,6 +504,7 @@ Rules:
 - Ignore greetings, attendance, admin talk, jokes and filler.
 - Every quote must be copied word-for-word from one cited block (8-30 words; for code or commands, copy the exact line(s)).
 - Do not judge accent, fluency, filler words, speaking speed or transcription errors.
+- Speech blocks are automatic speech recognition: words are sometimes misheard ("R curve" for ROC curve, "mode prediction" for total predictions, a dropped word in a formula). Read for what the teacher clearly meant. A garbled word, a half-heard formula or a misnamed term is a transcription slip, never a teaching gap or technical error; record a technical error only when the teacher's meaning is clearly wrong (stated plainly, or repeated, or shown on a slide).
 - Return JSON only.`;
 
 function windowPrompt(win, ctx) {
@@ -550,7 +551,7 @@ How to fill it:
 - observations: 2-6 specific ones about teaching quality, each tied to a block and quote. Gaps must say what was missing and where (e.g. "showed the steps of X but not why Y holds").`;
 }
 
-const EVAL_SYSTEM = `You are a careful, fair reviewer of university teaching. You rate one lecture against a fixed rubric using ONLY the evidence listed. You judge what was taught, relative to what the lecture set out to teach and its level: an introductory lecture is not penalised for lacking advanced material. You never judge accent, fluency, filler words, voice, enthusiasm, speaking speed or transcription errors. If the evidence for a dimension is too thin to judge, you say so instead of guessing. Return JSON only.`;
+const EVAL_SYSTEM = `You are a careful, fair reviewer of university teaching. You rate one lecture against a fixed rubric using ONLY the evidence listed. You judge what was taught, relative to what the lecture set out to teach and its level: an introductory lecture is not penalised for lacking advanced material. You never judge accent, fluency, filler words, voice, enthusiasm, speaking speed or transcription errors. Quotes from speech are automatic speech recognition: words are sometimes misheard ("R curve" for ROC curve, "mode prediction" for total predictions, a dropped word in a formula). Read for what the teacher clearly meant. A garbled word, a half-heard formula or a misnamed term is a transcription slip, never a teaching gap or technical error; record a technical error only when the teacher's meaning is clearly wrong (stated plainly, or repeated, or shown on a slide). If the evidence for a dimension is too thin to judge, you say so instead of guessing. Return JSON only.`;
 
 function evalPrompt(lecture) {
   const rubric = TEACHING_DIMENSIONS.map(d =>
@@ -584,7 +585,7 @@ Return:
     {
       "key": "clarity",
       "rating": 1-4 or null if there is not enough evidence,
-      "evidence": ["O3", "U5"],
+      "evidence": ["O3", "U5"]  (REQUIRED for every rated dimension: cite the observation or unit ids that support it; units (U..) count as evidence for clarity, examples, structure and depth),
       "finding": "one sentence (max 20 words) on what the evidence shows, naming the specific topic",
       "improvement": "one specific, actionable suggestion in max 18 words naming the topic and what to add (or null if rating is 4)"
     }
@@ -1226,9 +1227,18 @@ async function scoreTeaching(lecture, { totalWords, usage, hasSpeech, rawArtifac
   if (lecture.units.length < 3 || totalWords < 300) {
     return { available: false, reason: `The input is too short (${totalWords} words) to judge teaching quality fairly.` };
   }
-  const r = await callJson({ systemPrompt: EVAL_SYSTEM, prompt: evalPrompt(lecture), maxTokens: 4096, operation: 'TEACHING_SCORE' });
-  usage.calls++; usage.providers.add(`${r.provider}:${r.model}`);
   const validIds = new Set([...lecture.units.map(u => u.id), ...lecture.observations.map(o => o.id)]);
+  const ratedWithEvidence = (data) => ((data && data.dimensions) || []).filter(x => x && Number(x.rating) >= 1 && (x.evidence || []).some(id => validIds.has(id))).length;
+  let r = await callJson({ systemPrompt: EVAL_SYSTEM, prompt: evalPrompt(lecture), maxTokens: 4096, operation: 'TEACHING_SCORE' });
+  usage.calls++; usage.providers.add(`${r.provider}:${r.model}`);
+  // A reviewer that rates without citing evidence ids leaves a clear lecture "not judgeable": ask once more, explicitly.
+  if (ratedWithEvidence(r.data) < 4 && lecture.units.length >= 5) {
+    try {
+      const again = await callJson({ systemPrompt: EVAL_SYSTEM, prompt: `${evalPrompt(lecture)}\n\nYour previous answer left most dimensions without a rating or without evidence ids. The teaching units above ARE evidence: rate every dimension they support (clarity, examples, structure, depth, reasoning, accuracy) and cite the unit/observation ids for each. Use null only when nothing in the units or observations bears on that dimension.`, maxTokens: 4096, operation: 'TEACHING_SCORE' });
+      usage.calls++; usage.providers.add(`${again.provider}:${again.model}`);
+      if (ratedWithEvidence(again.data) > ratedWithEvidence(r.data)) r = again;
+    } catch (_) { /* keep the first review */ }
+  }
   const byId = Object.fromEntries([...lecture.units, ...lecture.observations].map(x => [x.id, x]));
 
   const dims = TEACHING_DIMENSIONS.map(d => {
