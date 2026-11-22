@@ -29,7 +29,7 @@ const { classifyTextBlock } = require('../../utils/inputKind');
 
 const teachingStyle = require('./teachingStyle');
 
-const MODEL_VERSION = 'lecture-model-v2.6';
+const MODEL_VERSION = 'lecture-model-v2.12';
 // Largest quiz a teacher can request (one setting for server, planner and UI). Default 30: a daily-quiz size.
 const MAX_QUIZ_QUESTIONS = Math.max(1, parseInt(process.env.MAX_QUIZ_QUESTIONS, 10) || 30);
 const CACHE_DIR = path.join(__dirname, '..', '..', 'storage', 'lecture_model_cache');
@@ -1229,20 +1229,42 @@ async function scoreTeaching(lecture, { totalWords, usage, hasSpeech, rawArtifac
   }
   const validIds = new Set([...lecture.units.map(u => u.id), ...lecture.observations.map(o => o.id)]);
   const ratedWithEvidence = (data) => ((data && data.dimensions) || []).filter(x => x && Number(x.rating) >= 1 && (x.evidence || []).some(id => validIds.has(id))).length;
-  let r = await callJson({ systemPrompt: EVAL_SYSTEM, prompt: evalPrompt(lecture), maxTokens: 4096, operation: 'TEACHING_SCORE' });
-  usage.calls++; usage.providers.add(`${r.provider}:${r.model}`);
+  // Stability: one review by a small model swings (the same lecture scored 54, 92 and 70 on three readings). The review
+  // runs several times in parallel and each dimension takes the MEDIAN rating among the reviews that rated it with
+  // evidence; the finding and evidence shown come from a review that gave that median rating.
+  const RUNS = Math.max(1, parseInt(process.env.TEACHING_REVIEW_RUNS, 10) || 1); // reviews of one reading agree; variation comes from re-reading
+  const reviews = (await Promise.all(Array.from({ length: RUNS }, () =>
+    callJson({ systemPrompt: EVAL_SYSTEM, prompt: evalPrompt(lecture), maxTokens: 4096, operation: 'TEACHING_SCORE' }).catch(() => null)))).filter(Boolean);
+  if (!reviews.length) throw new Error('Teaching review unavailable.');
+  reviews.forEach(x => { usage.calls++; usage.providers.add(`${x.provider}:${x.model}`); });
   // A reviewer that rates without citing evidence ids leaves a clear lecture "not judgeable": ask once more, explicitly.
-  if (ratedWithEvidence(r.data) < 4 && lecture.units.length >= 5) {
+  if (Math.max(...reviews.map(x => ratedWithEvidence(x.data))) < 4 && lecture.units.length >= 5) {
     try {
-      const again = await callJson({ systemPrompt: EVAL_SYSTEM, prompt: `${evalPrompt(lecture)}\n\nYour previous answer left most dimensions without a rating or without evidence ids. The teaching units above ARE evidence: rate every dimension they support (clarity, examples, structure, depth, reasoning, accuracy) and cite the unit/observation ids for each. Use null only when nothing in the units or observations bears on that dimension.`, maxTokens: 4096, operation: 'TEACHING_SCORE' });
+      const again = await callJson({ systemPrompt: EVAL_SYSTEM, prompt: `${evalPrompt(lecture)}
+
+Your previous answer left most dimensions without a rating or without evidence ids. The teaching units above ARE evidence: rate every dimension they support (clarity, examples, structure, depth, reasoning, accuracy) and cite the unit/observation ids for each. Use null only when nothing in the units or observations bears on that dimension.`, maxTokens: 4096, operation: 'TEACHING_SCORE' });
       usage.calls++; usage.providers.add(`${again.provider}:${again.model}`);
-      if (ratedWithEvidence(again.data) > ratedWithEvidence(r.data)) r = again;
-    } catch (_) { /* keep the first review */ }
+      reviews.push(again);
+    } catch (_) { /* keep the reviews we have */ }
   }
+  const pickDimension = (key) => {
+    const all = reviews.map(x => ((x.data && x.data.dimensions) || []).find(y => y && y.key === key))
+      .filter(y => y && Number(y.rating) >= 1 && Number(y.rating) <= 4);
+    const cited = all.filter(y => (y.evidence || []).some(id => validIds.has(id)));
+    // Some reviews rate a dimension but forget the evidence ids. The rating counts towards the median; the dimension
+    // is only shown when at least one review cited evidence for it (nothing is shown without verified quotes).
+    if (!cited.length) return {};
+    if (reviews.length >= 3 && all.length < 2) return {};
+    const sorted = all.map(y => Number(y.rating)).sort((m, n) => m - n);
+    const median = sorted[Math.floor((sorted.length - 1) / 2)];
+    const base = cited.find(y => Number(y.rating) === median) || cited.slice().sort((m, n) => Math.abs(Number(m.rating) - median) - Math.abs(Number(n.rating) - median))[0];
+    return { ...base, rating: median };
+  };
+  const r = { data: reviews[0].data, model: [...new Set(reviews.map(x => x.model))].join(', ') };
   const byId = Object.fromEntries([...lecture.units, ...lecture.observations].map(x => [x.id, x]));
 
   const dims = TEACHING_DIMENSIONS.map(d => {
-    const got = (r.data.dimensions || []).find(x => x && x.key === d.key) || {};
+    const got = pickDimension(d.key);
     // Teaching observations (which say why) are shown before raw unit quotes.
     const evidenceIds = (got.evidence || []).filter(id => validIds.has(id))
       .sort((a, b) => (a.startsWith('O') ? 0 : 1) - (b.startsWith('O') ? 0 : 1));
@@ -1255,6 +1277,15 @@ async function scoreTeaching(lecture, { totalWords, usage, hasSpeech, rawArtifac
         ? { id, quote: x.quote, where: x.where, time: x.time, note: x.note, polarity: x.polarity }
         : { id, quote: x.quote, where: x.time ? `at ${x.time}` : (x.slides && x.slides.length ? `slide ${x.slides[0]}` : 'material'), time: x.time, note: `${x.topic} — ${x.subtopic}` };
     });
+    // A technical-error verdict resting only on the speech transcript is not scored: automatic transcription mishears
+    // terms and formulas, and transcripts carry no confidence signal (a KMIT lecture's "TP plus TN by total
+    // predictions" and an NPTEL lecture's correct "slow start is multiplicative increase" were both scored as errors).
+    // It is shown as a point to double-check; errors visible in slides or documents still count.
+    let finding = assessable ? String(got.finding || '').trim() : 'Not enough evidence in this input to judge this.';
+    if (d.key === 'accuracy' && rating && rating <= 2 && evidence.length && evidence.every(e => e.time)) {
+      rating = null;
+      finding = `Possible issue to double-check (from the automatic transcript, which can mishear words): ${finding}`;
+    }
     return {
       key: d.key,
       label: d.label,
@@ -1262,7 +1293,7 @@ async function scoreTeaching(lecture, { totalWords, usage, hasSpeech, rawArtifac
       rating,
       score: rating ? rating * 25 : null,
       levelDescription: rating ? d.levels[rating] : null,
-      finding: assessable ? String(got.finding || '').trim() : 'Not enough evidence in this input to judge this.',
+      finding,
       improvement: assessable && rating < 4 && got.improvement ? String(got.improvement).trim() : null,
       evidence
     };
@@ -1304,8 +1335,10 @@ async function scoreTeaching(lecture, { totalWords, usage, hasSpeech, rawArtifac
     intent: lecture.intent,
     dimensions: dims,
     strengths: (r.data.strengths || []).filter(s => typeof s === 'string').slice(0, 3).map(humanise),
-    improvements: (r.data.improvements || []).filter(s => typeof s === 'string').slice(0, 3).map(humanise),
+    // Next steps follow the median-rated dimensions (so they never repeat a point the median review did not support).
+    improvements: (() => { const fromDims = dims.filter(d => d.rating !== null && d.rating < 4 && d.improvement).sort((a, b) => a.rating - b.rating).map(d => d.improvement); return (fromDims.length ? fromDims : (r.data.improvements || []).filter(s => typeof s === 'string').map(humanise)).slice(0, 3); })(),
     reviewModel: r.model,
+    reviews: reviews.length,
     caveat: 'This reflects the evidence in this one input, judged against a fixed rubric. It is a feedback aid, not a measure of a teacher\'s overall ability.'
   };
 }
@@ -1685,5 +1718,5 @@ module.exports = {
   // exported for tests
   unitEvidenceText,
   teachingStyle,
-  _internal: { spokenCodeHits, buildBlocks, buildWindows, quoteSupported, sanitiseAngles, computeCapacity, allocate, buildSegments, consolidateUnits, callJson }
+  _internal: { spokenCodeHits, buildBlocks, buildWindows, quoteSupported, sanitiseAngles, computeCapacity, allocate, buildSegments, consolidateUnits, callJson, evalPrompt, EVAL_SYSTEM }
 };
