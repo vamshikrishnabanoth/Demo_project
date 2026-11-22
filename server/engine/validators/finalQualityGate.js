@@ -41,7 +41,8 @@ const CRITERIA = {
   FAIRNESS: 'It relies on a misleading trick',
   EXPLANATION: 'The explanation is inaccurate or does not match the key',
   NOT_VALIDATED: 'It could not be validated, so it is not delivered',
-  DEPTH: 'Too shallow for its level, or it checks an incidental detail instead of an idea that was taught'
+  DEPTH: 'Too shallow for its level, or it checks an incidental detail instead of an idea that was taught',
+  CLUES: 'An option gives the answer away'
 };
 
 const CODE_TYPES = new Set(['output', 'debug', 'trace']);
@@ -84,6 +85,9 @@ function deterministicProblems(q) {
   // Options written into the question text as well ("… A. … B. … C. …") show the answers twice and break shuffling.
   const listsOptions = /(?:^|\s)\(?A[.)]\s+\S[\s\S]*?\s\(?B[.)]\s+\S[\s\S]*?\s\(?C[.)]\s+\S/.test(stem);
   if (listsOptions) problems.push({ code: 'FORMAT', detail: 'The options are also written inside the question text.' });
+  // An option that labels itself ("… (correct rank-based behaviour)", "(the bug)") tells the student which one it is.
+  const selfLabel = /\((?:[^)]*\b(?:correct|incorrect|wrong|right answer|the bug|buggy|standard (?:behaviou?r|approach|implementation)|recommended|expected behaviou?r)\b[^)]*)\)\s*$/i;
+  if (opts.some(o => selfLabel.test(o))) problems.push({ code: 'CLUES', detail: 'An option labels itself as correct, standard or wrong, which gives the answer away.' });
   return problems;
 }
 
@@ -287,7 +291,7 @@ function describeRejections(rejected) {
     GROUNDING: 'not supported by the lecture', TECHNICAL_CORRECTNESS: 'incorrect answer or content', SINGLE_ANSWER: 'more than one correct answer',
     DISTRACTOR_VALIDITY: 'an invalid wrong option', ALIGNMENT: 'options not answering the question', COMPLETENESS: 'missing information',
     WORDING: 'unclear wording', FORMAT: 'wrong option format', DISTRACTOR_PLAUSIBILITY: 'implausible wrong options',
-    DUPLICATE: 'duplicate of another question', FAIRNESS: 'a misleading trick', EXPLANATION: 'an inaccurate explanation', NOT_VALIDATED: 'could not be validated', DEPTH: 'too shallow for its level'
+    DUPLICATE: 'duplicate of another question', FAIRNESS: 'a misleading trick', EXPLANATION: 'an inaccurate explanation', NOT_VALIDATED: 'could not be validated', DEPTH: 'too shallow for its level', CLUES: 'an option that gives the answer away'
   };
   return Object.entries(counts).sort((a, b) => b[1] - a[1]).map(([c, n]) => `${n} ${label[c] || c}`).join(', ');
 }

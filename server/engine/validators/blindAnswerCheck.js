@@ -205,13 +205,20 @@ async function lectureDiscrepancies(disputed, lm, { max = 3 } = {}) {
     if (!passage) return;
     const probe = { ...q, blindCheck: undefined };
     try {
-      const prompt = `${buildPrompt([probe], { lm, passageChars: 1600, detectDuplicates: false })}\nFor this check answer as the LECTURE PASSAGE teaches it (what a student who learned only from this passage would choose), even if you think the passage is imprecise.`;
+      const prompt = `${buildPrompt([probe], { lm, passageChars: 1600, detectDuplicates: false })}\nFor this check answer as the LECTURE PASSAGE teaches it (what a student who learned only from this passage would choose), even if you think the passage is imprecise. In the answer object also give "lectureQuote": the exact words from the passage that lead to this answer (copied verbatim), and "convention": true if the answer depends on a convention, tie-break or assumption that the question does not state.`;
       const res = await callReasoner(prompt);
       const a = answersOf(res.data)[0];
       const byLecture = a && typeof a.answer === 'string' ? 'ABCD'.indexOf(a.answer.trim().toUpperCase().charAt(0)) : -1;
-      if (byLecture >= 0 && byLecture === keyIndex(q)) {
+      // A flag tells a teacher their lecture may be wrong, so it needs proof: the exact lecture words behind the key
+      // (found in the passage), and a question that does not hinge on an unstated convention. An ambiguous or
+      // simply wrong question is rejected and replaced without blaming the lecture.
+      const norm = (t) => String(t || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+      const quote = a && typeof a.lectureQuote === 'string' ? a.lectureQuote.trim() : '';
+      const quoted = quote.split(/\s+/).length >= 4 && norm(passage).includes(norm(quote));
+      const hedged = a && (a.convention === true || String(a.convention).toLowerCase() === 'true');
+      if (byLecture >= 0 && byLecture === keyIndex(q) && quoted && !hedged) {
         const s = q.lectureSource || {};
-        found.push({ subtopic: s.subtopic || null, time: s.time || null, lectureSays: q.options[byLecture], standardAnswer: c.blindAnswer, working: c.working || '', question: q.question || q.questionText || '' });
+        found.push({ subtopic: s.subtopic || null, time: s.time || null, lectureSays: q.options[byLecture], lectureQuote: quote, standardAnswer: c.blindAnswer, working: c.working || '', question: q.question || q.questionText || '' });
       }
     } catch (_) { /* best effort: no flag */ }
   }));

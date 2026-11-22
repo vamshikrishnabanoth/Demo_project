@@ -430,8 +430,17 @@ async function blindTests() {
     expose.lectureSource = { unitId: 'U01', subtopic: 'Dockerfile EXPOSE', time: '12:30' };
     expose.blindCheck = { status: 'DISAGREES', blindAnswer: 'Needs -p to publish', working: 'EXPOSE only documents' };
     const typo = mk('2 + 8 = ?', ['11', '10', '12', '9'], '11'); typo.blindCheck = { status: 'DISAGREES', blindAnswer: '10' };
-    router.complete = async ({ prompt }) => JSON.stringify({ answers: [{ q: 1, answer: /EXPOSE/.test(prompt) ? 'B' : 'B' }] });
+    router.complete = async () => JSON.stringify({ answers: [{ q: 1, answer: 'B', lectureQuote: 'Page size is 4 KB', convention: false }] });
     const flags = await lectureDiscrepancies([expose, typo], model);
+    router.complete = async () => JSON.stringify({ answers: [{ q: 1, answer: 'B', lectureQuote: 'Page size is 4 KB', convention: true }] });
+    const hedgedFlags = await lectureDiscrepancies([expose], model);
+    router.complete = async () => JSON.stringify({ answers: [{ q: 1, answer: 'B', lectureQuote: 'the teacher said ports are published', convention: false }] });
+    const unquotedFlags = await lectureDiscrepancies([expose], model);
+    test('Lecture discrepancy needs proof: no flag when the answer hinges on an unstated convention, or the quoted lecture words are not in the lecture', () => {
+      assert.strictEqual(hedgedFlags.length, 0);
+      assert.strictEqual(unquotedFlags.length, 0);
+      assert.strictEqual(flags[0].lectureQuote, 'Page size is 4 KB');
+    });
     test('Lecture discrepancy: a disputed key that matches what the lecture says is flagged for the teacher; a plain wrong key is not', () => {
       assert.strictEqual(flags.length, 1);
       assert.strictEqual(flags[0].subtopic, 'Dockerfile EXPOSE');
@@ -495,6 +504,26 @@ async function blindTests() {
     assert.ok(/RELATED POINT/.test(target.hardFormRecipe));
   });
 }
+
+test('Teaching review context check: a criticism is dropped only when the verdict points inside the shown class context', () => {
+  const { pointsIntoContext } = lm._internal;
+  const ctx = ['[1:04:56] a', '[1:06:06] b', '[1:07:10] c'].join(String.fromCharCode(10));
+  assert.ok(pointsIntoContext('1:06:06', ctx, [3896, 4157]));
+  assert.ok(pointsIntoContext('106:06', ctx, [3896, 4157]), 'minutes-only form of the same time');
+  assert.ok(pointsIntoContext('66:30', ctx, [3896, 4157]), 'a time inside the window');
+  assert.ok(!pointsIntoContext('20:00', ctx, [3896, 4157]));
+  assert.ok(!pointsIntoContext('later', ctx, [3896, 4157]));
+});
+
+test('Gate: an option that labels itself as correct or standard is rejected as a giveaway', () => {
+  const { deterministicProblems } = require('../engine/validators/finalQualityGate');
+  const q = { question: 'find(1) returns 3. What is the most likely cause of this result?', options: ['Reversed parent assignment', 'Re-indexing after union', 'Merging all sets', 'Attaching the second root to the first (correct rank-based behavior)'], correctAnswer: 'Reversed parent assignment' };
+  assert.ok(deterministicProblems(q).some(p => p.code === 'CLUES'));
+  q.options[3] = 'Attaching the second root to the first';
+  assert.ok(!deterministicProblems(q).some(p => p.code === 'CLUES'));
+  q.options[3] = 'Union by rank (O(log n) height)';
+  assert.ok(!deterministicProblems(q).some(p => p.code === 'CLUES'), 'an ordinary parenthesis is fine');
+});
 
 asyncTests().then(gateTests).then(blindTests).then(() => {
 const passed = results.filter(Boolean).length;

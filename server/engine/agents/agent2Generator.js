@@ -1844,7 +1844,7 @@ Rules:
 - When the question asks to predict an output, state, value or error, the stem must NOT contain that output (show only the input/commands/code before it).
 - Every distractor must be definitely wrong. If an option could be argued correct (even partly, or under a common reading), replace it.
 - Every distractor must be something a student who attended this class could genuinely believe. Never use joke, extreme or unrelated options (e.g. "it deletes all files", "the system trash folder", "it encrypts the data") unless the lecture itself raised that confusion. Prefer options built from other ideas, commands, values or steps taught in the same lecture.
-- No giveaway clues: do not repeat a distinctive word or phrase from the stem in the correct option only, and do not make the correct option the only one that is complete, qualified or specific.
+- No giveaway clues: do not repeat a distinctive word or phrase from the stem in the correct option only, and do not make the correct option the only one that is complete, qualified or specific. Options never judge themselves: no labels such as "(correct behaviour)", "(the bug)", "(standard approach)" or "(incorrect)" inside an option.
 - Write the stem as a natural classroom question a teacher would ask; prefer a short concrete situation, code fragment, command or value over abstract wording.
 
 Output ONLY a JSON array (no markdown fences, no commentary) of objects with this schema:

@@ -549,10 +549,11 @@ How to fill it:
   * hard only for real multi-step reasoning on what was taught (edge case, what-if, combining ideas, diagnosing a wrong result) — not for long or wordy recall;
   * a MENTIONED unit gets at most one easy recall angle.
 - misconceptions: 2-3 per unit, drawn from contrasts or warnings the teacher made, near-miss steps, off-by-one or boundary errors, or confusion with a related idea from the same lecture.
-- observations: 2-6 specific ones about teaching quality, each tied to a block and quote. Gaps must say what was missing and where (e.g. "showed the steps of X but not why Y holds").`;
+- observations: 2-6 specific ones about teaching quality, each tied to a block and quote. Gaps must say what was missing and where (e.g. "showed the steps of X but not why Y holds").
+- A recorded class has several voices and the transcript has no speaker labels. Students answer, guess, propose their own approach and get corrected. Before writing a gap, read the next blocks: a question the teacher asks the class ("why is X? can anyone tell me?") that is then answered or explained is a teaching strength, not a gap; a wrong statement followed by "no, no" or a correction is a student's guess (or a deliberate slip) being corrected; running a failing case on purpose and working out why is a demonstration of debugging; judging a student's approach ("you are unnecessarily sorting again") is reasoning, not an admission of error.`;
 }
 
-const EVAL_SYSTEM = `You are a careful, fair reviewer of university teaching. You rate one lecture against a fixed rubric using ONLY the evidence listed. You judge what was taught, relative to what the lecture set out to teach and its level: an introductory lecture is not penalised for lacking advanced material. You never judge accent, fluency, filler words, voice, enthusiasm, speaking speed or transcription errors. Quotes from speech are automatic speech recognition: words are sometimes misheard ("R curve" for ROC curve, "mode prediction" for total predictions, a dropped word in a formula). Read for what the teacher clearly meant. A garbled word, a half-heard formula or a misnamed term is a transcription slip, never a teaching gap or technical error; record a technical error only when the teacher's meaning is clearly wrong (stated plainly, or repeated, or shown on a slide). If the evidence for a dimension is too thin to judge, you say so instead of guessing. Return JSON only.`;
+const EVAL_SYSTEM = `You are a careful, fair reviewer of university teaching. You rate one lecture against a fixed rubric using ONLY the evidence listed. You judge what was taught, relative to what the lecture set out to teach and its level: an introductory lecture is not penalised for lacking advanced material. You never judge accent, fluency, filler words, voice, enthusiasm, speaking speed or transcription errors. Quotes from speech are automatic speech recognition: words are sometimes misheard ("R curve" for ROC curve, "mode prediction" for total predictions, a dropped word in a formula). Read for what the teacher clearly meant. A garbled word, a half-heard formula or a misnamed term is a transcription slip, never a teaching gap or technical error; record a technical error only when the teacher's meaning is clearly wrong (stated plainly, or repeated, or shown on a slide). A class has several voices with no speaker labels: student answers, guesses and proposed approaches, questions the teacher asks the class, a failing case run on purpose to debug it, and the teacher's critique of a student's approach are interaction, never the teacher's errors or gaps. If the evidence for a dimension is too thin to judge, you say so instead of guessing. Return JSON only.`;
 
 function evalPrompt(lecture) {
   const rubric = TEACHING_DIMENSIONS.map(d =>
@@ -854,7 +855,8 @@ async function buildLectureModel(opts = {}) {
     inputDescription,
     segments: segmentsOut,
     units: finalUnits,
-    observations
+    observations,
+    blocks: allBlocks
   };
   // The teaching review can finish in the background (opts.deferTeachingScore): the teacher sees the overview
   // as soon as it is ready and the score a few seconds later (GET /api/quiz/teaching-score/:id).
@@ -1221,12 +1223,101 @@ async function describeLecture({ title, segments, units, inputDescription, usage
   }
 }
 
+/**
+ * Checks each gap observation against what happened around it in class (the cited block, the one before and the
+ * next three). Keeps only real gaps/errors by the teacher. One small-model call per lecture; on failure every
+ * observation is kept (the review's own rules still apply).
+ */
+/** "1:06:06", "106:06" or "66:06" → seconds; null if not a time. */
+function parseClock(t) {
+  const p = String(t).trim().split(':').map(Number);
+  if (!p.length || p.some(x => !Number.isFinite(x))) return null;
+  return p.length === 3 ? p[0] * 3600 + p[1] * 60 + p[2] : (p.length === 2 ? p[0] * 60 + p[1] : null);
+}
+/** The verdict points at the shown context: a slide/block label in it, or a time inside its span. */
+function pointsIntoContext(at, ctx, range) {
+  if (ctx.includes(`[${at}]`)) return true;
+  if (!Array.isArray(range)) return false;
+  const inside = (t) => t !== null && t >= range[0] - 5 && t <= range[1] + 5;
+  const sec = parseClock(at);
+  // Models sometimes write 1:06:06 as "106:06"; accept that reading too.
+  const p = String(at).split(':').map(Number);
+  const alt = p.length === 2 && p[0] >= 100 && p[0] % 100 < 60 ? Math.floor(p[0] / 100) * 3600 + (p[0] % 100) * 60 + p[1] : null;
+  return inside(sec) || inside(alt);
+}
+
+async function checkGapsInContext(lecture, usage) {
+  const blocks = lecture.blocks || [];
+  const gaps = (lecture.observations || []).filter(o => o.polarity === 'gap' && (o.blocks || []).length);
+  if (!gaps.length || !blocks.length) return null;
+  const pos = Object.fromEntries(blocks.map((b, i) => [b.id, i]));
+  const contexts = [];
+  const ranges = [];
+  const items = gaps.map((o, k) => {
+    const at = pos[o.blocks[0]];
+    const ctx = at === undefined ? '' : blocks.slice(Math.max(0, at - 1), at + 4)
+      .map(b => `[${b.source === 'SPEECH' && Number.isFinite(b.start) ? fmtTime(b.start) : (b.slide ? `slide ${b.slide}` : b.id)}] ${String(b.text).slice(0, 1200)}`).join('\n');
+    contexts[k] = ctx;
+    const shown = at === undefined ? [] : blocks.slice(Math.max(0, at - 1), at + 4);
+    ranges[k] = shown.length ? [Number(shown[0].start), Number(shown[shown.length - 1].end || shown[shown.length - 1].start)] : null;
+    return `ITEM ${k + 1}
+Criticism: ${o.note}
+Quoted: "${o.quote}"
+What happened around it:
+${ctx}`;
+  }).join('\n\n');
+  const r = await callJson({
+    systemPrompt: 'You check criticisms of a recorded university class against the transcript around them. The transcript has no speaker labels: students speak too. Return JSON only.',
+    prompt: `For each item decide whether the criticism is a real gap or error BY THE TEACHER.
+Choose exactly one verdict:
+- TEACHER_GAP: a real gap or error by the teacher that the shown blocks do not resolve. The teacher saying they do not know or are unsure about something they are teaching is a TEACHER_GAP unless they give the correct explanation in the shown blocks. When unsure, choose TEACHER_GAP.
+- STUDENT_WORDS: the quoted words are clearly a student's answer, guess or proposed approach.
+- ANSWERED_LATER: the teacher asked the class a question (or left a point open) and the following blocks answer or explain it.
+- CORRECTED: a wrong statement is corrected in the following blocks ("no, no", "wait", a correct restatement).
+- DELIBERATE_DEMO: the teacher ran a failing case, a bug or wrong data on purpose and worked out why.
+- CRITIQUE_OF_STUDENT: the teacher was judging a student's approach, not stating their own.
+- TRANSCRIPTION: the "error" is a misheard word or formula.
+- NOT_TEACHING: about equipment or tools (a screen or annotation glitch), not about what was taught.
+For every verdict other than TEACHER_GAP, give "at": the time label of the block that shows it.
+${items}
+
+Return {"items":[{"item":1,"verdict":"TEACHER_GAP","at":"","why":"one short sentence"}]}`,
+    maxTokens: 2048, operation: 'TEACHING_SCORE'
+  });
+  usage.calls++; usage.providers.add(`${r.provider}:${r.model}`);
+  const verdicts = new Map(((r.data && r.data.items) || []).map(x => [Number(x.item), x]));
+  if (process.env.TEACHING_CONTEXT_DEBUG) console.log('[ContextCheck]', r.model, JSON.stringify([...verdicts.values()]));
+  const REASONS = new Set(['STUDENT_WORDS', 'ANSWERED_LATER', 'CORRECTED', 'DELIBERATE_DEMO', 'CRITIQUE_OF_STUDENT', 'TRANSCRIPTION', 'NOT_TEACHING']);
+  const dropped = [];
+  const kept = lecture.observations.filter(o => {
+    const k = gaps.indexOf(o);
+    if (k < 0) return true;
+    const v = verdicts.get(k + 1);
+    const verdict = v && String(v.verdict || '').toUpperCase();
+    // Dropped only with a named reason AND a pointer to the block in the shown context that shows it.
+    const shownAt = v && String(v.at || '').replace(/[[\]\s]/g, '');
+    if (verdict && REASONS.has(verdict) && shownAt && pointsIntoContext(shownAt, contexts[k], ranges[k])) {
+      dropped.push({ ...o, contextVerdict: `${verdict}: ${String(v.why || '').slice(0, 280)}` });
+      return false;
+    }
+    return true;
+  });
+  if (dropped.length) console.log(`[LectureModel] Teaching review: ${dropped.length} of ${gaps.length} criticism(s) dropped after checking the classroom context`);
+  return { kept, dropped };
+}
+
 async function scoreTeaching(lecture, { totalWords, usage, hasSpeech, rawArtifactOnly = false }) {
   if (rawArtifactOnly) {
     return { available: false, reason: 'This input is code or terminal output without an explanation, so there is no teaching to judge. Questions are still generated from it. Add a recording or notes that explain it to get a teaching score.' };
   }
   if (lecture.units.length < 3 || totalWords < 300) {
     return { available: false, reason: `The input is too short (${totalWords} words) to judge teaching quality fairly.` };
+  }
+  // Criticisms are checked in classroom context first (a student's guess, a question put to the class, a deliberate
+  // live debug, or a critique of a student's approach is not the teacher's gap or error). Unsupported ones are dropped.
+  if (process.env.TEACHING_CONTEXT_CHECK !== 'off') {
+    const checked = await checkGapsInContext(lecture, usage).catch(() => null);
+    if (checked) lecture = { ...lecture, observations: checked.kept, droppedGaps: checked.dropped };
   }
   const validIds = new Set([...lecture.units.map(u => u.id), ...lecture.observations.map(o => o.id)]);
   const ratedWithEvidence = (data) => ((data && data.dimensions) || []).filter(x => x && Number(x.rating) >= 1 && (x.evidence || []).some(id => validIds.has(id))).length;
@@ -1340,6 +1431,8 @@ Your previous answer left most dimensions without a rating or without evidence i
     improvements: (() => { const fromDims = dims.filter(d => d.rating !== null && d.rating < 4 && d.improvement).sort((a, b) => a.rating - b.rating).map(d => d.improvement); return (fromDims.length ? fromDims : (r.data.improvements || []).filter(s => typeof s === 'string').map(humanise)).slice(0, 3); })(),
     reviewModel: r.model,
     reviews: reviews.length,
+    // Criticisms dropped by the classroom-context check (kept for transparency and for the paper).
+    contextCheck: lecture.droppedGaps ? { dropped: lecture.droppedGaps.map(o => ({ time: o.time, quote: o.quote, note: o.note, why: o.contextVerdict })) } : null,
     caveat: 'This reflects the evidence in this one input, judged against a fixed rubric. It is a feedback aid, not a measure of a teacher\'s overall ability.'
   };
 }
@@ -1737,5 +1830,5 @@ module.exports = {
   unitEvidenceText,
   teachingStyle,
   hardForms,
-  _internal: { spokenCodeHits, buildBlocks, buildWindows, quoteSupported, sanitiseAngles, computeCapacity, allocate, buildSegments, consolidateUnits, callJson, evalPrompt, EVAL_SYSTEM }
+  _internal: { spokenCodeHits, buildBlocks, buildWindows, quoteSupported, sanitiseAngles, computeCapacity, allocate, buildSegments, consolidateUnits, callJson, evalPrompt, EVAL_SYSTEM, checkGapsInContext, scoreTeaching, pointsIntoContext }
 };
