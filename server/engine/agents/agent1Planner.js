@@ -5554,6 +5554,8 @@ Ensure targets are distributed across Easy, Medium, and Hard according to the re
         formatRecommendation: u.hasCode ? 'CODE_ANALYSIS' : 'PROSE_MULTIPLE_CHOICE',
         assessmentAngle: String(u.questionAngle || 'concept').toUpperCase(),
         questionAngle: u.questionAngle,
+        hardForm: u.hardForm || null,
+        hardFormRecipe: u.hardFormRecipe || null,
         trajectoryPhase: 'MID',
         timestamp: u.lectureTime || null,
         tier: 'Core',

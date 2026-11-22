@@ -446,6 +446,56 @@ async function blindTests() {
   }
 }
 
+// ── Hard forms: many ways to be Hard, matched to what was taught ──────────────
+{
+  const hf = require('../engine/intelligence/hardForms');
+  const U = (id, kind, extra = {}) => ({ id, topic: 'T', subtopic: `point ${id}`, statement: `statement ${id}`, kind, depth: 'EXPLAINED', importance: 'CORE',
+    angles: [{ type: 'scenario', difficulty: 'hard', focus: 'x' }], ...extra });
+  const units = [
+    U('A', 'CODE', { hasCode: true, depth: 'DEMONSTRATED', angles: [{ type: 'trace', difficulty: 'hard', focus: 'x' }] }),
+    U('B', 'MECHANISM'), U('C', 'COMPARISON'), U('D', 'CALCULATION', { hasFormula: true }),
+    U('E', 'EDGE_CASE', { angles: [{ type: 'edge_case', difficulty: 'hard', focus: 'x' }] }),
+    U('F', 'APPLICATION'), U('G', 'MECHANISM', { topic: 'Other' }), U('H', 'MECHANISM', { depth: 'MENTIONED' })
+  ];
+  const model = { units };
+  test('Hard forms follow the content: code -> trace first, formula -> calculation, comparison -> choose under constraints, edge case -> boundary', () => {
+    assert.strictEqual(hf.formsFor(units[0], model)[0], 'trace');
+    assert.ok(hf.formsFor(units[3], model).slice(0, 2).includes('calculate_decide'));
+    assert.strictEqual(hf.formsFor(units[2], model)[0], 'choose_constraints');
+    assert.strictEqual(hf.formsFor(units[4], model)[0], 'boundary');
+    assert.strictEqual(hf.formsFor(units[1], model)[0], 'predict_change');
+  });
+  test('Hard forms: a mentioned point has none; "connect two points" is offered only when a related point exists, never as the only way', () => {
+    assert.deepStrictEqual(hf.formsFor(units[7], model), []);
+    assert.ok(!hf.formsFor(units[6], model).includes('link'), 'no other explained point in its topic');
+    const b = hf.formsFor(units[1], model);
+    assert.ok(b.includes('link') && b[0] !== 'link');
+    assert.ok(hf.formsFor(units[1], model).length >= 3);
+  });
+  test('Hard forms: a worked-solution or work-backwards form needs a demonstration, code or a formula', () => {
+    assert.ok(!hf.formsFor(U('X', 'EXAMPLE'), model).includes('spot_flaw'));
+    assert.ok(hf.formsFor(U('Y', 'EXAMPLE', { depth: 'DEMONSTRATED' }), model).includes('spot_flaw'));
+  });
+  test('Hard forms are varied across a quiz, and a replacement avoids the rejected form', () => {
+    const picks = [units[1], units[5], units[2], units[4]].map(u => ({ unit: u, difficulty: 'hard' }));
+    hf.assignForms(picks, model);
+    assert.ok(new Set(picks.map(p => p.hardForm)).size >= 3, JSON.stringify(picks.map(p => p.hardForm)));
+    const again = [{ unit: units[1], difficulty: 'hard' }];
+    hf.assignForms(again, model, { avoid: [{ unitId: null, form: 'predict_change' }] });
+    assert.ok(again[0].hardForm && again[0].hardForm !== 'predict_change');
+  });
+  test('Hard forms reach the writer: the target carries the recipe, and "connect two points" carries the related passage', () => {
+    const plan = { selected: [{ unit: units[1], angle: units[1].angles[0], difficulty: 'hard', hardForm: 'link', linkedUnitId: 'C' }], reserves: [] };
+    const t = lm.toTeachingUnits({ ...model, blocks: [] }, plan, { styleGuided: false }).primary[0];
+    assert.strictEqual(t.hardForm, 'link');
+    assert.ok(/RELATED POINT/.test(t.hardFormRecipe));
+    assert.ok(t.transcriptExcerpt.includes('RELATED POINT TAUGHT IN THE SAME LECTURE (point C)'));
+    const target = planner._planFromLectureModel([t], 'Hard', 1, {}).assessmentTargets[0];
+    assert.strictEqual(target.hardForm, 'link');
+    assert.ok(/RELATED POINT/.test(target.hardFormRecipe));
+  });
+}
+
 asyncTests().then(gateTests).then(blindTests).then(() => {
 const passed = results.filter(Boolean).length;
 console.log(`\n🏁 ${passed} / ${results.length} tests passed`);

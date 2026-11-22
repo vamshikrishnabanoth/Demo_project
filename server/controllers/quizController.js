@@ -1321,6 +1321,7 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
                         subtopic: u.subtopic,
                         questionType: shownType,
                         plannedQuestionType: u.questionAngle,
+                        hardForm: u.hardForm || null,
                         time: u.lectureTime || null,
                         slides: u.lectureSlides || [],
                         plannedDifficulty: u.plannedDifficulty,
@@ -1391,7 +1392,7 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
                             const plan = lectureModel.planRequest(lmForGate, 1, r.question.difficulty || 'Medium', {
                                 excludeTopics: Array.isArray(lmOptions.excludeTopics) ? lmOptions.excludeTopics : [],
                                 replace: { unitId: (lecturePairOf(lmForGate, r.question) || {}).unitId || null, subtopic: r.question.lectureSource?.subtopic || null,
-                                    type: r.question.lectureSource?.plannedQuestionType || r.question.lectureSource?.questionType || null, difficulty: r.question.difficulty || 'Medium',
+                                    type: r.question.lectureSource?.plannedQuestionType || r.question.lectureSource?.questionType || null, form: r.question.lectureSource?.hardForm || null, difficulty: r.question.difficulty || 'Medium',
                                     usedPairs: [r.question, ...others].map(q => lecturePairOf(lmForGate, q)).filter(Boolean).concat(reserved) }
                             });
                             const pick = plan.selected[0];
@@ -5694,7 +5695,7 @@ function lecturePairOf(lm, q) {
     const unit = (s.unitId && lm.units.find(u => u.id === s.unitId))
         || lm.units.find(u => String(u.subtopic).toLowerCase() === String(s.subtopic || '').toLowerCase());
     const type = s.plannedQuestionType || s.questionType;
-    return unit && type ? { unitId: unit.id, type } : null;
+    return unit && type ? { unitId: unit.id, type, form: s.hardForm || null } : null;
 }
 
 /**
@@ -5715,7 +5716,7 @@ async function replaceOneFromLecture(lm, question, others = [], { excludedTopics
     const generated = await generateQuestions(null, null, 1, difficulty, null, null, inputs, null, taskId, null, null, 'MIXED',
         'FILL_WITH_MEDIUM', null, 'ALLOW_SCOPE_SUPPLEMENTARY',
         { id: lm.id, excludeTopics: Array.isArray(excludedTopics) ? excludedTopics : [],
-          replace: { unitId: origin ? origin.unitId : null, subtopic: src.subtopic || null, type: src.plannedQuestionType || src.questionType || null, difficulty, usedPairs },
+          replace: { unitId: origin ? origin.unitId : null, subtopic: src.subtopic || null, type: src.plannedQuestionType || src.questionType || null, form: src.hardForm || null, difficulty, usedPairs },
           skipGate: !gateContext, gateContext: gateContext || [], styleOverride });
     const newQ = Array.isArray(generated) ? generated[0] || null : null;
     const task = getTask(taskId) || {};

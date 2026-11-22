@@ -28,6 +28,7 @@ const { safeParseJson } = require('../utils/jsonParser');
 const { classifyTextBlock } = require('../../utils/inputKind');
 
 const teachingStyle = require('./teachingStyle');
+const hardForms = require('./hardForms');
 
 const MODEL_VERSION = 'lecture-model-v2.12';
 // Largest quiz a teacher can request (one setting for server, planner and UI). Default 30: a daily-quiz size.
@@ -1435,6 +1436,10 @@ function planRequest(fullModel, requestedCount, difficulty = 'Balanced', options
     const pick = ranked.slice(0, 1).map(p => ({ ...p, difficulty: p.angle.difficulty }));
     // Two reserves at most: a replacement should cost one question's worth of calls, not a quiz's.
     const spare = ranked.slice(1, 3).map(p => ({ ...p, difficulty: p.angle.difficulty }));
+    // Hard: a different form from the rejected attempt, and the form used least in the quiz.
+    hardForms.assignForms([...pick, ...spare], model, {
+      used: (r.usedPairs || []).map(x => x.form), avoid: r.form ? [{ unitId: null, form: r.form }] : [], isSamePoint: sameTeachingPoint
+    });
     const byDiffR = { easy: 0, medium: 0, hard: 0 };
     pick.forEach(p => { byDiffR[p.difficulty]++; });
     return {
@@ -1521,6 +1526,9 @@ function planRequest(fullModel, requestedCount, difficulty = 'Balanced', options
       if (k) byTopic[topic] = (byTopic[topic] || 0) + k;
     }
   }
+  // Hard picks: each gets the way of being Hard that its content supports, varied across the quiz.
+  hardForms.assignForms(selected, model, { isSamePoint: sameTeachingPoint });
+  hardForms.assignForms(reserves, model, { used: selected.map(p => p.hardForm), isSamePoint: sameTeachingPoint });
   const deliverable = selected.length;
   const shortfall = n - deliverable;
   const reasons = [];
@@ -1618,8 +1626,14 @@ function toTeachingUnits(model, plan, opts = {}) {
     const a = p.angle;
     // Examples often span the exchange around the point, so example-taught points also get the neighbouring block.
     const exampleTaught = styleGuided && teachingStyle.unitMode(u, styleOverride) === 'EXAMPLE';
-    const passage = unitEvidenceText(model, u, exampleTaught ? 2800 : 2400, { neighbours: exampleTaught ? 1 : 0 });
+    let passage = unitEvidenceText(model, u, exampleTaught ? 2800 : 2400, { neighbours: exampleTaught ? 1 : 0 });
     const tier = p.difficulty.charAt(0).toUpperCase() + p.difficulty.slice(1);
+    const form = tier === 'Hard' && p.hardForm ? p.hardForm : null;
+    const linked = form === 'link' && p.linkedUnitId ? model.units.find(x => x.id === p.linkedUnitId) : null;
+    if (linked) passage = `${passage}
+
+RELATED POINT TAUGHT IN THE SAME LECTURE (${linked.subtopic}): ${linked.statement}
+${unitEvidenceText(model, linked, 1200)}`;
     return {
       claimId: `${u.id}_${a.type}`,
       sequenceIndex: i + 1,
@@ -1640,6 +1654,9 @@ function toTeachingUnits(model, plan, opts = {}) {
       plannedOperation: ANGLE_TO_OPERATION[a.type] || 'EXPLAIN',
       questionAngle: a.type,
       angleFocus: a.focus,
+      hardForm: form,
+      hardFormRecipe: form ? hardForms.HARD_FORMS[form].recipe : null,
+      linkedUnitId: linked ? linked.id : null,
       lectureMisconceptions: u.misconceptions || [],
       teachingStyleNote: styleGuided ? teachingStyle.noteFor(u, model.teachingStyle, styleOverride) : null,
       teachingMode: styleGuided ? teachingStyle.unitMode(u, styleOverride) : null,
@@ -1664,7 +1681,8 @@ function toClientPayload(model) {
       id: u.id, topic: u.topic, subtopic: u.subtopic, kind: u.kind, depth: u.depth, source: u.source,
       time: u.time, slides: u.slides, statement: u.statement, quote: u.quote, angles: u.angles, delivery: u.delivery || null
     })),
-    teachingStyleText: model.teachingStyle ? teachingStyle.describeProfile(model.teachingStyle) : null
+    teachingStyleText: model.teachingStyle ? teachingStyle.describeProfile(model.teachingStyle) : null,
+    hardForms: hardForms.profile(model, { isSamePoint: sameTeachingPoint })
   };
 }
 
@@ -1718,5 +1736,6 @@ module.exports = {
   // exported for tests
   unitEvidenceText,
   teachingStyle,
+  hardForms,
   _internal: { spokenCodeHits, buildBlocks, buildWindows, quoteSupported, sanitiseAngles, computeCapacity, allocate, buildSegments, consolidateUnits, callJson, evalPrompt, EVAL_SYSTEM }
 };
