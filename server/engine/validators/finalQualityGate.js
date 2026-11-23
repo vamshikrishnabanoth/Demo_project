@@ -168,6 +168,10 @@ async function finalQualityGate(questions, opts = {}) {
   const mode = lm && !lm.isTopicNotes ? 'lecture' : 'domain';
   const context = Array.isArray(opts.context) ? opts.context : [];
   const list = (questions || []).map((q, i) => ({ q, n: i + 1, source: sourceFor(q, lm), problems: deterministicProblems(q) }));
+  // Deep lecture = its reading found at least HARD_DEEP_MIN multi-step (Hard) opportunities (default 8: the Transformer
+  // lecture has 23, Kruskal 13, MIT DP 8; the introductory classification-metrics class 5).
+  const hardCap = lm && lm.capacity && lm.capacity.byDifficulty ? Number(lm.capacity.byDifficulty.hard) || 0 : 0;
+  const deepLecture = hardCap >= (parseInt(process.env.HARD_DEEP_MIN, 10) || 8);
   const contextStems = context.map((q, i) => ({ n: list.length + i + 1, stem: stemOf(q).slice(0, 220) }));
 
   const batches = [];
@@ -216,13 +220,16 @@ async function finalQualityGate(questions, opts = {}) {
       // (the old behaviour) kept the count but silently turned planned Hard/Medium questions into Easy ones.
       // Replacement pass (opts.depth === 'relabel'): keep the slot under its true label rather than deliver fewer questions.
       const strictDepth = opts.depth !== 'relabel';
-      // Hard is relative to the lecture: it is the most demanding level THIS class supports (an introductory class's Hard
-      // is an applied question; a deep class's Hard needs several steps, which the writer's Hard forms aim for). So a
-      // Hard question is demoted only when it is recall (never Hard for any class); the step count is recorded, not enforced.
+      // Hard is relative to the lecture: the most demanding level THIS class supports. A deep class (one whose reading
+      // found many multi-step opportunities: traces, calculations, code) supports multi-step questions, so its Hard needs
+      // at least two dependent steps. An introductory class's Hard is its best applied question, so there only recall is
+      // demoted. (Transformer lecture, 23 Nov: with the relaxed rule everywhere, one-step questions passed as Hard.)
       if (Number.isFinite(steps)) item.q.measuredSteps = steps;
       const level = String(r.level || '').toLowerCase();
       if (label === 'Hard' && level === 'recall') {
         item.relabel = { from: 'Hard', to: 'Medium', reason: 'is answered by recalling a statement; a Hard question must apply or analyse what was taught' };
+      } else if (label === 'Hard' && deepLecture && Number.isFinite(steps) && steps < 2) {
+        item.relabel = { from: 'Hard', to: 'Medium', reason: `needs ${steps} reasoning step; this lecture supports multi-step Hard questions` };
       } else if (label === 'Medium' && String(r.level || '').toLowerCase() === 'recall') {
         // A "Medium" question answered by remembering a sentence from the lecture is honestly an Easy question.
         item.relabel = { from: 'Medium', to: 'Easy', reason: 'is answered by recalling a statement from the lecture; Medium needs applying it' };

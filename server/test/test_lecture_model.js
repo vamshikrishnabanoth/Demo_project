@@ -276,6 +276,23 @@ async function gateTests() {
       assert.ok(cal.accepted.includes(appliedHard) && appliedHard.difficulty === 'Hard' && appliedHard.measuredSteps === 1);
       assert.ok(cal.rejected.some(r => r.question === badState && r.criteria.includes('COMPLETENESS')));
     });
+    // Same applied one-step Hard question, judged against a deep lecture (many multi-step opportunities): not Hard enough there.
+    lm._internal.callJson = async () => ({ model: 'stub', data: { results: [
+      { q: 1, answer: 'A', alsoDefensible: [], grounded: true, correct: true, distractorsValid: true, plausible: true, aligned: true, complete: true, consistent: true, clear: true, fair: true, explanationOk: true, steps: 1, level: 'apply', problems: [] }
+    ], duplicates: [] } });
+    const deepLm = { ok: true, units: [], capacity: { byDifficulty: { easy: 30, medium: 40, hard: 23 } } };
+    const introLm = { ok: true, units: [], capacity: { byDifficulty: { easy: 7, medium: 16, hard: 5 } } };
+    const inDeep = mk('Input 2, 0, 2. What is the frequency array?', ['[1, 0, 2]', '[2, 0, 1]', '[1, 1, 1]', '[0, 2, 1]'], '[1, 0, 2]', { difficulty: 'Hard' });
+    const inIntro = mk('Input 2, 0, 2. What is the frequency array?', ['[1, 0, 2]', '[2, 0, 1]', '[1, 1, 1]', '[0, 2, 1]'], '[1, 0, 2]', { difficulty: 'Hard' });
+    const dDeep = await finalQualityGate([inDeep], { lectureModel: deepLm });
+    const dIntro = await finalQualityGate([inIntro], { lectureModel: introLm });
+    test('Hard depends on the lecture: a one-step applied question is not Hard in a deep lecture, but is the Hard of an introductory one', () => {
+      assert.ok(dDeep.rejected.some(r => r.question === inDeep && r.criteria.includes('DEPTH')));
+      assert.ok(dIntro.accepted.includes(inIntro) && inIntro.difficulty === 'Hard');
+    });
+    lm._internal.callJson = async () => ({ model: 'stub', data: { results: [
+      { q: 1, answer: 'A', alsoDefensible: [], grounded: true, correct: true, distractorsValid: true, plausible: true, aligned: true, complete: true, consistent: true, clear: true, fair: true, explanationOk: true, steps: 1, level: 'recall', problems: [] }
+    ], duplicates: [] } });
     const oneStepHard2 = mk('Input 1, 1, 1. What is the frequency array?', ['[0, 3, 0]', '[3, 0, 0]', '[1, 1, 1]', '[0, 0, 3]'], '[0, 3, 0]', { difficulty: 'Hard' });
     const cal2 = await finalQualityGate([oneStepHard2], { depth: 'relabel' });
     test('Replacement pass: a recall "Hard" replacement keeps its slot, relabelled Medium', () => {
