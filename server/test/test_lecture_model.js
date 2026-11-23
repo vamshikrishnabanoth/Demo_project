@@ -484,7 +484,7 @@ async function blindTests() {
     assert.ok(hf.formsFor(units[3], model).slice(0, 2).includes('calculate_decide'));
     assert.strictEqual(hf.formsFor(units[2], model)[0], 'choose_constraints');
     assert.strictEqual(hf.formsFor(units[4], model)[0], 'boundary');
-    assert.strictEqual(hf.formsFor(units[1], model)[0], 'predict_change');
+    assert.strictEqual(hf.formsFor(units[1], model)[0], 'why_design');
   });
   test('Hard forms: a mentioned point has none; "connect two points" is offered only when a related point exists, never as the only way', () => {
     assert.deepStrictEqual(hf.formsFor(units[7], model), []);

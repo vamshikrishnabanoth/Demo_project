@@ -26,7 +26,11 @@ const HARD_FORMS = {
   },
   predict_change: {
     label: 'What changes if…',
-    recipe: 'take the situation, code or process as taught and change ONE condition the teacher did not change (a parameter, an input, a line, an order, a constraint). Ask for the consequence. Reaching it must take at least two links of the taught mechanism (the change → an intermediate effect → the final outcome); state the change concretely. Distractors stop at the first link, reverse the direction of the effect, or assume the unchanged behaviour.'
+    recipe: 'take the situation, code or process as taught and change ONE condition the teacher did not change (remove a step, change a parameter, an input, a line, an order, a constraint). Ask for the eventual consequence. Reaching it must take at least two links of the taught mechanism: the change causes an intermediate effect, which causes the outcome asked about. Example of the depth wanted: "if attention scores were not divided by the square root of d_k, what would happen when training with large d_k?" (larger dot products, then a saturated softmax, then vanishing gradients). The options are outcomes, not definitions; the distractors stop at the first link (only "the scores get larger"), reverse the direction, or assume nothing changes. No numbers are needed; the chain of reasoning is what makes it Hard.'
+  },
+  why_design: {
+    label: 'Why is it built this way?',
+    recipe: 'ask why the taught method includes a specific step, setting or design choice (a scaling, a mask, a buffer, a sorting step, a base case, a check), by asking what would go wrong without it. The student must reason through the mechanism to the failure it prevents (at least two links: without it, X happens, which leads to Y). The key names the actual failure prevented; distractors name a real but different property of the method, a benefit the step does not provide, or only the first link of the chain. Do not ask for the definition of the step.'
   },
   diagnose: {
     label: 'Work back from a symptom',
@@ -62,12 +66,12 @@ const FORM_IDS = Object.keys(HARD_FORMS);
 
 // Forms each kind of teaching point supports, best fit first.
 const BY_KIND = {
-  CODE: ['trace', 'predict_change', 'diagnose', 'reverse', 'spot_flaw', 'boundary'],
+  CODE: ['trace', 'why_design', 'predict_change', 'diagnose', 'reverse', 'spot_flaw', 'boundary'],
   COMMAND: ['trace', 'diagnose', 'predict_change', 'reverse', 'boundary'],
-  ALGORITHM_TRACE: ['trace', 'reverse', 'spot_flaw', 'predict_change', 'boundary'],
+  ALGORITHM_TRACE: ['trace', 'reverse', 'why_design', 'spot_flaw', 'predict_change', 'boundary'],
   CALCULATION: ['calculate_decide', 'reverse', 'spot_flaw', 'predict_change'],
-  MECHANISM: ['predict_change', 'diagnose', 'transfer', 'boundary'],
-  COMPARISON: ['choose_constraints', 'predict_change', 'transfer'],
+  MECHANISM: ['why_design', 'predict_change', 'diagnose', 'transfer', 'boundary'],
+  COMPARISON: ['choose_constraints', 'why_design', 'predict_change', 'transfer'],
   EDGE_CASE: ['boundary', 'predict_change', 'diagnose'],
   APPLICATION: ['transfer', 'choose_constraints', 'diagnose'],
   EXAMPLE: ['transfer', 'spot_flaw', 'predict_change'],

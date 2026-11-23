@@ -1790,7 +1790,7 @@ ${target.distractorMisconceptions.map(m => `- ${m.concept}: ${m.description}`).j
     // Build evidence context per target (bounded to ~1200 chars per target to avoid prompt bloat)
     const TIER_DEMAND = {
       Easy: 'Easy — one step, but it must check that the student understood an idea the teacher explained (what it means, why it is used, what it does or prevents). A student who listened answers it; one who only half-heard the words, or knows the term only by name, picks a distractor. NEVER ask an incidental detail (a default value, a number, name or parameter mentioned in passing) or something answerable from the wording of the question or general familiarity with the term.',
-      Medium: 'Medium — the student must apply or trace something: follow the steps of a procedure, predict the state or output after an operation, compare two taught mechanisms, or explain why a rule holds. It must NOT be answerable by remembering one sentence from the lecture; give a situation, data or code to work on.',
+      Medium: 'Medium — the student must apply or trace something: follow the steps of a procedure, predict the state or output after an operation, compare two taught mechanisms, or explain why a rule holds. It must NOT be answerable by remembering one sentence from the lecture; give a situation, data or code to work on. A single lookup or one arithmetic operation on given numbers (dividing 512 by 4, stating the shape of a matrix described in the stem) is Easy, not Medium.',
       Hard: 'Hard — multi-step reasoning on a NEW concrete situation built only from taught material: an edge case, a what-if change, diagnosing a bug or wrong result, or combining two taught ideas. Length or vocabulary does not make a question Hard.'
     };
 
