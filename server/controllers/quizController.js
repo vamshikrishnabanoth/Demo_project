@@ -220,11 +220,35 @@ const _rawTranscribeAudioWithTimestamps = async (filePath) => {
                 const clientEntry = whisperPool[(keyHintIndex + attempt) % whisperPool.length];
                 try {
                     const uploadFile = await toFile(fs.createReadStream(audioInputPath), path.basename(audioInputPath));
-                    return await clientEntry.client.audio.transcriptions.create({
+                    const data = await clientEntry.client.audio.transcriptions.create({
                         file: uploadFile,
                         model: modelName,
                         response_format: "verbose_json"
                     });
+                    // Code-mixed classes (Hindi/Telugu/Tamil-English) come back in native script, where the lecture
+                    // reader's word-for-word quote check fails and teaching points are lost. Whisper's translate mode
+                    // gives the same lecture in English with timestamps (numbers, code and terms kept); the original
+                    // transcript is kept alongside. TRANSLATE_NON_LATIN_SPEECH=off disables it.
+                    // Trigger: Whisper heard a language other than English, or the text is partly in another script
+                    // (a Telugu-English class can come back as English with Devanagari/Tamil-script stretches).
+                    const heardLang = String((data && data.language) || '').toLowerCase();
+                    const nonEnglish = heardLang && !['en', 'english'].includes(heardLang);
+                    if (process.env.TRANSLATE_NON_LATIN_SPEECH !== 'off' && (nonEnglish || nonLatinShare(data && data.text) >= (parseFloat(process.env.TRANSLATE_NON_LATIN_SHARE) || 0.08))) {
+                        try {
+                            const tr = await clientEntry.client.audio.translations.create({
+                                file: await toFile(fs.createReadStream(audioInputPath), path.basename(audioInputPath)),
+                                model: process.env.STT_TRANSLATE_MODEL || 'whisper-large-v3',
+                                response_format: "verbose_json"
+                            });
+                            if (tr && typeof tr.text === 'string' && tr.text.trim().length > 20) {
+                                console.log(`🌐 [STT] ${Math.round(nonLatinShare(data.text) * 100)}% non-Latin script (${data.language || 'unknown'}); using Whisper's English translation for reading.`);
+                                return { ...tr, language: 'en', translatedFrom: data.language || 'non-Latin', originalText: data.text };
+                            }
+                        } catch (trErr) {
+                            console.warn(`⚠️ [STT] English translation failed (${trErr.message}); keeping the original-script transcript.`);
+                        }
+                    }
+                    return data;
                 } catch (err) {
                     lastError = err;
                     const status = err.status || err.statusCode || (err.response && err.response.status);
@@ -324,6 +348,8 @@ const _rawTranscribeAudioWithTimestamps = async (filePath) => {
                             duration: duration,
                             duration_formatted: formatTs(duration),
                             language: data.language || 'en',
+                            translatedFrom: data.translatedFrom || null,
+                            originalText: data.originalText || null,
                             model: actualModel,
                             sttProvider: actualProvider,
                             hasRealTimestamps: hasRealTs,
@@ -647,18 +673,29 @@ const parsePptOrPptx = async (filePath) => {
     // Binary PPT fallback or direct PPT handling (PowerPoint 97-2003 OLE2)
     const buffer = fs.readFileSync(filePath);
     const textParts = [];
+    // Only runs that read like words: printable byte runs inside embedded images ("JFIF Exif $3br %&'()*…") are
+    // not slide text and must never reach the model as lecture material.
+    const looksLikeText = (s) => {
+        const words = s.match(/[A-Za-z]{2,}/g) || [];
+        if (words.length < 3) return false;
+        const letters = (s.match(/[A-Za-z\s]/g) || []).length;
+        const vowelWords = words.filter(w => /[aeiouAEIOU]/.test(w)).length;
+        return letters / s.length >= 0.75 && vowelWords / words.length >= 0.6;
+    };
     const asciiMatches = buffer.toString('binary').match(/[\x20-\x7E\t\r\n]{4,}/g) || [];
     for (const match of asciiMatches) {
         const cleaned = match.trim();
-        if (cleaned.length >= 4) textParts.push(cleaned);
+        if (cleaned.length >= 4 && looksLikeText(cleaned)) textParts.push(cleaned);
     }
     const u16Str = buffer.toString('utf16le');
     const u16Matches = u16Str.match(/[\u0020-\u007E\t\r\n]{4,}/g) || [];
     for (const match of u16Matches) {
         const cleaned = match.trim();
-        if (cleaned.length >= 4 && !textParts.includes(cleaned)) textParts.push(cleaned);
+        if (cleaned.length >= 4 && looksLikeText(cleaned) && !textParts.includes(cleaned)) textParts.push(cleaned);
     }
-    return textParts.join('\n');
+    // PowerPoint template and package boilerplate is not lecture content.
+    const BOILERPLATE = /\.xml\b|\.rels\b|^PK\b|xmlPK|Click to edit Master|^(?:Second|Third|Fourth|Fifth) level$|^Office Theme$|^Default Design$/i;
+    return textParts.filter(t => !BOILERPLATE.test(t)).join('\n');
 };
 
 // Text Extraction Helper with Multimodal Pipeline Router
@@ -781,6 +818,23 @@ const extractTextWithRange = async (filePath, startPage = 1, endPage = 999) => {
             const s = Math.max(0, (start - 1) * chunksPerSlide);
             const e = Math.min(chunks.length, end * chunksPerSlide);
             return chunks.slice(s, e).join('\n');
+        }
+
+        // Scanned / handwritten PDF (almost no text layer): read it with the vision reader straight away. Running the
+        // page-by-page OCR below first took minutes per page on handwriting (a 66-page scan never finished) and
+        // reads handwriting badly; OCR stays as the time-limited fallback inside extractReadableTextFromScan.
+        if (ext === '.pdf') {
+            try {
+                const scan = await require('../engine/documentRouter/geminiVisionReader').pdfLooksScanned(fs.readFileSync(filePath));
+                if (scan && scan.scanned) {
+                    console.log(`📷 [quizController] ${path.basename(filePath)} looks scanned (${scan.pages} pages, ${String(scan.text || '').trim().length} chars of text layer); reading it with the vision reader.`);
+                    const visionText = await extractReadableTextFromScan(filePath, path.basename(filePath));
+                    if (visionText && visionText.trim().length >= 20) return visionText;
+                    return String(scan.text || '');
+                }
+            } catch (scanErr) {
+                console.warn(`⚠️ [quizController] Scan check failed (${scanErr.message}); using normal extraction.`);
+            }
         }
 
         // Multimodal Ingestion with page scoping
@@ -1106,12 +1160,24 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
                 sessionInputs.inputModality = 'UNIFIED';
             }
             if (lm && lm.ok && lm.units && lm.units.length > 0) {
+                // Teaching style (PDI v2): each teaching point prefers the question types that fit how it was taught
+                // (theory, code walkthrough, worked problems, examples, revision) and how closely the slides were
+                // followed; a teacher's correction replaces the detected style. STYLE_GUIDED_PLANNING=off disables it.
+                const styleGuided = lmOptions.styleGuided !== undefined ? Boolean(lmOptions.styleGuided) : process.env.STYLE_GUIDED_PLANNING !== 'off';
+                const styleOverride = lectureModel.teachingStyle.normaliseOverride(lmOptions.styleOverride);
+                if (styleOverride && !lmOptions.replace) recordStyleCorrection(lm, styleOverride);
+                // The original input-based index is still recorded (not used) as the baseline for evaluation.
+                let pdiBaseline = null;
+                try { pdiBaseline = require('../engine/pdiRouter').route(sessionInputs); } catch (_) { /* baseline only */ }
                 const lmPlan = lectureModel.planRequest(lm, parseInt(count, 10) || 0, difficulty || 'Balanced', {
                     excludeTopics: Array.isArray(lmOptions.excludeTopics) ? lmOptions.excludeTopics : [],
                     fillOtherTiers: (deficitPolicy || 'FILL_WITH_MEDIUM') === 'FILL_WITH_MEDIUM',
-                    replace: lmOptions.replace || null
+                    replace: lmOptions.replace || null,
+                    styleGuided,
+                    styleOverride
                 });
-                const lmUnits = lectureModel.toTeachingUnits(lm, lmPlan);
+                const lmUnits = lectureModel.toTeachingUnits(lm, lmPlan, { styleGuided, styleOverride });
+                if (styleGuided && lm.teachingStyle) console.log(`[TeachingStyle] ${lectureModel.teachingStyle.describeProfile(lm.teachingStyle)}${styleOverride ? ` (teacher corrected: ${JSON.stringify(styleOverride)})` : ''}`);
                 if (lmUnits.primary.length > 0) {
                     sessionInputs.teachingUnits = lmUnits.all;
                     lmUnitsForReview = lmUnits;
@@ -1124,7 +1190,9 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
                         capacity: lm.capacity.byDifficulty,
                         capacityTotal: lm.capacity.total,
                         shortfall: lmPlan.shortfall,
-                        shortfallReasons: lmPlan.shortfallReasons
+                        shortfallReasons: lmPlan.shortfallReasons,
+                        teachingStyle: styleGuided ? { profile: lm.teachingStyle || null, override: styleOverride } : null,
+                        pdiBaseline: pdiBaseline ? { representation: pdiBaseline.selected_representation, index: pdiBaseline.pedagogical_delivery_index } : null
                     };
                     console.log(`[LectureModel] Reusing lecture model ${lectureModelId.slice(0, 10)}: ${lmUnits.primary.length} targets + ${lmUnits.reserve.length} reserves (${JSON.stringify(lmPlan.byDifficulty)}).`);
                 }
@@ -1253,6 +1321,7 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
                         subtopic: u.subtopic,
                         questionType: shownType,
                         plannedQuestionType: u.questionAngle,
+                        hardForm: u.hardForm || null,
                         time: u.lectureTime || null,
                         slides: u.lectureSlides || [],
                         plannedDifficulty: u.plannedDifficulty,
@@ -1267,13 +1336,37 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
                 const { finalQualityGate, describeRejections } = require('../engine/validators/finalQualityGate');
                 const lmForGate = lmCandidate && lmCandidate.ok ? lmCandidate : null;
                 const GATE_TIMEOUT_MS = Math.max(30000, parseInt(process.env.QUALITY_GATE_TIMEOUT_MS, 10) || 150000);
-                const runGate = (qs, context) => Promise.race([
-                    finalQualityGate(qs, { lectureModel: lmForGate, context }),
+                const runGateOnly = (qs, context, depth) => Promise.race([
+                    finalQualityGate(qs, { lectureModel: lmForGate, context, depth }),
                     new Promise(resolve => setTimeout(() => resolve({
                         accepted: [], model: null, ms: GATE_TIMEOUT_MS,
                         rejected: qs.map(q => { q.qualityGate = { status: 'REJECTED', criteria: ['NOT_VALIDATED'], reasons: ['NOT_VALIDATED: The validation service did not answer in time.'] }; return { question: q, reasons: q.qualityGate.reasons, criteria: ['NOT_VALIDATED'] }; })
                     }), GATE_TIMEOUT_MS))
                 ]);
+                // Lecture inputs: a key-blind reasoning solve (with the teacher's passage) runs next to the gate. A different
+                // key or a second defensible option rejects the question, so the replacement round refills it. If the check
+                // is unavailable (rate limit) the gate's verdict stands. BLIND_CHECK=off disables it.
+                const blindOn = Boolean(lmForGate) && process.env.BLIND_CHECK !== 'off';
+                const lectureFlags = [];
+                const runGate = async (qs, context, depth) => {
+                    if (!blindOn) return runGateOnly(qs, context, depth);
+                    const { blindAnswerCheck, blindRejections } = require('../engine/validators/blindAnswerCheck');
+                    const BLIND_TIMEOUT_MS = Math.max(20000, parseInt(process.env.BLIND_CHECK_TIMEOUT_MS, 10) || 120000);
+                    const [g, b] = await Promise.all([
+                        runGateOnly(qs, context, depth),
+                        Promise.race([
+                            blindAnswerCheck(qs, { lectureModel: lmForGate }).catch(e => ({ checked: false, flagged: 0, reason: e.message })),
+                            new Promise(resolve => setTimeout(() => resolve({ checked: false, flagged: 0, reason: 'timeout' }), BLIND_TIMEOUT_MS))
+                        ])
+                    ]);
+                    const split = blindRejections(g.accepted);
+                    console.log(`[BlindCheck] ${b.checked ? `checked with ${b.model}` : `not run: ${b.reason}`}; ${split.rejected.length} gate-passed question(s) rejected`);
+                    // Disputed keys that follow the lecture's own words → a lecture point for the teacher to double-check.
+                    const { lectureDiscrepancies } = require('../engine/validators/blindAnswerCheck');
+                    const disc = await lectureDiscrepancies(split.rejected.map(r => r.question), lmForGate).catch(() => []);
+                    if (disc.length) lectureFlags.push(...disc);
+                    return { ...g, accepted: split.keep, rejected: [...g.rejected, ...split.rejected], blind: b };
+                };
                 if (taskId) updateTaskStage(taskId, 7, 'Final Quality Gate');
                 const generatedCount = result.questions.length;
                 const gate = await runGate(result.questions, Array.isArray(lmOptions.gateContext) ? lmOptions.gateContext : []);
@@ -1283,37 +1376,53 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
                 // One replacement round for lecture inputs (not inside a replacement itself): picks are reserved up
                 // front so parallel replacements never chase the same teaching point and question type.
                 if (gate.rejected.length > 0 && lmForGate && Array.isArray(lmForGate.units) && !lmOptions.replace) {
-                    const MAX_REPLACE = Math.max(0, parseInt(process.env.QUALITY_GATE_MAX_REPLACEMENTS, 10) || 5);
-                    const toReplace = gate.rejected.slice(0, MAX_REPLACE);
-                    const everyone = [...accepted, ...gate.rejected.map(r => r.question)];
-                    const reserved = [];
-                    const jobs = toReplace.map((r) => {
-                        const others = everyone.filter(q => q !== r.question);
-                        const plan = lectureModel.planRequest(lmForGate, 1, r.question.difficulty || 'Medium', {
-                            excludeTopics: Array.isArray(lmOptions.excludeTopics) ? lmOptions.excludeTopics : [],
-                            replace: { unitId: (lecturePairOf(lmForGate, r.question) || {}).unitId || null, subtopic: r.question.lectureSource?.subtopic || null,
-                                type: r.question.lectureSource?.plannedQuestionType || r.question.lectureSource?.questionType || null, difficulty: r.question.difficulty || 'Medium',
-                                usedPairs: [r.question, ...others].map(q => lecturePairOf(lmForGate, q)).filter(Boolean).concat(reserved) }
+                    // Shallow questions are rejected (not relabelled) on the first pass, so allow enough replacements for them.
+                    const MAX_REPLACE = Math.max(0, parseInt(process.env.QUALITY_GATE_MAX_REPLACEMENTS, 10) || Math.max(5, Math.ceil(0.7 * (sessionInputs.count || generatedCount))));
+                    // Up to two replacement rounds: a replacement that is itself caught by a check gets one more try, so
+                    // the teacher still receives the number of questions asked for. Every round is validated in full.
+                    const ROUNDS = Math.max(1, parseInt(process.env.QUALITY_GATE_REPLACEMENT_ROUNDS, 10) || 2);
+                    const target = sessionInputs.count || generatedCount;
+                    const tried = gate.rejected.map(r => r.question);
+                    let pending = gate.rejected.slice(0, MAX_REPLACE);
+                    for (let round = 0; round < ROUNDS && pending.length && accepted.length < target; round++) {
+                        const everyone = [...accepted, ...tried];
+                        const reserved = [];
+                        const jobs = pending.slice(0, Math.max(0, target - accepted.length)).map((r) => {
+                            const others = everyone.filter(q => q !== r.question);
+                            const plan = lectureModel.planRequest(lmForGate, 1, r.question.difficulty || 'Medium', {
+                                excludeTopics: Array.isArray(lmOptions.excludeTopics) ? lmOptions.excludeTopics : [],
+                                replace: { unitId: (lecturePairOf(lmForGate, r.question) || {}).unitId || null, subtopic: r.question.lectureSource?.subtopic || null,
+                                    type: r.question.lectureSource?.plannedQuestionType || r.question.lectureSource?.questionType || null, form: r.question.lectureSource?.hardForm || null, difficulty: r.question.difficulty || 'Medium',
+                                    usedPairs: [r.question, ...others].map(q => lecturePairOf(lmForGate, q)).filter(Boolean).concat(reserved) }
+                            });
+                            const pick = plan.selected[0];
+                            if (!pick) return Promise.resolve(null);
+                            const extraUsed = reserved.slice();
+                            reserved.push({ unitId: pick.unit.id, type: pick.angle.type });
+                            return replaceOneFromLecture(lmForGate, r.question, others, { excludedTopics: lmOptions.excludeTopics || [], extraUsed, styleOverride: lmOptions.styleOverride || null })
+                                .then(x => x.question).catch(() => null);
                         });
-                        const pick = plan.selected[0];
-                        if (!pick) return Promise.resolve(null);
-                        const extraUsed = reserved.slice();
-                        reserved.push({ unitId: pick.unit.id, type: pick.angle.type });
-                        return replaceOneFromLecture(lmForGate, r.question, others, { excludedTopics: lmOptions.excludeTopics || [], extraUsed })
-                            .then(x => x.question).catch(() => null);
-                    });
-                    const fresh = (await Promise.all(jobs)).filter(Boolean);
-                    if (fresh.length) {
-                        const gate2 = await runGate(fresh, accepted);
-                        replacedOk = gate2.accepted.length;
-                        accepted.push(...gate2.accepted);
-                        allRejected.push(...gate2.rejected);
+                        const fresh = (await Promise.all(jobs)).filter(Boolean);
+                        if (!fresh.length) break;
+                        const gateN = await runGate(fresh, accepted, 'relabel'); // replacements: a shallow one keeps its slot under its true label
+                        replacedOk += gateN.accepted.length;
+                        accepted.push(...gateN.accepted);
+                        allRejected.push(...gateN.rejected);
+                        tried.push(...fresh);
+                        pending = gateN.rejected;
                     }
                 }
                 result.questions = accepted;
                 const relabeled = accepted.filter(q => q.qualityGate && q.qualityGate.relabeled);
                 if (relabeled.length) {
-                    const rn = `${relabeled.length} question${relabeled.length === 1 ? '' : 's'} labelled Hard ${relabeled.length === 1 ? 'was' : 'were'} relabelled Medium by the quality gate (${relabeled.length === 1 ? 'it needs' : 'they need'} only one reasoning step).`;
+                    const hm = relabeled.filter(q => q.qualityGate.relabeled.from === 'Hard');
+                    const me = relabeled.filter(q => q.qualityGate.relabeled.from === 'Medium');
+                    const parts = [];
+                    if (hm.length) parts.push(`${hm.length} question${hm.length === 1 ? '' : 's'} labelled Hard ${hm.length === 1 ? 'was' : 'were'} relabelled Medium by the quality gate (${hm.length === 1 ? 'it needs' : 'they need'} only one reasoning step)`);
+                    if (me.length) parts.push(`${me.length} question${me.length === 1 ? '' : 's'} labelled Medium ${me.length === 1 ? 'was' : 'were'} relabelled Easy (answered by recalling a statement from the lecture)`);
+                    let rn = `${parts.join('; ')}.`;
+                    // Say why when Hard questions could only be written by a lighter fallback model.
+                    if (hm.some(q => q.metadata && q.metadata.hardWriter === 'fallback')) rn += ' The stronger AI models were at their daily limit, so a lighter model wrote these Hard questions; generating again later usually gives real Hard questions.';
                     result.notice = result.notice ? `${result.notice} ${rn}` : rn;
                 }
                 const firstPassRejected = gate.rejected.length;
@@ -1325,6 +1434,8 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
                     replaced: replacedOk,
                     delivered: accepted.length,
                     ms: gate.ms,
+                    blindCheck: gate.blind ? { checked: gate.blind.checked, model: gate.blind.model || null, reason: gate.blind.reason || null } : null,
+                    lectureFlags,
                     rejected: allRejected.map(r => ({
                         question: r.question.question || r.question.questionText || '',
                         options: r.question.options || [],
@@ -1342,6 +1453,26 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
                         (short > 0 ? `. Delivering ${accepted.length} of ${sessionInputs.count || generatedCount} requested — nothing that failed a check is included.` : '.');
                     result.notice = result.notice ? `${result.notice} ${gateNote}` : gateNote;
                     if (short > 0) result.isPartial = true;
+                }
+                if (lectureFlags.length) {
+                    const pts = lectureFlags.map(f => f.kind === 'premise'
+                        ? `"${f.subtopic || 'a point'}"${f.time ? ` (around ${f.time})` : ''}: the lecture says "${String(f.lectureQuote || '').slice(0, 220)}"${f.standardAnswer ? `, but ${String(f.standardAnswer).slice(0, 220)}` : ''}`
+                        : `"${f.subtopic || 'a point'}"${f.time ? ` (around ${f.time})` : ''}: the lecture says "${String(f.lectureQuote || '').slice(0, 220)}", which leads to "${f.lectureSays}" for the question "${String(f.question || '').replace(/\s+/g, ' ').slice(0, 160)}", but the standard answer is "${f.standardAnswer}"`).join('; ');
+                    const ln = `Please double-check ${lectureFlags.length === 1 ? 'this point' : 'these points'} in your lecture — ${pts}. Questions on ${lectureFlags.length === 1 ? 'it were' : 'them were'} replaced.`;
+                    result.notice = result.notice ? `${result.notice} ${ln}` : ln;
+                    result.lectureFlags = lectureFlags;
+                }
+                // Coverage: share of the lecture's teaching points that this quiz asks about.
+                if (lmForGate && Array.isArray(lmForGate.units) && lmForGate.units.length) {
+                    const asked = new Set(accepted.map(q => q.lectureSource && q.lectureSource.unitId).filter(Boolean));
+                    const covered = lmForGate.units.filter(u => asked.has(u.id));
+                    result.coverage = {
+                        teachingPoints: lmForGate.units.length,
+                        covered: covered.length,
+                        percent: Math.round(100 * covered.length / lmForGate.units.length),
+                        notAsked: lmForGate.units.filter(u => !asked.has(u.id)).map(u => u.subtopic).slice(0, 30)
+                    };
+                    result.qualityGate.coverage = { teachingPoints: result.coverage.teachingPoints, covered: result.coverage.covered, percent: result.coverage.percent };
                 }
                 console.log(`[QualityGate] ${gate.model ? `judged by ${gate.model}` : 'not judged'}: ${generatedCount} generated, ${firstPassRejected} rejected, ${replacedOk} replaced, ${accepted.length} delivered (${(gate.ms / 1000).toFixed(1)}s)`);
                 if (result.questions.length === 0) result.error = result.notice || 'No question passed the final quality gate.';
@@ -4077,7 +4208,7 @@ exports.generateQuizQuestions = async (req, res) => {
 
             let finalQuestions = [];
             if (parsedInputs && parsedInputs.length > 0) {
-                finalQuestions = await generateQuestions(null, null, questionCount, difficulty, source_material_id, blendedRatios, parsedInputs, parsedTopicWeights, taskId, callbackUrl, parsedIsolatedNarratives, derivedStyle, deficitPolicy, explicitModality, reqCapacityPolicy, req.body.lectureModelId ? { id: req.body.lectureModelId, excludeTopics: (() => { try { const v = typeof req.body.excludedTopics === 'string' ? JSON.parse(req.body.excludedTopics) : req.body.excludedTopics; return Array.isArray(v) ? v.map(String).slice(0, 50) : []; } catch (_) { return []; } })() } : null);
+                finalQuestions = await generateQuestions(null, null, questionCount, difficulty, source_material_id, blendedRatios, parsedInputs, parsedTopicWeights, taskId, callbackUrl, parsedIsolatedNarratives, derivedStyle, deficitPolicy, explicitModality, reqCapacityPolicy, req.body.lectureModelId ? { id: req.body.lectureModelId, excludeTopics: (() => { try { const v = typeof req.body.excludedTopics === 'string' ? JSON.parse(req.body.excludedTopics) : req.body.excludedTopics; return Array.isArray(v) ? v.map(String).slice(0, 50) : []; } catch (_) { return []; } })(), styleOverride: (() => { try { const v = typeof req.body.styleOverride === 'string' ? JSON.parse(req.body.styleOverride) : req.body.styleOverride; return v && typeof v === 'object' ? v : null; } catch (_) { return null; } })() } : null);
             } else if (req.file) {
                 if (isVoiceSource && extractedText) {
                     const voiceInput = [{
@@ -5534,13 +5665,39 @@ function inputsFromLectureModel(lm) {
     return inputs;
 }
 
+/** Share of letters that are not Latin script (0 for English, ~0.6+ for a Devanagari/Telugu transcript). */
+function nonLatinShare(text) {
+    const s = String(text || '');
+    const letters = (s.match(/\p{L}/gu) || []).length;
+    if (letters < 50) return 0;
+    const latin = (s.match(/\p{Script=Latin}/gu) || []).length;
+    return (letters - latin) / letters;
+}
+
+/**
+ * A teacher's correction of the detected teaching style, kept (without user identity) as labelled data for
+ * evaluating style detection: what the system detected next to what the teacher said it was.
+ */
+function recordStyleCorrection(lm, override) {
+    try {
+        const dir = path.join(__dirname, '..', 'storage');
+        if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+        const detected = lm.teachingStyle || null;
+        fs.appendFileSync(path.join(dir, 'style_corrections.jsonl'), JSON.stringify({
+            at: new Date().toISOString(), lectureModelId: lm.id, title: lm.title,
+            detected: detected ? { mix: detected.mix, dominant: detected.dominant, slideUse: detected.slideUse } : null,
+            corrected: override
+        }) + '\n');
+    } catch (e) { console.warn('[TeachingStyle] could not record correction:', e.message); }
+}
+
 /** The (teaching point, question type) pair a question came from, resolved against the lecture model. */
 function lecturePairOf(lm, q) {
     const s = (q && q.lectureSource) || {};
     const unit = (s.unitId && lm.units.find(u => u.id === s.unitId))
         || lm.units.find(u => String(u.subtopic).toLowerCase() === String(s.subtopic || '').toLowerCase());
     const type = s.plannedQuestionType || s.questionType;
-    return unit && type ? { unitId: unit.id, type } : null;
+    return unit && type ? { unitId: unit.id, type, form: s.hardForm || null } : null;
 }
 
 /**
@@ -5549,7 +5706,7 @@ function lecturePairOf(lm, q) {
  * `gateContext`: when given, the new question is validated by the Final Quality Gate inside the run (with these
  * questions as duplicate context); when omitted the caller validates it.
  */
-async function replaceOneFromLecture(lm, question, others = [], { excludedTopics = [], extraUsed = [], gateContext = null, userId = null } = {}) {
+async function replaceOneFromLecture(lm, question, others = [], { excludedTopics = [], extraUsed = [], gateContext = null, userId = null, styleOverride = null } = {}) {
     const src = question.lectureSource || {};
     const difficulty = ['Easy', 'Medium', 'Hard'].includes(question.difficulty) ? question.difficulty
         : (['Easy', 'Medium', 'Hard'].includes(src.measuredDifficulty) ? src.measuredDifficulty : 'Medium');
@@ -5561,8 +5718,8 @@ async function replaceOneFromLecture(lm, question, others = [], { excludedTopics
     const generated = await generateQuestions(null, null, 1, difficulty, null, null, inputs, null, taskId, null, null, 'MIXED',
         'FILL_WITH_MEDIUM', null, 'ALLOW_SCOPE_SUPPLEMENTARY',
         { id: lm.id, excludeTopics: Array.isArray(excludedTopics) ? excludedTopics : [],
-          replace: { unitId: origin ? origin.unitId : null, subtopic: src.subtopic || null, type: src.plannedQuestionType || src.questionType || null, difficulty, usedPairs },
-          skipGate: !gateContext, gateContext: gateContext || [] });
+          replace: { unitId: origin ? origin.unitId : null, subtopic: src.subtopic || null, type: src.plannedQuestionType || src.questionType || null, form: src.hardForm || null, difficulty, usedPairs },
+          skipGate: !gateContext, gateContext: gateContext || [], styleOverride });
     const newQ = Array.isArray(generated) ? generated[0] || null : null;
     const task = getTask(taskId) || {};
     return { question: newQ, difficulty, msg: newQ ? null : (task.pipelineNotice || null) };
@@ -5578,7 +5735,7 @@ async function replaceOneFromLecture(lm, question, others = [], { excludedTopics
  */
 exports.replaceQuestion = async (req, res) => {
     const startedAt = Date.now();
-    const { lectureModelId, question = {}, otherQuestions = [], reason = null, excludedTopics = [] } = req.body || {};
+    const { lectureModelId, question = {}, otherQuestions = [], reason = null, excludedTopics = [], styleOverride = null } = req.body || {};
     const lm = lectureModelId ? lectureModel.getById(String(lectureModelId)) : null;
     if (!lm || !lm.ok || !Array.isArray(lm.units) || lm.units.length === 0) {
         return res.status(404).json({ msg: 'The lecture analysis for this quiz is no longer available, so this question cannot be traced back. Edit it by hand, or re-add the material and generate again.' });
@@ -5586,7 +5743,7 @@ exports.replaceQuestion = async (req, res) => {
     const others = Array.isArray(otherQuestions) ? otherQuestions : [];
     const src = question.lectureSource || {};
     try {
-        const r = await replaceOneFromLecture(lm, question, others, { excludedTopics, gateContext: others, userId: req.user?.id || null });
+        const r = await replaceOneFromLecture(lm, question, others, { excludedTopics, gateContext: others, userId: req.user?.id || null, styleOverride });
         const newQ = r.question;
         const ms = Date.now() - startedAt;
         console.log(`[ReplaceQuestion] user=${req.user?.id || '?'} reason=${reason || 'none'} from="${src.subtopic || '?'}/${src.questionType || '?'}" ${r.difficulty} -> ${newQ ? `"${newQ.lectureSource?.subtopic || '?'}/${newQ.lectureSource?.questionType || '?'}"` : 'none'} in ${(ms / 1000).toFixed(1)}s`);
@@ -6147,7 +6304,7 @@ const transcribeAudioWithTimestamps = async (filePath) => {
         if (filePath && fs.existsSync(filePath)) {
             const fileBuffer = fs.readFileSync(filePath);
             audioHash = crypto.createHash('sha256').update(fileBuffer).digest('hex');
-            const cacheKey = `transcription:${audioHash}`;
+            const cacheKey = `transcription:${require("../config/cacheConfig").WHISPER_VERSION}:${audioHash}`;
             const cached = cacheManager.get(cacheKey);
             if (cached && cached.text && cached.text.trim().length >= 5) {
                 console.log(`⚡ [AUDIO CACHE HIT] Returned cached transcription for hash ${audioHash.substring(0, 10)} (${cached.segments?.length || 0} segments)`);
@@ -6162,7 +6319,7 @@ const transcribeAudioWithTimestamps = async (filePath) => {
 
     if (result && result.text && result.text.trim().length >= 5 && audioHash) {
         try {
-            const cacheKey = `transcription:${audioHash}`;
+            const cacheKey = `transcription:${require("../config/cacheConfig").WHISPER_VERSION}:${audioHash}`;
             cacheManager.set(cacheKey, result, {
                 category: 'transcription',
                 qualityScore: 1.0,
@@ -6242,7 +6399,8 @@ exports.transcribe = async (req, res) => {
             segments: result ? (result.segments || []) : [],
             duration: result ? (result.duration || 0) : null,
             duration_formatted: result ? (result.duration_formatted || null) : null,
-            language: result ? (result.language || 'en') : 'en'
+            language: result ? (result.language || 'en') : 'en',
+            translatedFrom: result ? (result.translatedFrom || null) : null
         });
     } catch (err) {
         console.error('Error in transcribe controller:', err.message);
@@ -6787,3 +6945,6 @@ exports.approveQuiz = async (req, res) => {
 
 // Exposed for integration tests and evaluation harnesses (not routed).
 exports._generateQuestions = generateQuestions;
+// Exposed for the input smoke tests (same extraction a teacher's upload goes through).
+exports._extractTextWithRange = extractTextWithRange;
+exports._extractReadableTextFromScan = extractReadableTextFromScan;

@@ -167,12 +167,28 @@ async function runSuite() {
       streamEventCaptured = event;
     });
 
-    const result = await pipelineOrchestrator.runPipeline({
-      taskId: customTaskId,
-      count: 1,
-      difficulty: 'Easy',
-      voiceTranscript: 'In computing, a virtual machine provides an emulation of a computer system based on computer architectures.'
-    });
+    // This test checks trace linkage, not the AI: providers are replaced by the router's built-in test mock so the
+    // result never depends on live quota (it failed once when every key had hit its daily limit).
+    const llmRouter = require('../engine/adapter/llmRouter');
+    const savedComplete = llmRouter._complete;
+    const savedOutage = llmRouter.outage;
+    const savedDisable = process.env.DISABLE_GEMINI;
+    llmRouter._complete = async (p = {}) => llmRouter._getMockResponse(p.prompt, p.systemPrompt);
+    llmRouter.outage = null;
+    process.env.DISABLE_GEMINI = 'true';
+    let result;
+    try {
+      result = await pipelineOrchestrator.runPipeline({
+        taskId: customTaskId,
+        count: 1,
+        difficulty: 'Easy',
+        voiceTranscript: 'In computing, a virtual machine provides an emulation of a computer system based on computer architectures.'
+      });
+    } finally {
+      llmRouter._complete = savedComplete;
+      llmRouter.outage = savedOutage;
+      if (savedDisable === undefined) delete process.env.DISABLE_GEMINI; else process.env.DISABLE_GEMINI = savedDisable;
+    }
 
     unsub();
 

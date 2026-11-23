@@ -242,6 +242,18 @@ class Agent3Evaluator {
       return preAudit;
     }
 
+    // Lean lecture path (default; LECTURE_LEAN_PATH=off restores the per-question critic): a lecture question that passes every deterministic check skips this
+    // per-question AI critic; the Final Quality Gate then checks all its criteria (and more) with the lecture passage,
+    // ten questions per call, and rejected questions are replaced. Questions failing a deterministic check still get
+    // the critic's bounded repair below.
+    if (target && target.lectureUnitId && process.env.LECTURE_LEAN_PATH !== 'off' && preAudit.passed && (preAudit.failureReasons || []).length === 0) {
+      preAudit.verificationMethod = 'DETERMINISTIC_AUDIT_FINAL_GATE_DEFERRED';
+      preAudit.isFallback = false;
+      preAudit.isLLMVerified = false;
+      preAudit.isFullVerification = false;
+      return preAudit;
+    }
+
     const requestedTier = target.targetDifficulty || candidateMCQ.metadata?.targetDifficulty || 'Medium';
     const intendedOp = target.intendedCognitiveOperation || candidateMCQ.metadata?.intendedCognitiveOperation || (requestedTier === 'Easy' ? 'RECALL' : (requestedTier === 'Medium' ? 'COMPARE' : 'DIAGNOSE'));
 
@@ -768,6 +780,17 @@ ${String(ctx || '').slice(0, 1200)}`;
     }
 
     // 6. Hard enforcement: Deterministic TIER_COGNITIVE_MISMATCH must never be overwritten by LLM Critic
+    // (except on the lecture path, where the Final Quality Gate judges difficulty with the passage and relabels).
+    if (target && target.lectureUnitId && process.env.AGENT3_TIER_CHECK !== 'on') {
+      const before = Array.isArray(parsed.failureReasons) ? parsed.failureReasons : [];
+      const rest = before.filter(r => r && r !== EVALUATOR_FAILURE_CODES.TIER_COGNITIVE_MISMATCH);
+      if (before.length > 0 && rest.length === 0) {
+        parsed.status = 'PASS'; parsed.passed = true; parsed.verdict = 'PASS'; parsed.failureReason = null;
+      }
+      parsed.failureReasons = rest;
+      if (parsed.cognitiveAudit) parsed.cognitiveAudit = { ...parsed.cognitiveAudit, isCalibrated: true, advisoryOnly: true };
+      return parsed;
+    }
 
     const hasDeterministicMismatch = Array.isArray(preAudit.failureReasons) &&
       preAudit.failureReasons.includes(EVALUATOR_FAILURE_CODES.TIER_COGNITIVE_MISMATCH);
@@ -1314,8 +1337,14 @@ ${String(ctx || '').slice(0, 1200)}`;
 
     let isCalibrated = true;
     let mismatchDetails = null;
+    // Lecture-model questions: difficulty is judged by the Final Quality Gate, which reads the lecture passage and
+    // counts the reasoning steps (and relabels honestly). This keyword classifier was tuned to OS/compiler/database
+    // wording and labels most other subjects RECALL, so on the lecture path it is advisory only.
+    const tierJudgedByGate = Boolean(target && target.lectureUnitId) && process.env.AGENT3_TIER_CHECK !== 'on';
 
-    if (requestedTier === 'Hard') {
+    if (tierJudgedByGate) {
+      isCalibrated = true;
+    } else if (requestedTier === 'Hard') {
       if (evaluatedDemand === 'UNCERTAIN' && isGenuineMultiStepHard(candidateMCQ, target)) {
         // The keyword classifier could not label it, but the stem carries the multi-step material itself.
         isCalibrated = true;

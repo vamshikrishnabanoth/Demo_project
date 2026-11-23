@@ -143,10 +143,38 @@ class Agent2Generator {
    * 4. Reject the question if there is no match or more than one match.
    * 5. Never guess or fuzzy-reassign an incorrect answer key.
    */
+  /**
+   * Models sometimes write the options into the stem as well ("…? A. x B. y C. z D. w"). After shuffling, those
+   * letters no longer match the real options, so a student sees two conflicting "A"s. When the embedded list is
+   * the same as the options, it is cut from the stem (the options array is the source of truth).
+   */
+  stripEmbeddedOptions(mcq) {
+    if (!Array.isArray(mcq.options) || mcq.options.length < 3) return;
+    for (const field of ['questionText', 'question']) if (typeof mcq[field] === 'string') this._stripEmbeddedOptionsIn(mcq, field);
+  }
+
+  _stripEmbeddedOptionsIn(mcq, field) {
+    const stem = mcq[field];
+    const m = stem.match(/(?:^|\s)\(?A[.)]\s+\S/);
+    if (!m) return;
+    const start = m.index + (m[0].match(/^\s/) ? 1 : 0);
+    const tail = stem.slice(start);
+    const parts = tail.split(/(?:^|\s)\(?[A-D][.)]\s+/).map(s => s.trim()).filter(Boolean);
+    if (parts.length < 3) return;
+    const norm = (s) => String(s || '').toLowerCase().replace(/[\s`'".;,]+/g, ' ').trim();
+    const opts = new Set(mcq.options.map(norm));
+    const matched = parts.filter(p => opts.has(norm(p))).length;
+    if (matched >= 3) {
+      const cut = stem.slice(0, start).trim();
+      if (cut.length >= 12) mcq[field] = cut;
+    }
+  }
+
   normalizeCorrectAnswer(mcq) {
     if (!mcq || mcq.isUnfulfilled || !Array.isArray(mcq.options) || mcq.options.length === 0) {
       return;
     }
+    this.stripEmbeddedOptions(mcq);
 
     const stripOptionPrefix = (str) => {
       if (typeof str !== 'string') return '';
@@ -1734,7 +1762,7 @@ ${target.distractorMisconceptions.map(m => `- ${m.concept}: ${m.description}`).j
     );
 
     const QUESTION_ANGLE_GUIDE = {
-      recall: 'check a taught definition, term, command or fact directly',
+      recall: 'check a taught definition, term, command or fact by its meaning or effect (not its name or a value mentioned in passing)',
       concept: 'check understanding of what an idea means or implies (not word-for-word recall)',
       mechanism: 'ask how or why something works the way it was explained',
       trace: 'give a short concrete input/state and ask for the state after following the taught steps',
@@ -1761,8 +1789,8 @@ ${target.distractorMisconceptions.map(m => `- ${m.concept}: ${m.description}`).j
 
     // Build evidence context per target (bounded to ~1200 chars per target to avoid prompt bloat)
     const TIER_DEMAND = {
-      Easy: 'Easy — one-step understanding: recognise a correct definition, property or direct fact that was taught. The student still has to think; no trick wording.',
-      Medium: 'Medium — the student must apply or trace something: follow the steps of a procedure, predict the state or output after an operation, compare two taught mechanisms, or explain why a rule holds. A pure definition is NOT Medium.',
+      Easy: 'Easy — one step, but it must check that the student understood an idea the teacher explained (what it means, why it is used, what it does or prevents). A student who listened answers it; one who only half-heard the words, or knows the term only by name, picks a distractor. NEVER ask an incidental detail (a default value, a number, name or parameter mentioned in passing) or something answerable from the wording of the question or general familiarity with the term.',
+      Medium: 'Medium — the student must apply or trace something: follow the steps of a procedure, predict the state or output after an operation, compare two taught mechanisms, or explain why a rule holds. It must NOT be answerable by remembering one sentence from the lecture; give a situation, data or code to work on.',
       Hard: 'Hard — multi-step reasoning on a NEW concrete situation built only from taught material: an edge case, a what-if change, diagnosing a bug or wrong result, or combining two taught ideas. Length or vocabulary does not make a question Hard.'
     };
 
@@ -1770,7 +1798,13 @@ ${target.distractorMisconceptions.map(m => `- ${m.concept}: ${m.description}`).j
     const targetsBlock = validTargets.map((t, idx) => {
       const tier = t.targetDifficulty || 'Medium';
       const op = t.intendedCognitiveOperation || (tier === 'Easy' ? 'RECALL' : (tier === 'Medium' ? 'COMPARE' : 'DIAGNOSE'));
-      let ctx = getTargetEvidenceContext(t, evidencePackage, t.distractorStrategy === 'LECTURE_MISCONCEPTIONS' ? 2600 : 1200); // lecture-model targets carry the full passage for their point
+      // Lecture-model targets carry the teacher's full passage for their point (up to 2,400-2,800 chars). It used to be
+      // cut to 1,200 chars here, so the writer saw half of the explanation and fell back to recall questions. Deeper
+      // tiers now get the whole passage plus room for related retrieved context (other parts of the lecture to combine).
+      const ctxCap = t.lectureUnitId
+        ? ({ Easy: 2000, Medium: 2800, Hard: 3600 }[tier] || 2800)
+        : (t.distractorStrategy === 'LECTURE_MISCONCEPTIONS' ? 2600 : 1200);
+      let ctx = getTargetEvidenceContext(t, evidencePackage, Math.max(ctxCap, t.distractorStrategy === 'LECTURE_MISCONCEPTIONS' ? 2600 : 0));
       if (!ctx || ctx.length < 20) {
         ctx = t.supportingEvidence || (typeof evidencePackage === 'string' ? evidencePackage : (evidencePackage?.unifiedRawContent || ''));
       }
@@ -1782,9 +1816,10 @@ Target ID: ${t.targetId}
 Concept: ${t.concept}
 Required difficulty: ${TIER_DEMAND[tier] || TIER_DEMAND.Medium}
 Cognitive operation: ${op}
-${t.questionAngle && QUESTION_ANGLE_GUIDE[t.questionAngle] ? `Question type: ${QUESTION_ANGLE_GUIDE[t.questionAngle]}\n` : ''}${tier === 'Hard' ? `HARD RECIPE (mandatory): ${HARD_RECIPE[t.questionAngle] || HARD_RECIPE.default} Write the data on separate lines (e.g. "P1: Allocation [0,1,0], Max [7,5,3]" or code lines) so the prose sentence stays under 35 words.\n` : ''}${tier === 'Easy' && ['output', 'debug'].includes(t.questionAngle) ? `EASY CODE (mandatory): put 1-3 lines of the code exactly as taught (reconstruct it from the teacher's words if it was read aloud) on separate lines in the stem; the answer must follow from ONE rule taught in class (what one statement prints or does, or one obvious mistake) - no loop tracing, no state over several steps.\n` : ''}Learning objective: ${t.instruction || t.operationalGuidance || 'Test conceptual and applied understanding.'}
+${t.questionAngle && QUESTION_ANGLE_GUIDE[t.questionAngle] ? `Question type: ${QUESTION_ANGLE_GUIDE[t.questionAngle]}\n` : ''}${tier === 'Hard' ? `HARD RECIPE (mandatory): ${t.hardFormRecipe || HARD_RECIPE[t.questionAngle] || HARD_RECIPE.default} Write the data on separate lines (e.g. "P1: Allocation [0,1,0], Max [7,5,3]" or code lines) so the prose sentence stays under 35 words.\n` : ''}${tier === 'Easy' && ['output', 'debug'].includes(t.questionAngle) ? `EASY CODE (mandatory): put 1-3 lines of the code exactly as taught (reconstruct it from the teacher's words if it was read aloud) on separate lines in the stem; the answer must follow from ONE rule taught in class (what one statement prints or does, or one obvious mistake) - no loop tracing, no state over several steps.\n` : ''}${t.teachingStyleNote ? `${t.teachingStyleNote}
+` : ''}Learning objective: ${t.instruction || t.operationalGuidance || 'Test conceptual and applied understanding.'}
 ${misconceptions}Evidence (the ONLY source of truth for this question):
-${(ctx || '').slice(0, 1200).trim()}
+${(ctx || '').slice(0, Math.max(ctxCap, t.distractorStrategy === 'LECTURE_MISCONCEPTIONS' ? 2600 : 0)).trim()}
 `;
     }).join('\n');
 
@@ -1800,7 +1835,7 @@ For EACH target, work in this order:
 
 Rules:
 - The question must be self-contained (passes the "cover the options" test). If it refers to code, a command, a table or data, include that code/command/data inside "questionText" (use \\n for line breaks). Never write "the snippet above" without including it.
-- Keep stems direct and short (normally 12-35 words plus any code). No "in the lecture", "as discussed", "according to the slides". Never list the answer options (A), B), ...) inside "questionText".
+- Keep stems direct and short (normally 12-35 words plus any code). No "in the lecture", "as discussed", "according to the slides", and never mention the class, the instructor/teacher or what they said, emphasized or did ("during the walkthrough", "the instructor emphasized") — a student who missed the class must be able to answer from the question alone. Never list the answer options (A), B), ...) inside "questionText".
 - All four options parallel in form and similar in length (each at most about 15 words; the correct option must not be the longest or shortest); no "all/none of the above", no absolute words used as giveaways.
 - If you include code, keep it to the few lines the question needs (at most about 12).
 - "correctAnswer" must be copied character-for-character from "options", and "correctAnswerIndex" must point to it. Vary the position of the correct answer across questions.
@@ -1809,7 +1844,7 @@ Rules:
 - When the question asks to predict an output, state, value or error, the stem must NOT contain that output (show only the input/commands/code before it).
 - Every distractor must be definitely wrong. If an option could be argued correct (even partly, or under a common reading), replace it.
 - Every distractor must be something a student who attended this class could genuinely believe. Never use joke, extreme or unrelated options (e.g. "it deletes all files", "the system trash folder", "it encrypts the data") unless the lecture itself raised that confusion. Prefer options built from other ideas, commands, values or steps taught in the same lecture.
-- No giveaway clues: do not repeat a distinctive word or phrase from the stem in the correct option only, and do not make the correct option the only one that is complete, qualified or specific.
+- No giveaway clues: do not repeat a distinctive word or phrase from the stem in the correct option only, and do not make the correct option the only one that is complete, qualified or specific. Options never judge themselves: no labels such as "(correct behaviour)", "(the bug)", "(standard approach)" or "(incorrect)" inside an option.
 - Write the stem as a natural classroom question a teacher would ask; prefer a short concrete situation, code fragment, command or value over abstract wording.
 
 Output ONLY a JSON array (no markdown fences, no commentary) of objects with this schema:
@@ -1854,13 +1889,20 @@ Generate a JSON array of exactly ${validTargets.length} distinct, rigorous MCQs 
 
     const fastModel = options.fastModel || process.env.AGENT2_MODEL || process.env.GENERATOR_MODEL || 'qwen/qwen3.8-27b';
     let responseText = null;
+    // Which kind of model wrote a batch with Hard targets: 'strong' Gemini, Groq 'reasoning', or a lighter 'fallback'.
+    let hardWriter = null;
 
     try {
       const maxTokens = Math.min(6000, Math.max(1800, validTargets.length * 900));
       // Multi-step Hard questions need a stronger reasoning model: batches containing Hard targets go to the
       // Gemini chain (3.5-flash first, then lighter models, then Groq) instead of the fast default model.
       const hasHard = validTargets.some(t => t.targetDifficulty === 'Hard');
-      if (hasHard && process.env.HARD_GENERATION_PROVIDER !== 'groq' && process.env.GEMINI_API_KEY) {
+      // Order (free tier): Groq's reasoning model first — the strong Gemini models allow only ~20 requests a day
+      // and are used up within minutes — then strong Gemini if Groq is unavailable. HARD_GENERATION_PROVIDER=gemini-first
+      // restores the old order (e.g. with a paid Gemini key).
+      const geminiFirst = process.env.HARD_GENERATION_PROVIDER === 'gemini-first';
+      const tryStrongGemini = async () => {
+        if (responseText || !hasHard || process.env.HARD_GENERATION_PROVIDER === 'groq' || !process.env.GEMINI_API_KEY) return;
         try {
           // Strong Gemini models only — the light models write single-step "Hard" questions and wrong keys.
           const r = await require('../intelligence/lectureModel')._internal.callJson({
@@ -1869,32 +1911,59 @@ Generate a JSON array of exactly ${validTargets.length} distinct, rigorous MCQs 
             noGroqFallback: true
           });
           responseText = JSON.stringify(r.data);
+          hardWriter = 'strong';
           console.log(`🧠 [Agent 2 Batch] Batch with Hard targets generated by ${r.provider}:${r.model}.`);
         } catch (strongErr) {
-          console.warn(`⚠️ [Agent 2 Batch] Strong Gemini unavailable for Hard batch (${strongErr.message.slice(0, 120)}); using gpt-oss-120b with full reasoning.`);
+          console.warn(`⚠️ [Agent 2 Batch] Strong Gemini unavailable for Hard batch (${strongErr.message.slice(0, 120)}).`);
         }
-      }
-      // Without strong Gemini quota, Hard questions are written by Groq's reasoning model with full reasoning
-      // effort (it works the multi-step problem out before writing the question), never by a light model.
-      if (!responseText && hasHard && process.env.GROQ_API_KEY) {
+      };
+      // Groq's reasoning model with full reasoning effort (it works the multi-step problem out before writing the
+      // question), never a light model.
+      const tryGroqReasoning = async () => {
+        if (responseText || !hasHard || !process.env.GROQ_API_KEY) return;
         try {
-          responseText = await llmRouter.complete({
+          // Fit prompt + reasoning + answer inside the per-minute token budget (free tier: 8,000 for gpt-oss-120b);
+          // when the room is tight, medium reasoning leaves enough tokens for the answer itself.
+          const tpmBudget = parseInt(process.env.HARD_TPM_BUDGET, 10) || 7600;
+          const promptTokens = Math.ceil((String(effectiveSystemPrompt || '').length + String(userPrompt || '').length) / 3.2);
+          const room = tpmBudget - promptTokens;
+          // Use all the room the minute allows: high reasoning on a Hard problem easily spends 4,500 tokens and then
+          // returns an empty answer.
+          const hardMaxTokens = Math.max(1800, Math.min(6500, room));
+          let effort = process.env.HARD_REASONING_EFFORT || (hardMaxTokens < 3200 ? 'medium' : 'high');
+          console.log(`🧠 [Agent 2 Batch] Hard request: ~${promptTokens} prompt tokens, ${hardMaxTokens} for reasoning+answer (${effort}).`);
+          const callHard = () => llmRouter.complete({
             prompt: userPrompt,
             systemPrompt: effectiveSystemPrompt,
             temperature: 0.2,
             model: 'openai/gpt-oss-120b',
             groqModels: ['openai/gpt-oss-120b'],
-            reasoningEffort: process.env.HARD_REASONING_EFFORT || 'high',
+            reasoningEffort: effort,
             sessionId: evidencePackage?.sessionId,
-            maxTokens: Math.min(6500, Math.max(3500, validTargets.length * 2200)),
+            maxTokens: hardMaxTokens,
             operation: 'HARD_BATCH_GENERATION',
+            noGeminiFallback: true,
+            // Worth waiting for: a Hard question may wait up to ~2.5 min for per-minute token room on a key.
+            rateLimitWaitMs: parseInt(process.env.HARD_RATE_LIMIT_WAIT_MS, 10) || 150000,
             signal: evidencePackage?.abortSignal || options?.abortSignal
           });
-          console.log(`🧠 [Agent 2 Batch] Batch with Hard targets generated by groq:openai/gpt-oss-120b (reasoning ${process.env.HARD_REASONING_EFFORT || 'high'}).`);
+          try {
+            responseText = await callHard();
+          } catch (firstErr) {
+            // Reasoning used up the whole token allowance and left no answer: retry once with medium reasoning.
+            if (effort !== 'high' || !/empty content/i.test(firstErr.message || '')) throw firstErr;
+            effort = 'medium';
+            console.warn('⚠️ [Agent 2 Batch] Hard answer was empty after high reasoning; retrying with medium reasoning.');
+            responseText = await callHard();
+          }
+          hardWriter = 'reasoning';
+          console.log(`🧠 [Agent 2 Batch] Batch with Hard targets generated by groq:openai/gpt-oss-120b (reasoning ${effort}).`);
         } catch (reasonErr) {
           console.warn(`⚠️ [Agent 2 Batch] Reasoning model unavailable for Hard batch (${reasonErr.message.slice(0, 120)}).`);
         }
-      }
+      };
+      if (geminiFirst) { await tryStrongGemini(); await tryGroqReasoning(); }
+      else { await tryGroqReasoning(); await tryStrongGemini(); }
       if (!responseText) responseText = await llmRouter.complete({
         prompt: userPrompt,
         systemPrompt: systemPrompt,
@@ -2002,6 +2071,7 @@ Generate a JSON array of exactly ${validTargets.length} distinct, rigorous MCQs 
       const op = target.intendedCognitiveOperation || (tier === 'Easy' ? 'RECALL' : (tier === 'Medium' ? 'COMPARE' : 'DIAGNOSE'));
 
       rawMCQ.metadata = {
+        hardWriter: tier === 'Hard' ? (hardWriter || 'fallback') : undefined,
         dimension: target.dimension || 'Conceptual',
         cognitiveLevel: target.cognitiveLevel || 'Understand',
         targetDifficulty: tier,
@@ -2632,6 +2702,13 @@ Generate exactly ONE grounded JSON MCQ testing ${target.concept} at ${tier} tier
       }
     }
 
+    // Models sometimes give the key as a letter ("B"), "Option 2", "B) text" or with different spacing/case:
+    // resolve it deterministically to the option it names before treating the output as malformed.
+    if (!parsedMCQ.options.includes(parsedMCQ.correctAnswer)) {
+      const resolved = resolveKeyToOption(parsedMCQ.options, parsedMCQ.correctAnswer, parsedMCQ.correctAnswerIndex);
+      if (resolved !== null) parsedMCQ.correctAnswer = resolved;
+    }
+
     // Verify correctAnswer exists within options array
     if (!parsedMCQ.options.includes(parsedMCQ.correctAnswer)) {
       console.warn(`⚠️ [Agent 2] Output for target ${target.targetId}: correctAnswer does not match any of the provided options.`);
@@ -2772,6 +2849,24 @@ Generate exactly ONE grounded JSON MCQ testing ${target.concept} at ${tier} tier
 
     return parsedMCQ;
   }
+}
+
+
+/** Maps a key given as a letter, index, "Option B", "B) text" or loosely formatted text to the option it names (null if unclear). */
+function resolveKeyToOption(options, key, keyIndex) {
+  if (!Array.isArray(options) || options.length === 0) return null;
+  const norm = (x) => String(x == null ? '' : x).toLowerCase().replace(/^\s*(?:option\s*)?[a-d1-4][).:\]-]\s+/i, '').replace(/[\s`'"]+/g, ' ').trim();
+  const k = String(key == null ? '' : key).trim();
+  const letter = k.match(/^(?:option\s*)?\(?([A-Da-d])\)?[).:]?$/i);
+  if (letter) return options['abcd'.indexOf(letter[1].toLowerCase())] ?? null;
+  const num = k.match(/^(?:option\s*)?([1-4])$/i);
+  if (num) return options[Number(num[1]) - 1] ?? null;
+  const exact = options.filter(o => norm(o) === norm(k) && norm(k));
+  if (exact.length === 1) return exact[0];
+  const prefixed = k.match(/^\(?([A-Da-d])[).:]\s+(.+)$/);
+  if (prefixed) { const o = options['abcd'.indexOf(prefixed[1].toLowerCase())]; if (o && norm(o) === norm(prefixed[2])) return o; }
+  if (Number.isInteger(keyIndex) && keyIndex >= 0 && keyIndex < options.length && norm(k) && norm(options[keyIndex]).startsWith(norm(k).slice(0, 12))) return options[keyIndex];
+  return null;
 }
 
 module.exports = new Agent2Generator();

@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
-import { Loader2, AlertCircle, RefreshCw, Mic, FileText, Link2, AlertTriangle, BookOpen, ChevronDown, ChevronUp, Clock } from 'lucide-react';
+import { Loader2, AlertCircle, RefreshCw, Mic, FileText, Link2, AlertTriangle, BookOpen, ChevronDown, ChevronUp, Clock, MessageSquareText } from 'lucide-react';
+import { SHOW_TEACHING_RATINGS } from '../../config/teachingFeedback';
 
 /**
  * Glanceable summary of what the system understood (from the shared lecture model):
@@ -18,28 +19,121 @@ function ScoreRing({ teaching, onClick }) {
     const color = value === null ? '#94a3b8' : value >= 80 ? '#16a34a' : value >= 60 ? '#d97706' : '#e11d48';
     const r = 20, c = 2 * Math.PI * r, dash = value === null ? 0 : (value / 100) * c;
     return (
-        <button type="button" onClick={onClick} disabled={pending} title="Why this score?"
+        <button type="button" onClick={onClick} disabled={pending} title={SHOW_TEACHING_RATINGS ? "Why this score?" : "Read the teaching feedback"}
             className="shrink-0 flex items-center gap-2 rounded-2xl px-2 py-1.5 hover:bg-white/80 transition-colors cursor-pointer disabled:cursor-default">
             <span className="relative w-12 h-12">
                 <svg viewBox="0 0 48 48" className="w-12 h-12 -rotate-90" aria-hidden="true">
                     <circle cx="24" cy="24" r={r} fill="none" stroke="#f1f5f9" strokeWidth="5" />
-                    <circle cx="24" cy="24" r={r} fill="none" stroke={color} strokeWidth="5" strokeLinecap="round" strokeDasharray={`${dash} ${c}`} />
+                    {SHOW_TEACHING_RATINGS && <circle cx="24" cy="24" r={r} fill="none" stroke={color} strokeWidth="5" strokeLinecap="round" strokeDasharray={`${dash} ${c}`} />}
                 </svg>
                 <span className="absolute inset-0 flex items-center justify-center text-sm font-black text-slate-900">
-                    {pending ? <Loader2 size={14} className="animate-spin text-slate-400" /> : (value ?? '–')}
+                    {pending ? <Loader2 size={14} className="animate-spin text-slate-400" /> : (SHOW_TEACHING_RATINGS ? (value ?? '–') : <MessageSquareText size={18} className="text-[#c2410c]" />)}
                 </span>
             </span>
             <span className="text-left leading-tight">
-                <span className="block text-[10px] font-black uppercase tracking-wider text-slate-500">Teaching score</span>
+                <span className="block text-[10px] font-black uppercase tracking-wider text-slate-500">{SHOW_TEACHING_RATINGS ? 'Teaching score' : 'Teaching feedback'}</span>
                 <span className="block text-[11px] font-bold" style={{ color: pending ? '#64748b' : '#c2410c' }}>
-                    {pending ? 'Preparing…' : value === null ? 'Not enough evidence' : 'See why →'}
+                    {pending ? 'Preparing…' : (SHOW_TEACHING_RATINGS ? (value === null ? 'Not enough evidence' : 'See why →') : (teaching && teaching.dimensions ? 'Read →' : 'Not enough evidence'))}
                 </span>
             </span>
         </button>
     );
 }
 
-export default function LectureUnderstandingPanel({ model, loading, error, onRetry, onOpenScore, excludedTopics = [], onToggleTopic = null }) {
+const STYLE_MODES = [
+    { key: 'CONCEPTUAL', label: 'Concept explanation', color: '#2563eb' },
+    { key: 'CODE', label: 'Code walkthrough', color: '#16a34a' },
+    { key: 'NUMERICAL', label: 'Worked problems', color: '#9333ea' },
+    { key: 'EXAMPLE', label: 'Teaching through examples', color: '#ea580c' },
+    { key: 'REVISION', label: 'Quick revision', color: '#0891b2' }
+];
+const SLIDE_USE = [
+    { key: 'READS', label: 'Followed the slides closely' },
+    { key: 'OUTLINE', label: 'Used the slides as an outline' },
+    { key: 'BEYOND', label: 'Explained well beyond the slides' }
+];
+const SLIDE_USE_TEXT = { READS: 'Followed the slides closely', OUTLINE: 'Used the slides as an outline', BEYOND: 'Explained well beyond the slides', NO_MATERIAL: 'Taught without slides' };
+
+/**
+ * How the class was taught (detected per part of the lecture) and how closely it followed the slides.
+ * Questions lean toward the types that fit this style; the teacher can correct it in one tap.
+ */
+function TeachingStyleRow({ style, override, onChange }) {
+    const [editing, setEditing] = useState(false);
+    if (!style || !style.mix) return null;
+    const detectedModes = Object.entries(style.mix).filter(([, v]) => v >= 10).map(([k]) => k);
+    const activeModes = override && override.modes && override.modes.length ? override.modes : detectedModes;
+    const slideKey = (override && override.slideUse) || (style.slideUse && style.slideUse.label) || null;
+    const hasSlides = style.slideUse && style.slideUse.label && style.slideUse.label !== 'NO_MATERIAL';
+    const toggleMode = (k) => {
+        const next = activeModes.includes(k) ? activeModes.filter(m => m !== k) : [...activeModes, k];
+        if (!next.length) return;
+        onChange && onChange({ modes: next, slideUse: (override && override.slideUse) || null });
+    };
+    const setSlide = (k) => onChange && onChange({ modes: (override && override.modes) || [], slideUse: k });
+    const mix = Object.entries(style.mix).sort((a, b) => b[1] - a[1]);
+    return (
+        <div className="bg-white/90 rounded-2xl border border-orange-200/60 p-2.5 space-y-1.5">
+            <div className="flex items-center justify-between gap-2">
+                <p className="text-[10px] font-black uppercase tracking-wider text-slate-500">How you taught</p>
+                {onChange && (
+                    <button type="button" onClick={() => setEditing(v => !v)} className="text-[11px] font-bold text-[#c2410c] cursor-pointer">
+                        {editing ? 'Done' : 'Not right?'}
+                    </button>
+                )}
+            </div>
+            {override ? (
+                <p className="text-[11px] text-slate-800">
+                    <span className="font-bold">{activeModes.map(k => (STYLE_MODES.find(m => m.key === k) || {}).label).join(' · ')}</span>
+                    {slideKey && hasSlides ? ` · ${SLIDE_USE_TEXT[slideKey]}` : ''}
+                    <span className="text-slate-500"> (your correction)</span>
+                </p>
+            ) : (
+                <>
+                    <div className="flex h-2 rounded-full overflow-hidden bg-slate-100" role="img" aria-label="Share of the class by teaching style">
+                        {mix.map(([k, v]) => <span key={k} style={{ width: `${v}%`, background: (STYLE_MODES.find(m => m.key === k) || {}).color || '#cbd5e1' }} />)}
+                    </div>
+                    <p className="text-[11px] text-slate-800 flex flex-wrap gap-x-3 gap-y-0.5">
+                        {mix.filter(([, v]) => v >= 5).map(([k, v]) => {
+                            const m = STYLE_MODES.find(x => x.key === k) || { label: k, color: '#cbd5e1' };
+                            return <span key={k} className="flex items-center gap-1"><span className="w-2 h-2 rounded-full" style={{ background: m.color }} />{m.label} <span className="text-slate-500">{v}%</span></span>;
+                        })}
+                        {slideKey && <span className="text-slate-600">{SLIDE_USE_TEXT[slideKey]}</span>}
+                    </p>
+                </>
+            )}
+            {editing && (
+                <div className="pt-1.5 border-t border-orange-100 space-y-1.5">
+                    <p className="text-[11px] text-slate-600">Tap the styles you used. Questions will lean toward types that fit them.</p>
+                    <div className="flex flex-wrap gap-1.5">
+                        {STYLE_MODES.map(m => {
+                            const on = activeModes.includes(m.key);
+                            return (
+                                <button key={m.key} type="button" aria-pressed={on} onClick={() => toggleMode(m.key)}
+                                    className={`text-[11px] font-bold px-2.5 py-1 rounded-full border cursor-pointer ${on ? 'bg-orange-50 border-orange-400 text-slate-900' : 'bg-white border-slate-200 text-slate-500'}`}>
+                                    {m.label}
+                                </button>
+                            );
+                        })}
+                    </div>
+                    {hasSlides && (
+                        <div className="flex flex-wrap gap-1.5">
+                            {SLIDE_USE.map(s => (
+                                <button key={s.key} type="button" aria-pressed={slideKey === s.key} onClick={() => setSlide(s.key)}
+                                    className={`text-[11px] font-bold px-2.5 py-1 rounded-full border cursor-pointer ${slideKey === s.key ? 'bg-orange-50 border-orange-400 text-slate-900' : 'bg-white border-slate-200 text-slate-500'}`}>
+                                    {s.label}
+                                </button>
+                            ))}
+                        </div>
+                    )}
+                    {override && <button type="button" onClick={() => onChange && onChange(null)} className="text-[11px] font-bold text-slate-600 underline cursor-pointer">Use what was detected</button>}
+                </div>
+            )}
+        </div>
+    );
+}
+
+export default function LectureUnderstandingPanel({ model, loading, error, onRetry, onOpenScore, excludedTopics = [], onToggleTopic = null, styleOverride = null, onChangeStyle = null }) {
     const [showParts, setShowParts] = useState(false);
     const [showSummary, setShowSummary] = useState(false);
     const [activeSeg, setActiveSeg] = useState(null);
@@ -122,6 +216,8 @@ export default function LectureUnderstandingPanel({ model, loading, error, onRet
                     <p className={`text-xs text-slate-700 leading-relaxed ${showSummary ? '' : 'line-clamp-2'}`}>{model.summary}</p>
                 </button>
             )}
+
+            {!model.isTopicNotes && <TeachingStyleRow style={model.teachingStyle} override={styleOverride} onChange={onChangeStyle} />}
 
             {/* Lecture map */}
             {segments.length > 0 && (

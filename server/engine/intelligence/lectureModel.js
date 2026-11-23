@@ -27,7 +27,10 @@ const llmRouter = require('../adapter/llmRouter');
 const { safeParseJson } = require('../utils/jsonParser');
 const { classifyTextBlock } = require('../../utils/inputKind');
 
-const MODEL_VERSION = 'lecture-model-v2.4';
+const teachingStyle = require('./teachingStyle');
+const hardForms = require('./hardForms');
+
+const MODEL_VERSION = 'lecture-model-v2.12';
 // Largest quiz a teacher can request (one setting for server, planner and UI). Default 30: a daily-quiz size.
 const MAX_QUIZ_QUESTIONS = Math.max(1, parseInt(process.env.MAX_QUIZ_QUESTIONS, 10) || 30);
 const CACHE_DIR = path.join(__dirname, '..', '..', 'storage', 'lecture_model_cache');
@@ -387,8 +390,10 @@ async function callJson({ systemPrompt, prompt, maxTokens = 8192, operation, mod
   // lecture reading starts on other models, leaving the strongest model's daily quota for those steps.
   const CRITICAL_OPS = new Set(['HARD_BATCH_GENERATION', 'BLIND_ANSWER_CHECK', 'FINAL_QUALITY_GATE', 'TEACHING_SCORE']);
   const defaultList = CRITICAL_OPS.has(operation)
-    ? (process.env.GEMINI_CRITICAL_MODELS || 'gemini-3.5-flash,gemini-3.6-flash,gemini-3.5-flash-lite,gemini-3.1-flash-lite')
-    : (process.env.LECTURE_MODEL_GEMINI || 'gemini-3.6-flash,gemini-3.5-flash-lite,gemini-3.5-flash,gemini-3.1-flash-lite');
+    // Free tier: gemini-3.5-flash / 3.6-flash allow ~20 requests a day; they are reserved for writing Hard questions
+    // (agent2 HARD_GEMINI_MODELS), so every other step uses the lite models (~500/day). Override with GEMINI_CRITICAL_MODELS.
+    ? (process.env.GEMINI_CRITICAL_MODELS || 'gemini-3.5-flash-lite,gemini-3.1-flash-lite')
+    : (process.env.LECTURE_MODEL_GEMINI || 'gemini-3.5-flash-lite,gemini-3.1-flash-lite');
   const listed = Array.isArray(models) && models.length ? models : defaultList.split(",").map(s => s.trim()).filter(Boolean);
   // Models that answered in the last 10 minutes go first (stable sort keeps the configured order otherwise).
   const recent = (m) => ((lastSuccessAt.get(m) || 0) > Date.now() - 10 * 60000 ? 0 : 1);
@@ -500,6 +505,7 @@ Rules:
 - Ignore greetings, attendance, admin talk, jokes and filler.
 - Every quote must be copied word-for-word from one cited block (8-30 words; for code or commands, copy the exact line(s)).
 - Do not judge accent, fluency, filler words, speaking speed or transcription errors.
+- Speech blocks are automatic speech recognition: words are sometimes misheard ("R curve" for ROC curve, "mode prediction" for total predictions, a dropped word in a formula). Read for what the teacher clearly meant. A garbled word, a half-heard formula or a misnamed term is a transcription slip, never a teaching gap or technical error; record a technical error only when the teacher's meaning is clearly wrong (stated plainly, or repeated, or shown on a slide).
 - Return JSON only.`;
 
 function windowPrompt(win, ctx) {
@@ -511,7 +517,7 @@ ${blocks}
 
 Return this JSON:
 {
-  "segments": [ { "from": "B01", "to": "B03", "title": "3-6 word title", "description": "one short plain sentence stating what was taught, starting with the content itself (e.g. 'Four benefits of IPC: ...', 'Traces git add moving a file to the staging area') — never start with 'The lecture' or 'The instructor'" } ],
+  "segments": [ { "from": "B01", "to": "B03", "title": "3-6 word title", "description": "one short plain sentence stating what was taught, starting with the content itself (e.g. 'Four benefits of IPC: ...', 'Traces git add moving a file to the staging area') — never start with 'The lecture' or 'The instructor'", "delivery": "how this part was taught: CONCEPTUAL (explaining ideas, definitions, differences, why) | CODE (walking through code, a notebook, commands or a tool live) | NUMERICAL (solving a problem or derivation step by step with numbers) | EXAMPLE (teaching mainly through a concrete example, analogy or real-life scenario) | REVISION (quick recap or exam-style revision of points)" } ],
   "units": [
     {
       "topic": "macro topic (reuse the same name for the same topic)",
@@ -521,7 +527,8 @@ Return this JSON:
       "statement": "1-2 sentences: the precise point that was taught, in your own words",
       "quote": "verbatim words from one of the cited blocks",
       "depth": "MENTIONED (only named) | EXPLAINED (explained) | DEMONSTRATED (worked example, code, trace or calculation shown)",
-      "importance": "CORE (part of the subject being taught) | ASIDE (a passing remark: platforms or tools mentioned in passing, career/exam/admin talk, motivation, anecdotes, analogies used only as a story)",
+      "importance": "CORE (part of the subject being taught) | ASIDE (a passing remark: platforms or tools mentioned in passing, career/exam/admin talk, motivation, anecdotes that explain nothing)",
+      "teacherExample": "the concrete example, analogy, scenario or numbers the teacher used to teach THIS point, in one short sentence (null if none). An analogy or example that explains a point belongs to that point (CORE), not to an ASIDE",
       "angles": [ { "type": "one of ${ANGLE_TYPES.join('|')}", "difficulty": "easy|medium|hard", "focus": "the specific thing one question would test" } ],
       "misconceptions": ["a specific wrong belief a student could have about this point"]
     }
@@ -533,7 +540,7 @@ Return this JSON:
 }
 
 How to fill it:
-- segments: cover every speech block in order (if there are speech blocks). Make a new segment whenever the idea being taught changes — typically every 1-3 minutes, so a ${win.speech.length}-block window usually has about ${Math.max(1, Math.round(win.speech.length / 2))} segments. For material-only input, make one segment per section/slide group instead. Titles name the specific idea (e.g. "git add and the staging area"), never generic ("Introduction", "Practical demonstration").
+- segments: cover every speech block in order (if there are speech blocks). Make a new segment whenever the idea being taught changes — typically every 1-3 minutes, so a ${win.speech.length}-block window usually has about ${Math.max(1, Math.round(win.speech.length / 2))} segments. For material-only input, make one segment per section/slide group instead. Titles name the specific idea (e.g. "git add and the staging area"), never generic ("Introduction", "Practical demonstration"). Label each segment's delivery by how THAT part was taught (a class often mixes, e.g. theory first, then a notebook demo, then a worked problem); judge from what the teacher is doing, not from the subject.
 - units: be thorough and fine-grained. Make one unit for EACH distinct teachable point: every definition, every command or flag explained, every step of a procedure, every rule, every example worked through, every comparison, every warning or edge case. Every block that is not chatter must be cited by at least one unit. For code or terminal sessions, each command (with its flags and its output or state change) and each code construct is its own unit. A substantive block usually contains 1-3 units; this window has ${win.speech.length + win.material.length} blocks, so expect roughly ${Math.max(2, Math.round((win.speech.length + win.material.length) * 1.3))} units or more if the content is dense (fewer only if much of it is chatter). Do not create units for things only listed in a slide title and never discussed. If the same point is explained and later demonstrated (or repeated), make ONE unit that cites all of those blocks.
 - For code, SQL or terminal material, think like a teacher setting a lab quiz: the exact output of the whole program/session, the effect of each important call or command (and its flags), what each key line or keyword does and why it is there, what happens for a boundary or invalid input, and what goes wrong if one line is changed. Each of these is its own unit or angle.
 - angles: give every EXPLAINED or DEMONSTRATED unit 2-4 angles; only angles this unit's content really supports, each testing something different (max 4):
@@ -542,10 +549,11 @@ How to fill it:
   * hard only for real multi-step reasoning on what was taught (edge case, what-if, combining ideas, diagnosing a wrong result) — not for long or wordy recall;
   * a MENTIONED unit gets at most one easy recall angle.
 - misconceptions: 2-3 per unit, drawn from contrasts or warnings the teacher made, near-miss steps, off-by-one or boundary errors, or confusion with a related idea from the same lecture.
-- observations: 2-6 specific ones about teaching quality, each tied to a block and quote. Gaps must say what was missing and where (e.g. "showed the steps of X but not why Y holds").`;
+- observations: 2-6 specific ones about teaching quality, each tied to a block and quote. Gaps must say what was missing and where (e.g. "showed the steps of X but not why Y holds").
+- A recorded class has several voices and the transcript has no speaker labels. Students answer, guess, propose their own approach and get corrected. Before writing a gap, read the next blocks: a question the teacher asks the class ("why is X? can anyone tell me?") that is then answered or explained is a teaching strength, not a gap; a wrong statement followed by "no, no" or a correction is a student's guess (or a deliberate slip) being corrected; running a failing case on purpose and working out why is a demonstration of debugging; judging a student's approach ("you are unnecessarily sorting again") is reasoning, not an admission of error.`;
 }
 
-const EVAL_SYSTEM = `You are a careful, fair reviewer of university teaching. You rate one lecture against a fixed rubric using ONLY the evidence listed. You judge what was taught, relative to what the lecture set out to teach and its level: an introductory lecture is not penalised for lacking advanced material. You never judge accent, fluency, filler words, voice, enthusiasm, speaking speed or transcription errors. If the evidence for a dimension is too thin to judge, you say so instead of guessing. Return JSON only.`;
+const EVAL_SYSTEM = `You are a careful, fair reviewer of university teaching. You rate one lecture against a fixed rubric using ONLY the evidence listed. You judge what was taught, relative to what the lecture set out to teach and its level: an introductory lecture is not penalised for lacking advanced material. You never judge accent, fluency, filler words, voice, enthusiasm, speaking speed or transcription errors. Quotes from speech are automatic speech recognition: words are sometimes misheard ("R curve" for ROC curve, "mode prediction" for total predictions, a dropped word in a formula). Read for what the teacher clearly meant. A garbled word, a half-heard formula or a misnamed term is a transcription slip, never a teaching gap or technical error; record a technical error only when the teacher's meaning is clearly wrong (stated plainly, or repeated, or shown on a slide). A class has several voices with no speaker labels: student answers, guesses and proposed approaches, questions the teacher asks the class, a failing case run on purpose to debug it, and the teacher's critique of a student's approach are interaction, never the teacher's errors or gaps. If the evidence for a dimension is too thin to judge, you say so instead of guessing. Return JSON only.`;
 
 function evalPrompt(lecture) {
   const rubric = TEACHING_DIMENSIONS.map(d =>
@@ -579,7 +587,7 @@ Return:
     {
       "key": "clarity",
       "rating": 1-4 or null if there is not enough evidence,
-      "evidence": ["O3", "U5"],
+      "evidence": ["O3", "U5"]  (REQUIRED for every rated dimension: cite the observation or unit ids that support it; units (U..) count as evidence for clarity, examples, structure and depth),
       "finding": "one sentence (max 20 words) on what the evidence shows, naming the specific topic",
       "improvement": "one specific, actionable suggestion in max 18 words naming the topic and what to add (or null if rating is 4)"
     }
@@ -795,6 +803,7 @@ async function buildLectureModel(opts = {}) {
     u.hasFormula = u.kind === 'CALCULATION' || (u.angles || []).some(a => a.type === 'calculation');
     u.angles = sanitiseAngles(u);
     u.misconceptions = (u.misconceptions || []).filter(m => typeof m === 'string' && m.trim().length > 5).slice(0, 4);
+    u.teacherExample = typeof u.teacherExample === 'string' && u.teacherExample.trim().length > 8 && !/^null$/i.test(u.teacherExample.trim()) ? u.teacherExample.trim().slice(0, 300) : null;
   });
 
   // Duplicate teaching points and variant topic names are consolidated in one small call; ids renumbered.
@@ -846,7 +855,8 @@ async function buildLectureModel(opts = {}) {
     inputDescription,
     segments: segmentsOut,
     units: finalUnits,
-    observations
+    observations,
+    blocks: allBlocks
   };
   // The teaching review can finish in the background (opts.deferTeachingScore): the teacher sees the overview
   // as soon as it is ready and the score a few seconds later (GET /api/quiz/teaching-score/:id).
@@ -887,6 +897,7 @@ async function buildLectureModel(opts = {}) {
     contradictions,
     capacity,
     teaching,
+    teachingStyle: null,
     incomplete: unreadParts.length ? { unreadParts, message: `Part of the input could not be read because the analysis service was busy (${unreadParts.join('; ')}). Retry to include it.` } : null,
     blocks: allBlocks.map(b => ({ id: b.id, source: b.source, start: b.start, end: b.end, slide: b.slide || null, text: b.text })),
     audit: {
@@ -900,6 +911,8 @@ async function buildLectureModel(opts = {}) {
       builtAt: new Date().toISOString()
     }
   };
+  // How the lecture was taught (per part and overall) and how closely it followed the slides: no extra AI call.
+  try { model.teachingStyle = teachingStyle.buildProfile(model); } catch (e) { console.warn('[LectureModel] teaching style skipped:', e.message); }
   // Incomplete models are kept in memory for generation but not persisted, so a retry re-reads them.
   const persist = () => { if (unreadParts.length) memoryCache.set(key, model); else writeCache(key, model); };
   persist();
@@ -1058,6 +1071,7 @@ function buildSegments(rawSegments, speech, material, blockMap, units) {
     return {
       title: String(s.title || '').trim() || 'Section',
       description: String(s.description || '').trim(),
+      delivery: teachingStyle.normMode(s.delivery),
       source: from.source,
       start: from.source === 'SPEECH' ? from.start : null,
       end: from.source === 'SPEECH' ? end : null,
@@ -1209,6 +1223,89 @@ async function describeLecture({ title, segments, units, inputDescription, usage
   }
 }
 
+/**
+ * Checks each gap observation against what happened around it in class (the cited block, the one before and the
+ * next three). Keeps only real gaps/errors by the teacher. One small-model call per lecture; on failure every
+ * observation is kept (the review's own rules still apply).
+ */
+/** "1:06:06", "106:06" or "66:06" → seconds; null if not a time. */
+function parseClock(t) {
+  const p = String(t).trim().split(':').map(Number);
+  if (!p.length || p.some(x => !Number.isFinite(x))) return null;
+  return p.length === 3 ? p[0] * 3600 + p[1] * 60 + p[2] : (p.length === 2 ? p[0] * 60 + p[1] : null);
+}
+/** The verdict points at the shown context: a slide/block label in it, or a time inside its span. */
+function pointsIntoContext(at, ctx, range) {
+  if (ctx.includes(`[${at}]`)) return true;
+  if (!Array.isArray(range)) return false;
+  const inside = (t) => t !== null && t >= range[0] - 5 && t <= range[1] + 5;
+  const sec = parseClock(at);
+  // Models sometimes write 1:06:06 as "106:06"; accept that reading too.
+  const p = String(at).split(':').map(Number);
+  const alt = p.length === 2 && p[0] >= 100 && p[0] % 100 < 60 ? Math.floor(p[0] / 100) * 3600 + (p[0] % 100) * 60 + p[1] : null;
+  return inside(sec) || inside(alt);
+}
+
+async function checkGapsInContext(lecture, usage) {
+  const blocks = lecture.blocks || [];
+  const gaps = (lecture.observations || []).filter(o => o.polarity === 'gap' && (o.blocks || []).length);
+  if (!gaps.length || !blocks.length) return null;
+  const pos = Object.fromEntries(blocks.map((b, i) => [b.id, i]));
+  const contexts = [];
+  const ranges = [];
+  const items = gaps.map((o, k) => {
+    const at = pos[o.blocks[0]];
+    const ctx = at === undefined ? '' : blocks.slice(Math.max(0, at - 1), at + 4)
+      .map(b => `[${b.source === 'SPEECH' && Number.isFinite(b.start) ? fmtTime(b.start) : (b.slide ? `slide ${b.slide}` : b.id)}] ${String(b.text).slice(0, 1200)}`).join('\n');
+    contexts[k] = ctx;
+    const shown = at === undefined ? [] : blocks.slice(Math.max(0, at - 1), at + 4);
+    ranges[k] = shown.length ? [Number(shown[0].start), Number(shown[shown.length - 1].end || shown[shown.length - 1].start)] : null;
+    return `ITEM ${k + 1}
+Criticism: ${o.note}
+Quoted: "${o.quote}"
+What happened around it:
+${ctx}`;
+  }).join('\n\n');
+  const r = await callJson({
+    systemPrompt: 'You check criticisms of a recorded university class against the transcript around them. The transcript has no speaker labels: students speak too. Return JSON only.',
+    prompt: `For each item decide whether the criticism is a real gap or error BY THE TEACHER.
+Choose exactly one verdict:
+- TEACHER_GAP: a real gap or error by the teacher that the shown blocks do not resolve. The teacher saying they do not know or are unsure about something they are teaching is a TEACHER_GAP unless they give the correct explanation in the shown blocks. When unsure, choose TEACHER_GAP.
+- STUDENT_WORDS: the quoted words are clearly a student's answer, guess or proposed approach.
+- ANSWERED_LATER: the teacher asked the class a question (or left a point open) and the following blocks answer or explain it.
+- CORRECTED: a wrong statement is corrected in the following blocks ("no, no", "wait", a correct restatement).
+- DELIBERATE_DEMO: the teacher ran a failing case, a bug or wrong data on purpose and worked out why.
+- CRITIQUE_OF_STUDENT: the teacher was judging a student's approach, not stating their own.
+- TRANSCRIPTION: the "error" is a misheard word or formula.
+- NOT_TEACHING: about equipment or tools (a screen or annotation glitch), not about what was taught.
+For every verdict other than TEACHER_GAP, give "at": the time label of the block that shows it.
+${items}
+
+Return {"items":[{"item":1,"verdict":"TEACHER_GAP","at":"","why":"one short sentence"}]}`,
+    maxTokens: 2048, operation: 'TEACHING_SCORE'
+  });
+  usage.calls++; usage.providers.add(`${r.provider}:${r.model}`);
+  const verdicts = new Map(((r.data && r.data.items) || []).map(x => [Number(x.item), x]));
+  if (process.env.TEACHING_CONTEXT_DEBUG) console.log('[ContextCheck]', r.model, JSON.stringify([...verdicts.values()]));
+  const REASONS = new Set(['STUDENT_WORDS', 'ANSWERED_LATER', 'CORRECTED', 'DELIBERATE_DEMO', 'CRITIQUE_OF_STUDENT', 'TRANSCRIPTION', 'NOT_TEACHING']);
+  const dropped = [];
+  const kept = lecture.observations.filter(o => {
+    const k = gaps.indexOf(o);
+    if (k < 0) return true;
+    const v = verdicts.get(k + 1);
+    const verdict = v && String(v.verdict || '').toUpperCase();
+    // Dropped only with a named reason AND a pointer to the block in the shown context that shows it.
+    const shownAt = v && String(v.at || '').replace(/[[\]\s]/g, '');
+    if (verdict && REASONS.has(verdict) && shownAt && pointsIntoContext(shownAt, contexts[k], ranges[k])) {
+      dropped.push({ ...o, contextVerdict: `${verdict}: ${String(v.why || '').slice(0, 280)}` });
+      return false;
+    }
+    return true;
+  });
+  if (dropped.length) console.log(`[LectureModel] Teaching review: ${dropped.length} of ${gaps.length} criticism(s) dropped after checking the classroom context`);
+  return { kept, dropped };
+}
+
 async function scoreTeaching(lecture, { totalWords, usage, hasSpeech, rawArtifactOnly = false }) {
   if (rawArtifactOnly) {
     return { available: false, reason: 'This input is code or terminal output without an explanation, so there is no teaching to judge. Questions are still generated from it. Add a recording or notes that explain it to get a teaching score.' };
@@ -1216,13 +1313,50 @@ async function scoreTeaching(lecture, { totalWords, usage, hasSpeech, rawArtifac
   if (lecture.units.length < 3 || totalWords < 300) {
     return { available: false, reason: `The input is too short (${totalWords} words) to judge teaching quality fairly.` };
   }
-  const r = await callJson({ systemPrompt: EVAL_SYSTEM, prompt: evalPrompt(lecture), maxTokens: 4096, operation: 'TEACHING_SCORE' });
-  usage.calls++; usage.providers.add(`${r.provider}:${r.model}`);
+  // Criticisms are checked in classroom context first (a student's guess, a question put to the class, a deliberate
+  // live debug, or a critique of a student's approach is not the teacher's gap or error). Unsupported ones are dropped.
+  if (process.env.TEACHING_CONTEXT_CHECK !== 'off') {
+    const checked = await checkGapsInContext(lecture, usage).catch(() => null);
+    if (checked) lecture = { ...lecture, observations: checked.kept, droppedGaps: checked.dropped };
+  }
   const validIds = new Set([...lecture.units.map(u => u.id), ...lecture.observations.map(o => o.id)]);
+  const ratedWithEvidence = (data) => ((data && data.dimensions) || []).filter(x => x && Number(x.rating) >= 1 && (x.evidence || []).some(id => validIds.has(id))).length;
+  // Stability: one review by a small model swings (the same lecture scored 54, 92 and 70 on three readings). The review
+  // runs several times in parallel and each dimension takes the MEDIAN rating among the reviews that rated it with
+  // evidence; the finding and evidence shown come from a review that gave that median rating.
+  const RUNS = Math.max(1, parseInt(process.env.TEACHING_REVIEW_RUNS, 10) || 1); // reviews of one reading agree; variation comes from re-reading
+  const reviews = (await Promise.all(Array.from({ length: RUNS }, () =>
+    callJson({ systemPrompt: EVAL_SYSTEM, prompt: evalPrompt(lecture), maxTokens: 4096, operation: 'TEACHING_SCORE' }).catch(() => null)))).filter(Boolean);
+  if (!reviews.length) throw new Error('Teaching review unavailable.');
+  reviews.forEach(x => { usage.calls++; usage.providers.add(`${x.provider}:${x.model}`); });
+  // A reviewer that rates without citing evidence ids leaves a clear lecture "not judgeable": ask once more, explicitly.
+  if (Math.max(...reviews.map(x => ratedWithEvidence(x.data))) < 4 && lecture.units.length >= 5) {
+    try {
+      const again = await callJson({ systemPrompt: EVAL_SYSTEM, prompt: `${evalPrompt(lecture)}
+
+Your previous answer left most dimensions without a rating or without evidence ids. The teaching units above ARE evidence: rate every dimension they support (clarity, examples, structure, depth, reasoning, accuracy) and cite the unit/observation ids for each. Use null only when nothing in the units or observations bears on that dimension.`, maxTokens: 4096, operation: 'TEACHING_SCORE' });
+      usage.calls++; usage.providers.add(`${again.provider}:${again.model}`);
+      reviews.push(again);
+    } catch (_) { /* keep the reviews we have */ }
+  }
+  const pickDimension = (key) => {
+    const all = reviews.map(x => ((x.data && x.data.dimensions) || []).find(y => y && y.key === key))
+      .filter(y => y && Number(y.rating) >= 1 && Number(y.rating) <= 4);
+    const cited = all.filter(y => (y.evidence || []).some(id => validIds.has(id)));
+    // Some reviews rate a dimension but forget the evidence ids. The rating counts towards the median; the dimension
+    // is only shown when at least one review cited evidence for it (nothing is shown without verified quotes).
+    if (!cited.length) return {};
+    if (reviews.length >= 3 && all.length < 2) return {};
+    const sorted = all.map(y => Number(y.rating)).sort((m, n) => m - n);
+    const median = sorted[Math.floor((sorted.length - 1) / 2)];
+    const base = cited.find(y => Number(y.rating) === median) || cited.slice().sort((m, n) => Math.abs(Number(m.rating) - median) - Math.abs(Number(n.rating) - median))[0];
+    return { ...base, rating: median };
+  };
+  const r = { data: reviews[0].data, model: [...new Set(reviews.map(x => x.model))].join(', ') };
   const byId = Object.fromEntries([...lecture.units, ...lecture.observations].map(x => [x.id, x]));
 
   const dims = TEACHING_DIMENSIONS.map(d => {
-    const got = (r.data.dimensions || []).find(x => x && x.key === d.key) || {};
+    const got = pickDimension(d.key);
     // Teaching observations (which say why) are shown before raw unit quotes.
     const evidenceIds = (got.evidence || []).filter(id => validIds.has(id))
       .sort((a, b) => (a.startsWith('O') ? 0 : 1) - (b.startsWith('O') ? 0 : 1));
@@ -1235,6 +1369,15 @@ async function scoreTeaching(lecture, { totalWords, usage, hasSpeech, rawArtifac
         ? { id, quote: x.quote, where: x.where, time: x.time, note: x.note, polarity: x.polarity }
         : { id, quote: x.quote, where: x.time ? `at ${x.time}` : (x.slides && x.slides.length ? `slide ${x.slides[0]}` : 'material'), time: x.time, note: `${x.topic} — ${x.subtopic}` };
     });
+    // A technical-error verdict resting only on the speech transcript is not scored: automatic transcription mishears
+    // terms and formulas, and transcripts carry no confidence signal (a KMIT lecture's "TP plus TN by total
+    // predictions" and an NPTEL lecture's correct "slow start is multiplicative increase" were both scored as errors).
+    // It is shown as a point to double-check; errors visible in slides or documents still count.
+    let finding = assessable ? String(got.finding || '').trim() : 'Not enough evidence in this input to judge this.';
+    if (d.key === 'accuracy' && rating && rating <= 2 && evidence.length && evidence.every(e => e.time)) {
+      rating = null;
+      finding = `Possible issue to double-check (from the automatic transcript, which can mishear words): ${finding}`;
+    }
     return {
       key: d.key,
       label: d.label,
@@ -1242,7 +1385,7 @@ async function scoreTeaching(lecture, { totalWords, usage, hasSpeech, rawArtifac
       rating,
       score: rating ? rating * 25 : null,
       levelDescription: rating ? d.levels[rating] : null,
-      finding: assessable ? String(got.finding || '').trim() : 'Not enough evidence in this input to judge this.',
+      finding,
       improvement: assessable && rating < 4 && got.improvement ? String(got.improvement).trim() : null,
       evidence
     };
@@ -1284,8 +1427,12 @@ async function scoreTeaching(lecture, { totalWords, usage, hasSpeech, rawArtifac
     intent: lecture.intent,
     dimensions: dims,
     strengths: (r.data.strengths || []).filter(s => typeof s === 'string').slice(0, 3).map(humanise),
-    improvements: (r.data.improvements || []).filter(s => typeof s === 'string').slice(0, 3).map(humanise),
+    // Next steps follow the median-rated dimensions (so they never repeat a point the median review did not support).
+    improvements: (() => { const fromDims = dims.filter(d => d.rating !== null && d.rating < 4 && d.improvement).sort((a, b) => a.rating - b.rating).map(d => d.improvement); return (fromDims.length ? fromDims : (r.data.improvements || []).filter(s => typeof s === 'string').map(humanise)).slice(0, 3); })(),
     reviewModel: r.model,
+    reviews: reviews.length,
+    // Criticisms dropped by the classroom-context check (kept for transparency and for the paper).
+    contextCheck: lecture.droppedGaps ? { dropped: lecture.droppedGaps.map(o => ({ time: o.time, quote: o.quote, note: o.note, why: o.contextVerdict })) } : null,
     caveat: 'This reflects the evidence in this one input, judged against a fixed rubric. It is a feedback aid, not a measure of a teacher\'s overall ability.'
   };
 }
@@ -1348,6 +1495,12 @@ function planRequest(fullModel, requestedCount, difficulty = 'Balanced', options
     return { ...fullModel, units, topics: fullModel.topics.filter(t => !excluded.has(t.name)), capacity: computeCapacity(units) };
   })();
   const cap = model.capacity.byDifficulty;
+  // Teaching style (PDI v2): each point prefers the question types that fit how it was taught. Older readings
+  // without style labels get them from the unit kinds. STYLE_GUIDED_PLANNING=off turns it off (ablation).
+  const styleGuided = options.styleGuided !== undefined ? Boolean(options.styleGuided) : process.env.STYLE_GUIDED_PLANNING !== 'off';
+  if (styleGuided && !fullModel.teachingStyle) { try { fullModel.teachingStyle = teachingStyle.buildProfile(fullModel); } catch (_) {} }
+  const styleOverride = teachingStyle.normaliseOverride(options.styleOverride);
+  const preferOf = (u) => (styleGuided ? teachingStyle.preferFor(u, styleOverride) : null);
 
   // Replacing one question: same difficulty, traced back to the teaching point it came from, with a
   // question type not used there yet; then other points of the same topic; then anywhere in the lecture.
@@ -1376,6 +1529,10 @@ function planRequest(fullModel, requestedCount, difficulty = 'Balanced', options
     const pick = ranked.slice(0, 1).map(p => ({ ...p, difficulty: p.angle.difficulty }));
     // Two reserves at most: a replacement should cost one question's worth of calls, not a quiz's.
     const spare = ranked.slice(1, 3).map(p => ({ ...p, difficulty: p.angle.difficulty }));
+    // Hard: a different form from the rejected attempt, and the form used least in the quiz.
+    hardForms.assignForms([...pick, ...spare], model, {
+      used: (r.usedPairs || []).map(x => x.form), avoid: r.form ? [{ unitId: null, form: r.form }] : [], isSamePoint: sameTeachingPoint
+    });
     const byDiffR = { easy: 0, medium: 0, hard: 0 };
     pick.forEach(p => { byDiffR[p.difficulty]++; });
     return {
@@ -1443,7 +1600,10 @@ function planRequest(fullModel, requestedCount, difficulty = 'Balanced', options
         let bestIdx = -1, bestScore = Infinity;
         remaining.forEach((p, i) => {
           if (!allowRepeatPoint && selected.some(s => sameTeachingPoint(s.unit, p.unit))) return;
-          const score = typeCount(p.angle.type) * 100 + p.rank * 10 + i * 0.01;
+          // Style preference: below variety (100 per repeat) but above the lecture's own angle order (10 per rank).
+          const prefer = preferOf(p.unit);
+          const styleBonus = prefer && prefer.includes(p.angle.type) ? 40 : 0;
+          const score = typeCount(p.angle.type) * 100 + p.rank * 10 - styleBonus + i * 0.01;
           if (score < bestScore) { bestScore = score; bestIdx = i; }
         });
         return bestIdx;
@@ -1459,6 +1619,9 @@ function planRequest(fullModel, requestedCount, difficulty = 'Balanced', options
       if (k) byTopic[topic] = (byTopic[topic] || 0) + k;
     }
   }
+  // Hard picks: each gets the way of being Hard that its content supports, varied across the quiz.
+  hardForms.assignForms(selected, model, { isSamePoint: sameTeachingPoint });
+  hardForms.assignForms(reserves, model, { used: selected.map(p => p.hardForm), isSamePoint: sameTeachingPoint });
   const deliverable = selected.length;
   const shortfall = n - deliverable;
   const reasons = [];
@@ -1514,12 +1677,22 @@ const ANGLE_TO_OPERATION = {
  * filled (a reader may cite 15:14 and 17:26 but skip the 16:23 block where the decisive trace happens), then cited
  * material. When too long, every block keeps an equal share (head-only truncation used to drop the end of a point).
  */
-function unitEvidenceText(model, unit, maxChars = 2400) {
+function unitEvidenceText(model, unit, maxChars = 2400, { neighbours = 0 } = {}) {
   if (!model || !unit) return '';
   const blocks = model.blocks || [];
   const idx = Object.fromEntries(blocks.map((b, i) => [b.id, i]));
   const cited = (unit.blocks || []).filter(id => idx[id] !== undefined);
   const speech = cited.filter(id => blocks[idx[id]].source === 'SPEECH').map(id => idx[id]).sort((a, b) => a - b);
+  // neighbours > 0 (example-taught points): also the classroom exchange just before and after the point (student answers, the
+  // teacher's follow-up), which is where in-class misconceptions and worked examples usually are.
+  if (neighbours > 0 && speech.length) {
+    for (let n = 1; n <= neighbours; n++) {
+      const before = speech[0] - n; const after = speech[speech.length - 1] + n;
+      if (before >= 0 && blocks[before].source === 'SPEECH') speech.unshift(before);
+      if (after < blocks.length && blocks[after].source === 'SPEECH') speech.push(after);
+    }
+    speech.sort((a, b) => a - b);
+  }
   const chosen = [];
   speech.forEach((pos, k) => {
     if (k > 0) {
@@ -1537,12 +1710,23 @@ function unitEvidenceText(model, unit, maxChars = 2400) {
   return parts.map(t => (t.length > share ? `${t.slice(0, share)}…` : t)).join('\n').slice(0, maxChars + parts.length);
 }
 
-function toTeachingUnits(model, plan) {
+function toTeachingUnits(model, plan, opts = {}) {
+  // Teaching style (PDI v2): the question writer is told how each point was taught (and the teacher's own example).
+  const styleGuided = opts.styleGuided !== undefined ? Boolean(opts.styleGuided) : process.env.STYLE_GUIDED_PLANNING !== 'off';
+  const styleOverride = teachingStyle.normaliseOverride(opts.styleOverride);
   const make = (p, i, isReserve) => {
     const u = p.unit;
     const a = p.angle;
-    const passage = unitEvidenceText(model, u, 2400);
+    // Examples often span the exchange around the point, so example-taught points also get the neighbouring block.
+    const exampleTaught = styleGuided && teachingStyle.unitMode(u, styleOverride) === 'EXAMPLE';
+    let passage = unitEvidenceText(model, u, exampleTaught ? 2800 : 2400, { neighbours: exampleTaught ? 1 : 0 });
     const tier = p.difficulty.charAt(0).toUpperCase() + p.difficulty.slice(1);
+    const form = tier === 'Hard' && p.hardForm ? p.hardForm : null;
+    const linked = form === 'link' && p.linkedUnitId ? model.units.find(x => x.id === p.linkedUnitId) : null;
+    if (linked) passage = `${passage}
+
+RELATED POINT TAUGHT IN THE SAME LECTURE (${linked.subtopic}): ${linked.statement}
+${unitEvidenceText(model, linked, 1200)}`;
     return {
       claimId: `${u.id}_${a.type}`,
       sequenceIndex: i + 1,
@@ -1563,7 +1747,12 @@ function toTeachingUnits(model, plan) {
       plannedOperation: ANGLE_TO_OPERATION[a.type] || 'EXPLAIN',
       questionAngle: a.type,
       angleFocus: a.focus,
+      hardForm: form,
+      hardFormRecipe: form ? hardForms.HARD_FORMS[form].recipe : null,
+      linkedUnitId: linked ? linked.id : null,
       lectureMisconceptions: u.misconceptions || [],
+      teachingStyleNote: styleGuided ? teachingStyle.noteFor(u, model.teachingStyle, styleOverride) : null,
+      teachingMode: styleGuided ? teachingStyle.unitMode(u, styleOverride) : null,
       lectureUnitId: u.id,
       lectureTime: u.time,
       lectureSlides: u.slides,
@@ -1583,8 +1772,10 @@ function toClientPayload(model) {
     ...rest,
     units: model.units.map(u => ({
       id: u.id, topic: u.topic, subtopic: u.subtopic, kind: u.kind, depth: u.depth, source: u.source,
-      time: u.time, slides: u.slides, statement: u.statement, quote: u.quote, angles: u.angles
-    }))
+      time: u.time, slides: u.slides, statement: u.statement, quote: u.quote, angles: u.angles, delivery: u.delivery || null
+    })),
+    teachingStyleText: model.teachingStyle ? teachingStyle.describeProfile(model.teachingStyle) : null,
+    hardForms: hardForms.profile(model, { isSamePoint: sameTeachingPoint })
   };
 }
 
@@ -1637,5 +1828,7 @@ module.exports = {
   getById,
   // exported for tests
   unitEvidenceText,
-  _internal: { spokenCodeHits, buildBlocks, buildWindows, quoteSupported, sanitiseAngles, computeCapacity, allocate, buildSegments, consolidateUnits, callJson }
+  teachingStyle,
+  hardForms,
+  _internal: { spokenCodeHits, buildBlocks, buildWindows, quoteSupported, sanitiseAngles, computeCapacity, allocate, buildSegments, consolidateUnits, callJson, evalPrompt, EVAL_SYSTEM, checkGapsInContext, scoreTeaching, pointsIntoContext }
 };

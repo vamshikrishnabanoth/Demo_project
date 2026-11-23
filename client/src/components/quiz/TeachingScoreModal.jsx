@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { X, CheckCircle2, ArrowRight, Quote, ChevronDown, ChevronUp, HelpCircle, Loader2 } from 'lucide-react';
+import { X, CheckCircle2, ArrowRight, Quote, ChevronDown, ChevronUp, HelpCircle, Loader2, FlaskConical } from 'lucide-react';
+import { SHOW_TEACHING_RATINGS } from '../../config/teachingFeedback';
 
 /**
  * Teaching score, readable in ~10 seconds:
@@ -41,7 +42,7 @@ export default function TeachingScoreModal({ isOpen, onClose, teaching = null, m
             <div className="bg-white w-full max-w-xl max-h-[90vh] overflow-y-auto rounded-3xl shadow-2xl" onClick={(e) => e.stopPropagation()}>
                 <div className="flex items-start justify-between gap-3 px-5 pt-5">
                     <div className="min-w-0">
-                        <h2 id="ts-title" className="text-base font-black text-slate-900">Teaching score</h2>
+                        <h2 id="ts-title" className="text-base font-black text-slate-900">{SHOW_TEACHING_RATINGS ? 'Teaching score' : 'Teaching feedback'}</h2>
                         <p className="text-xs text-slate-500 truncate">{model?.title || 'This lecture'}</p>
                     </div>
                     <button type="button" onClick={onClose} className="p-2 rounded-xl hover:bg-slate-100 cursor-pointer" aria-label="Close"><X size={18} /></button>
@@ -50,12 +51,18 @@ export default function TeachingScoreModal({ isOpen, onClose, teaching = null, m
                 <div className="p-5 space-y-4">
                     {!t || t.pending ? (
                         <p className="text-sm text-slate-600 flex items-center gap-2">
-                            {t && t.pending ? <><Loader2 size={16} className="animate-spin" /> Preparing the teaching review…</> : <><HelpCircle size={16} /> No teaching score for this input.</>}
+                            {t && t.pending ? <><Loader2 size={16} className="animate-spin" /> Preparing the teaching review…</> : <><HelpCircle size={16} /> No teaching feedback for this input.</>}
                         </p>
                     ) : (
                         <>
-                            {/* Score + verdict */}
-                            <div className="flex items-center gap-4">
+                            {/* Score + verdict (ratings hidden until validated: written feedback only) */}
+                            {!SHOW_TEACHING_RATINGS && (
+                                <p className="text-[11px] text-slate-600 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 flex gap-2">
+                                    <FlaskConical size={14} className="shrink-0 mt-0.5 text-slate-500" />
+                                    <span>Experimental: observations an AI made from this recording, with the moments they come from. It is not a rating of your teaching. Check any point against the quoted moment.{t.intent ? ` Lecture aim as understood: ${t.intent}` : ''}</span>
+                                </p>
+                            )}
+                            {SHOW_TEACHING_RATINGS && <div className="flex items-center gap-4">
                                 <span className="relative w-20 h-20 shrink-0">
                                     <svg viewBox="0 0 80 80" className="w-20 h-20 -rotate-90" aria-hidden="true">
                                         <circle cx="40" cy="40" r="34" fill="none" stroke="#f1f5f9" strokeWidth="8" />
@@ -71,22 +78,22 @@ export default function TeachingScoreModal({ isOpen, onClose, teaching = null, m
                                     <span className="inline-block text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-slate-100 text-slate-600" title={t.confidenceReason}>
                                         {String(t.confidence || 'low').toLowerCase()} confidence
                                     </span>
-                                    {t.intent && <p className="text-xs text-slate-600 line-clamp-2">{t.intent}</p>}
+                                    <p className="text-[11px] text-slate-500">AI estimate from this recording; tap an area for the quoted moments.</p>
                                 </div>
-                            </div>
+                            </div>}
 
                             {/* Keep doing / Try next */}
                             <div className="grid sm:grid-cols-2 gap-3">
                                 <div className="rounded-2xl bg-emerald-50 border border-emerald-100 p-3">
                                     <p className="text-[11px] font-black uppercase tracking-wider text-emerald-800 mb-1.5">Keep doing</p>
                                     <ul className="space-y-1.5">
-                                        {(t.strengths || []).slice(0, 3).map((s, i) => <li key={i} className="text-xs text-slate-800 flex gap-1.5"><CheckCircle2 size={13} className="text-emerald-600 shrink-0 mt-0.5" /><span className="line-clamp-3">{s}</span></li>)}
+                                        {(t.strengths || []).slice(0, 2).map((s, i) => <li key={i} className="text-xs text-slate-800 flex gap-1.5"><CheckCircle2 size={13} className="text-emerald-600 shrink-0 mt-0.5" /><span className="line-clamp-2">{s}</span></li>)}
                                     </ul>
                                 </div>
                                 <div className="rounded-2xl bg-amber-50 border border-amber-100 p-3">
                                     <p className="text-[11px] font-black uppercase tracking-wider text-amber-800 mb-1.5">Try next class</p>
                                     <ul className="space-y-1.5">
-                                        {(t.improvements || []).slice(0, 3).map((s, i) => <li key={i} className="text-xs text-slate-800 flex gap-1.5"><ArrowRight size={13} className="text-amber-600 shrink-0 mt-0.5" /><span className="line-clamp-3">{s}</span></li>)}
+                                        {(t.improvements || []).slice(0, 2).map((s, i) => <li key={i} className="text-xs text-slate-800 flex gap-1.5"><ArrowRight size={13} className="text-amber-600 shrink-0 mt-0.5" /><span className="line-clamp-2">{s}</span></li>)}
                                     </ul>
                                 </div>
                             </div>
@@ -98,15 +105,15 @@ export default function TeachingScoreModal({ isOpen, onClose, teaching = null, m
                                         <button type="button" onClick={() => setOpen(open === d.key ? null : d.key)} className="w-full flex items-center justify-between gap-3 px-3 py-2.5 text-left cursor-pointer hover:bg-slate-50">
                                             <span className="text-xs font-bold text-slate-800">{d.label}</span>
                                             <span className="flex items-center gap-2 shrink-0">
-                                                <Dots rating={d.rating} />
-                                                <span className="text-[11px] font-bold text-slate-500 w-20 text-right">{d.rating ? WORD[d.rating] : 'Not judged'}</span>
+                                                {SHOW_TEACHING_RATINGS ? <><Dots rating={d.rating} />
+                                                <span className="text-[11px] font-bold text-slate-500 w-20 text-right">{d.rating ? WORD[d.rating] : 'Not judged'}</span></> : <span className="text-[11px] font-bold text-slate-500">{d.rating ? 'Details' : 'Not enough evidence'}</span>}
                                                 {open === d.key ? <ChevronUp size={14} className="text-slate-400" /> : <ChevronDown size={14} className="text-slate-400" />}
                                             </span>
                                         </button>
                                         {open === d.key && (
                                             <div className="px-3 pb-3 space-y-1.5">
-                                                <p className="text-xs text-slate-700">{d.finding}</p>
-                                                {(d.evidence || []).slice(0, 2).map((e, i) => (
+                                                <p className="text-xs text-slate-700 line-clamp-2">{d.finding}</p>
+                                                {(d.evidence || []).slice(0, 1).map((e, i) => (
                                                     <p key={i} className="text-[11px] text-slate-500 flex gap-1.5"><Quote size={11} className="shrink-0 mt-0.5" /><span>{e.where && <span className="font-mono font-bold text-slate-600 mr-1">{e.where}</span>}“{e.quote}”</span></p>
                                                 ))}
                                                 {d.improvement && <p className="text-[11px] text-amber-900 bg-amber-50 rounded-lg px-2 py-1 flex gap-1.5"><ArrowRight size={11} className="shrink-0 mt-0.5" />{d.improvement}</p>}
@@ -116,7 +123,7 @@ export default function TeachingScoreModal({ isOpen, onClose, teaching = null, m
                                 ))}
                             </div>
 
-                            <button type="button" onClick={() => setShowHow(v => !v)} className="text-[11px] font-bold text-slate-500 underline cursor-pointer">How this score works</button>
+                            <button type="button" onClick={() => setShowHow(v => !v)} className="text-[11px] font-bold text-slate-500 underline cursor-pointer">{SHOW_TEACHING_RATINGS ? 'How this score works' : 'How this feedback is made'}</button>
                             {showHow && <p className="text-[11px] text-slate-500 leading-relaxed">{t.method} {t.confidenceReason ? `Confidence: ${t.confidenceReason}.` : ''} {t.caveat}</p>}
                         </>
                     )}

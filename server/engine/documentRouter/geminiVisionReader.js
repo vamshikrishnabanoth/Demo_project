@@ -110,8 +110,50 @@ async function readWithGemini(filePath, originalName = '') {
     }
   }
 
-  const models = (process.env.VISION_READER_MODELS || 'gemini-3.5-flash,gemini-3.6-flash,gemini-3.5-flash-lite,gemini-3.1-flash-lite')
+  const models = (process.env.VISION_READER_MODELS || 'gemini-3.5-flash-lite,gemini-3.1-flash-lite')
     .split(',').map(s => s.trim()).filter(Boolean);
+
+  // Long scans (e.g. 60+ handwritten pages) are read as parallel page ranges of the same uploaded file instead of
+  // one huge request: a single request took 10+ minutes and could time out on every model in turn.
+  let pageCount = 0;
+  if (mimeType === 'application/pdf') {
+    try { pageCount = (await withTimeout(require('pdf-parse')(buf), 30000, 'pdf-parse timeout')).numpages || 0; } catch (_) { pageCount = 0; }
+  }
+  const RANGE = Math.max(4, parseInt(process.env.VISION_PAGES_PER_CALL, 10) || 10);
+  if (pageCount > RANGE + 2) {
+    const ranges = [];
+    for (let a = 1; a <= pageCount; a += RANGE) ranges.push([a, Math.min(pageCount, a + RANGE - 1)]);
+    const out = new Array(ranges.length).fill('');
+    const t0 = Date.now();
+    let next = 0;
+    const readRange = async ([a, b]) => {
+      let p = `${PROMPT}\n\nOnly transcribe pages ${a} to ${b} of this PDF (counting from the first page of the file). Begin each page with "[Page n]".`;
+      for (const model of models) {
+        try {
+          const m = genAI.getGenerativeModel({ model, generationConfig: { temperature: 0, maxOutputTokens: 30000 } });
+          const r = await withTimeout(m.generateContent([filePart, { text: p }]), 150000, 'vision range timeout');
+          const t = String(r.response.text() || '').trim();
+          if (t.length >= 20) return t;
+        } catch (e) {
+          const msg = String(e.message || '');
+          if (/RECITATION/i.test(msg)) p = `${NOTES_PROMPT}\n\nOnly cover pages ${a} to ${b} of this PDF. Begin each page with "[Page n]".`;
+          console.warn(`[VisionReader] ${model} failed on pages ${a}-${b} of ${originalName}: ${msg.slice(0, 120)}`);
+        }
+      }
+      return '';
+    };
+    const workers = Array.from({ length: Math.min(4, ranges.length) }, async () => {
+      while (next < ranges.length) { const i = next++; out[i] = await readRange(ranges[i]); }
+    });
+    await Promise.all(workers);
+    if (uploaded) { try { await uploaded.fm.deleteFile(uploaded.name); } catch (_) {} }
+    const missing = ranges.filter((_, i) => !out[i]).map(([a, b]) => `${a}-${b}`);
+    const joined = out.filter(Boolean).join('\n\n').trim();
+    console.log(`[VisionReader] ${originalName}: ${pageCount} pages in ${ranges.length} parallel ranges, ${joined.length} chars in ${((Date.now() - t0) / 1000).toFixed(1)}s${missing.length ? ` (pages not read: ${missing.join(', ')})` : ''}`);
+    if (joined.length >= 20 && !missing.length) writeCache(key, joined);
+    return joined.length >= 20 ? joined : '';
+  }
+
   let text = '';
   let prompt = PROMPT;
   for (const model of models) {

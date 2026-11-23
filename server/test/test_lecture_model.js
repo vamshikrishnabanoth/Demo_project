@@ -262,15 +262,32 @@ async function gateTests() {
       assert.ok(r2.reasons.length > 0 && twoRight.qualityGate.status === 'REJECTED');
     });
     lm._internal.callJson = async () => ({ model: 'stub', data: { results: [
-      { q: 1, answer: 'A', alsoDefensible: [], grounded: true, correct: true, distractorsValid: true, plausible: true, aligned: true, complete: true, consistent: true, clear: true, fair: true, explanationOk: true, steps: 1, problems: [] },
+      { q: 1, answer: 'A', alsoDefensible: [], grounded: true, correct: true, distractorsValid: true, plausible: true, aligned: true, complete: true, consistent: true, clear: true, fair: true, explanationOk: true, steps: 1, level: 'recall', problems: [] },
+      { q: 3, answer: 'A', alsoDefensible: [], grounded: true, correct: true, distractorsValid: true, plausible: true, aligned: true, complete: true, consistent: true, clear: true, fair: true, explanationOk: true, steps: 1, level: 'apply', problems: [] },
       { q: 2, answer: 'A', alsoDefensible: [], grounded: true, correct: true, distractorsValid: true, plausible: true, aligned: true, complete: true, consistent: false, clear: true, fair: true, explanationOk: true, steps: 3, problems: ['state after index 2 ignores indices 0 and 1'] }
     ], duplicates: [] } });
     const oneStepHard = mk('Input 1, 1, 1. What is the frequency array?', ['[0, 3, 0]', '[3, 0, 0]', '[1, 1, 1]', '[0, 0, 3]'], '[0, 3, 0]', { difficulty: 'Hard' });
     const badState = mk('Input [2, 0, 2]; auxiliary []; processing index 2. What happens?', ['a', 'b', 'c', 'd'], 'a', { difficulty: 'Hard' });
-    const cal = await finalQualityGate([oneStepHard, badState], {});
-    test('A one-step question labelled Hard is relabelled Medium; an inconsistent state is rejected', () => {
-      assert.ok(cal.accepted.includes(oneStepHard) && oneStepHard.difficulty === 'Medium' && oneStepHard.qualityGate.relabeled);
+    const appliedHard = mk('Input 2, 0, 2 with the counting rule taught. What is the frequency array?', ['[1, 0, 2]', '[2, 0, 1]', '[1, 1, 1]', '[0, 2, 1]'], '[1, 0, 2]', { difficulty: 'Hard' });
+    const cal = await finalQualityGate([oneStepHard, badState, appliedHard], {});
+    test('Hard is lecture-relative: a recall question labelled Hard is rejected for depth; an applied one-step question stays Hard (steps recorded); an inconsistent state is rejected', () => {
+      assert.ok(cal.rejected.some(r => r.question === oneStepHard && r.criteria.includes('DEPTH')));
+      assert.strictEqual(oneStepHard.difficulty, 'Hard');
+      assert.ok(cal.accepted.includes(appliedHard) && appliedHard.difficulty === 'Hard' && appliedHard.measuredSteps === 1);
       assert.ok(cal.rejected.some(r => r.question === badState && r.criteria.includes('COMPLETENESS')));
+    });
+    const oneStepHard2 = mk('Input 1, 1, 1. What is the frequency array?', ['[0, 3, 0]', '[3, 0, 0]', '[1, 1, 1]', '[0, 0, 3]'], '[0, 3, 0]', { difficulty: 'Hard' });
+    const cal2 = await finalQualityGate([oneStepHard2], { depth: 'relabel' });
+    test('Replacement pass: a recall "Hard" replacement keeps its slot, relabelled Medium', () => {
+      assert.ok(cal2.accepted.includes(oneStepHard2) && oneStepHard2.difficulty === 'Medium' && oneStepHard2.qualityGate.relabeled);
+    });
+    lm._internal.callJson = async () => ({ model: 'stub', data: { results: [
+      { q: 1, answer: 'A', alsoDefensible: [], grounded: true, correct: true, distractorsValid: true, plausible: true, aligned: true, complete: true, consistent: true, clear: true, fair: true, explanationOk: true, steps: 1, level: 'recall', trivial: true, problems: [] }
+    ], duplicates: [] } });
+    const trivia = mk('What is the default dropout rate in the positional encoding constructor?', ['0.1', '0.2', '0.5', '0.0'], '0.1');
+    const tv = await finalQualityGate([trivia], {});
+    test('An Easy question on an incidental detail (e.g. a default value) is rejected for depth', () => {
+      assert.ok(tv.rejected.some(r => r.question === trivia && r.criteria.includes('DEPTH')));
     });
     lm._internal.callJson = async () => { throw new Error('provider down'); };
     const down = await finalQualityGate([mk('Which is a valid statement?', ['a', 'b', 'c', 'd'], 'a')], {});
@@ -283,7 +300,244 @@ async function gateTests() {
   }
 }
 
-asyncTests().then(gateTests).then(() => {
+// ── Teaching style (PDI v2) ───────────────────────────────────────────────────
+const ts = lm.teachingStyle;
+function styleModel() {
+  const ang = (types) => types.map(t => ({ type: t, difficulty: 'medium', focus: `${t} focus` }));
+  const units = [
+    { id: 'U01', topic: 'Lists', subtopic: 'what a list is', kind: 'DEFINITION', depth: 'EXPLAINED', importance: 'CORE', blocks: ['B01'], statement: 'A list holds items.', angles: ang(['concept', 'output']), misconceptions: [] },
+    { id: 'U02', topic: 'Lists', subtopic: 'append in a loop', kind: 'CODE', depth: 'DEMONSTRATED', importance: 'CORE', blocks: ['B03'], statement: 'append adds to the end.', angles: ang(['recall', 'output']), misconceptions: [], hasCode: true, teacherExample: 'appending the marks of five students in a for loop' },
+    { id: 'U03', topic: 'Lists', subtopic: 'slicing', kind: 'DEFINITION', depth: 'EXPLAINED', importance: 'CORE', blocks: ['B05'], statement: 'Slicing returns a new list.', angles: ang(['recall', 'concept']), misconceptions: [] }
+  ];
+  const segments = [
+    { title: 'Lists', start: 0, end: 600, delivery: 'CONCEPTUAL', unitIds: ['U01', 'U03'] },
+    { title: 'Notebook demo', start: 600, end: 1000, delivery: 'CODE', unitIds: ['U02'] }
+  ];
+  return { ok: true, units, segments, topics: [{ name: 'Lists', share: 100 }], capacity: computeCapacity(units),
+    blocks: [{ id: 'B01', source: 'SPEECH', text: 'so a list holds items right? any questions' }, { id: 'B03', source: 'SPEECH', text: 'run this cell and append each mark' }, { id: 'B05', source: 'SPEECH', text: 'slicing gives a new list remember this for the exam' }] };
+}
+
+test('Teaching style: each part of the lecture is labelled, and the mix follows teaching time', () => {
+  const m = styleModel();
+  const p = ts.buildProfile(m);
+  assert.strictEqual(p.basis, 'time');
+  assert.strictEqual(p.mix.CONCEPTUAL, 60); assert.strictEqual(p.mix.CODE, 40);
+  assert.strictEqual(p.dominant, 'CONCEPTUAL');
+  assert.strictEqual(m.units[1].delivery, 'CODE');
+  assert.strictEqual(p.slideUse.label, 'NO_MATERIAL');
+  assert.ok(/Concept explanation 60% · Code walkthrough 40% · Taught without slides/.test(ts.describeProfile(p)));
+});
+
+test('Teaching style: older readings without labels fall back to how each point was taught', () => {
+  const m = styleModel(); m.segments.forEach(s => { delete s.delivery; });
+  const p = ts.buildProfile(m);
+  assert.strictEqual(m.units[1].delivery, 'CODE'); assert.strictEqual(m.units[1].deliverySource, 'kind');
+  assert.strictEqual(p.basis, 'units');
+});
+
+test('Slide use: reading the slides aloud, using them as an outline, and explaining beyond them are told apart', () => {
+  const slide = 'Gradient descent updates each weight by subtracting the learning rate times the gradient of the loss. A learning rate that is too large makes the loss diverge, while a learning rate that is too small makes training very slow. Stochastic gradient descent uses one sample per update and mini batch gradient descent uses a small batch of samples per update.';
+  const mat = { id: 'D01', source: 'MATERIAL', text: slide };
+  const reads = ts.slideReliance([{ id: 'B01', source: 'SPEECH', text: `okay so ${slide} okay` }, mat]);
+  const beyond = ts.slideReliance([{ id: 'B01', source: 'SPEECH', text: 'imagine you are walking down a hill in fog and you feel the ground with your feet and take a small step where it slopes down, if you jump too far you overshoot the valley and climb the other side' }, mat]);
+  assert.strictEqual(reads.label, 'READS', JSON.stringify(reads));
+  assert.strictEqual(beyond.label, 'BEYOND', JSON.stringify(beyond));
+  assert.strictEqual(ts.slideReliance([{ id: 'B01', source: 'SPEECH', text: 'hello class' }]).label, 'NO_MATERIAL');
+});
+
+test('Slide use from the reading: points taught with the slides vs only in speech', () => {
+  const m = styleModel();
+  m.blocks.push({ id: 'D01', source: 'MATERIAL', text: 'Lists. '.repeat(60) });
+  m.units.forEach(u => { u.source = 'SPOKEN'; });
+  assert.strictEqual(ts.buildProfile(m).slideUse.label, 'BEYOND');
+  m.units.forEach(u => { u.source = 'BOTH'; });
+  const p = ts.buildProfile(m);
+  assert.strictEqual(p.slideUse.label, 'READS'); assert.strictEqual(p.slideUse.basis, 'reading');
+});
+
+test('Planning prefers the question type that fits how each point was taught (code part → output, theory part → concept)', () => {
+  const m = styleModel(); m.teachingStyle = ts.buildProfile(m);
+  const plan = lm.planRequest(m, 2, 'Medium', {});
+  const byUnit = Object.fromEntries(plan.selected.map(s => [s.unit.id, s.angle.type]));
+  assert.strictEqual(byUnit.U02, 'output', JSON.stringify(byUnit));
+  assert.strictEqual(byUnit.U01, 'concept', JSON.stringify(byUnit));
+  const off = lm.planRequest(styleModel(), 2, 'Medium', { styleGuided: false });
+  assert.ok(off.selected.some(s => s.unit.id === 'U02' && s.angle.type === 'recall'), 'without style the lecture\'s own angle order is used');
+});
+
+test('A teacher correction replaces the detected style, and the writer gets the teacher\'s own example', () => {
+  const m = styleModel(); m.teachingStyle = ts.buildProfile(m);
+  const override = ts.normaliseOverride({ modes: ['revision'], slideUse: 'beyond' });
+  assert.deepStrictEqual(override, { modes: ['REVISION'], slideUse: 'BEYOND' });
+  assert.strictEqual(ts.unitMode(m.units[1], override), 'REVISION');
+  const plan = lm.planRequest(m, 3, 'Medium', { styleOverride: override });
+  const units = lm.toTeachingUnits(m, plan, { styleOverride: override });
+  const code = units.primary.find(t => t.lectureUnitId === 'U02');
+  assert.ok(/quick revision/.test(code.teachingStyleNote) && /beyond the slides/.test(code.teachingStyleNote));
+  assert.ok(/marks of five students/.test(code.teachingStyleNote));
+  assert.strictEqual(ts.normaliseOverride({ modes: ['nonsense'] }), null);
+});
+
+async function blindTests() {
+  const { blindAnswerCheck, blindRejections, _buildPrompt } = require('../engine/validators/blindAnswerCheck');
+  const router = require('../engine/adapter/llmRouter');
+  const model = { units: [{ id: 'U01', subtopic: 'Paging', blocks: [] }] };
+  const original = lm.unitEvidenceText;
+  lm.unitEvidenceText = (m, u) => (u.id === 'U01' ? 'Page size is 4 KB; 8 MB needs 2048 pages.' : '');
+  const mk = (stem, options, key) => ({ question: stem, options, correctAnswer: key, lectureSource: { unitId: 'U01' } });
+  const wrongKey = mk('8 MB with 4 KB pages needs how many pages?', ['512', '2048', '4096', '1024'], '1024');
+  const twoRight = mk('Which is a special number value?', ['undefined', 'Infinity', 'null', 'NaN'], 'Infinity');
+  const fine = mk('What is the page size?', ['1 KB', '2 KB', '4 KB', '8 KB'], '4 KB');
+  const reveals = mk('It prints 3. What does it print?', ['1', '2', '3', '4'], '3');
+  const realComplete = router.complete;
+  let prompts = [];
+  try {
+    router.complete = async ({ prompt, noGeminiFallback }) => {
+      prompts.push({ prompt, noGeminiFallback });
+      return JSON.stringify({ answers: [
+        { q: 1, answer: 'B', alsoDefensible: [] }, { q: 2, answer: 'B', alsoDefensible: ['D'], note: 'NaN is also a number' },
+        { q: 3, answer: 'C', alsoDefensible: [] }, { q: 4, answer: 'C', alsoDefensible: [], stemRevealsAnswer: true }
+      ] });
+    };
+    const qs = [wrongKey, twoRight, fine, reveals];
+    const s = await blindAnswerCheck(qs, { lectureModel: model, batchSize: 4, passageChars: 1000 });
+    const plain = _buildPrompt([fine], { lm: model, passageChars: 0, detectDuplicates: false });
+    test('Blind check (lecture path) shows the teacher\'s passage, never falls back to Gemini, and finds a wrong key and a second answer', () => {
+      assert.ok(s.checked);
+      assert.strictEqual(prompts.length, 1);
+      assert.ok(/LECTURE PASSAGE[^\n]*2048 pages/.test(prompts[0].prompt));
+      assert.ok(!/LECTURE PASSAGE/.test(plain), 'no passage by default');
+      assert.ok(!/duplicates/.test(prompts[0].prompt), 'no near-duplicate request on the lecture path');
+      assert.strictEqual(prompts[0].noGeminiFallback, true);
+      assert.strictEqual(wrongKey.blindCheck.status, 'DISAGREES');
+      assert.strictEqual(twoRight.blindCheck.status, 'POSSIBLY_AMBIGUOUS');
+      assert.strictEqual(fine.blindCheck.status, 'AGREES');
+    });
+    test('Blind rejections: wrong key and two answers are rejected for refill; stem-reveals and agreed questions are kept', () => {
+      wrongKey.independentCheck = { status: 'AGREES', model: 'gate' }; // the parallel gate writes its own field
+      const split = blindRejections(qs);
+      assert.deepStrictEqual(split.keep, [fine, reveals]);
+      assert.deepStrictEqual(split.rejected.map(r => r.criteria[0]), ['TECHNICAL_CORRECTNESS', 'SINGLE_ANSWER']);
+      assert.strictEqual(wrongKey.qualityGate.status, 'REJECTED');
+    });
+    router.complete = async () => { throw new Error('rate limited'); };
+    const busy = [mk('Q?', ['a', 'b', 'c', 'd'], 'a')];
+    const s2 = await blindAnswerCheck(busy, { lectureModel: model });
+    test('Blind check unavailable: questions are NOT_CHECKED and the gate verdict stands', () => {
+      assert.strictEqual(s2.checked, false);
+      assert.strictEqual(busy[0].blindCheck.status, 'NOT_CHECKED');
+      assert.strictEqual(blindRejections(busy).keep.length, 1);
+    });
+    const { lectureDiscrepancies } = require('../engine/validators/blindAnswerCheck');
+    const expose = mk('What does EXPOSE 80 do?', ['Needs -p to publish', 'Makes port 80 available to the host', 'Firewall rule', 'Runs on 80'], 'Makes port 80 available to the host');
+    expose.lectureSource = { unitId: 'U01', subtopic: 'Dockerfile EXPOSE', time: '12:30' };
+    expose.blindCheck = { status: 'DISAGREES', blindAnswer: 'Needs -p to publish', working: 'EXPOSE only documents' };
+    const typo = mk('2 + 8 = ?', ['11', '10', '12', '9'], '11'); typo.blindCheck = { status: 'DISAGREES', blindAnswer: '10' };
+    router.complete = async () => JSON.stringify({ answers: [{ q: 1, answer: 'B', lectureQuote: 'Page size is 4 KB', convention: false }] });
+    const flags = await lectureDiscrepancies([expose, typo], model);
+    router.complete = async () => JSON.stringify({ answers: [{ q: 1, answer: 'B', lectureQuote: 'Page size is 4 KB', convention: true }] });
+    const hedgedFlags = await lectureDiscrepancies([expose], model);
+    router.complete = async () => JSON.stringify({ answers: [{ q: 1, answer: 'B', lectureQuote: 'the teacher said ports are published', convention: false }] });
+    const unquotedFlags = await lectureDiscrepancies([expose], model);
+    test('Lecture discrepancy needs proof: no flag when the answer hinges on an unstated convention, or the quoted lecture words are not in the lecture', () => {
+      assert.strictEqual(hedgedFlags.length, 0);
+      assert.strictEqual(unquotedFlags.length, 0);
+      assert.strictEqual(flags[0].lectureQuote, 'Page size is 4 KB');
+    });
+    test('Lecture discrepancy: a disputed key that matches what the lecture says is flagged for the teacher; a plain wrong key is not', () => {
+      assert.strictEqual(flags.length, 1);
+      assert.strictEqual(flags[0].subtopic, 'Dockerfile EXPOSE');
+      assert.strictEqual(flags[0].standardAnswer, 'Needs -p to publish');
+    });
+    const premiseQ = mk('What does autoregressive mean for an encoder-only model?', ['All at once', 'Twice', 'One token after another', 'Never'], 'One token after another');
+    router.complete = async () => JSON.stringify({ answers: [{ q: 1, answer: 'C', alsoDefensible: [], falsePremise: 'an encoder-only model generating autoregressively', correction: 'autoregressive generation is done by decoder-only models' }] });
+    await blindAnswerCheck([premiseQ], { lectureModel: model });
+    test('False premise: a question with a right key but a false assumption is rejected', () => {
+      assert.strictEqual(premiseQ.blindCheck.status, 'FALSE_PREMISE');
+      const sp = blindRejections([premiseQ]);
+      assert.strictEqual(sp.rejected.length, 1);
+      assert.ok(/assumes something false/.test(sp.rejected[0].reasons[0]));
+    });
+    test('Blind check prompt without a lecture model keeps the near-duplicate request (legacy path)', () => {
+      assert.ok(/duplicates/.test(_buildPrompt([fine], { lm: null, detectDuplicates: true })));
+    });
+  } finally {
+    router.complete = realComplete;
+    lm.unitEvidenceText = original;
+  }
+}
+
+// ── Hard forms: many ways to be Hard, matched to what was taught ──────────────
+{
+  const hf = require('../engine/intelligence/hardForms');
+  const U = (id, kind, extra = {}) => ({ id, topic: 'T', subtopic: `point ${id}`, statement: `statement ${id}`, kind, depth: 'EXPLAINED', importance: 'CORE',
+    angles: [{ type: 'scenario', difficulty: 'hard', focus: 'x' }], ...extra });
+  const units = [
+    U('A', 'CODE', { hasCode: true, depth: 'DEMONSTRATED', angles: [{ type: 'trace', difficulty: 'hard', focus: 'x' }] }),
+    U('B', 'MECHANISM'), U('C', 'COMPARISON'), U('D', 'CALCULATION', { hasFormula: true }),
+    U('E', 'EDGE_CASE', { angles: [{ type: 'edge_case', difficulty: 'hard', focus: 'x' }] }),
+    U('F', 'APPLICATION'), U('G', 'MECHANISM', { topic: 'Other' }), U('H', 'MECHANISM', { depth: 'MENTIONED' })
+  ];
+  const model = { units };
+  test('Hard forms follow the content: code -> trace first, formula -> calculation, comparison -> choose under constraints, edge case -> boundary', () => {
+    assert.strictEqual(hf.formsFor(units[0], model)[0], 'trace');
+    assert.ok(hf.formsFor(units[3], model).slice(0, 2).includes('calculate_decide'));
+    assert.strictEqual(hf.formsFor(units[2], model)[0], 'choose_constraints');
+    assert.strictEqual(hf.formsFor(units[4], model)[0], 'boundary');
+    assert.strictEqual(hf.formsFor(units[1], model)[0], 'predict_change');
+  });
+  test('Hard forms: a mentioned point has none; "connect two points" is offered only when a related point exists, never as the only way', () => {
+    assert.deepStrictEqual(hf.formsFor(units[7], model), []);
+    assert.ok(!hf.formsFor(units[6], model).includes('link'), 'no other explained point in its topic');
+    const b = hf.formsFor(units[1], model);
+    assert.ok(b.includes('link') && b[0] !== 'link');
+    assert.ok(hf.formsFor(units[1], model).length >= 3);
+  });
+  test('Hard forms: a worked-solution or work-backwards form needs a demonstration, code or a formula', () => {
+    assert.ok(!hf.formsFor(U('X', 'EXAMPLE'), model).includes('spot_flaw'));
+    assert.ok(hf.formsFor(U('Y', 'EXAMPLE', { depth: 'DEMONSTRATED' }), model).includes('spot_flaw'));
+  });
+  test('Hard forms are varied across a quiz, and a replacement avoids the rejected form', () => {
+    const picks = [units[1], units[5], units[2], units[4]].map(u => ({ unit: u, difficulty: 'hard' }));
+    hf.assignForms(picks, model);
+    assert.ok(new Set(picks.map(p => p.hardForm)).size >= 3, JSON.stringify(picks.map(p => p.hardForm)));
+    const again = [{ unit: units[1], difficulty: 'hard' }];
+    hf.assignForms(again, model, { avoid: [{ unitId: null, form: 'predict_change' }] });
+    assert.ok(again[0].hardForm && again[0].hardForm !== 'predict_change');
+  });
+  test('Hard forms reach the writer: the target carries the recipe, and "connect two points" carries the related passage', () => {
+    const plan = { selected: [{ unit: units[1], angle: units[1].angles[0], difficulty: 'hard', hardForm: 'link', linkedUnitId: 'C' }], reserves: [] };
+    const t = lm.toTeachingUnits({ ...model, blocks: [] }, plan, { styleGuided: false }).primary[0];
+    assert.strictEqual(t.hardForm, 'link');
+    assert.ok(/RELATED POINT/.test(t.hardFormRecipe));
+    assert.ok(t.transcriptExcerpt.includes('RELATED POINT TAUGHT IN THE SAME LECTURE (point C)'));
+    const target = planner._planFromLectureModel([t], 'Hard', 1, {}).assessmentTargets[0];
+    assert.strictEqual(target.hardForm, 'link');
+    assert.ok(/RELATED POINT/.test(target.hardFormRecipe));
+  });
+}
+
+test('Teaching review context check: a criticism is dropped only when the verdict points inside the shown class context', () => {
+  const { pointsIntoContext } = lm._internal;
+  const ctx = ['[1:04:56] a', '[1:06:06] b', '[1:07:10] c'].join(String.fromCharCode(10));
+  assert.ok(pointsIntoContext('1:06:06', ctx, [3896, 4157]));
+  assert.ok(pointsIntoContext('106:06', ctx, [3896, 4157]), 'minutes-only form of the same time');
+  assert.ok(pointsIntoContext('66:30', ctx, [3896, 4157]), 'a time inside the window');
+  assert.ok(!pointsIntoContext('20:00', ctx, [3896, 4157]));
+  assert.ok(!pointsIntoContext('later', ctx, [3896, 4157]));
+});
+
+test('Gate: an option that labels itself as correct or standard is rejected as a giveaway', () => {
+  const { deterministicProblems } = require('../engine/validators/finalQualityGate');
+  const q = { question: 'find(1) returns 3. What is the most likely cause of this result?', options: ['Reversed parent assignment', 'Re-indexing after union', 'Merging all sets', 'Attaching the second root to the first (correct rank-based behavior)'], correctAnswer: 'Reversed parent assignment' };
+  assert.ok(deterministicProblems(q).some(p => p.code === 'CLUES'));
+  q.options[3] = 'Attaching the second root to the first';
+  assert.ok(!deterministicProblems(q).some(p => p.code === 'CLUES'));
+  q.options[3] = 'Union by rank (O(log n) height)';
+  assert.ok(!deterministicProblems(q).some(p => p.code === 'CLUES'), 'an ordinary parenthesis is fine');
+});
+
+asyncTests().then(gateTests).then(blindTests).then(() => {
 const passed = results.filter(Boolean).length;
 console.log(`\n🏁 ${passed} / ${results.length} tests passed`);
 process.exit(passed === results.length ? 0 : 1);

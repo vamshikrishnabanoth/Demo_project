@@ -6,7 +6,7 @@ module.exports = {
   SCHEMA_VERSION: parseInt(process.env.CACHE_SCHEMA_VERSION || '1', 10),
   PIPELINE_VERSION: process.env.CACHE_PIPELINE_VERSION || '5.2.0',
   OCR_VERSION: process.env.CACHE_OCR_VERSION || '2.1.0',
-  WHISPER_VERSION: process.env.CACHE_WHISPER_VERSION || 'whisper-large-v3',
+  WHISPER_VERSION: process.env.CACHE_WHISPER_VERSION || 'whisper-large-v3+en-translate-v1', // bumped: code-mixed speech is now translated to English
   ANALYSIS_VERSION: process.env.CACHE_ANALYSIS_VERSION || '4.2.0',
   PROMPT_VERSION: process.env.CACHE_PROMPT_VERSION || '2.6.0',
   PLANNER_VERSION: process.env.CACHE_PLANNER_VERSION || '1.3.0',

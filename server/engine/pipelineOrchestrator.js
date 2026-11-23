@@ -697,7 +697,11 @@ class PipelineOrchestrator {
       // Hard retries are bounded by time as well as attempts: once the budget is spent, remaining Hard
       // slots move to Medium (when the teacher allowed filling) instead of looping on a slow provider.
       const generationStartedAt = Date.now();
-      const HARD_TIME_BUDGET_MS = Math.max(30000, parseInt(process.env.HARD_TIME_BUDGET_MS, 10) || 150000);
+      // A teacher who chose Hard explicitly would rather wait a few minutes than get Medium/Easy questions: on the free
+      // tier Hard writing alone takes several minutes (Transformer lecture, 23 Nov: 5 of 10 Hard slots fell to Medium
+      // after 150 s and were then rated Easy). Balanced quizzes keep the short budget.
+      const explicitHard = String(requestedDifficulty || '').toLowerCase() === 'hard';
+      const HARD_TIME_BUDGET_MS = Math.max(30000, parseInt(process.env.HARD_TIME_BUDGET_MS, 10) || (explicitHard ? 600000 : 150000));
       const fillAllowed = sessionInputs.deficitPolicy === 'FILL_WITH_MEDIUM';
       const hardBudgetSpent = () => fillAllowed && (Date.now() - generationStartedAt) > HARD_TIME_BUDGET_MS;
       // Questions rejected ONLY for being "not hard enough" are otherwise valid; when the teacher allowed
@@ -1317,7 +1321,9 @@ class PipelineOrchestrator {
         // calculation, trace, output, debug and code questions keep their own call (where mistakes are likely).
         // Each batched verdict still passes through the same per-question fail-closed parsing. AGENT3_BATCH_CRITIC=false turns it off.
         const precomputed = new Array(batchTargets.length).fill(null);
-        if (process.env.AGENT3_BATCH_CRITIC !== 'false') {
+        // Lean lecture path: the Final Quality Gate is the semantic check, so no batched critic call is made up front.
+        const leanLecture = process.env.LECTURE_LEAN_PATH !== 'off' && batchTargets.every(t => t.lectureUnitId);
+        if (process.env.AGENT3_BATCH_CRITIC !== 'false' && !leanLecture) {
           const eligible = batchTargets.map((t, b) => ({ t, b, c: batchCandidates[b] })).filter(({ t, c }) =>
             c && !c.isUnfulfilled &&
             ['Easy', 'Medium'].includes(t.targetDifficulty || 'Medium') &&
@@ -1357,7 +1363,10 @@ class PipelineOrchestrator {
         const hardTargets = waveTargets.filter(t => t.targetDifficulty === 'Hard');
         const otherTargets = waveTargets.filter(t => t.targetDifficulty !== 'Hard');
         for (let i = 0; i < otherTargets.length; i += BATCH_SIZE) waveBatches.push(otherTargets.slice(i, i + BATCH_SIZE));
-        for (let i = 0; i < hardTargets.length; i += 2) waveBatches.push(hardTargets.slice(i, i + 2));
+        // One Hard target per request by default: Groq's free tier gives gpt-oss-120b 8,000 tokens per minute per key,
+        // and prompt + reasoning + answer for two Hard questions does not fit (429 or an empty answer).
+        const HARD_BATCH = Math.max(1, Math.min(3, parseInt(process.env.HARD_BATCH_SIZE, 10) || 1));
+        for (let i = 0; i < hardTargets.length; i += HARD_BATCH) waveBatches.push(hardTargets.slice(i, i + HARD_BATCH));
         const waveResults = await Promise.all(waveBatches.map(runBatch));
 
         for (const waveResult of waveResults) {
@@ -1950,7 +1959,8 @@ class PipelineOrchestrator {
         }
         if (hasProviderFailures) {
           const providerCount = unfulfilledTargets.filter(u => u?.status === 'UNFULFILLED_PROVIDER_FAILURE' || u?.unfulfilledReason === 'PROVIDER_UNAVAILABLE' || u?.unfulfilledReason === 'PROVIDER_ERROR').length;
-          noticeParts.push(`${providerCount} question(s) could not be generated because the AI provider failed or was rate-limited; retrying may succeed.`);
+          const outage = (() => { try { return require('./adapter/llmRouter').getOutage(); } catch (_) { return null; } })();
+          noticeParts.push(`${providerCount} question(s) could not be generated because the AI provider failed or was rate-limited${outage ? ` (${outage.message})` : ''}; retrying may succeed.`);
         }
         const capacityUnfulfilled = unfulfilledTargets.filter(u => u && u.status !== 'UNFULFILLED_PROVIDER_FAILURE' && u.unfulfilledReason !== 'PROVIDER_UNAVAILABLE' && u.unfulfilledReason !== 'PROVIDER_ERROR');
         if (capacityUnfulfilled.length > 0) {
