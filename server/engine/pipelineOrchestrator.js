@@ -697,7 +697,11 @@ class PipelineOrchestrator {
       // Hard retries are bounded by time as well as attempts: once the budget is spent, remaining Hard
       // slots move to Medium (when the teacher allowed filling) instead of looping on a slow provider.
       const generationStartedAt = Date.now();
-      const HARD_TIME_BUDGET_MS = Math.max(30000, parseInt(process.env.HARD_TIME_BUDGET_MS, 10) || 150000);
+      // A teacher who chose Hard explicitly would rather wait a few minutes than get Medium/Easy questions: on the free
+      // tier Hard writing alone takes several minutes (Transformer lecture, 23 Nov: 5 of 10 Hard slots fell to Medium
+      // after 150 s and were then rated Easy). Balanced quizzes keep the short budget.
+      const explicitHard = String(requestedDifficulty || '').toLowerCase() === 'hard';
+      const HARD_TIME_BUDGET_MS = Math.max(30000, parseInt(process.env.HARD_TIME_BUDGET_MS, 10) || (explicitHard ? 600000 : 150000));
       const fillAllowed = sessionInputs.deficitPolicy === 'FILL_WITH_MEDIUM';
       const hardBudgetSpent = () => fillAllowed && (Date.now() - generationStartedAt) > HARD_TIME_BUDGET_MS;
       // Questions rejected ONLY for being "not hard enough" are otherwise valid; when the teacher allowed
