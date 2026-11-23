@@ -3617,7 +3617,7 @@ exports.generateQuizQuestions = async (req, res) => {
 
         let taskId;
         try {
-            taskId = createTask({ userId: req.user?.id, idempotencyKey, questionCount: reqQuestionCount, textLength: estimatedTextLength });
+            taskId = createTask({ userId: req.user?.id, idempotencyKey, questionCount: reqQuestionCount, textLength: estimatedTextLength, difficulty: req.body.difficulty || null });
         } catch (bpErr) {
             return res.status(bpErr.statusCode || 429).json({ msg: bpErr.message, code: bpErr.code || 'SYSTEM_BUSY' });
         }
