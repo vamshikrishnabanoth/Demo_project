@@ -8,10 +8,11 @@ import {
     FileText, FileCode, Plus, Trash2, Mic, X as XIcon, Award,
     PlayCircle, PauseCircle, StopCircle, WifiOff, RefreshCw,
     AlertCircle, CheckCircle, Download, Lightbulb, Shield, Zap, Scale, Activity,
-    Wifi, Info, Tag, ListOrdered, Target, Link2
+    Wifi, Info, Tag, ListOrdered, Target, Link2, MessageSquareText
 } from 'lucide-react';
 import AgentPipelineLoader from '../components/loaders/AgentPipelineLoader';
 import TeachingScoreModal from '../components/quiz/TeachingScoreModal';
+import { SHOW_TEACHING_RATINGS } from '../config/teachingFeedback';
 import LectureUnderstandingPanel from '../components/quiz/LectureUnderstandingPanel';
 import toast from 'react-hot-toast';
 import {
@@ -1602,23 +1603,23 @@ export default function CreateQuizTopic() {
                                 type="button"
                                 onClick={() => setShowTeachingScoreModal(true)}
                                 className="bg-gradient-to-r from-orange-50 via-amber-50/50 to-white hover:from-orange-100 hover:to-amber-100 border-2 border-orange-200 hover:border-orange-400 rounded-2xl px-4 py-2 flex items-center gap-3.5 shadow-xs transition-all cursor-pointer active:scale-95 group text-left"
-                                title="Click to view what the AI understood and why you received this score"
+                                title={SHOW_TEACHING_RATINGS ? "Click to view what the AI understood and why you received this score" : "Click to read what the AI noticed in this lecture"}
                             >
                                 {/* Bold Score Number */}
                                 <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-[#ea580c] to-[#c2410c] text-white flex flex-col items-center justify-center shrink-0 shadow-sm group-hover:scale-105 transition-transform">
-                                    <span className="text-base font-black tracking-tight leading-none">{teachingScore ?? '–'}</span>
-                                    <span className="text-[8px] font-black uppercase tracking-widest text-orange-200 leading-none mt-0.5">/100</span>
+                                    {SHOW_TEACHING_RATINGS ? <><span className="text-base font-black tracking-tight leading-none">{teachingScore ?? '–'}</span>
+                                    <span className="text-[8px] font-black uppercase tracking-widest text-orange-200 leading-none mt-0.5">/100</span></> : <MessageSquareText size={20} />}
                                 </div>
                                 <div>
                                     <div className="flex items-center gap-1.5">
-                                        <p className="text-[10px] font-black text-[#9a3412] uppercase tracking-widest">Teaching Score</p>
+                                        <p className="text-[10px] font-black text-[#9a3412] uppercase tracking-widest">{SHOW_TEACHING_RATINGS ? 'Teaching Score' : 'Teaching Feedback'}</p>
                                         <span className="text-[9px] font-bold text-[#c2410c] bg-orange-100 px-2 py-0.5 rounded-full group-hover:bg-[#ea580c] group-hover:text-white transition-colors flex items-center gap-1">
                                             <span>See Breakdown</span>
                                             <Info size={10} className="shrink-0" />
                                         </span>
                                     </div>
                                     <p className="text-xs font-black text-[#c2410c] flex items-center gap-1.5 mt-0.5">
-                                        <span>{lectureDepth.rating || 'Comprehensive Depth'} ⭐</span>
+                                        {SHOW_TEACHING_RATINGS && <span>{lectureDepth.rating || 'Comprehensive Depth'} ⭐</span>}
                                         <span className="text-[10px] font-bold text-orange-800 bg-white/80 border border-orange-200 px-2 py-0.2 rounded-md">
                                             {isTopicOnly ? 'Curriculum Scope' : hasAudio && hasDocFiles ? 'Audio + Document' : hasAudio ? 'Audio Lecture' : 'Document'}
                                         </span>

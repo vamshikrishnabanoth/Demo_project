@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
-import { Loader2, AlertCircle, RefreshCw, Mic, FileText, Link2, AlertTriangle, BookOpen, ChevronDown, ChevronUp, Clock } from 'lucide-react';
+import { Loader2, AlertCircle, RefreshCw, Mic, FileText, Link2, AlertTriangle, BookOpen, ChevronDown, ChevronUp, Clock, MessageSquareText } from 'lucide-react';
+import { SHOW_TEACHING_RATINGS } from '../../config/teachingFeedback';
 
 /**
  * Glanceable summary of what the system understood (from the shared lecture model):
@@ -18,21 +19,21 @@ function ScoreRing({ teaching, onClick }) {
     const color = value === null ? '#94a3b8' : value >= 80 ? '#16a34a' : value >= 60 ? '#d97706' : '#e11d48';
     const r = 20, c = 2 * Math.PI * r, dash = value === null ? 0 : (value / 100) * c;
     return (
-        <button type="button" onClick={onClick} disabled={pending} title="Why this score?"
+        <button type="button" onClick={onClick} disabled={pending} title={SHOW_TEACHING_RATINGS ? "Why this score?" : "Read the teaching feedback"}
             className="shrink-0 flex items-center gap-2 rounded-2xl px-2 py-1.5 hover:bg-white/80 transition-colors cursor-pointer disabled:cursor-default">
             <span className="relative w-12 h-12">
                 <svg viewBox="0 0 48 48" className="w-12 h-12 -rotate-90" aria-hidden="true">
                     <circle cx="24" cy="24" r={r} fill="none" stroke="#f1f5f9" strokeWidth="5" />
-                    <circle cx="24" cy="24" r={r} fill="none" stroke={color} strokeWidth="5" strokeLinecap="round" strokeDasharray={`${dash} ${c}`} />
+                    {SHOW_TEACHING_RATINGS && <circle cx="24" cy="24" r={r} fill="none" stroke={color} strokeWidth="5" strokeLinecap="round" strokeDasharray={`${dash} ${c}`} />}
                 </svg>
                 <span className="absolute inset-0 flex items-center justify-center text-sm font-black text-slate-900">
-                    {pending ? <Loader2 size={14} className="animate-spin text-slate-400" /> : (value ?? '–')}
+                    {pending ? <Loader2 size={14} className="animate-spin text-slate-400" /> : (SHOW_TEACHING_RATINGS ? (value ?? '–') : <MessageSquareText size={18} className="text-[#c2410c]" />)}
                 </span>
             </span>
             <span className="text-left leading-tight">
-                <span className="block text-[10px] font-black uppercase tracking-wider text-slate-500">Teaching score</span>
+                <span className="block text-[10px] font-black uppercase tracking-wider text-slate-500">{SHOW_TEACHING_RATINGS ? 'Teaching score' : 'Teaching feedback'}</span>
                 <span className="block text-[11px] font-bold" style={{ color: pending ? '#64748b' : '#c2410c' }}>
-                    {pending ? 'Preparing…' : value === null ? 'Not enough evidence' : 'See why →'}
+                    {pending ? 'Preparing…' : (SHOW_TEACHING_RATINGS ? (value === null ? 'Not enough evidence' : 'See why →') : (teaching && teaching.dimensions ? 'Read →' : 'Not enough evidence'))}
                 </span>
             </span>
         </button>
