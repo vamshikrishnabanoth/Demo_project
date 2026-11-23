@@ -139,9 +139,12 @@ function calculateAdaptiveTimeoutMs(options = {}) {
     perQuestionSafetyMs = 10000; // 10s per question
   }
 
-  const computed = baseSlaMs + (count * perQuestionSafetyMs);
+  // An explicit Hard request may spend up to 10 more minutes on Hard writing before falling back (pipelineOrchestrator
+  // HARD_TIME_BUDGET_MS); on the free tier a 10-Hard quiz took 877-1015 s on 23 Nov, so it gets that much extra here.
+  const hard = typeof options === 'object' && options !== null && String(options.difficulty || '').toLowerCase() === 'hard';
+  const computed = baseSlaMs + (count * perQuestionSafetyMs) + (hard ? 600000 : 0);
   const minTimeoutMs = 420000;   // 7 minutes floor
-  const maxTimeoutMs = 1200000;  // 20 minutes strictly bounded operational ceiling
+  const maxTimeoutMs = hard ? 1800000 : 1200000;  // 20 minutes ceiling (30 for an explicit Hard request)
   return Math.min(maxTimeoutMs, Math.max(minTimeoutMs, computed));
 }
 
