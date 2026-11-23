@@ -262,20 +262,23 @@ async function gateTests() {
       assert.ok(r2.reasons.length > 0 && twoRight.qualityGate.status === 'REJECTED');
     });
     lm._internal.callJson = async () => ({ model: 'stub', data: { results: [
-      { q: 1, answer: 'A', alsoDefensible: [], grounded: true, correct: true, distractorsValid: true, plausible: true, aligned: true, complete: true, consistent: true, clear: true, fair: true, explanationOk: true, steps: 1, problems: [] },
+      { q: 1, answer: 'A', alsoDefensible: [], grounded: true, correct: true, distractorsValid: true, plausible: true, aligned: true, complete: true, consistent: true, clear: true, fair: true, explanationOk: true, steps: 1, level: 'recall', problems: [] },
+      { q: 3, answer: 'A', alsoDefensible: [], grounded: true, correct: true, distractorsValid: true, plausible: true, aligned: true, complete: true, consistent: true, clear: true, fair: true, explanationOk: true, steps: 1, level: 'apply', problems: [] },
       { q: 2, answer: 'A', alsoDefensible: [], grounded: true, correct: true, distractorsValid: true, plausible: true, aligned: true, complete: true, consistent: false, clear: true, fair: true, explanationOk: true, steps: 3, problems: ['state after index 2 ignores indices 0 and 1'] }
     ], duplicates: [] } });
     const oneStepHard = mk('Input 1, 1, 1. What is the frequency array?', ['[0, 3, 0]', '[3, 0, 0]', '[1, 1, 1]', '[0, 0, 3]'], '[0, 3, 0]', { difficulty: 'Hard' });
     const badState = mk('Input [2, 0, 2]; auxiliary []; processing index 2. What happens?', ['a', 'b', 'c', 'd'], 'a', { difficulty: 'Hard' });
-    const cal = await finalQualityGate([oneStepHard, badState], {});
-    test('First pass: a one-step question labelled Hard is rejected for depth (to be rewritten deeper); an inconsistent state is rejected', () => {
+    const appliedHard = mk('Input 2, 0, 2 with the counting rule taught. What is the frequency array?', ['[1, 0, 2]', '[2, 0, 1]', '[1, 1, 1]', '[0, 2, 1]'], '[1, 0, 2]', { difficulty: 'Hard' });
+    const cal = await finalQualityGate([oneStepHard, badState, appliedHard], {});
+    test('Hard is lecture-relative: a recall question labelled Hard is rejected for depth; an applied one-step question stays Hard (steps recorded); an inconsistent state is rejected', () => {
       assert.ok(cal.rejected.some(r => r.question === oneStepHard && r.criteria.includes('DEPTH')));
       assert.strictEqual(oneStepHard.difficulty, 'Hard');
+      assert.ok(cal.accepted.includes(appliedHard) && appliedHard.difficulty === 'Hard' && appliedHard.measuredSteps === 1);
       assert.ok(cal.rejected.some(r => r.question === badState && r.criteria.includes('COMPLETENESS')));
     });
     const oneStepHard2 = mk('Input 1, 1, 1. What is the frequency array?', ['[0, 3, 0]', '[3, 0, 0]', '[1, 1, 1]', '[0, 0, 3]'], '[0, 3, 0]', { difficulty: 'Hard' });
     const cal2 = await finalQualityGate([oneStepHard2], { depth: 'relabel' });
-    test('Replacement pass: a one-step "Hard" replacement keeps its slot, relabelled Medium', () => {
+    test('Replacement pass: a recall "Hard" replacement keeps its slot, relabelled Medium', () => {
       assert.ok(cal2.accepted.includes(oneStepHard2) && oneStepHard2.difficulty === 'Medium' && oneStepHard2.qualityGate.relabeled);
     });
     lm._internal.callJson = async () => ({ model: 'stub', data: { results: [
@@ -445,6 +448,15 @@ async function blindTests() {
       assert.strictEqual(flags.length, 1);
       assert.strictEqual(flags[0].subtopic, 'Dockerfile EXPOSE');
       assert.strictEqual(flags[0].standardAnswer, 'Needs -p to publish');
+    });
+    const premiseQ = mk('What does autoregressive mean for an encoder-only model?', ['All at once', 'Twice', 'One token after another', 'Never'], 'One token after another');
+    router.complete = async () => JSON.stringify({ answers: [{ q: 1, answer: 'C', alsoDefensible: [], falsePremise: 'an encoder-only model generating autoregressively', correction: 'autoregressive generation is done by decoder-only models' }] });
+    await blindAnswerCheck([premiseQ], { lectureModel: model });
+    test('False premise: a question with a right key but a false assumption is rejected', () => {
+      assert.strictEqual(premiseQ.blindCheck.status, 'FALSE_PREMISE');
+      const sp = blindRejections([premiseQ]);
+      assert.strictEqual(sp.rejected.length, 1);
+      assert.ok(/assumes something false/.test(sp.rejected[0].reasons[0]));
     });
     test('Blind check prompt without a lecture model keeps the near-duplicate request (legacy path)', () => {
       assert.ok(/duplicates/.test(_buildPrompt([fine], { lm: null, detectDuplicates: true })));

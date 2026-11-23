@@ -78,7 +78,7 @@ export default function TeachingScoreModal({ isOpen, onClose, teaching = null, m
                                     <span className="inline-block text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-slate-100 text-slate-600" title={t.confidenceReason}>
                                         {String(t.confidence || 'low').toLowerCase()} confidence
                                     </span>
-                                    {t.intent && <p className="text-xs text-slate-600 line-clamp-2">{t.intent}</p>}
+                                    <p className="text-[11px] text-slate-500">AI estimate from this recording; tap an area for the quoted moments.</p>
                                 </div>
                             </div>}
 
@@ -87,13 +87,13 @@ export default function TeachingScoreModal({ isOpen, onClose, teaching = null, m
                                 <div className="rounded-2xl bg-emerald-50 border border-emerald-100 p-3">
                                     <p className="text-[11px] font-black uppercase tracking-wider text-emerald-800 mb-1.5">Keep doing</p>
                                     <ul className="space-y-1.5">
-                                        {(t.strengths || []).slice(0, 3).map((s, i) => <li key={i} className="text-xs text-slate-800 flex gap-1.5"><CheckCircle2 size={13} className="text-emerald-600 shrink-0 mt-0.5" /><span className="line-clamp-3">{s}</span></li>)}
+                                        {(t.strengths || []).slice(0, 2).map((s, i) => <li key={i} className="text-xs text-slate-800 flex gap-1.5"><CheckCircle2 size={13} className="text-emerald-600 shrink-0 mt-0.5" /><span className="line-clamp-2">{s}</span></li>)}
                                     </ul>
                                 </div>
                                 <div className="rounded-2xl bg-amber-50 border border-amber-100 p-3">
                                     <p className="text-[11px] font-black uppercase tracking-wider text-amber-800 mb-1.5">Try next class</p>
                                     <ul className="space-y-1.5">
-                                        {(t.improvements || []).slice(0, 3).map((s, i) => <li key={i} className="text-xs text-slate-800 flex gap-1.5"><ArrowRight size={13} className="text-amber-600 shrink-0 mt-0.5" /><span className="line-clamp-3">{s}</span></li>)}
+                                        {(t.improvements || []).slice(0, 2).map((s, i) => <li key={i} className="text-xs text-slate-800 flex gap-1.5"><ArrowRight size={13} className="text-amber-600 shrink-0 mt-0.5" /><span className="line-clamp-2">{s}</span></li>)}
                                     </ul>
                                 </div>
                             </div>
@@ -112,8 +112,8 @@ export default function TeachingScoreModal({ isOpen, onClose, teaching = null, m
                                         </button>
                                         {open === d.key && (
                                             <div className="px-3 pb-3 space-y-1.5">
-                                                <p className="text-xs text-slate-700">{d.finding}</p>
-                                                {(d.evidence || []).slice(0, 2).map((e, i) => (
+                                                <p className="text-xs text-slate-700 line-clamp-2">{d.finding}</p>
+                                                {(d.evidence || []).slice(0, 1).map((e, i) => (
                                                     <p key={i} className="text-[11px] text-slate-500 flex gap-1.5"><Quote size={11} className="shrink-0 mt-0.5" /><span>{e.where && <span className="font-mono font-bold text-slate-600 mr-1">{e.where}</span>}“{e.quote}”</span></p>
                                                 ))}
                                                 {d.improvement && <p className="text-[11px] text-amber-900 bg-amber-50 rounded-lg px-2 py-1 flex gap-1.5"><ArrowRight size={11} className="shrink-0 mt-0.5" />{d.improvement}</p>}

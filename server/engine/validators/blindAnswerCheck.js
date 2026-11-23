@@ -46,7 +46,7 @@ function buildPrompt(list, { lm, passageChars, detectDuplicates }) {
     : ' Use correct subject knowledge.';
   const dupPart = detectDuplicates ? '\nAlso list pairs of questions that test the same fact or skill (near-duplicates).' : '';
   const dupJson = detectDuplicates ? ',"duplicates":[[1,3]]' : '';
-  return `${body}\n\nWork each question out yourself before choosing (trace the steps or do the calculation using the data in the question; do not assume any option is right).${passageRule} For every question return: one or two lines of working, then the single best option letter; and any OTHER option letters that a knowledgeable examiner could also defend as correct (empty if none); and whether the stem itself already reveals the answer.${dupPart}\nReturn {"answers":[{"q":1,"working":"short working","answer":"B","alsoDefensible":[],"stemRevealsAnswer":false,"note":"short reason if alsoDefensible is not empty"}]${dupJson}}`;
+  return `${body}\n\nWork each question out yourself before choosing (trace the steps or do the calculation using the data in the question; do not assume any option is right).${passageRule} For every question return: one or two lines of working, then the single best option letter; and any OTHER option letters that a knowledgeable examiner could also defend as correct (empty if none); and whether the stem itself already reveals the answer; and, separately, whether the question text states or assumes something technically false (for example it calls a model that generates one token after another "encoder-only", or gives a wrong property of a data structure as a premise): quote that false part in "falsePremise" and give the correct statement in "correction" (both empty when the question's premises are all true).${dupPart}\nReturn {"answers":[{"q":1,"working":"short working","answer":"B","alsoDefensible":[],"stemRevealsAnswer":false,"falsePremise":"","correction":"","note":"short reason if alsoDefensible is not empty"}]${dupJson}}`;
 }
 
 const SYSTEM = 'You are a careful university examiner taking a multiple-choice quiz. Return JSON only.';
@@ -93,6 +93,11 @@ function applyAnswers(list, d, model, field = 'independentCheck') {
     } else if (also.length > 0) {
       flagged++;
       q[field] = { status: 'POSSIBLY_AMBIGUOUS', model, otherDefensible: also.map(x => q.options[x]), reason: a.note || 'Another option may also be defensible.' };
+    } else if (typeof a.falsePremise === 'string' && a.falsePremise.trim().length > 3) {
+      // The key can be right while the question itself teaches something false ("what does autoregressive mean for an
+      // encoder-only model?"). Such a question is rejected; if the lecture said it, the teacher is told (lectureDiscrepancies).
+      flagged++;
+      q[field] = { status: 'FALSE_PREMISE', model, premise: a.falsePremise.trim().slice(0, 300), correction: String(a.correction || '').trim().slice(0, 300), reason: `The question assumes something false: "${a.falsePremise.trim().slice(0, 160)}".` };
     } else if (a.stemRevealsAnswer === true) {
       flagged++;
       q[field] = { status: 'POSSIBLY_AMBIGUOUS', model, stemReveals: true, reason: 'The question text already shows the answer (e.g. the output it asks for). Consider removing that part.' };
@@ -179,6 +184,10 @@ function blindRejections(accepted) {
       const reason = `TECHNICAL_CORRECTNESS: An independent key-blind solve chose "${c.blindAnswer}" instead of the key${c.working ? ` (${String(c.working).slice(0, 200)})` : ''}.`;
       q.qualityGate = { ...(q.qualityGate || {}), status: 'REJECTED', criteria: ['TECHNICAL_CORRECTNESS'], reasons: [reason] };
       rejected.push({ question: q, reasons: [reason], criteria: ['TECHNICAL_CORRECTNESS'] });
+    } else if (c && c.status === 'FALSE_PREMISE') {
+      const reason = `TECHNICAL_CORRECTNESS: The question assumes something false: "${c.premise}"${c.correction ? ` (correct: ${c.correction})` : ''}.`;
+      q.qualityGate = { ...(q.qualityGate || {}), status: 'REJECTED', criteria: ['TECHNICAL_CORRECTNESS'], reasons: [reason] };
+      rejected.push({ question: q, reasons: [reason], criteria: ['TECHNICAL_CORRECTNESS'] });
     } else if (c && c.status === 'POSSIBLY_AMBIGUOUS' && Array.isArray(c.otherDefensible) && c.otherDefensible.length) {
       const reason = `SINGLE_ANSWER: An independent solve found another defensible option ("${c.otherDefensible[0]}"): ${c.reason || ''}`.trim();
       q.qualityGate = { ...(q.qualityGate || {}), status: 'REJECTED', criteria: ['SINGLE_ANSWER'], reasons: [reason] };
@@ -200,9 +209,26 @@ async function lectureDiscrepancies(disputed, lm, { max = 3 } = {}) {
   const found = [];
   await Promise.all(disputed.slice(0, max).map(async (q) => {
     const c = q.blindCheck || {};
-    if (c.status !== 'DISAGREES') return;
+    if (c.status !== 'DISAGREES' && c.status !== 'FALSE_PREMISE') return;
     const passage = passageFor(q, lm, 1600);
     if (!passage) return;
+    const norm = (t) => String(t || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+    if (c.status === 'FALSE_PREMISE') {
+      // Did the lecture itself say the false thing? Only a verbatim quote from the passage counts.
+      try {
+        const res = await callReasoner(`LECTURE PASSAGE: """${passage}"""
+
+A quiz question assumed: "${c.premise}". The correct statement is: "${c.correction}".
+Does the lecture passage itself state or clearly imply the false version? If yes, copy the exact words from the passage in "lectureQuote" (verbatim, at least 6 words); if not, leave it empty. Return {"answers":[{"q":1,"answer":"A","lectureQuote":""}]}`);
+        const a = answersOf(res.data)[0] || {};
+        const quote = typeof a.lectureQuote === 'string' ? a.lectureQuote.trim() : '';
+        if (quote.split(/s+/).length >= 6 && norm(passage).includes(norm(quote))) {
+          const s = q.lectureSource || {};
+          found.push({ kind: 'premise', subtopic: s.subtopic || null, time: s.time || null, lectureSays: c.premise, lectureQuote: quote, standardAnswer: c.correction || null, working: '', question: q.question || q.questionText || '' });
+        }
+      } catch (_) { /* best effort */ }
+      return;
+    }
     const probe = { ...q, blindCheck: undefined };
     try {
       const prompt = `${buildPrompt([probe], { lm, passageChars: 1600, detectDuplicates: false })}\nFor this check answer as the LECTURE PASSAGE teaches it (what a student who learned only from this passage would choose), even if you think the passage is imprecise. In the answer object also give "lectureQuote": the exact words from the passage that lead to this answer (copied verbatim), and "convention": true if the answer depends on a convention, tie-break or assumption that the question does not state.`;
@@ -212,7 +238,6 @@ async function lectureDiscrepancies(disputed, lm, { max = 3 } = {}) {
       // A flag tells a teacher their lecture may be wrong, so it needs proof: the exact lecture words behind the key
       // (found in the passage), and a question that does not hinge on an unstated convention. An ambiguous or
       // simply wrong question is rejected and replaced without blaming the lecture.
-      const norm = (t) => String(t || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
       const quote = a && typeof a.lectureQuote === 'string' ? a.lectureQuote.trim() : '';
       const quoted = quote.split(/\s+/).length >= 4 && norm(passage).includes(norm(quote));
       const hedged = a && (a.convention === true || String(a.convention).toLowerCase() === 'true');

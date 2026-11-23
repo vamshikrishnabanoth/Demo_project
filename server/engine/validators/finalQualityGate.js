@@ -216,8 +216,13 @@ async function finalQualityGate(questions, opts = {}) {
       // (the old behaviour) kept the count but silently turned planned Hard/Medium questions into Easy ones.
       // Replacement pass (opts.depth === 'relabel'): keep the slot under its true label rather than deliver fewer questions.
       const strictDepth = opts.depth !== 'relabel';
-      if (label === 'Hard' && Number.isFinite(steps) && steps < 2) {
-        item.relabel = { from: 'Hard', to: 'Medium', reason: `needs ${steps} reasoning step${steps === 1 ? '' : 's'}, not the two or more a Hard question requires` };
+      // Hard is relative to the lecture: it is the most demanding level THIS class supports (an introductory class's Hard
+      // is an applied question; a deep class's Hard needs several steps, which the writer's Hard forms aim for). So a
+      // Hard question is demoted only when it is recall (never Hard for any class); the step count is recorded, not enforced.
+      if (Number.isFinite(steps)) item.q.measuredSteps = steps;
+      const level = String(r.level || '').toLowerCase();
+      if (label === 'Hard' && level === 'recall') {
+        item.relabel = { from: 'Hard', to: 'Medium', reason: 'is answered by recalling a statement; a Hard question must apply or analyse what was taught' };
       } else if (label === 'Medium' && String(r.level || '').toLowerCase() === 'recall') {
         // A "Medium" question answered by remembering a sentence from the lecture is honestly an Easy question.
         item.relabel = { from: 'Medium', to: 'Easy', reason: 'is answered by recalling a statement from the lecture; Medium needs applying it' };

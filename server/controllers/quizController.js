@@ -1455,7 +1455,9 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
                     if (short > 0) result.isPartial = true;
                 }
                 if (lectureFlags.length) {
-                    const pts = lectureFlags.map(f => `"${f.subtopic || 'a point'}"${f.time ? ` (around ${f.time})` : ''}: the lecture says "${String(f.lectureQuote || '').slice(0, 220)}", which leads to "${f.lectureSays}" for the question "${String(f.question || '').replace(/\s+/g, ' ').slice(0, 160)}", but the standard answer is "${f.standardAnswer}"`).join('; ');
+                    const pts = lectureFlags.map(f => f.kind === 'premise'
+                        ? `"${f.subtopic || 'a point'}"${f.time ? ` (around ${f.time})` : ''}: the lecture says "${String(f.lectureQuote || '').slice(0, 220)}"${f.standardAnswer ? `, but ${String(f.standardAnswer).slice(0, 220)}` : ''}`
+                        : `"${f.subtopic || 'a point'}"${f.time ? ` (around ${f.time})` : ''}: the lecture says "${String(f.lectureQuote || '').slice(0, 220)}", which leads to "${f.lectureSays}" for the question "${String(f.question || '').replace(/\s+/g, ' ').slice(0, 160)}", but the standard answer is "${f.standardAnswer}"`).join('; ');
                     const ln = `Please double-check ${lectureFlags.length === 1 ? 'this point' : 'these points'} in your lecture — ${pts}. Questions on ${lectureFlags.length === 1 ? 'it were' : 'them were'} replaced.`;
                     result.notice = result.notice ? `${result.notice} ${ln}` : ln;
                     result.lectureFlags = lectureFlags;
