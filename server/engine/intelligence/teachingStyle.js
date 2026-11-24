@@ -151,6 +151,7 @@ function assignUnitModes(model) {
 function buildProfile(model) {
   if (!model || !Array.isArray(model.units)) return null;
   assignUnitModes(model);
+  markEmphasis(model);
   const mixRaw = Object.fromEntries(DELIVERY_MODES.map(m => [m, 0]));
   const timedSegs = (model.segments || []).filter(s => s.start != null && s.end != null && s.end > s.start);
   let basis = 'units';
@@ -180,6 +181,7 @@ function buildProfile(model) {
     slideUse: slides,
     interaction: words ? cueDensity(speechText, DIALOGUE_CUES, words) : null,
     emphasis: words ? cueDensity(speechText, EMPHASIS_CUES, words) : null,
+    stressedPoints: model.units.filter(u => u.stressed).length,
     unitsFromReader: model.units.filter(u => u.deliverySource !== 'kind').length,
     unitsTotal: model.units.length
   };
@@ -220,12 +222,57 @@ function preferFor(unit, override) {
   return MODE_PREFER[unitMode(unit, override)] || null;
 }
 
+// Words a teacher uses when a fact must be remembered. Matched in the teacher's speech for each point only.
+const STRESS_CUES = [/\bremember\b/i, /\bimportant\b/i, /\bnote (that|this|down)\b/i, /\bkey (point|thing|idea)\b/i, /\bdon'?t forget\b/i, /\bexam\b/i, /\bby heart\b/i, /\bwrite (this|it) down\b/i, /\bmust know\b/i, /\bpay attention\b/i];
+
+/**
+ * Marks the teaching points the teacher stressed as "remember this": a stress cue in the teacher's own speech for
+ * that point. Keeps the sentence as evidence (unit.stressQuote). Deterministic; runs on cached readings too.
+ */
+function markEmphasis(model) {
+  const byId = new Map((model.blocks || []).map(b => [b.id, b]));
+  for (const u of model.units || []) {
+    u.stressed = false; u.stressQuote = null;
+    if (u.importance === 'ASIDE') continue;
+    for (const id of u.blocks || []) {
+      const b = byId.get(id);
+      if (!b || b.source !== 'SPEECH') continue;
+      const sentence = String(b.text || '').split(/(?<=[.?!])\s+/).find(s => STRESS_CUES.some(re => re.test(s)));
+      if (sentence) { u.stressed = true; u.stressQuote = sentence.trim().slice(0, 240); break; }
+    }
+  }
+  return model;
+}
+
+/**
+ * How many of `want` questions each teaching mode should get: proportional to the share of the lecture taught that
+ * way (teaching time where the reading has times, else teaching points), never more than the mode can supply.
+ * With a teacher correction, shares are recounted from the corrected modes.
+ */
+function modeQuota(model, pool, want, override, allocate) {
+  const caps = {};
+  pool.forEach(p => { const m = unitMode(p.unit, override); caps[m] = (caps[m] || 0) + 1; });
+  let weights = {};
+  const mix = model.teachingStyle && model.teachingStyle.mix;
+  if (override && override.modes && override.modes.length) {
+    (model.units || []).filter(u => u.importance !== 'ASIDE').forEach(u => { const m = unitMode(u, override); weights[m] = (weights[m] || 0) + 1; });
+  } else if (mix && Object.keys(mix).length) {
+    weights = { ...mix };
+  } else {
+    (model.units || []).filter(u => u.importance !== 'ASIDE').forEach(u => { const m = unitMode(u, null); weights[m] = (weights[m] || 0) + 1; });
+  }
+  // A mode with questions available but no measured share still gets a tiny weight (used only if others run out).
+  Object.keys(caps).forEach(m => { weights[m] = (weights[m] || 0) + 1e-6; });
+  return allocate(want, weights, caps);
+}
+
 /** Note for the question writer about how this point was taught (plus the teacher's own example, if any). */
 function noteFor(unit, profile, override) {
   const mode = unitMode(unit, override);
   const slide = (override && override.slideUse) || (profile && profile.slideUse && profile.slideUse.label) || null;
   const parts = [`Teaching style: ${MODE_NOTE[mode]}`];
   if (slide && SLIDE_USE_NOTE[slide]) parts.push(SLIDE_USE_NOTE[slide]);
+  if (unit.stressed && unit.stressQuote) parts.push(`The teacher stressed this point for students to remember ("${unit.stressQuote}"): test exactly the fact, value or term stressed, in the teacher's words.`);
   if (unit.teacherExample && String(unit.teacherExample).trim().length > 8) parts.push(`The teacher's own example for this point: ${String(unit.teacherExample).trim().slice(0, 300)}`);
   return parts.join(' ');
 }
@@ -233,5 +280,5 @@ function noteFor(unit, profile, override) {
 module.exports = {
   DELIVERY_MODES, MODE_LABEL, MODE_PREFER, SLIDE_USE, SLIDE_USE_LABEL,
   normMode, modeFromKind, slideReliance, assignUnitModes, buildProfile, describeProfile,
-  normaliseOverride, unitMode, preferFor, noteFor
+  normaliseOverride, unitMode, preferFor, noteFor, markEmphasis, modeQuota
 };
