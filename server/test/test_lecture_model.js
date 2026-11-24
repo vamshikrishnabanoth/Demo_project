@@ -377,9 +377,66 @@ test('Planning prefers the question type that fits how each point was taught (co
   const plan = lm.planRequest(m, 2, 'Medium', {});
   const byUnit = Object.fromEntries(plan.selected.map(s => [s.unit.id, s.angle.type]));
   assert.strictEqual(byUnit.U02, 'output', JSON.stringify(byUnit));
-  assert.strictEqual(byUnit.U01, 'concept', JSON.stringify(byUnit));
+  // The other question is a concept question on a concept-taught point (U03 is also the point the teacher stressed).
+  const theory = plan.selected.find(s => s.unit.id !== 'U02');
+  assert.ok(['U01', 'U03'].includes(theory.unit.id) && theory.angle.type === 'concept', JSON.stringify(byUnit));
   const off = lm.planRequest(styleModel(), 2, 'Medium', { styleGuided: false });
   assert.ok(off.selected.some(s => s.unit.id === 'U02' && s.angle.type === 'recall'), 'without style the lecture\'s own angle order is used');
+});
+
+// A lecture taught 70% as live code and 30% as theory, with plenty of points of each kind.
+function mixedModel() {
+  const W = ['range', 'enumerate', 'break', 'continue', 'nested', 'while', 'accumulator', 'counter', 'sentinel', 'zip'];
+  const units = [];
+  for (let i = 0; i < 10; i++) units.push({ id: `C${i}`, topic: 'Loops', subtopic: `${W[i]} demo`, kind: 'CODE', depth: 'DEMONSTRATED', importance: 'CORE', blocks: [], statement: `${W[i]} demonstrated`, angles: [{ type: 'concept', difficulty: 'medium', focus: 'c' }, { type: 'output', difficulty: 'medium', focus: 'o' }], misconceptions: [], hasCode: true });
+  for (let i = 0; i < 10; i++) units.push({ id: `T${i}`, topic: 'Loops', subtopic: `${W[i]} idea`, kind: 'DEFINITION', depth: 'EXPLAINED', importance: 'CORE', blocks: [], statement: `${W[i]} explained`, angles: [{ type: 'concept', difficulty: 'medium', focus: 'c' }, { type: 'comparison', difficulty: 'medium', focus: 'x' }], misconceptions: [] });
+  const segments = [
+    { title: 'Theory', start: 0, end: 300, delivery: 'CONCEPTUAL', unitIds: units.filter(u => u.id[0] === 'T').map(u => u.id) },
+    { title: 'Demo', start: 300, end: 1000, delivery: 'CODE', unitIds: units.filter(u => u.id[0] === 'C').map(u => u.id) }
+  ];
+  return { ok: true, units, segments, topics: [{ name: 'Loops', share: 100 }], capacity: computeCapacity(units), blocks: [] };
+}
+
+test('The quiz mirrors how the lecture was taught: 70% live code gives about 70% code-taught questions', () => {
+  const m = mixedModel(); m.teachingStyle = ts.buildProfile(m);
+  assert.strictEqual(m.teachingStyle.mix.CODE, 70);
+  const plan = lm.planRequest(m, 10, 'Medium', {});
+  const fromCode = plan.selected.filter(s => s.unit.id[0] === 'C').length;
+  assert.strictEqual(fromCode, 7, `code-taught questions: ${fromCode}`);
+  // Each code-taught point gets the question that fits code taught live; theory points get concept/comparison.
+  assert.ok(plan.selected.filter(s => s.unit.id[0] === 'C').every(s => s.angle.type === 'output'));
+  assert.strictEqual(new Set(plan.selected.map(s => s.unit.id)).size, 10, 'still one question per teaching point');
+  const twenty = lm.planRequest(m, 20, 'Medium', {});
+  // 20 questions on 20 points: every point once comes before a second question on any point, so 10 + 10.
+  assert.strictEqual(twenty.selected.filter(s => s.unit.id[0] === 'C').length, 10);
+  const off = lm.planRequest(mixedModel(), 10, 'Medium', { styleGuided: false });
+  assert.ok(off.selected.filter(s => s.unit.id[0] === 'C').length !== 7 || off.selected.some(s => s.unit.id[0] === 'C' && s.angle.type !== 'output'), 'without the profile the mix is not steered');
+});
+
+test('A teacher correction to the style also changes the quiz mix', () => {
+  const m = mixedModel(); m.teachingStyle = ts.buildProfile(m);
+  const plan = lm.planRequest(m, 10, 'Medium', { styleOverride: { modes: ['conceptual'] } });
+  assert.ok(plan.selected.every(s => s.angle.type !== 'output'), JSON.stringify(plan.selected.map(s => s.angle.type)));
+});
+
+test('Points the teacher stressed ("remember this for the exam") are marked with the sentence and get the direct question at Easy', () => {
+  const m = styleModel();
+  m.units.forEach(u => { u.angles = u.angles.map(a => ({ ...a, difficulty: 'easy' })); });
+  m.capacity = computeCapacity(m.units);
+  m.teachingStyle = ts.buildProfile(m);
+  assert.strictEqual(m.units[2].stressed, true);
+  assert.ok(/remember this for the exam/.test(m.units[2].stressQuote));
+  assert.strictEqual(m.units[0].stressed, false);
+  assert.strictEqual(m.teachingStyle.stressedPoints, 1);
+  const plan = lm.planRequest(m, 1, 'Easy', { styleGuided: true });
+  assert.strictEqual(plan.selected[0].unit.id, 'U03', JSON.stringify(plan.selected.map(s => s.unit.id)));
+  assert.strictEqual(plan.selected[0].angle.type, 'recall');
+  const units = lm.toTeachingUnits(m, plan, {});
+  assert.ok(/stressed this point/.test(units.primary[0].teachingStyleNote) && /remember this for the exam/.test(units.primary[0].teachingStyleNote));
+  // Older cached readings get the marks at planning time.
+  const old = styleModel(); old.teachingStyle = { mix: { CONCEPTUAL: 60, CODE: 40 } };
+  lm.planRequest(old, 1, 'Medium', {});
+  assert.strictEqual(old.units[2].stressed, true);
 });
 
 test('A teacher correction replaces the detected style, and the writer gets the teacher\'s own example', () => {

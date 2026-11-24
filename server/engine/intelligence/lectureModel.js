@@ -1501,6 +1501,8 @@ function planRequest(fullModel, requestedCount, difficulty = 'Balanced', options
   if (styleGuided && !fullModel.teachingStyle) { try { fullModel.teachingStyle = teachingStyle.buildProfile(fullModel); } catch (_) {} }
   const styleOverride = teachingStyle.normaliseOverride(options.styleOverride);
   const preferOf = (u) => (styleGuided ? teachingStyle.preferFor(u, styleOverride) : null);
+  // Readings made before emphasis marking get it now (deterministic, no model call).
+  if (styleGuided && (fullModel.units || []).some(u => u.stressed === undefined)) { try { teachingStyle.markEmphasis(fullModel); } catch (_) {} }
 
   // Replacing one question: same difficulty, traced back to the teaching point it came from, with a
   // question type not used there yet; then other points of the same topic; then anywhere in the lecture.
@@ -1569,6 +1571,16 @@ function planRequest(fullModel, requestedCount, difficulty = 'Balanced', options
   const selected = [];
   const reserves = [];
   const byTopic = {};
+  // The quiz blueprint has two axes, like a teacher's table of specifications: topics (allocated per difficulty
+  // below by capacity and teaching time) and the kind of question, which follows how each part was taught. A
+  // lecture that was 30% live code walkthrough gets about 30% code-taught questions. The target is set for the
+  // whole quiz and then shared out across the difficulties, so rounding at each difficulty does not add up.
+  const modeOf = (u) => teachingStyle.unitMode(u, styleOverride);
+  const nWanted = byDiff.easy + byDiff.medium + byDiff.hard;
+  const modeTarget = styleGuided && nWanted > 0
+    ? teachingStyle.modeQuota(model, model.units.flatMap(u => u.angles.filter(a => byDiff[a.difficulty] > 0).map(a => ({ unit: u, angle: a }))), nWanted, styleOverride, allocate)
+    : null;
+  const modeSoFar = {};
   for (const d of ['easy', 'medium', 'hard']) {
     const want = byDiff[d];
     const pools = {};
@@ -1586,38 +1598,66 @@ function planRequest(fullModel, requestedCount, difficulty = 'Balanced', options
       return [t.name, 0.5 * capShare + 0.5 * timeShare + 1e-6];
     }));
     const alloc = want > 0 ? allocate(want, weights, caps) : {};
-    for (const [topic, pool] of Object.entries(pools)) {
-      const k = alloc[topic] || 0;
-      // Diversity first: skip a point that was already assessed (same unit, or the same command/idea
-      // taught twice, e.g. explained and later demonstrated) while other points are still available.
-      // Variety second: among eligible opportunities, take the question type used least so far in the
-      // quiz (so a quiz is not mostly recall/concept when the lecture also supports traces, outputs,
-      // scenarios, comparisons...). Ties keep the original lecture order.
-      const chosen = [];
-      const remaining = pool.slice();
-      const typeCount = t => selected.filter(s => s.angle.type === t).length;
-      const pickBest = (allowRepeatPoint) => {
-        let bestIdx = -1, bestScore = Infinity;
+    // This difficulty's share of each mode: what the mode still needs towards its quiz-wide target, within what
+    // this difficulty can supply.
+    let modeQuota = null;
+    if (modeTarget && want > 0) {
+      const modeCaps = {};
+      Object.entries(pools).filter(([t]) => (alloc[t] || 0) > 0).forEach(([, p]) => p.forEach(x => { const m = modeOf(x.unit); modeCaps[m] = (modeCaps[m] || 0) + 1; }));
+      const need = Object.fromEntries(Object.keys(modeCaps).map(m => [m, Math.max(0, (modeTarget[m] || 0) - (modeSoFar[m] || 0)) + 1e-6]));
+      modeQuota = allocate(want, need, modeCaps);
+    }
+    const modeUsed = {};
+    const topicLeft = { ...alloc };
+    const remainingBy = Object.fromEntries(Object.entries(pools).map(([t, p]) => [t, p.slice()]));
+    const typeCount = t => selected.filter(s => s.angle.type === t).length;
+    const typeCountInMode = (m, t) => selected.filter(s => s.angle.type === t && modeOf(s.unit) === m).length;
+    // Order of preference for each pick (topic quotas are fixed):
+    //   1. a teaching point not assessed yet (same unit, or the same idea taught twice, counts as one point);
+    //   2. a teaching mode still below its share of the quiz;
+    //   3. a question type that fits how the point was taught (code taught live → output/trace/debug; theory →
+    //      concept/comparison/mechanism; a fact the teacher stressed → a direct question at Easy);
+    //   4. among those, the type used least so far within that teaching mode (variety without leaving the style);
+    //   5. points the teacher stressed, then the lecture's own order.
+    // Without the style profile (ablation), only 1 and plain type variety across the quiz apply, as before.
+    const pickBest = (allowRepeatPoint) => {
+      let best = null, bestScore = Infinity;
+      for (const [topic, remaining] of Object.entries(remainingBy)) {
+        if (!(topicLeft[topic] > 0)) continue;
         remaining.forEach((p, i) => {
           if (!allowRepeatPoint && selected.some(s => sameTeachingPoint(s.unit, p.unit))) return;
-          // Style preference: below variety (100 per repeat) but above the lecture's own angle order (10 per rank).
-          const prefer = preferOf(p.unit);
-          const styleBonus = prefer && prefer.includes(p.angle.type) ? 40 : 0;
-          const score = typeCount(p.angle.type) * 100 + p.rank * 10 - styleBonus + i * 0.01;
-          if (score < bestScore) { bestScore = score; bestIdx = i; }
+          const m = modeOf(p.unit);
+          const modeFull = modeQuota && (modeUsed[m] || 0) >= (modeQuota[m] || 0) ? 1e6 : 0;
+          let score;
+          if (styleGuided) {
+            const prefer = preferOf(p.unit);
+            // A point the teacher stressed ("remember this", "important for the exam") deserves a question, and at
+            // Easy the one that fits is a direct question on the stressed fact.
+            const stressedRecall = Boolean(p.unit.stressed) && d === 'easy' && p.angle.type === 'recall';
+            const fits = !prefer || prefer.includes(p.angle.type) || stressedRecall;
+            const stressBonus = stressedRecall ? 60 : (p.unit.stressed ? 20 : 0);
+            score = modeFull + (fits ? 0 : 1e4) + typeCountInMode(m, p.angle.type) * 100 + p.rank * 10 - stressBonus + i * 0.01;
+          } else {
+            score = typeCount(p.angle.type) * 100 + p.rank * 10 + i * 0.01;
+          }
+          if (score < bestScore) { bestScore = score; best = { topic, i }; }
         });
-        return bestIdx;
-      };
-      while (chosen.length < k) {
-        let idx = pickBest(false);
-        if (idx === -1) idx = pickBest(true);
-        if (idx === -1) break;
-        const [p] = remaining.splice(idx, 1);
-        chosen.push(p); selected.push({ ...p, difficulty: d });
       }
-      remaining.forEach(p => reserves.push({ ...p, difficulty: d }));
-      if (k) byTopic[topic] = (byTopic[topic] || 0) + k;
+      return best;
+    };
+    let toPick = Object.values(alloc).reduce((s, x) => s + x, 0);
+    while (toPick > 0) {
+      const at = pickBest(false) || pickBest(true);
+      if (!at) break;
+      const [p] = remainingBy[at.topic].splice(at.i, 1);
+      selected.push({ ...p, difficulty: d });
+      const m = modeOf(p.unit);
+      modeUsed[m] = (modeUsed[m] || 0) + 1;
+      topicLeft[at.topic]--; toPick--;
+      byTopic[at.topic] = (byTopic[at.topic] || 0) + 1;
     }
+    Object.entries(modeUsed).forEach(([m, c]) => { modeSoFar[m] = (modeSoFar[m] || 0) + c; });
+    Object.values(remainingBy).forEach(rem => rem.forEach(p => reserves.push({ ...p, difficulty: d })));
   }
   // Hard picks: each gets the way of being Hard that its content supports, varied across the quiz.
   hardForms.assignForms(selected, model, { isSamePoint: sameTeachingPoint });
