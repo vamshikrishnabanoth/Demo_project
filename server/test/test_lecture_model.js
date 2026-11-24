@@ -456,6 +456,11 @@ async function blindTests() {
     const hedgedFlags = await lectureDiscrepancies([expose], model);
     router.complete = async () => JSON.stringify({ answers: [{ q: 1, answer: 'B', lectureQuote: 'the teacher said ports are published', convention: false }] });
     const unquotedFlags = await lectureDiscrepancies([expose], model);
+    router.complete = async ({ prompt }) => JSON.stringify({ answers: [{ q: 1, answer: /technically WRONG/.test(prompt) ? 'A' : 'B', lectureQuote: 'Page size is 4 KB', convention: false }] });
+    const correctLectureFlags = await lectureDiscrepancies([expose], model);
+    test('Lecture discrepancy tie-breaker: a disputed key does not flag the lecture when its quoted statement is judged correct', () => {
+      assert.strictEqual(correctLectureFlags.length, 0);
+    });
     test('Lecture discrepancy needs proof: no flag when the answer hinges on an unstated convention, or the quoted lecture words are not in the lecture', () => {
       assert.strictEqual(hedgedFlags.length, 0);
       assert.strictEqual(unquotedFlags.length, 0);

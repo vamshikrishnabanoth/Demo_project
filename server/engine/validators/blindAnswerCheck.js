@@ -204,6 +204,20 @@ function blindRejections(accepted) {
  * available to the host"). The question is still replaced; the point is reported to the teacher to double-check.
  * @returns {Promise<Array<{subtopic, time, lectureSays, standardAnswer, working, question}>>}
  */
+/**
+ * Tie-breaker before telling a teacher their lecture is wrong: ask directly whether the quoted statement is technically
+ * wrong. A disagreement between two model solves is not proof (Transformer lecture, 24 Nov: the solver inverted the
+ * correct "multiply the embedding by sqrt(d_model)" and the lecture was flagged). Only a clear "wrong" passes.
+ */
+async function statementIsWrong(quote, topic) {
+  try {
+    const res = await callReasoner(`A teacher said, in a lecture on ${topic || 'this subject'}: "${quote}"
+Is this statement technically WRONG as taught (not merely informal, simplified or incomplete)? Answer "B" if it is wrong, "A" if it is correct or acceptable. Return {"answers":[{"q":1,"answer":"A","why":"one sentence"}]}`);
+    const a = answersOf(res.data)[0] || {};
+    return String(a.answer || '').trim().toUpperCase().charAt(0) === 'B';
+  } catch (_) { return false; }
+}
+
 async function lectureDiscrepancies(disputed, lm, { max = 3 } = {}) {
   if (!lm || !Array.isArray(disputed) || !disputed.length) return [];
   const found = [];
@@ -222,7 +236,7 @@ A quiz question assumed: "${c.premise}". The correct statement is: "${c.correcti
 Does the lecture passage itself state or clearly imply the false version? If yes, copy the exact words from the passage in "lectureQuote" (verbatim, at least 6 words); if not, leave it empty. Return {"answers":[{"q":1,"answer":"A","lectureQuote":""}]}`);
         const a = answersOf(res.data)[0] || {};
         const quote = typeof a.lectureQuote === 'string' ? a.lectureQuote.trim() : '';
-        if (quote.split(/s+/).length >= 6 && norm(passage).includes(norm(quote))) {
+        if (quote.split(/s+/).length >= 6 && norm(passage).includes(norm(quote)) && await statementIsWrong(quote, (q.lectureSource || {}).topic)) {
           const s = q.lectureSource || {};
           found.push({ kind: 'premise', subtopic: s.subtopic || null, time: s.time || null, lectureSays: c.premise, lectureQuote: quote, standardAnswer: c.correction || null, working: '', question: q.question || q.questionText || '' });
         }
@@ -241,7 +255,7 @@ Does the lecture passage itself state or clearly imply the false version? If yes
       const quote = a && typeof a.lectureQuote === 'string' ? a.lectureQuote.trim() : '';
       const quoted = quote.split(/\s+/).length >= 4 && norm(passage).includes(norm(quote));
       const hedged = a && (a.convention === true || String(a.convention).toLowerCase() === 'true');
-      if (byLecture >= 0 && byLecture === keyIndex(q) && quoted && !hedged) {
+      if (byLecture >= 0 && byLecture === keyIndex(q) && quoted && !hedged && await statementIsWrong(quote, (q.lectureSource || {}).topic)) {
         const s = q.lectureSource || {};
         found.push({ subtopic: s.subtopic || null, time: s.time || null, lectureSays: q.options[byLecture], lectureQuote: quote, standardAnswer: c.blindAnswer, working: c.working || '', question: q.question || q.questionText || '' });
       }
