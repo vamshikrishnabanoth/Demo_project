@@ -70,7 +70,7 @@ function deterministicProblems(q) {
   // Questions of a code-type plan that ask about data or concepts (e.g. "given the data set …") are not affected.
   const type = q.lectureSource && q.lectureSource.questionType;
   const stem = stemOf(q);
-  const talksAboutCode = /\b(?:this|the following|given|above|below)\s+(?:code|program|snippet|loop|statement|line|function|condition|command|query)\b|\bwhat (?:does|will) (?:the|this) (?:code|program|loop|statement|command|query) (?:print|output|return|display)|\bcondition\s+['"`]?[a-z_]\w*\s*(?:[<>=!]=?|>=|<=)|\bwhat is printed\b|\boutput of\b/i.test(stem);
+  const talksAboutCode = /\b(?:this|the following|given|above|below)\s+(?:(?:python|java|c\+\+|javascript|sql|bash|shell|pytorch)\s+)?(?:code|program|snippet|loop|statement|line|function|condition|command|query|method|class)\b|\bwhat (?:does|will) (?:the|this) (?:code|program|loop|statement|command|query) (?:print|output|return|display)|\bcondition\s+['"`]?[a-z_]\w*\s*(?:[<>=!]=?|>=|<=)|\bwhat is printed\b|\boutput of\b/i.test(stem);
   if (CODE_TYPES.has(type) || talksAboutCode) {
     const showsCode = /```|`[^`]+`|\n\s*\S.*[;{}()=<>\[\]]|^\s*(?:\$|>>>|#include|for\s*\(|while\s*\(|if\s*\(|int\s|def\s|print)/m.test(stem);
     if (talksAboutCode && !showsCode) problems.push({ code: 'COMPLETENESS', detail: 'It refers to code but does not show the code.' });
