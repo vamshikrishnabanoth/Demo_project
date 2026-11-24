@@ -70,7 +70,7 @@ function deterministicProblems(q) {
   // Questions of a code-type plan that ask about data or concepts (e.g. "given the data set …") are not affected.
   const type = q.lectureSource && q.lectureSource.questionType;
   const stem = stemOf(q);
-  const talksAboutCode = /\b(?:this|the following|given|above|below)\s+(?:code|program|snippet|loop|statement|line|function|condition|command|query)\b|\bwhat (?:does|will) (?:the|this) (?:code|program|loop|statement|command|query) (?:print|output|return|display)|\bcondition\s+['"`]?[a-z_]\w*\s*(?:[<>=!]=?|>=|<=)|\bwhat is printed\b|\boutput of\b/i.test(stem);
+  const talksAboutCode = /\b(?:this|the following|given|above|below)\s+(?:(?:python|java|c\+\+|javascript|sql|bash|shell|pytorch)\s+)?(?:code|program|snippet|loop|statement|line|function|condition|command|query|method|class)\b|\bwhat (?:does|will) (?:the|this) (?:code|program|loop|statement|command|query) (?:print|output|return|display)|\bcondition\s+['"`]?[a-z_]\w*\s*(?:[<>=!]=?|>=|<=)|\bwhat is printed\b|\boutput of\b/i.test(stem);
   if (CODE_TYPES.has(type) || talksAboutCode) {
     const showsCode = /```|`[^`]+`|\n\s*\S.*[;{}()=<>\[\]]|^\s*(?:\$|>>>|#include|for\s*\(|while\s*\(|if\s*\(|int\s|def\s|print)/m.test(stem);
     if (talksAboutCode && !showsCode) problems.push({ code: 'COMPLETENESS', detail: 'It refers to code but does not show the code.' });
@@ -130,7 +130,7 @@ For EACH question:
  - consistent: any data, state or trace given in the question is internally consistent (e.g. the state "after processing index 2" must reflect indices 0 and 1). Count an inconsistency as complete=false.
  - steps: how many dependent reasoning steps a strong student needs to reach the answer (1 = recall or one direct application).
  - trivial: true ONLY if the question asks an incidental detail that is not itself one of the ideas taught — a default value, a specific number, a name, a version or a setting mentioned in passing — or if its answer is given away by the wording of the question. Asking what a central taught concept means, does, or is used for is NOT trivial.
- - level: "recall" ONLY if the question asks the student to restate a fact, definition, value, name or statement (what is X, which term, what does X stand for, what value does X hold). "apply" if the question gives a situation, case, data or code and asks what happens, what to choose or why — even when the lecture discussed the same example. "analyze" if it needs several dependent steps, combining ideas or diagnosing.
+ - level: "recall" ONLY if the question asks the student to restate a fact, definition, value, name or statement (what is X, which term, what does X stand for, what value does X hold), or if its answer is a single lookup or one arithmetic operation on numbers given in the stem (512 / 4 heads = 128; the dimensions of a matrix the stem already describes). "apply" if the question gives a situation, case, data or code and asks what happens, what to choose or why — even when the lecture discussed the same example. "analyze" if it needs several dependent steps, combining ideas or diagnosing.
  - distractorsValid: every wrong option is clearly wrong; none is correct, equivalent in meaning to another option or the key (e.g. "counts only elements after x" vs "skips elements before x"), duplicated, nonsensical or unrelated.
  - plausible: every wrong option is a realistic student misconception, not a throwaway.
  - aligned: the options directly answer the question asked.
@@ -168,6 +168,10 @@ async function finalQualityGate(questions, opts = {}) {
   const mode = lm && !lm.isTopicNotes ? 'lecture' : 'domain';
   const context = Array.isArray(opts.context) ? opts.context : [];
   const list = (questions || []).map((q, i) => ({ q, n: i + 1, source: sourceFor(q, lm), problems: deterministicProblems(q) }));
+  // Deep lecture = its reading found at least HARD_DEEP_MIN multi-step (Hard) opportunities (default 8: the Transformer
+  // lecture has 23, Kruskal 13, MIT DP 8; the introductory classification-metrics class 5).
+  const hardCap = lm && lm.capacity && lm.capacity.byDifficulty ? Number(lm.capacity.byDifficulty.hard) || 0 : 0;
+  const deepLecture = hardCap >= (parseInt(process.env.HARD_DEEP_MIN, 10) || 8);
   const contextStems = context.map((q, i) => ({ n: list.length + i + 1, stem: stemOf(q).slice(0, 220) }));
 
   const batches = [];
@@ -216,13 +220,16 @@ async function finalQualityGate(questions, opts = {}) {
       // (the old behaviour) kept the count but silently turned planned Hard/Medium questions into Easy ones.
       // Replacement pass (opts.depth === 'relabel'): keep the slot under its true label rather than deliver fewer questions.
       const strictDepth = opts.depth !== 'relabel';
-      // Hard is relative to the lecture: it is the most demanding level THIS class supports (an introductory class's Hard
-      // is an applied question; a deep class's Hard needs several steps, which the writer's Hard forms aim for). So a
-      // Hard question is demoted only when it is recall (never Hard for any class); the step count is recorded, not enforced.
+      // Hard is relative to the lecture: the most demanding level THIS class supports. A deep class (one whose reading
+      // found many multi-step opportunities: traces, calculations, code) supports multi-step questions, so its Hard needs
+      // at least two dependent steps. An introductory class's Hard is its best applied question, so there only recall is
+      // demoted. (Transformer lecture, 23 Nov: with the relaxed rule everywhere, one-step questions passed as Hard.)
       if (Number.isFinite(steps)) item.q.measuredSteps = steps;
       const level = String(r.level || '').toLowerCase();
       if (label === 'Hard' && level === 'recall') {
         item.relabel = { from: 'Hard', to: 'Medium', reason: 'is answered by recalling a statement; a Hard question must apply or analyse what was taught' };
+      } else if (label === 'Hard' && deepLecture && Number.isFinite(steps) && steps < 2) {
+        item.relabel = { from: 'Hard', to: 'Medium', reason: `needs ${steps} reasoning step; this lecture supports multi-step Hard questions` };
       } else if (label === 'Medium' && String(r.level || '').toLowerCase() === 'recall') {
         // A "Medium" question answered by remembering a sentence from the lecture is honestly an Easy question.
         item.relabel = { from: 'Medium', to: 'Easy', reason: 'is answered by recalling a statement from the lecture; Medium needs applying it' };

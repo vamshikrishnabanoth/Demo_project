@@ -276,6 +276,23 @@ async function gateTests() {
       assert.ok(cal.accepted.includes(appliedHard) && appliedHard.difficulty === 'Hard' && appliedHard.measuredSteps === 1);
       assert.ok(cal.rejected.some(r => r.question === badState && r.criteria.includes('COMPLETENESS')));
     });
+    // Same applied one-step Hard question, judged against a deep lecture (many multi-step opportunities): not Hard enough there.
+    lm._internal.callJson = async () => ({ model: 'stub', data: { results: [
+      { q: 1, answer: 'A', alsoDefensible: [], grounded: true, correct: true, distractorsValid: true, plausible: true, aligned: true, complete: true, consistent: true, clear: true, fair: true, explanationOk: true, steps: 1, level: 'apply', problems: [] }
+    ], duplicates: [] } });
+    const deepLm = { ok: true, units: [], capacity: { byDifficulty: { easy: 30, medium: 40, hard: 23 } } };
+    const introLm = { ok: true, units: [], capacity: { byDifficulty: { easy: 7, medium: 16, hard: 5 } } };
+    const inDeep = mk('Input 2, 0, 2. What is the frequency array?', ['[1, 0, 2]', '[2, 0, 1]', '[1, 1, 1]', '[0, 2, 1]'], '[1, 0, 2]', { difficulty: 'Hard' });
+    const inIntro = mk('Input 2, 0, 2. What is the frequency array?', ['[1, 0, 2]', '[2, 0, 1]', '[1, 1, 1]', '[0, 2, 1]'], '[1, 0, 2]', { difficulty: 'Hard' });
+    const dDeep = await finalQualityGate([inDeep], { lectureModel: deepLm });
+    const dIntro = await finalQualityGate([inIntro], { lectureModel: introLm });
+    test('Hard depends on the lecture: a one-step applied question is not Hard in a deep lecture, but is the Hard of an introductory one', () => {
+      assert.ok(dDeep.rejected.some(r => r.question === inDeep && r.criteria.includes('DEPTH')));
+      assert.ok(dIntro.accepted.includes(inIntro) && inIntro.difficulty === 'Hard');
+    });
+    lm._internal.callJson = async () => ({ model: 'stub', data: { results: [
+      { q: 1, answer: 'A', alsoDefensible: [], grounded: true, correct: true, distractorsValid: true, plausible: true, aligned: true, complete: true, consistent: true, clear: true, fair: true, explanationOk: true, steps: 1, level: 'recall', problems: [] }
+    ], duplicates: [] } });
     const oneStepHard2 = mk('Input 1, 1, 1. What is the frequency array?', ['[0, 3, 0]', '[3, 0, 0]', '[1, 1, 1]', '[0, 0, 3]'], '[0, 3, 0]', { difficulty: 'Hard' });
     const cal2 = await finalQualityGate([oneStepHard2], { depth: 'relabel' });
     test('Replacement pass: a recall "Hard" replacement keeps its slot, relabelled Medium', () => {
@@ -439,6 +456,11 @@ async function blindTests() {
     const hedgedFlags = await lectureDiscrepancies([expose], model);
     router.complete = async () => JSON.stringify({ answers: [{ q: 1, answer: 'B', lectureQuote: 'the teacher said ports are published', convention: false }] });
     const unquotedFlags = await lectureDiscrepancies([expose], model);
+    router.complete = async ({ prompt }) => JSON.stringify({ answers: [{ q: 1, answer: /technically WRONG/.test(prompt) ? 'A' : 'B', lectureQuote: 'Page size is 4 KB', convention: false }] });
+    const correctLectureFlags = await lectureDiscrepancies([expose], model);
+    test('Lecture discrepancy tie-breaker: a disputed key does not flag the lecture when its quoted statement is judged correct', () => {
+      assert.strictEqual(correctLectureFlags.length, 0);
+    });
     test('Lecture discrepancy needs proof: no flag when the answer hinges on an unstated convention, or the quoted lecture words are not in the lecture', () => {
       assert.strictEqual(hedgedFlags.length, 0);
       assert.strictEqual(unquotedFlags.length, 0);
@@ -484,7 +506,7 @@ async function blindTests() {
     assert.ok(hf.formsFor(units[3], model).slice(0, 2).includes('calculate_decide'));
     assert.strictEqual(hf.formsFor(units[2], model)[0], 'choose_constraints');
     assert.strictEqual(hf.formsFor(units[4], model)[0], 'boundary');
-    assert.strictEqual(hf.formsFor(units[1], model)[0], 'predict_change');
+    assert.strictEqual(hf.formsFor(units[1], model)[0], 'why_design');
   });
   test('Hard forms: a mentioned point has none; "connect two points" is offered only when a related point exists, never as the only way', () => {
     assert.deepStrictEqual(hf.formsFor(units[7], model), []);
