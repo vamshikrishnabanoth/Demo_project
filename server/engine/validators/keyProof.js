@@ -75,7 +75,10 @@ function runSolver(code) {
   const src = String(code || '');
   if (!/function\s+solve\s*\(/.test(src)) throw new Error('no solve() function');
   if (/\b(?:require|process|import|globalThis|Function|eval|setTimeout|setInterval|fetch|XMLHttpRequest)\b/.test(src)) throw new Error('solver uses a forbidden name');
-  const ctx = vm.createContext(Object.freeze({ Math, JSON, Number, String, Array, Object, Boolean, parseInt, parseFloat, isNaN, isFinite, BigInt }));
+  // A context with NO host objects: it gets its own Math, JSON, Array... from a fresh realm. Passing the host's built-ins
+  // (as before) let a program reach the host Function constructor, and from it `process` (review, 28 Nov).
+  // The context object itself has a null prototype, so `this.constructor` leads nowhere either.
+  const ctx = vm.createContext(Object.create(null));
   return vm.runInContext(`(function(){ "use strict"; ${src}\n; return solve(); })()`, ctx, { timeout: 1000 });
 }
 
@@ -93,7 +96,8 @@ function optionsMatching(value, options) {
       // "25% of the original torque" for a computed 0.25 (and 25 for "0.25 times").
       const pct = /%|percent/i.test(o);
       const same = (x) => close(x, value) || (pct && (close(x, value * 100) || close(x / 100, value)));
-      if (on.length && on.some(same) && on.filter(x => !same(x)).length <= 1) out.push(i);
+      // Every number in the option must be the computed value: "min 4, max 15" is not matched by 15 alone (review, 28 Nov).
+      if (on.length && on.every(same)) out.push(i);
       return;
     }
     if (typeof value === 'boolean') { if (canon(o).split(' ').includes(String(value))) out.push(i); return; }
@@ -172,7 +176,9 @@ async function secondComputation(qs, deps) {
   const router = require('../adapter/llmRouter');
   const { safeParseJson } = require('../utils/jsonParser');
   const body = qs.map((q, i) => `Q${i + 1}. ${stemOf(q)}\n${q.options.map((o, k) => `  ${'ABCD'[k]}) ${o}`).join('\n')}`).join('\n\n');
+  const meta = {};
   const raw = await router.complete({
+    meta,
     prompt: `${body}\n\nFor EACH question write a JavaScript function solve() that computes the correct answer from the data in the question alone, using the standard definitions of the subject (state your convention in a comment). Return the computed VALUE (number, string or array as the correct option would state it), never an option letter. Plain JavaScript and Math only.\nReturn JSON only: {"solvers":[{"q":1,"solver":"function solve(){ ... }"}]}`,
     systemPrompt: 'You are a careful examiner who computes answers independently. Return JSON only.',
     temperature: 0, responseFormat: 'json', maxTokens: 3500, operation: 'KEY_PROOF_SECOND',
@@ -180,7 +186,9 @@ async function secondComputation(qs, deps) {
   });
   const d = safeParseJson(raw, null) || {};
   const list = Array.isArray(d.solvers) ? d.solvers : [];
-  return qs.map((_, i) => { const x = list.find(y => Number(y.q) === i + 1) || list[i]; return x && x.solver ? String(x.solver) : null; });
+  const out = qs.map((_, i) => { const x = list.find(y => Number(y.q) === i + 1) || list[i]; return x && x.solver ? String(x.solver) : null; });
+  out.model = meta.model || 'openai/gpt-oss-120b';
+  return out;
 }
 
 async function callProver(prompt, deps) {
@@ -234,7 +242,7 @@ async function proveQuestions(questions, lm, deps = {}) {
       if (!p.solver || !String(p.solver).trim()) return ['TECHNICAL_CORRECTNESS', 'the answer is a value but no computation reproduces it'];
       // "function solve(){ return 'MySQL returns an error: …'; }" restates an answer; it does not compute one.
       const body = String(p.solver).replace(/function\s+solve\s*\([^)]*\)\s*\{/, '').replace(/\}\s*$/, '');
-      const literal = !/[-+*/%<>]|=(?!>)|\b(?:for|while|if|Math|length|map|reduce|filter|push|pop|shift|splice|sort|slice|split|join)\b/.test(body.replace(/(["'`])(?:\.|(?!\1).)*\1/g, ''));
+      const literal = !/[-+*/%<>]|=(?!>)|\b(?:for|while|if|Math|length|map|reduce|filter|push|pop|shift|splice|sort|slice|split|join)\b/.test(body.replace(/(["'`])(?:\\.|(?!\1).)*\1/g, ''));
       if (literal) {
         // A fixed answer proves nothing, unless it is output the class actually saw ("Query OK, 0 rows affected"):
         // then the lecture itself is the proof, and the quote check below must hold.
@@ -315,7 +323,7 @@ async function proveQuestions(questions, lm, deps = {}) {
       if (why) {
         proven.splice(proven.indexOf(q), 1);
         reject(q, why.startsWith('the second independent computation could not') ? 'NOT_VALIDATED' : 'TECHNICAL_CORRECTNESS', why);
-      } else q.keyProof.secondSolver = true;
+      } else { q.keyProof.secondSolver = true; q.keyProof.secondSolverModel = (second && second.model) || null; }
     }
   }
   return { proven, rejected, model };

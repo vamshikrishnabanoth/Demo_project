@@ -187,7 +187,7 @@ class LLMRouter {
     }
   }
 
-  async _complete({ prompt, systemPrompt = '', temperature = 0.3, responseFormat = 'json', model = null, sessionId = null, maxTokens = null, operation = null, signal = null, abortSignal = null, reasoningEffort = null, groqModels = null, noGeminiFallback = false, rateLimitWaitMs = null }) {
+  async _complete({ prompt, systemPrompt = '', temperature = 0.3, responseFormat = 'json', model = null, sessionId = null, maxTokens = null, operation = null, signal = null, abortSignal = null, reasoningEffort = null, groqModels = null, noGeminiFallback = false, rateLimitWaitMs = null, meta = null }) {
     const effectiveSignal = signal || abortSignal;
     if (!this.groqApiKey && process.env.GROQ_API_KEY) {
       this.groqApiKey = process.env.GROQ_API_KEY;
@@ -220,6 +220,7 @@ class LLMRouter {
           sessionId,
           maxTokens,
           operation,
+          meta,
           signal: effectiveSignal
         });
       } catch (err) {
@@ -244,7 +245,8 @@ class LLMRouter {
           groqSleepBudget,
           reasoningEffort,
           groqModels,
-          noGeminiFallback
+          noGeminiFallback,
+          meta
         });
       } catch (err) {
         // A cancelled request must not be re-sent to another provider.
@@ -275,7 +277,8 @@ class LLMRouter {
           model,
           sessionId,
           maxTokens,
-          operation
+          operation,
+          meta
         });
       } catch (err) {
         errors.push(`Gemini (${err.message})`);
@@ -304,7 +307,8 @@ class LLMRouter {
                   maxTokens,
                   operation,
                   signal: effectiveSignal,
-                  groqSleepBudget
+                  groqSleepBudget,
+                  meta
                 });
               } catch (retryErr) {
                 errors.push(`GroqRetry (${retryErr.message})`);
@@ -374,7 +378,7 @@ class LLMRouter {
   }
 
   /** Call Groq Cloud API with configured model, multi-key pool, and bounded rate-limit backoff */
-  async _callGroqWithRetry({ prompt, userPrompt, systemPrompt, temperature, primaryModel, fallbackModel, sessionId = null, maxTokens = null, operation = null, signal = null, abortSignal = null, groqSleepBudget = null, reasoningEffort = null, groqModels = null, noGeminiFallback = false }) {
+  async _callGroqWithRetry({ prompt, userPrompt, systemPrompt, temperature, primaryModel, fallbackModel, sessionId = null, maxTokens = null, operation = null, signal = null, abortSignal = null, groqSleepBudget = null, reasoningEffort = null, groqModels = null, noGeminiFallback = false, meta = null }) {
     prompt = prompt || userPrompt || '';
     const effectiveSignal = signal || abortSignal;
     const sleepBudget = groqSleepBudget || { spent: 0, max: RATE_LIMIT_WAIT_BUDGET_MS };
@@ -586,6 +590,8 @@ class LLMRouter {
               keySucceeded = true;
 
               // Record structured metadata for caller inspection (model that actually succeeded and provider usage)
+              // Per-call record of the model that actually answered (the shared field below is overwritten by parallel calls).
+              if (meta) { meta.model = currentModel; meta.provider = 'groq'; }
               this.lastCompletionMetadata = {
                 model: currentModel,
                 provider: 'groq',
@@ -865,7 +871,7 @@ class LLMRouter {
   /**
    * Call Google Gemini API as cloud fallback when Groq hits 429/failures.
    */
-  async _callGemini({ prompt, systemPrompt = '', temperature = 0.3, responseFormat = 'json', model = null, sessionId = null, maxTokens = null, signal = null, abortSignal = null, operation = null }) {
+  async _callGemini({ prompt, systemPrompt = '', temperature = 0.3, responseFormat = 'json', model = null, sessionId = null, maxTokens = null, signal = null, abortSignal = null, operation = null, meta = null }) {
     const effectiveSignal = signal || abortSignal;
     let resolvedMaxTokens = parseInt(maxTokens, 10);
     if (isNaN(resolvedMaxTokens) || resolvedMaxTokens <= 0) {
@@ -955,6 +961,7 @@ class LLMRouter {
           } catch (_) {}
         }
 
+        if (meta) { meta.model = geminiModelName; meta.provider = 'gemini'; }
         this._recordServed(operation, 'gemini', geminiModelName);
         return text.trim();
       } catch (err) {

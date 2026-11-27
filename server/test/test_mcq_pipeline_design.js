@@ -681,6 +681,20 @@ const ang = (type, difficulty) => ({ type, difficulty, focus: `${type} ${difficu
     assert(/second independent computation gives \[4,15\]/.test(r.rejected[0].reasons[0]), r.rejected[0].reasons[0]);
   });
 
+  await test('D47', 'review fixes: sandbox has no host objects, every number must match, literals detected, real answering model reported', async () => {
+    const k = require('../engine/validators/keyProof');
+    assert.strictEqual(k.runSolver('function solve(){ return Math.constructor.constructor("return typeof proc" + "ess")(); }'), 'undefined', 'no path to the host process');
+    assert.deepStrictEqual(k.optionsMatching(15, ['Minimum 4 nodes, maximum 15 nodes', '15 nodes', '16', '7']), [1]);
+    assert.deepStrictEqual(k.optionsMatching(54.44, ['54.44 A', '44.5 A', '60 A', '31.4 A']), [0]);
+    const src = require('fs').readFileSync(require.resolve('../engine/validators/keyProof'), 'utf8');
+    assert(src.includes(String.raw`(?:\\.|(?!\1).)*\1/g`), 'escaped characters inside string literals are skipped');
+    const blind = require('fs').readFileSync(require.resolve('../engine/validators/blindAnswerCheck'), 'utf8');
+    assert(!/split\(\/s\+\/\)/.test(blind), 'whitespace split, not the letter s');
+    assert(/model: meta\.model \|\| models\[0\]/.test(blind), 'the model that actually answered is reported');
+    const router = require('fs').readFileSync(require.resolve('../engine/adapter/llmRouter'), 'utf8');
+    assert(/if \(meta\) \{ meta\.model = currentModel;/.test(router) && /if \(meta\) \{ meta\.model = geminiModelName;/.test(router));
+  });
+
   const failed = results.filter(r => !r.ok);
   console.log(`\n${results.length - failed.length}/${results.length} passed`);
   process.exit(failed.length ? 1 : 0);
