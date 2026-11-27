@@ -1033,7 +1033,8 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
     // Time budget (C7): a quiz answers within QUIZ_TIME_BUDGET_MS of Generate (default 2 min) with what is proven by
     // then; no check is skipped to meet it, the notice reports what was left. A replacement (count 1) inherits none.
     const genStartedAt = Date.now();
-    const QUIZ_BUDGET_MS = Math.max(30000, parseInt(process.env.QUIZ_TIME_BUDGET_MS, 10) || 120000);
+    // 3 min of generation + ~1 min of reading keeps upload-to-questions under 5 minutes, with room for one replacement round.
+    const QUIZ_BUDGET_MS = Math.max(30000, parseInt(process.env.QUIZ_TIME_BUDGET_MS, 10) || 180000);
     const timeLeft = () => QUIZ_BUDGET_MS - (Date.now() - genStartedAt);
     try {
         console.log(`🚀 [Baseline v1.0] Executing 3-Agent Pipeline: ${type || 'multi-input'} | Count: ${count} | Style: ${questionStyle}`);
@@ -1575,7 +1576,7 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
                     const short = Math.max(0, (sessionInputs.count || generatedCount) - accepted.length);
                     const gateNote = `Quality gate: ${firstPassRejected} of ${generatedCount} generated question${generatedCount === 1 ? '' : 's'} rejected (${describeRejections(gate.rejected)})` +
                         (lmForGate && !lmOptions.replace ? `; ${replacedOk} replaced with validated questions` : '') +
-                        (short > 0 ? `. Delivering ${accepted.length} of ${sessionInputs.count || generatedCount} requested — nothing that failed a check is included${timedOut ? '; the 2-minute limit was reached before more could be proven (generate again to add more)' : ''}.` : '.');
+                        (short > 0 ? `. Delivering ${accepted.length} of ${sessionInputs.count || generatedCount} requested — nothing that failed a check is included${timedOut ? '; the 3-minute limit was reached before more could be proven (generate again to add more)' : ''}.` : '.');
                     result.notice = result.notice ? `${result.notice} ${gateNote}` : gateNote;
                     if (short > 0) result.isPartial = true;
                 }

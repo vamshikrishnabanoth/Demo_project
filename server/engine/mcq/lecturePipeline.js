@@ -211,7 +211,9 @@ async function run(sessionInputs, lm, progress = () => {}, deps = {}) {
     return added;
   };
   extraHard = overgen('Hard', parseFloat(process.env.HARD_OVERGENERATE) || 0.4);
-  extraOther = overgen('Medium', parseFloat(process.env.OVERGENERATE) || 0.5) + overgen('Easy', parseFloat(process.env.OVERGENERATE) || 0.5);
+  // Lean mode (few keys): no time for replacement rounds, so the first wave carries twice the spares.
+  const otherShare = parseFloat(process.env.OVERGENERATE) || (require('../utils/capacityMode').isLean() ? 1.0 : 0.5);
+  extraOther = overgen('Medium', otherShare) + overgen('Easy', otherShare);
   const writeGoal = requested + extraHard + extraOther;
   const maxAttempts = Math.max(writeGoal * 3, writeGoal + 6);
   let attempts = 0;
