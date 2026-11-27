@@ -151,12 +151,8 @@ class LLMRouter {
     // Circuit breaker: when every provider has just failed, further calls fail at once for a short window instead
     // of each walking the whole key/model cascade again (which used to burn every key's quota in minutes).
     const outage = this.getOutage();
-    if (outage && outage.quota) {
-      // Daily limits reset in hours: fail at once with the reason instead of burning every remaining target.
-      const err = new Error(`NO_LLM_PROVIDER_AVAILABLE: ${outage.message} (circuit open for ${Math.ceil((outage.until - Date.now()) / 1000)}s more)`);
-      err.code = 'NO_LLM_PROVIDER_AVAILABLE';
-      throw err;
-    }
+    // Any open circuit (quota or busy) is waited out, then the call is tried again: failing at once made a whole quiz's
+    // targets fail in a burst during a one-minute window, although other keys and models recovered seconds later.
     if (outage) {
       // A short "busy" outage usually clears in seconds: wait it out (without hammering the providers), then try.
       const sig = params && (params.signal || params.abortSignal);
@@ -165,7 +161,12 @@ class LLMRouter {
     try {
       return await this._complete(params);
     } catch (err) {
-      if (err && err.code === 'NO_LLM_PROVIDER_AVAILABLE') {
+      // A call limited to particular models (e.g. Hard writing on gpt-oss-120b only, no Gemini) failing says nothing
+      // about the other models, so it never opens the circuit for everyone.
+      const restricted = Boolean(params && ((Array.isArray(params.groqModels) && params.groqModels.length) || params.noGeminiFallback));
+      // A request too large for a provider is a property of that request, not an outage of every provider.
+      const tooLarge = /413|too large|TOO_LARGE/i.test(String(err && err.message));
+      if (err && err.code === 'NO_LLM_PROVIDER_AVAILABLE' && !restricted && !tooLarge) {
         const reset = String(err.message).match(/retry in ([\dhms.]+)/i);
         // Only a daily limit with a long reset counts as a quota outage; per-minute throttling (429 with a short
         // retry) and "busy" errors are transient.
@@ -421,6 +422,37 @@ class LLMRouter {
     // Up to 20 passes across the pool with bounded cooldown sleep if keys are temporarily throttled
     const cancelSignal = signal || abortSignal;
     for (let poolAttempt = 0; poolAttempt < 20; poolAttempt++) {
+      // Smart key use: the requested model is tried on EVERY key before another model is considered, keys with the
+      // most known token budget first. A model busy on all keys is waited for (short resets) rather than swapped:
+      // a question is written by the model that was chosen for it, not by whichever model happens to be free.
+      const routeFree = (k, m) => !this.invalidKeys.has(k)
+        && !(Date.now() < (this.tpdExhaustedRoutes.get(`${k}_${m}`) || 0))
+        && !(Date.now() < (this.modelCooldowns.get(`${k}_${m}`) || 0) - 50)
+        && !(Date.now() < (this.keyCooldowns.get(k) || 0) - 50);
+      let passModels = modelsToTry;
+      const firstFree = modelsToTry.find(m => keys.some((_, k) => routeFree(k, m)));
+      const primary = modelsToTry[0];
+      if (firstFree === primary) {
+        passModels = [primary];
+      } else {
+        // The primary model is busy on every key: wait for its earliest reset when that is short.
+        const resets = keys.map((_, k) => Math.max(this.modelCooldowns.get(`${k}_${primary}`) || 0, this.keyCooldowns.get(k) || 0))
+          .filter((t, k) => !this.invalidKeys.has(k) && !(Date.now() < (this.tpdExhaustedRoutes.get(`${k}_${primary}`) || 0)));
+        const waitMs = resets.length ? Math.max(0, Math.min(...resets) - Date.now() + 300) : Infinity;
+        const allowance = Math.max(0, sleepBudget.max - sleepBudget.spent);
+        if (waitMs <= Math.min(30000, allowance)) {
+          sleepBudget.spent += waitMs;
+          console.warn(`⏳ [LLMRouter] ${primary} busy on all ${totalKeys} keys; waiting ${Math.round(waitMs / 1000)}s for its reset instead of switching model.`);
+          await this._sleep(waitMs, effectiveSignal);
+          poolAttempt--; // a wait is not a failed pass
+          if (sleepBudget.spent >= sleepBudget.max) break;
+          continue;
+        }
+        passModels = firstFree ? modelsToTry.slice(modelsToTry.indexOf(firstFree)) : modelsToTry;
+      }
+      const passModel = passModels[0];
+      const budgetOf = (k) => { const b = this.routeTokenBudget.get(`${k}_${passModel}`); return b && Date.now() < b.resetAt ? b.remaining : Infinity; };
+      const keyOrder = keys.map((_, k) => k).sort((a, b) => (budgetOf(b) - budgetOf(a)) || (((a - startKeyOffset + totalKeys) % totalKeys) - ((b - startKeyOffset + totalKeys) % totalKeys)));
       for (let offset = 0; offset < totalKeys; offset++) {
         // A cancelled request (its caller timed out or the teacher cancelled) stops here. Without this check every
         // remaining key x model was tried with the dead signal, each failing instantly, for up to 20 passes.
@@ -429,7 +461,7 @@ class LLMRouter {
           cancelled.code = 'REQUEST_CANCELLED';
           throw cancelled;
         }
-        const keyIdx = (startKeyOffset + offset) % totalKeys;
+        const keyIdx = keyOrder[offset];
         const key = keys[keyIdx];
         // Check if key was permanently invalidated (e.g. 401/403)
         if (this.invalidKeys.has(keyIdx)) {
@@ -444,9 +476,9 @@ class LLMRouter {
         }
 
         let keySucceeded = false;
-        for (let mIdx = 0; mIdx < modelsToTry.length; mIdx++) {
-          const currentModel = modelsToTry[mIdx];
-          const isLastModel = mIdx === modelsToTry.length - 1;
+        for (let mIdx = 0; mIdx < passModels.length; mIdx++) {
+          const currentModel = passModels[mIdx];
+          const isLastModel = mIdx === passModels.length - 1;
           if (cancelSignal && cancelSignal.aborted) {
             const cancelled = new Error('canceled: the request was cancelled by its caller');
             cancelled.code = 'REQUEST_CANCELLED';
@@ -542,6 +574,9 @@ class LLMRouter {
                   response.data.usage.prompt_tokens || 0,
                   response.data.usage.completion_tokens || 0
                 );
+                // Per-model token tally (cost per quiz; the free tier's daily budget is per account and per model).
+                this.tokensByModel = this.tokensByModel || {};
+                this.tokensByModel[currentModel] = (this.tokensByModel[currentModel] || 0) + (response.data.usage.total_tokens || ((response.data.usage.prompt_tokens || 0) + (response.data.usage.completion_tokens || 0)));
               }
 
               // Success! Clear cooldowns for this key and model
@@ -771,6 +806,13 @@ class LLMRouter {
           console.warn('⚡ [LLMRouter] All eligible Groq routes for this operation are TPD-exhausted. Fast-failing over to Gemini immediately (0ms delay).');
           break; // Exits Loop 1 -> _callGroq throws -> fallback catches -> calls _callGemini()
         }
+        // The daily allowance of every eligible route is used up and the reset is minutes away: waiting cannot help,
+        // so the caller is told at once (it can use its stated fallback) instead of after the whole wait budget.
+        if (minWaitMs > 60000) {
+          const daily = new Error(`DAILY_LIMIT: ${modelsToTry.join(', ')} daily token allowance used on all ${totalKeys} keys (resets in ${Math.round(minWaitMs / 60000)} min)`);
+          daily.code = 'DAILY_LIMIT';
+          throw daily;
+        }
         if (poolAttempt < 18 && tpdCooldowns.length > 0) {
           const remainingAllowance = Math.max(0, sleepBudget.max - sleepBudget.spent);
           if (remainingAllowance <= 0) {
@@ -796,12 +838,14 @@ class LLMRouter {
         if (process.env.ALLOW_MOCK_FALLBACK === 'true' && process.env.NODE_ENV !== 'production') {
           break;
         }
-        if (hasGemini) {
-          console.warn('⚡ [LLMRouter] Groq keys throttled by TPM. Fast-failing over to Gemini immediately (0ms delay)...');
-          break;
-        }
         const now = Date.now();
         const pendingCooldowns = Array.from(this.modelCooldowns.values()).filter(t => t - now > 0);
+        // A per-minute reset is short: wait for it (same provider, same model). Gemini only if the reset is long.
+        const shortest = pendingCooldowns.length ? Math.min(...pendingCooldowns) - now : 0;
+        if (hasGemini && shortest > 30000) {
+          console.warn(`⚡ [LLMRouter] Groq keys throttled for ${Math.round(shortest / 1000)}s. Failing over to Gemini.`);
+          break;
+        }
         const rawWaitMs = pendingCooldowns.length > 0 ? Math.min(Math.min(...pendingCooldowns) - now + 300, 60000) : 3000;
         const remainingAllowance = Math.max(0, sleepBudget.max - sleepBudget.spent);
         if (remainingAllowance <= 0) {
@@ -833,7 +877,9 @@ class LLMRouter {
         resolvedMaxTokens = 4096;
       }
     }
-    const apiKey = (this.geminiApiKey || process.env.GEMINI_API_KEY || '').trim();
+    // Gemini key pool (engine/utils/geminiKeys.js): a quota or key error on one key moves to the next.
+    const geminiKeys = require('../utils/geminiKeys');
+    let apiKey = (geminiKeys.key() || this.geminiApiKey || '').trim();
     if (!apiKey) {
       throw new Error('GEMINI_API_KEY is missing or empty');
     }
@@ -850,7 +896,7 @@ class LLMRouter {
       throw new Error(`@google/generative-ai SDK not available: ${e.message}`);
     }
 
-    const genAI = new GoogleGenerativeAI(apiKey);
+    let genAI = new GoogleGenerativeAI(apiKey);
 
     // Configurable model cascade: verified supported models from Google ModelService API
     const candidateModels = Array.from(new Set([
@@ -916,6 +962,12 @@ class LLMRouter {
         const msg = err.message || '';
         const status = err.status || (msg.includes('429') ? 429 : (msg.includes('403') ? 403 : (msg.includes('404') ? 404 : 500)));
 
+        if ((status === 429 || msg.includes('RESOURCE_EXHAUSTED')) && geminiKeys.report(err, apiKey)) {
+          apiKey = geminiKeys.key();
+          genAI = new GoogleGenerativeAI(apiKey);
+          console.warn(`⚡ [LLMRouter] Gemini key limit reached on '${geminiModelName}'. Switching to the next Gemini key (${geminiKeys.count()} in pool)...`);
+          continue;
+        }
         if (status === 429 || msg.includes('RESOURCE_EXHAUSTED')) {
           if (msg.includes('PerDay') || msg.includes('limit: 20') || msg.includes('per day')) {
             console.warn(`⚡ [LLMRouter] Gemini model '${geminiModelName}' daily limit reached. Fast-failing over to next candidate model...`);
@@ -929,6 +981,12 @@ class LLMRouter {
           await this._sleep(cooldownMs);
           continue;
         } else if (status === 403 || msg.includes('PERMISSION_DENIED') || msg.includes('leaked') || msg.includes('API key')) {
+          if (geminiKeys.report(new Error(`quota: key unusable (${status}) per day`), apiKey)) {
+            apiKey = geminiKeys.key();
+            genAI = new GoogleGenerativeAI(apiKey);
+            console.warn('🚨 [LLMRouter] A Gemini key was refused; switching to the next Gemini key.');
+            continue;
+          }
           this.geminiCooldownUntil = Date.now() + 3600000;
           console.warn(`🚨 [LLMRouter] Gemini authentication error (${msg}). Marking key unavailable.`);
           break;

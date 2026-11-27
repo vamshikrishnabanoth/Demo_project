@@ -140,7 +140,8 @@ class Agent3Evaluator {
         isUnfulfilled: true,
         unfulfilledReason: candidateMCQ.unfulfilledReason || 'INSUFFICIENT_EVIDENCE_FOR_HARD',
         failureReason: candidateMCQ.message || 'Capacity deficit: concept lacks observed mechanisms in lecture evidence to fulfill requested Hard difficulty',
-        failureReasons: ['INSUFFICIENT_EVIDENCE_FOR_HARD'],
+        // The real reason (e.g. PROVIDER_UNAVAILABLE when the model call failed), not a guessed capacity deficit.
+        failureReasons: [candidateMCQ.unfulfilledReason || 'INSUFFICIENT_EVIDENCE_FOR_HARD'],
         optionAnalysis: [],
         cognitiveAudit: {
           requestedDifficulty: target.targetDifficulty || candidateMCQ.metadata?.targetDifficulty || 'Hard',
@@ -896,6 +897,21 @@ ${String(ctx || '').slice(0, 1200)}`;
     // 1. Initial Evaluation
     const initialEval = await this.evaluateQuestion(candidateMCQ, target, evidencePackage, { precomputedCriticResponse: options.precomputedCriticResponse || null });
 
+    // The reviewer could not reach any model: that says nothing about the question. Report it as a busy provider so the
+    // pipeline waits and checks the same question again, instead of discarding it as VERIFICATION_FAILED (S14, 27 Nov:
+    // 8 of 10 terminal questions were thrown away while every provider was briefly out, and the reserves with them).
+    if (initialEval.criticUnavailable && initialEval.status !== 'PASS' &&
+        /NO_LLM_PROVIDER|PROVIDER_UNAVAILABLE|DAILY_LIMIT|rate.?limit|timed? ?out|quota|cooldown|429|5\d\d/i.test(String(initialEval.criticUnavailableReason || ''))) {
+      return {
+        ...initialEval,
+        status: 'PROVIDER_UNAVAILABLE',
+        failureReasons: [`PROVIDER_UNAVAILABLE: ${String(initialEval.criticUnavailableReason).slice(0, 120)}`],
+        repaired: false,
+        mcq: candidateMCQ,
+        repair: { attempted: false, successful: false, repairAttempts: 0, instruction: null, originalMCQ: candidateMCQ, repairedMCQ: null }
+      };
+    }
+
     // 2. If already passed, or if unfulfilled, return immediately without repair
     if (initialEval.status === 'PASS' || initialEval.status === 'UNFULFILLED' || initialEval.isUnfulfilled || candidateMCQ.isUnfulfilled) {
       return {
@@ -1024,7 +1040,7 @@ ${String(ctx || '').slice(0, 1200)}`;
         isUnfulfilled: true,
         unfulfilledReason: repairedMCQ.unfulfilledReason || 'INSUFFICIENT_EVIDENCE_FOR_HARD',
         failureReason: repairedMCQ.message || 'Capacity deficit remains unfulfilled after repair',
-        failureReasons: ['INSUFFICIENT_EVIDENCE_FOR_HARD'],
+        failureReasons: [repairedMCQ.unfulfilledReason || 'INSUFFICIENT_EVIDENCE_FOR_HARD'],
         repaired: false,
         mcq: candidateMCQ,
         repair: {
