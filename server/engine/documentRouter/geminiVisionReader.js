@@ -73,8 +73,7 @@ function withTimeout(p, ms, msg) {
  * @returns {Promise<string>} transcribed text ('' when unavailable)
  */
 async function readWithGemini(filePath, originalName = '') {
-  // Gemini key pool: the current key (a scan is read once and cached; an uploaded file stays with the key that uploaded it).
-  const apiKey = require('../utils/geminiKeys').key();
+  const apiKey = String(process.env.GEMINI_API_KEY || '').trim();
   if (!apiKey || process.env.DISABLE_GEMINI === 'true' || process.env.DISABLE_VISION_READER === 'true') return '';
   const ext = path.extname(originalName || filePath).toLowerCase();
   const mimeType = MIME[ext];
@@ -188,13 +187,7 @@ async function pdfLooksScanned(buf) {
     const pdfParse = require('pdf-parse');
     const data = await withTimeout(pdfParse(buf), 30000, 'pdf-parse timeout');
     const pages = Math.max(1, data.numpages || 1);
-    // Watermarks and site footers repeated on every page (e.g. "www.universityupdates.in | ...") are not content:
-    // without this, a handwritten scan with a typed footer looked like a text PDF and its handwriting was never read.
-    const lines = String(data.text || '').split('\n').map(l => l.trim()).filter(Boolean);
-    const freq = new Map();
-    lines.forEach(l => freq.set(l, (freq.get(l) || 0) + 1));
-    const content = lines.filter(l => freq.get(l) < 3 && !/^(?:(?:https?:\/\/|www\.)\S+[\s|]*)+$/i.test(l));
-    const chars = content.join('').replace(/\s+/g, '').length;
+    const chars = String(data.text || '').replace(/\s+/g, '').length;
     return { scanned: chars / pages < 120, pages, text: data.text || '' };
   } catch (_) {
     return { scanned: true, pages: 1, text: '' };

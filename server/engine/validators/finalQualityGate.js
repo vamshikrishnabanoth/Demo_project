@@ -26,7 +26,6 @@
 'use strict';
 
 const lectureModel = require('../intelligence/lectureModel');
-const semantic = require('../utils/semanticEmbedder');
 
 const CRITERIA = {
   GROUNDING: 'Not supported by the material for this input mode',
@@ -67,29 +66,18 @@ function deterministicProblems(q) {
   else if (new Set(opts.map(norm)).size !== 4) problems.push({ code: 'FORMAT', detail: 'Two options are the same.' });
   if (keyIndex(q) < 0) problems.push({ code: 'FORMAT', detail: 'The answer key is not one of the options.' });
   if (stemOf(q).length < 12) problems.push({ code: 'COMPLETENESS', detail: 'The question text is missing or too short.' });
-  // A stem must ask something (M02, 27 Nov: "A team adds a payment feature and runs regression tests…" with no question).
-  {
-    const st = stemOf(q).trim();
-    const asks = /\?\s*$|\?\s*\n/.test(st) || /\?/.test(st.split('\n').slice(-3).join(' ')) ||
-      /\b(?:which|what|why|how|when|where|who|whom|whose|identify|select|choose|determine|compute|calculate|find|predict|trace|complete|fill|contrast|compare|explain|describe|state|evaluate|diagnose|order|arrange|name|give)\b/i.test(st.split(/\n|\s\|\s/).filter(l => !/^\s{2,}\S|[;{}]\s*$|^\s*(?:def|for|while|if|else|return|int|class|import|public|private|print|cout|#include)\b/.test(l)).join(' '));
-    if (st.length >= 12 && !asks) problems.push({ code: 'COMPLETENESS', detail: 'The question text does not ask anything.' });
-  }
   // A question that refers to code ("this loop", "the condition", "what does the program print") must show it.
   // Questions of a code-type plan that ask about data or concepts (e.g. "given the data set …") are not affected.
   const type = q.lectureSource && q.lectureSource.questionType;
   const stem = stemOf(q);
-  const talksAboutCode = /\b(?:this|the following|given(?:\s+the)?|the provided|the given|the shown|the above|the below|above|below)\s+(?:(?:python|java|c\+\+|c|javascript|sql|bash|shell|pytorch|docker|dockerfile|yaml|json|html|css|terminal|mysql)\s+)?(?:[\w-]+\s+){0,2}(?:code|program|snippet|fragment|script|dockerfile|loop|function|command|query|method)\b|\bwhat (?:does|will) (?:the|this) (?:code|program|loop|statement|command|query) (?:print|output|return|display)|\bcondition\s+['"`]?[a-z_]\w*\s*(?:[<>=!]=?|>=|<=)|\bwhat is printed\b|\boutput of\b/i.test(stem);
+  const talksAboutCode = /\b(?:this|the following|given|above|below)\s+(?:(?:python|java|c\+\+|javascript|sql|bash|shell|pytorch)\s+)?(?:code|program|snippet|loop|statement|line|function|condition|command|query|method|class)\b|\bwhat (?:does|will) (?:the|this) (?:code|program|loop|statement|command|query) (?:print|output|return|display)|\bcondition\s+['"`]?[a-z_]\w*\s*(?:[<>=!]=?|>=|<=)|\bwhat is printed\b|\boutput of\b/i.test(stem);
   if (CODE_TYPES.has(type) || talksAboutCode) {
-    const showsCode = /```|`[^`]+`|\n\s*\S.*[;{}()=<>\[\]]|^\s*(?:\$|>>>|#include|for\s*\(|while\s*\(|if\s*\(|int\s|def\s|print)|^\s*(?:FROM|RUN|COPY|ADD|WORKDIR|CMD|ENTRYPOINT|ENV|EXPOSE|SELECT|INSERT|CREATE|UPDATE|DELETE|ALTER|DROP|mysql>|docker|git|pip|npm|kubectl)\s+\S/m.test(stem);
+    const showsCode = /```|`[^`]+`|\n\s*\S.*[;{}()=<>\[\]]|^\s*(?:\$|>>>|#include|for\s*\(|while\s*\(|if\s*\(|int\s|def\s|print)/m.test(stem);
     if (talksAboutCode && !showsCode) problems.push({ code: 'COMPLETENESS', detail: 'It refers to code but does not show the code.' });
   }
   // A question must stand on its own: "what did the instructor emphasize during the walkthrough?" cannot be answered
   // by a student who missed that class, and tests memory of the session rather than the subject.
   const refersToClass = /\b(?:the|our|your) (?:instructor|teacher|lecturer|professor|presenter|speaker|trainer)\b|\b(?:during|in|from) the (?:live )?(?:coding )?(?:walkthrough|demo(?:nstration)?|lecture|class|session|video|recording)\b|\bin (?:today's |this |the )?class\b|\bas (?:discussed|explained|shown|mentioned|taught) (?:in|during|earlier|before|above)\b/i.test(stem);
-  // "Trace the taught algorithm on …" does not say which algorithm (S05: -96 is right only for the minimum-product
-  // subset; a student would compute the maximum product, 192).
-  const unnamedTaught = /\b(?:the|this) (?:taught|discussed|covered|presented|given|explained) (?:algorithm|method|approach|procedure|technique|formula|rule|strategy)\b|\b(?:algorithm|method|approach|procedure|formula) (?:as )?(?:taught|discussed|covered|explained) (?:in class|earlier|above)\b/i.test(stem);
-  if (unnamedTaught) problems.push({ code: 'COMPLETENESS', detail: 'It asks to apply "the taught algorithm" without naming it, so a student cannot tell which one is meant.' });
   if (refersToClass) problems.push({ code: 'COMPLETENESS', detail: 'It refers to the class or the instructor, so a student who missed the class cannot answer it from the question alone.' });
   // "According to the quick answer check / the notes / the slides …": tests the document, not the subject.
   const refersToMaterial = /\baccording to the (?:notes|slides?|material|document|text|passage|handout|ppt|presentation|quick (?:answer )?check|summary|table|example given|lecture notes)\b|\b(?:in|from) the (?:quick (?:answer )?check|handout|given notes|uploaded (?:notes|document|material))\b/i.test(stem);
@@ -100,29 +88,7 @@ function deterministicProblems(q) {
   // An option that labels itself ("… (correct rank-based behaviour)", "(the bug)") tells the student which one it is.
   const selfLabel = /\((?:[^)]*\b(?:correct|incorrect|wrong|right answer|the bug|buggy|standard (?:behaviou?r|approach|implementation)|recommended|expected behaviou?r)\b[^)]*)\)\s*$/i;
   if (opts.some(o => selfLabel.test(o))) problems.push({ code: 'CLUES', detail: 'An option labels itself as correct, standard or wrong, which gives the answer away.' });
-  // A numeric key must be what the explanation's own working arrives at. S09 (27 Nov): the explanation computed
-  // T = 20 / 4.25 = 4.705, then "adjusted" to the key 1.82; none of the options was right and the judge passed it.
-  const mismatch = keyContradictsWorking(q);
-  if (mismatch) problems.push({ code: 'TECHNICAL_CORRECTNESS', detail: mismatch });
   return problems;
-}
-
-const NUM = /-?\d+(?:,\d{3})*(?:\.\d+)?/g;
-function keyContradictsWorking(q) {
-  const opts = Array.isArray(q.options) ? q.options : [];
-  const key = String(opts[keyIndex(q)] ?? q.correctAnswer ?? '');
-  const expl = String(q.explanation || q.answerReasoning || '');
-  const keyNums = (key.match(NUM) || []).map(x => Number(x.replace(/,/g, '')));
-  if (keyNums.length !== 1 || !expl) return null;
-  const k = keyNums[0];
-  // Results of the working: the number after each "=" or "equals (approximately)" / "≈".
-  const results = [...expl.matchAll(/(?:(?<![<>!=])=(?!=)|≈|\bequals?\s+(?:to\s+)?(?:approximately\s+|about\s+|roughly\s+)?|\bis\s+approximately\s+)\s*(-?\d+(?:,\d{3})*(?:\.\d+)?)(?!\s*[\/*×^+])/gi)]
-    .map(m => Number(m[1].replace(/,/g, '')));
-  if (!results.length) return null;
-  const close = (a, b) => Math.abs(a - b) <= Math.max(0.02 * Math.max(Math.abs(a), Math.abs(b)), 0.006);
-  const pct = /%|percent/i.test(key);
-  if (results.some(r => close(r, k) || (pct && (close(r * 100, k) || close(r, k / 100))))) return null;
-  return `The explanation's working arrives at ${results[results.length - 1]}, not the key's ${k}.`;
 }
 
 /** The teacher's own words for this question's teaching point (the allowed source of specific facts). */
@@ -158,18 +124,18 @@ ${sourceRule}
 For EACH question:
 1. Solve it yourself from the question and options only, as a strong student would, ignoring KEY: one line of working, then your letter ("answer"), and any OTHER letters an expert could also defend as correct ("alsoDefensible").
 2. Then judge strictly (true only if fully satisfied):
- - grounded: as defined above. A KEY that states exactly what a tool, program or system prints or returns (an error message or code, a status line, console output) is grounded only if that output appears in SOURCE or is computed from code shown in the question; an output the class never saw (e.g. a specific error text for a query that was never run) makes grounded=false.
- - correct: KEY is technically correct (concepts, calculations, code, outputs). For any number, shape or count in the KEY that comes from code or data in the question, recompute it step by step from the question EXACTLY as written (e.g. an input_shape of (28, 28) is not a flattened 784 vector, even if the lecture flattened it); if your result differs from the KEY, correct=false. For ANY claim about what code or an algorithm does (what it counts, skips, misses, prints, which elements are affected), trace it yourself on a small example — the one in SOURCE if there is one — before accepting it. A key that is half right ("skips earlier elements but misses LATER ones" when it actually misses earlier ones) is not correct.
- - alsoDefensible (in step 1): look at each wrong option on its own and ask whether a teacher who taught SOURCE would also accept it. Also read each wrong option as a stand-alone statement about the subject: if it is TRUE (e.g. "an adjacency list is less efficient than a matrix for dense graphs"), it is defensible and must be listed, even if the key is "more" correct. A mapping, order or naming that is only one valid convention among several is defensible too. "Why/purpose/motivation" questions often have two acceptable answers; list them.
+ - grounded: as defined above.
+ - correct: KEY is technically correct (concepts, calculations, code, outputs). For ANY claim about what code or an algorithm does (what it counts, skips, misses, prints, which elements are affected), trace it yourself on a small example — the one in SOURCE if there is one — before accepting it. A key that is half right ("skips earlier elements but misses LATER ones" when it actually misses earlier ones) is not correct.
+ - alsoDefensible (in step 1): look at each wrong option on its own and ask whether a teacher who taught SOURCE would also accept it. "Why/purpose/motivation" questions often have two acceptable answers; list them.
  - consistent: any data, state or trace given in the question is internally consistent (e.g. the state "after processing index 2" must reflect indices 0 and 1). Count an inconsistency as complete=false.
  - steps: how many dependent reasoning steps a strong student needs to reach the answer (1 = recall or one direct application).
  - trivial: true ONLY if the question asks an incidental detail that is not itself one of the ideas taught — a default value, a specific number, a name, a version or a setting mentioned in passing — or if its answer is given away by the wording of the question. Asking what a central taught concept means, does, or is used for is NOT trivial.
  - level: "recall" ONLY if the question asks the student to restate a fact, definition, value, name or statement (what is X, which term, what does X stand for, what value does X hold), or if its answer is a single lookup or one arithmetic operation on numbers given in the stem (512 / 4 heads = 128; the dimensions of a matrix the stem already describes). "apply" if the question gives a situation, case, data or code and asks what happens, what to choose or why — even when the lecture discussed the same example. "analyze" if it needs several dependent steps, combining ideas or diagnosing.
  - distractorsValid: every wrong option is clearly wrong; none is correct, equivalent in meaning to another option or the key (e.g. "counts only elements after x" vs "skips elements before x"), duplicated, nonsensical or unrelated.
- - plausible: every wrong option is a realistic student misconception, not a throwaway. An option from a different topic or a different kind of thing than the question asks about (e.g. "training-set size and validation-set size" as the axes of a confusion matrix) is a throwaway: plausible=false.
+ - plausible: every wrong option is a realistic student misconception, not a throwaway.
  - aligned: the options directly answer the question asked.
  - complete: the question contains everything needed (the code when it asks about code or output); no unstated assumption.
- - clear: concise, grammatical, immediately understandable. clear=false if the question shows data, numbers or code that are not needed to reach the answer (padding), or uses a term that is a speech-recognition slip for a real term (e.g. "FX score" for F1 score).
+ - clear: concise, grammatical, immediately understandable.
  - fair: no misleading trick.
  - explanationOk: the explanation (if any) is accurate and matches KEY (true if there is none).
 3. "problems": one short phrase for each false item.
@@ -184,10 +150,7 @@ async function judgeBatch(items, mode, otherStems) {
     systemPrompt: 'You are the final quality gate for university multiple-choice questions. Be strict and exact: a question passes only if it is fully correct, grounded and unambiguous. Return JSON only.',
     prompt: buildPrompt(items, mode, otherStems),
     maxTokens: 8192,
-    operation: 'FINAL_QUALITY_GATE',
-    // When Gemini is unavailable and the gate falls back to Groq, Hard questions are judged by the strongest model: the
-    // smaller one undercounted reasoning steps and returned no verdict, rejecting every Hard question (S04, 27 Nov).
-    groqModel: items.some(x => String(x.q.difficulty || x.q.metadata?.targetDifficulty || '') === 'Hard') ? 'openai/gpt-oss-120b' : null
+    operation: 'FINAL_QUALITY_GATE'
   });
   const d = res.data || {};
   const results = Array.isArray(d) ? d : (Array.isArray(d.results) ? d.results : (Object.values(d).find(v => Array.isArray(v)) || []));
@@ -199,29 +162,6 @@ async function judgeBatch(items, mode, otherStems) {
  * @param {object} opts { lectureModel?: model with units/blocks, context?: already-accepted questions (duplicate check only) }
  * @returns {Promise<{accepted:Array, rejected:Array<{question, reasons}>, model?:string, ms:number}>}
  */
-/**
- * A key that quotes what a tool printed (an error message, "Query OK, ...", a traceback) must quote something the
- * class actually saw. C03 (27 Nov): a question invented the MySQL error for a query the class never ran, and its key
- * was also wrong (a misplaced WHERE gives a syntax error, not "Invalid use of group function"); the judge passed it.
- * Returns the unseen output, or null. Only lecture inputs are checked (topic notes have no class output).
- */
-const TOOL_OUTPUT = /(?:\berror\b\s*(?:\d+\s*)?(?:\([^)]*\)\s*)?:\s*(.{6,}))|(\bQuery OK\b.*)|(\b\d+\s+rows?\s+(?:in set|affected).*)|(\bTraceback\b.*)|(\bException in thread\b.*)|(\b[A-Z][A-Za-z]+(?:Error|Exception)\s*:\s*.{4,})/i;
-function unseenToolOutput(q, lm) {
-  if (!lm || lm.isTopicNotes || !Array.isArray(lm.blocks) || !lm.blocks.length) return null;
-  const opts = q.options || [];
-  const key = String(opts[keyIndex(q)] ?? q.correctAnswer ?? '');
-  const m = key.match(TOOL_OUTPUT);
-  if (!m) return null;
-  const quoted = (m.slice(1).find(Boolean) || m[0]);
-  const norm = (t) => String(t).toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
-  const words = norm(quoted).split(' ').filter(w => w.length > 2).slice(0, 8);
-  if (words.length < 2) return null;
-  const lecture = norm(lm.blocks.map(b => b.text).join(' '));
-  const stem = norm(stemOf(q));
-  const seen = words.filter(w => lecture.includes(w) || stem.includes(w)).length;
-  return seen / words.length >= 0.75 && lecture.includes(norm(quoted).split(' ').slice(0, 3).join(' ')) ? null : quoted.slice(0, 120);
-}
-
 async function finalQualityGate(questions, opts = {}) {
   const t0 = Date.now();
   const lm = opts.lectureModel && opts.lectureModel.ok ? opts.lectureModel : null;
@@ -243,19 +183,8 @@ async function finalQualityGate(questions, opts = {}) {
       ...list.filter(x => !batch.includes(x)).map(x => ({ n: x.n, stem: stemOf(x.q).slice(0, 220) })),
       ...contextStems
     ];
-    // A batch too large for the available provider is split in halves (down to one question) and judged in parts.
-    const judgeSplit = async (items) => {
-      try { return await judgeBatch(items, mode, others); } catch (e) {
-        if (items.length > 1 && /TOO_LARGE|413|too large/i.test(e.message)) {
-          const mid = Math.ceil(items.length / 2);
-          const [a, b] = [await judgeSplit(items.slice(0, mid)), await judgeSplit(items.slice(mid))];
-          if (a.error && b.error) return a;
-          return { results: [...(a.results || []), ...(b.results || [])], duplicates: [...(a.duplicates || []), ...(b.duplicates || [])], model: a.model || b.model };
-        }
-        return { error: e.message };
-      }
-    };
-    let out = await judgeSplit(batch);
+    let out = null;
+    try { out = await judgeBatch(batch, mode, others); } catch (e) { out = { error: e.message }; }
     if (out.model) models.add(out.model);
     if (Array.isArray(out.duplicates)) dupPairs.push(...out.duplicates);
     for (const item of batch) {
@@ -271,7 +200,6 @@ async function finalQualityGate(questions, opts = {}) {
       const why = (Array.isArray(r.problems) ? r.problems : []).filter(Boolean).join('; ');
       const add = (code, detail) => item.problems.push({ code, detail: detail || why || CRITERIA[code] });
       if (r.grounded === false) add('GROUNDING');
-      else { const unseen = unseenToolOutput(item.q, lm); if (unseen) add('GROUNDING', `The key quotes tool output the class never saw ("${unseen}").`); }
       if (r.correct === false) add('TECHNICAL_CORRECTNESS');
       else if (solved !== k) add('TECHNICAL_CORRECTNESS', `An independent solve chose "${item.q.options[solved] ?? r.answer}", not the key.${r.working ? ` (${String(r.working).slice(0, 160)})` : ''}`);
       if (also.length > 0) add('SINGLE_ANSWER', `Also defensible: "${also.map(x => item.q.options[x]).join('", "')}".`);
@@ -285,15 +213,7 @@ async function finalQualityGate(questions, opts = {}) {
       if (r.explanationOk === false) add('EXPLANATION');
       // Criterion 10 (difficulty fits): a "Hard" question needing fewer than two dependent steps keeps its place
       // only under its true label — it is relabelled Medium (and reported), never passed off as Hard.
-      // A judge can undercount steps on a trace ("three produce attempts on a circular buffer" = 1 step). A stem with
-      // code or data that asks about the result after several operations is at least two dependent steps.
-      const traceFloor = (() => {
-        const st = stemOf(item.q);
-        const codeLines = st.split(/\n|\s\|\s/).filter(l => /[=;{}()%<>]|\b(?:while|for|if|return)\b/.test(l)).length;
-        const several = /\b(?:two|three|four|five|2|3|4|5)\s+(?:items|times|attempts|operations|requests|steps|iterations|calls|pushes|pops|inserts)\b|\bsequentially\b|\bafter (?:the )?(?:second|third|fourth|all)\b|\bthen\b.*\bthen\b/i.test(st);
-        return codeLines >= 2 && several ? 2 : 0;
-      })();
-      const steps = Math.max(Number(r.steps) || 0, traceFloor) || Number(r.steps);
+      const steps = Number(r.steps);
       const label = String(item.q.difficulty || item.q.metadata?.targetDifficulty || '');
       // Depth. First pass (opts.depth !== 'relabel'): a question shallower than its level, or one that checks an incidental
       // detail, is REJECTED so the replacement round writes a deeper one at the same planned level. Relabelling it down
@@ -332,38 +252,6 @@ async function finalQualityGate(questions, opts = {}) {
       if (A.size < 3 || B.size < 3) continue;
       const inter = [...A].filter(t => B.has(t)).length;
       if (inter / (A.size + B.size - inter) >= 0.6) dupPairs.push([factWords[i].n, factWords[j].n]);
-    }
-  }
-
-  // Semantic backup: questions whose stem + correct answer mean the same thing (e.g. "spam marked as spam by mistake:
-  // which error?" and "another name for a false positive?") are duplicates even with no words in common. Threshold
-  // 0.895 on gemini-embedding-001: on 38 delivered questions it flagged exactly the 3 same-fact pairs and none of the
-  // definition-vs-calculation pairs (0.888 and below). Skipped (judge + word backup only) when embeddings are unavailable.
-  try {
-    const keyText = (q) => { const k = keyIndex(q); return k >= 0 && q.options ? q.options[k] : (q.correctAnswer || ''); };
-    const pool = [...list.map(x => ({ n: x.n, q: x.q })), ...context.map((q, i) => ({ n: list.length + i + 1, q }))];
-    const vecs = pool.length > 1 ? await semantic.embedMany(pool.map(p => `${stemOf(p.q)} Answer: ${keyText(p.q)}`), { label: 'duplicate check' }) : null;
-    const T = parseFloat(process.env.SEMANTIC_DUP_THRESHOLD) || 0.895;
-    if (vecs) {
-      for (let i = 0; i < pool.length; i++) {
-        for (let j = i + 1; j < pool.length; j++) {
-          if (pool[i].n > list.length && pool[j].n > list.length) continue;
-          const c = semantic.cosine(vecs[i], vecs[j]);
-          if (c !== null && c >= T) dupPairs.push([pool[i].n, pool[j].n]);
-        }
-      }
-    }
-  } catch (_) { /* semantic duplicate check is a backup only */ }
-
-  // Same answer, same fact: two questions whose keys are the same text ("Binary cross entropy" twice, S03 27 Nov) test
-  // the same point even when the stems differ. Checked in code, so it holds when embeddings are unavailable.
-  {
-    const keyText = (q) => { const k = keyIndex(q); return norm(k >= 0 && q.options ? q.options[k] : (q.correctAnswer || '')); };
-    const pool = [...list.map(x => ({ n: x.n, q: x.q })), ...context.map((q, i) => ({ n: list.length + i + 1, q }))];
-    for (let i = 0; i < pool.length; i++) for (let j = i + 1; j < pool.length; j++) {
-      if (pool[i].n > list.length && pool[j].n > list.length) continue;
-      const a = keyText(pool[i].q), b = keyText(pool[j].q);
-      if (a.length >= 4 && a === b && !/^\d+(?:\.\d+)?$/.test(a)) dupPairs.push([pool[i].n, pool[j].n]);
     }
   }
 
@@ -420,4 +308,4 @@ function describeRejections(rejected) {
   return Object.entries(counts).sort((a, b) => b[1] - a[1]).map(([c, n]) => `${n} ${label[c] || c}`).join(', ');
 }
 
-module.exports = { finalQualityGate, describeRejections, deterministicProblems, unseenToolOutput, keyContradictsWorking, CRITERIA };
+module.exports = { finalQualityGate, describeRejections, deterministicProblems, CRITERIA };

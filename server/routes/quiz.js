@@ -286,12 +286,7 @@ router.get('/health', (req, res) => {
         version: 'v2.2-key-pool-fast',
         timestamp: new Date().toISOString(),
         watchdogFloorSec: 360,
-        watchdogCeilingSec: 600,
-        // How many distinct keys the server has (counts only, never the keys), so capacity can be checked without using them.
-        keys: (() => {
-            const distinct = (re) => new Set(Object.entries(process.env).filter(([n, v]) => re.test(n) && typeof v === 'string' && v.trim().length > 10).flatMap(([, v]) => v.split(',').map(s => s.trim()).filter(Boolean))).size;
-            return { groq: distinct(/^GROQ_(?:API_)?KEY/), gemini: distinct(/^GEMINI_API_KEY/) };
-        })()
+        watchdogCeilingSec: 600
     });
 });
 

@@ -26,19 +26,9 @@ function paragraphsFromXml(xml) {
   let m;
   while ((m = paraRegex.exec(xml)) !== null) {
     const runs = [];
-    // Each run keeps its baseline: a superscript ("2" + superscript "n") is written 2^n and a subscript x_1, so
-    // "one of 2^n inputs" is not read as "2n" (S06 slides, 27 Nov: a multiplexer key became wrong this way).
-    const runRegex = /<a:(?:r|fld)\b[^>]*>([\s\S]*?)<\/a:(?:r|fld)>|<a:t(?:\s[^>]*)?>([\s\S]*?)<\/a:t>/g;
+    const runRegex = /<a:t(?:\s[^>]*)?>([\s\S]*?)<\/a:t>/g;
     let r;
-    while ((r = runRegex.exec(m[1])) !== null) {
-      if (r[2] !== undefined) { runs.push(decodeXmlEntities(r[2])); continue; }
-      const t = /<a:t(?:\s[^>]*)?>([\s\S]*?)<\/a:t>/.exec(r[1]);
-      if (!t) continue;
-      const text = decodeXmlEntities(t[1]);
-      const base = Number((/<a:rPr\b[^>]*\bbaseline="(-?\d+)"/.exec(r[1]) || [])[1] || 0);
-      const mark = base > 0 ? '^' : base < 0 ? '_' : '';
-      runs.push(mark && text.trim() ? `${mark}${text.trim().length > 1 ? `(${text.trim()})` : text.trim()}` : text);
-    }
+    while ((r = runRegex.exec(m[1])) !== null) runs.push(decodeXmlEntities(r[1]));
     const line = runs.join('').trim();
     if (line) paragraphs.push(line);
   }
@@ -101,4 +91,4 @@ function renderSlides(slides, startSlide = 1, endSlide = Infinity) {
     .join('\n\n');
 }
 
-module.exports = { readPptxSlides, renderSlides, paragraphsFromXml };
+module.exports = { readPptxSlides, renderSlides };
