@@ -59,7 +59,10 @@ async function callReasoner(prompt, opts = {}) {
   // Hard questions (multi-step computations and procedures) are solved by the strongest reasoning model first:
   // a smaller solver repeated the writer's mistake on a resource-ordering question that broke its own rule.
   if (opts.hard || opts.strong) models = ['openai/gpt-oss-120b', ...models.filter(m => m !== 'openai/gpt-oss-120b')];
+  // meta: the router fills in the model that actually answered (after any fallback), so the verdict names it.
+  const meta = {};
   const raw = await router.complete({
+    meta,
     prompt, systemPrompt: SYSTEM, temperature: 0, responseFormat: 'json',
     // High reasoning on a Hard question needs room: with 3500 tokens the reasoning used them all and the answer was
     // unreadable, so no Hard question could be confirmed (S04/D06 re-run, 27 Nov). Hard batches are one question each.
@@ -70,7 +73,7 @@ async function callReasoner(prompt, opts = {}) {
   });
   const data = safeParseJson(raw, null);
   if (!data) throw new Error('Unreadable answer from the independent check.');
-  return { data, model: models[0] };
+  return { data, model: meta.model || models[0], intended: models[0], fellBack: Boolean(meta.model && meta.model !== models[0]) };
 }
 
 function answersOf(d) {
@@ -244,7 +247,7 @@ A quiz question assumed: "${c.premise}". The correct statement is: "${c.correcti
 Does the lecture passage itself state or clearly imply the false version? If yes, copy the exact words from the passage in "lectureQuote" (verbatim, at least 6 words); if not, leave it empty. Return {"answers":[{"q":1,"answer":"A","lectureQuote":""}]}`);
         const a = answersOf(res.data)[0] || {};
         const quote = typeof a.lectureQuote === 'string' ? a.lectureQuote.trim() : '';
-        if (quote.split(/s+/).length >= 6 && norm(passage).includes(norm(quote)) && await statementIsWrong(quote, (q.lectureSource || {}).topic)) {
+        if (quote.split(/\s+/).length >= 6 && norm(passage).includes(norm(quote)) && await statementIsWrong(quote, (q.lectureSource || {}).topic)) {
           const s = q.lectureSource || {};
           found.push({ kind: 'premise', subtopic: s.subtopic || null, time: s.time || null, lectureSays: c.premise, lectureQuote: quote, standardAnswer: c.correction || null, working: '', question: q.question || q.questionText || '' });
         }
