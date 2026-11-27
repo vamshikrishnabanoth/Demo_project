@@ -272,7 +272,7 @@ Proof-gated delivery changes what a teacher has to do with generated questions: 
 
 - **AI assistance:** AI tools were used in building the system and in drafting this manuscript; the authors reviewed, rewrote and take responsibility for all content. *(Adjust to the journal's policy.)*
 - **Data:** classroom recordings used with permission; public lectures used under their licences. *(Authors to confirm.)*
-- **Code availability:** *(repository link)*.
+- **Code availability:** *(repository link)*. The evaluated proof-gated pipeline is on branch `feat/semantic-linkage-quality` (commit f79c626; lean mode for small key pools on `feat/lean-mode`). The deployed site currently runs the earlier gate-and-blind-check version (60c6fa2), which delivers more questions per request on a server with few free keys (§10, throughput).
 
 ## References
 
