@@ -1423,14 +1423,14 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
                     // A blind solve that could not run is tried once more after a pause: an unchecked question is never delivered.
                     const unchecked = g.accepted.filter(q => !q.blindCheck || q.blindCheck.status === 'NOT_CHECKED');
                     if (unchecked.length) {
-                        await new Promise(r => setTimeout(r, Math.max(0, parseInt(process.env.BLIND_CHECK_RETRY_MS, 10) || 30000)));
+                        await new Promise(r => setTimeout(r, require('../engine/utils/capacityMode').retryWaitMs(Math.max(0, parseInt(process.env.BLIND_CHECK_RETRY_MS, 10) || 30000))));
                         await blindAnswerCheck(unchecked, { lectureModel: lmForGate }).catch(() => null);
                     }
                     // A verdict other than "agrees" from the smaller solver is decided by the strongest one: gpt-oss-20b called
                     // good questions ambiguous, and the proof step then (rightly) refused them (S04 re-run: 5 of 6 such
                     // questions were agreed by gpt-oss-120b). Only the strong solver's agreement counts for those.
                     const doubt = g.accepted.filter(q => q.blindCheck && q.blindCheck.status !== 'AGREES' && q.blindCheck.model !== 'openai/gpt-oss-120b');
-                    if (doubt.length && process.env.BLIND_CHECK_ADJUDICATE !== 'off') {
+                    if (doubt.length && process.env.BLIND_CHECK_ADJUDICATE !== 'off' && !require('../engine/utils/capacityMode').isLean()) {
                         const before = doubt.map(q => q.blindCheck);
                         await blindAnswerCheck(doubt, { lectureModel: lmForGate, strong: true }).catch(() => null);
                         doubt.forEach((q, i) => { if (!q.blindCheck || q.blindCheck.status === 'NOT_CHECKED') q.blindCheck = before[i]; });
@@ -5701,6 +5701,8 @@ function buildAnalysisFromLectureModel(model, wordCount) {
     const teaching = process.env.TEACHING_SCORE_VERSION === 'v1' ? (model.teaching || { available: false })
         : (model.teaching && model.teaching.version === 'teaching-v2' ? model.teaching : { available: false, pending: true, reason: 'The teaching review is being prepared.' });
     if (process.env.TEACHING_SCORE_VERSION !== 'v1' && !(model.teaching && model.teaching.version === 'teaching-v2')) model.teaching = teaching;
+    // Start the report now (it needs only the reading); the screen's poll then finds it ready.
+    if (process.env.TEACHING_SCORE_VERSION !== 'v1' && teaching.pending && model.id) setImmediate(() => { ensureTeachingV2(model).catch(() => {}); });
     const chapters = model.segments.map((s, i) => ({
         id: `ch_${String(i + 1).padStart(2, '0')}`,
         title: s.title,

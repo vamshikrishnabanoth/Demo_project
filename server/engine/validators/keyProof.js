@@ -215,7 +215,7 @@ async function proveQuestions(questions, lm, deps = {}) {
   const call = async (qs, notes) => {
     for (let attempt = 0; attempt < 2; attempt++) {
       try { const res = await callProver(buildPrompt(qs, lm, notes), deps); if (res && res.data) return res; } catch (_) {}
-      if (attempt === 0) await new Promise(r => setTimeout(r, deps.retryWaitMs ?? (parseInt(process.env.KEY_PROOF_RETRY_MS, 10) || 30000)));
+      if (attempt === 0) await new Promise(r => setTimeout(r, deps.retryWaitMs ?? require('../utils/capacityMode').retryWaitMs(parseInt(process.env.KEY_PROOF_RETRY_MS, 10) || 30000)));
     }
     return null;
   };
@@ -297,7 +297,7 @@ async function proveQuestions(questions, lm, deps = {}) {
   // once wrote solve() with the key's own wrong formula (binary tree height 3: "min 7, max 8"; C02, 27 Nov), so a
   // single computation can share the writer's misconception. Both computations must reproduce the key.
   const computed = proven.filter(q => q.keyProof && q.keyProof.computed);
-  if (computed.length && process.env.KEY_PROOF_SECOND_SOLVER !== 'off') {
+  if (computed.length && process.env.KEY_PROOF_SECOND_SOLVER !== 'off' && !(require('../utils/capacityMode').isLean() && !deps.secondSolver)) {
     let second = null;
     try { second = await secondComputation(computed, deps); } catch (_) { second = null; }
     for (const q of computed) {

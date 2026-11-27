@@ -88,15 +88,18 @@ async function accuracy(lm, deps = {}) {
   const BATCH = 14;
   const batches = [];
   for (let i = 0; i < core.length; i += BATCH) batches.push(core.slice(i, i + BATCH));
+  // Small key pools (lean mode): one batch, so the report does not wait on rate limits.
+  if (require('../utils/capacityMode').isLean() && !deps.callJson) batches.splice(1);
+  const LIMIT_MS = parseInt(process.env.TEACHING_CHECK_TIMEOUT_MS, 10) || 25000;
   const wrong = []; let model = null; let failed = 0;
   await Promise.all(batches.map(async (b) => {
     const list = b.map((u, i) => `S${i + 1} [${u.topic || ''} / ${u.subtopic || ''}]: "${String(u.quote).slice(0, 400)}"`).join('\n');
     try {
-      const res = await callJson({
+      const res = await Promise.race([callJson({
         systemPrompt: 'You are a subject expert checking statements a teacher said in class. Return JSON only.',
         prompt: `${list}\n\nThese are verbatim quotes from a classroom lecture (speech recognition may misspell words: ignore spelling, grammar and filler). For each, decide whether the teacher stated something technically WRONG for this subject (a false fact, rule, value, or reversed relation). Simplifications for beginners are not wrong. Return {"checks":[{"s":1,"wrong":false,"why":"","correct":""}]}`,
         maxTokens: 3000, operation: 'TEACHING_SCORE'
-      });
+      }), new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), LIMIT_MS))]);
       model = res.model || model;
       const checks = Array.isArray(res && res.data && res.data.checks) ? res.data.checks : [];
       checks.filter(c => c && c.wrong === true).forEach(c => { const u = b[Number(c.s) - 1]; if (u) wrong.push({ time: u.time || null, quote: String(u.quote).slice(0, 200), why: String(c.why || '').slice(0, 200), correct: String(c.correct || '').slice(0, 200) }); });

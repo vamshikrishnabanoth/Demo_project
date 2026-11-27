@@ -313,7 +313,7 @@ async function run(sessionInputs, lm, progress = () => {}, deps = {}) {
     progress({ stage: 'AGENT_3_QUESTION_EVAL', decisions: [`Question ${accepted.length}/${requested} passed its checks`] });
     if (providerWaits > waitedFor && queue.length && accepted.length < requested) {
       waitedFor = providerWaits;
-      const waitMs = deps.providerWaitMs ?? (parseInt(process.env.PROVIDER_RETRY_WAIT_MS, 10) || 30000);
+      const waitMs = deps.providerWaitMs ?? require('../utils/capacityMode').retryWaitMs(parseInt(process.env.PROVIDER_RETRY_WAIT_MS, 10) || 30000);
       if (sessionInputs.writeDeadlineAt && Date.now() + waitMs > sessionInputs.writeDeadlineAt) break;
       await new Promise(r => setTimeout(r, waitMs));
     }
