@@ -157,7 +157,7 @@ class DifficultyAwareDistractorValidator {
 
     const options = Array.isArray(mcq.options) ? mcq.options.map(o => String(o || '').trim()) : [];
     const correctAnswer = String(mcq.correctAnswer || (mcq.options && typeof mcq.correctAnswerIndex === 'number' ? mcq.options[mcq.correctAnswerIndex] : '') || '').trim();
-    const stem = String(mcq.questionText || mcq.questionStem || mcq.stem || '').trim();
+    const stem = String(mcq.questionText || mcq.questionStem || mcq.stem || mcq.question || '').trim();
     const domainEvidence = evidencePackage?.unifiedRawContent || evidencePackage?.curricularContent || '';
 
     const flaws = [];
@@ -177,7 +177,7 @@ class DifficultyAwareDistractorValidator {
     // ─────────────────────────────────────────────────────────────────────────
     // Dimension 2: Plausibility (No absurd or comical options)
     // ─────────────────────────────────────────────────────────────────────────
-    const plausibilityDim = this._validatePlausibility(distractors, domainEvidence, stem);
+    const plausibilityDim = this._validatePlausibility(distractors, domainEvidence, `${stem} ${correctAnswer}`);
     if (!plausibilityDim.passed) {
       flaws.push({ dimension: 'PLAUSIBILITY', code: plausibilityDim.code, message: plausibilityDim.message });
       repairHints.push(`REPLACE_ABSURD_DISTRACTOR: ${plausibilityDim.details}`);
@@ -361,6 +361,30 @@ class DifficultyAwareDistractorValidator {
           code: 'LAZY_META_DISTRACTOR',
           message: `Distractor "${d}" is a lazy meta-option prohibited by single-concept testing principles`,
           details: `Option [${i}] is lazy meta-option`
+        };
+      }
+    }
+    // Off-topic throwaway (e.g. "Pizza delivery" as a reason recursion stops): a short prose distractor none of whose
+    // content words relates to the question, the other options or the lecture evidence. Fixed word lists cannot
+    // anticipate every throwaway; relatedness to the question's own vocabulary can. Numbers and code are exempt.
+    const STOP = new Set(['the', 'and', 'that', 'this', 'with', 'from', 'into', 'when', 'what', 'which', 'only', 'more', 'less', 'than', 'they', 'them', 'their', 'there', 'have', 'does', 'will', 'would', 'should', 'could', 'each', 'every', 'some', 'none', 'also', 'used', 'uses', 'using', 'because', 'about', 'after', 'before', 'while']);
+    const words = (t) => String(t || '').toLowerCase().match(/[a-z]{4,}/g) || [];
+    const stemOf = (w) => w.slice(0, 4);
+    const context = new Set([...words(stem), ...words(domainEvidence)].map(stemOf));
+    // Needs the lecture's words to judge relatedness; without evidence the check is skipped (no false alarms).
+    for (let i = 0; String(domainEvidence || '').length >= 200 && i < distractors.length; i++) {
+      const d = String(distractors[i] || '');
+      if (/\d|[{}();=<>\[\]`]/.test(d)) continue;
+      const own = words(d).filter(w => !STOP.has(w));
+      if (own.length === 0 || own.length > 4) continue;
+      const others = new Set(distractors.filter((_, j) => j !== i).flatMap(words).map(stemOf));
+      const related = own.some(w => context.has(stemOf(w)) || others.has(stemOf(w)));
+      if (!related) {
+        return {
+          passed: false,
+          code: 'OFF_TOPIC_DISTRACTOR',
+          message: `Distractor "${d}" shares no idea with the question, the other options or the lecture`,
+          details: `Option [${i}] is off-topic: "${d}"`
         };
       }
     }

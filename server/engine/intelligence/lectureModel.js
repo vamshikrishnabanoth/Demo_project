@@ -29,6 +29,7 @@ const { classifyTextBlock } = require('../../utils/inputKind');
 
 const teachingStyle = require('./teachingStyle');
 const hardForms = require('./hardForms');
+const semantic = require('../utils/semanticEmbedder');
 
 const MODEL_VERSION = 'lecture-model-v2.12';
 // Largest quiz a teacher can request (one setting for server, planner and UI). Default 30: a daily-quiz size.
@@ -315,7 +316,29 @@ function buildBlocks({ text = '', segments = [], documents = [] }) {
 // ─────────────────────────────────────────────────────────────────────────────
 // 2. Windows: whole input, processed in parallel; slides travel with the speech they match
 // ─────────────────────────────────────────────────────────────────────────────
-function buildWindows(speech, material) {
+// Semantic linkage: speech passages (runs of consecutive blocks) and material blocks are embedded in ONE request
+// (free-tier limit), so a slide explained in the teacher's own words, or a translated code-mixed class, still finds
+// its speech. Returns null when embeddings are unavailable; buildWindows then uses word overlap alone, as before.
+async function prepareSemanticLinkage(speech, material) {
+  if (!speech.length || !material.length || !semantic.enabled()) return null;
+  const matGroups = semantic.groupConsecutive(material, 45);
+  const passages = semantic.groupConsecutive(speech, Math.min(Math.ceil(speech.length / 3), semantic.MAX_TEXTS_PER_CALL - matGroups.length));
+  const vecs = await semantic.embedMany([...passages.map(p => p.map(b => b.text).join(' ')), ...matGroups.map(g => g.map(b => b.text).join('\n'))], { label: 'speech–slide linkage' });
+  if (!vecs) return null;
+  const passageVec = vecs.slice(0, passages.length);
+  const passageOf = new Map();
+  passages.forEach((p, i) => p.forEach(b => passageOf.set(b.id, i)));
+  const matVec = new Map();
+  matGroups.forEach((g, i) => g.forEach(b => matVec.set(b.id, vecs[passages.length + i])));
+  // Threshold relative to this lecture: one subject makes every pair fairly similar, so only the top 10% of
+  // speech–material pairs (and at least 0.6) count as a semantic link on their own.
+  const sims = [];
+  for (const mv of new Set(matVec.values())) for (const pv of passageVec) { const c = semantic.cosine(mv, pv); if (c !== null) sims.push(c); }
+  sims.sort((a, b) => a - b);
+  return { passageVec, passageOf, matVec, threshold: Math.max(0.6, semantic.quantile(sims, 0.9) || 0.6), stats: { semanticOnly: 0, movedBySemantic: 0, considered: 0 } };
+}
+
+function buildWindows(speech, material, sem = null) {
   const windows = [];
   if (speech.length > 0) {
     let cur = [];
@@ -331,17 +354,36 @@ function buildWindows(speech, material) {
 
     // Attach each material block to the speech window it overlaps most (cross-referencing).
     const unattached = [];
+    const windowText = windows.map(w => w.speech.map(s => s.text).join(' '));
     for (const m of material) {
       let best = -1; let bestScore = 0;
-      windows.forEach((w, i) => {
-        const score = jaccard(m.text, w.speech.map(s => s.text).join(' '));
-        if (score > bestScore) { bestScore = score; best = i; }
-      });
-      if (best >= 0 && bestScore >= 0.04) {
-        const w = windows[best];
-        const used = w.material.reduce((n, x) => n + x.text.length, 0);
-        if (used + m.text.length <= 6000) { w.material.push(m); continue; }
+      const lex = windowText.map(t => jaccard(m.text, t));
+      lex.forEach((score, i) => { if (score > bestScore) { bestScore = score; best = i; } });
+      // Candidate windows, best first; a window that is already full passes the block to the next good match.
+      let order = lex.map((s, i) => i).sort((a, b) => lex[b] - lex[a]);
+      let ok = (i) => lex[i] >= 0.04;
+      const mv = sem && sem.matVec.get(m.id);
+      if (mv) {
+        // Hybrid: shared words and shared meaning, each normalised across windows, weigh equally. A link holds if
+        // either signal is strong, so semantic linking only adds links; it never removes a word-overlap link.
+        const sv = windows.map(w => Math.max(-1, ...[...new Set(w.speech.map(b => sem.passageOf.get(b.id)))].map(p => semantic.cosine(mv, sem.passageVec[p]) ?? -1)));
+        const zl = semantic.zScores(lex); const zs = semantic.zScores(sv);
+        const h = zl.map((z, i) => 0.5 * z + 0.5 * zs[i]);
+        order = h.map((x, i) => i).sort((a, b) => h[b] - h[a]);
+        ok = (i) => lex[i] >= 0.04 || sv[i] >= sem.threshold;
+        sem.stats.considered++;
+        const hb = order[0];
+        if (bestScore < 0.04 && ok(hb)) sem.stats.semanticOnly++;
+        if (bestScore >= 0.04 && hb !== best && ok(hb)) sem.stats.movedBySemantic++;
       }
+      let placed = false;
+      for (const i of order) {
+        if (!ok(i)) continue;
+        const w = windows[i];
+        const used = w.material.reduce((n, x) => n + x.text.length, 0);
+        if (used + m.text.length <= 6000) { w.material.push(m); placed = true; break; }
+      }
+      if (placed) continue;
       unattached.push(m);
     }
     // Material not matched to any speech goes into its own windows (marked material-only by the model).
@@ -374,17 +416,19 @@ function renderBlock(b) {
 // ─────────────────────────────────────────────────────────────────────────────
 async function callGeminiDirect({ systemPrompt, prompt, maxTokens, model }) {
   const { GoogleGenerativeAI } = require('@google/generative-ai');
-  const genAI = new GoogleGenerativeAI(String(process.env.GEMINI_API_KEY).trim());
-  const m = genAI.getGenerativeModel({
-    model,
-    systemInstruction: systemPrompt,
-    generationConfig: { temperature: 0, maxOutputTokens: maxTokens, responseMimeType: 'application/json' }
+  // Gemini key pool: a quota error on one key moves to the next (engine/utils/geminiKeys.js).
+  return require('../utils/geminiKeys').withKey(async (apiKey) => {
+    const m = new GoogleGenerativeAI(apiKey).getGenerativeModel({
+      model,
+      systemInstruction: systemPrompt,
+      generationConfig: { temperature: 0, maxOutputTokens: maxTokens, responseMimeType: 'application/json' }
+    });
+    const result = await m.generateContent(prompt);
+    return result.response.text();
   });
-  const result = await m.generateContent(prompt);
-  return result.response.text();
 }
 
-async function callJson({ systemPrompt, prompt, maxTokens = 8192, operation, models = null, noGroqFallback = false }) {
+async function callJson({ systemPrompt, prompt, maxTokens = 8192, operation, models = null, noGroqFallback = false, groqModel = null }) {
   // Free-tier quota is per model, so work is split: the steps where a weak model causes real errors
   // (Hard questions, the independent answer check, the teaching score) get the strongest model first;
   // lecture reading starts on other models, leaving the strongest model's daily quota for those steps.
@@ -405,7 +449,7 @@ async function callJson({ systemPrompt, prompt, maxTokens = 8192, operation, mod
   let settled = false;
 
   const geminiPath = async () => {
-    if (!process.env.GEMINI_API_KEY || process.env.DISABLE_GEMINI === 'true') throw new Error('Gemini disabled');
+    if (!require('../utils/geminiKeys').hasKey() || process.env.DISABLE_GEMINI === 'true') throw new Error('Gemini disabled');
     // Two rounds over the model list: a model that is only briefly rate-limited (429) gets a second chance
     // after a short retry delay; a model that errors otherwise is benched for a minute.
     for (let round = 0; round < 2; round++) {
@@ -455,13 +499,18 @@ async function callJson({ systemPrompt, prompt, maxTokens = 8192, operation, mod
 
   const groqPath = async () => {
     const groqStart = Date.now();
+    // Groq's free tier counts prompt + max_tokens against ~8,000 tokens a minute per model: a request that cannot
+    // fit is refused at once (the caller splits it), and max_tokens is cut to what fits.
+    const promptTokens = Math.ceil((String(systemPrompt || '').length + String(prompt || '').length) / 3.5);
+    if (promptTokens > 6200) throw new Error(`PROMPT_TOO_LARGE_FOR_GROQ (${promptTokens} tokens)`);
+    const groqMax = Math.max(1200, Math.min(maxTokens, 7800 - promptTokens));
     const raw = await llmRouter.complete({
-      prompt, systemPrompt, temperature: 0, responseFormat: 'json', maxTokens, operation,
-      model: process.env.LECTURE_MODEL_GROQ || 'openai/gpt-oss-120b'
+      prompt, systemPrompt, temperature: 0, responseFormat: 'json', maxTokens: groqMax, operation,
+      model: groqModel || process.env.LECTURE_MODEL_GROQ || 'openai/gpt-oss-120b'
     });
     const parsed = safeParseJson(raw, null);
     if (timing) console.log(`[LectureModel] ${operation} via groq: ${((Date.now() - groqStart) / 1000).toFixed(1)}s`);
-    if (parsed) return { data: parsed, provider: 'groq', model: process.env.LECTURE_MODEL_GROQ || 'openai/gpt-oss-120b' };
+    if (parsed) return { data: parsed, provider: 'groq', model: groqModel || process.env.LECTURE_MODEL_GROQ || 'openai/gpt-oss-120b' };
     throw new Error('Groq returned unparseable JSON');
   };
 
@@ -524,7 +573,7 @@ Return this JSON:
       "subtopic": "specific idea, rule, command, algorithm or example",
       "kind": "one of ${UNIT_KINDS.join('|')}",
       "blocks": ["B02"],
-      "statement": "1-2 sentences: the precise point that was taught, in your own words",
+      "statement": "1-2 sentences: the precise point that was taught, in your own words. Write technical terms correctly: when the transcript has an obvious speech-recognition error (e.g. 'FX score' for 'F1 score', 'redlock' for 'deadlock'), use the correct term here and in topic, subtopic and angles; only 'quote' stays verbatim",
       "quote": "verbatim words from one of the cited blocks",
       "depth": "MENTIONED (only named) | EXPLAINED (explained) | DEMONSTRATED (worked example, code, trace or calculation shown)",
       "importance": "CORE (part of the subject being taught) | ASIDE (a passing remark: platforms or tools mentioned in passing, career/exam/admin talk, motivation, anecdotes that explain nothing)",
@@ -619,7 +668,10 @@ async function buildLectureModel(opts = {}) {
     return { ok: false, reason: 'EMPTY_INPUT', message: 'No readable content was found in the input.' };
   }
   const blockMap = Object.fromEntries(allBlocks.map(b => [b.id, b]));
-  const key = hashInput([allBlocks.map(b => `${b.id}|${b.start}|${b.text}`).join('\n'), title]);
+  // Semantic linkage changes which slides travel with which speech, so it gets its own cache entries.
+  const semanticIntended = speech.length > 0 && material.length > 0 && semantic.enabled();
+  // reading:v2 (27 Nov 2026): block kinds stored, blind calibration, revisit counts, meaning vectors; older readings are rebuilt.
+  const key = hashInput([allBlocks.map(b => `${b.id}|${b.start}|${b.text}`).join('\n'), title, 'reading:v2', ...(semanticIntended ? ['linkage:semantic-v1'] : [])]);
 
   if (!forceRefresh) {
     const hit = readCache(key);
@@ -635,7 +687,12 @@ async function buildLectureModel(opts = {}) {
   const ctx = `${title ? `"${title}". ` : ''}Input: ${inputDescription}, ${totalWords} words.`;
 
   // 4a. Windows in parallel
-  const windows = buildWindows(speech, material);
+  const sem = semanticIntended ? await prepareSemanticLinkage(speech, material).catch(() => null) : null;
+  const windows = buildWindows(speech, material, sem);
+  const linkage = sem
+    ? { method: 'hybrid (word overlap + gemini-embedding-001)', threshold: Number(sem.threshold.toFixed(3)), ...sem.stats }
+    : { method: speech.length && material.length ? 'word overlap' : 'none (single source)' };
+  if (sem) console.log(`[LectureModel] Speech–slide linkage: hybrid; ${sem.stats.semanticOnly} slide block(s) linked by meaning only, ${sem.stats.movedBySemantic} moved to a better-matching part of the speech.`);
   const usage = { calls: 0, providers: new Set() };
   const results = new Array(windows.length);
   let idx = 0;
@@ -779,6 +836,7 @@ async function buildLectureModel(opts = {}) {
     const dup = finalUnits.find(x => x.topic === u.topic && (jaccard(x.statement, u.statement) >= 0.7 || String(x.subtopic).toLowerCase() === String(u.subtopic).toLowerCase() && jaccard(x.statement, u.statement) >= 0.4));
     if (dup) {
       dup.blocks = Array.from(new Set([...dup.blocks, ...u.blocks]));
+      dup.mentions = (dup.mentions || 1) + 1; // the same point taught again in another part of the lecture
       dup.angles = [...(dup.angles || []), ...(u.angles || [])];
       dup.misconceptions = Array.from(new Set([...(dup.misconceptions || []), ...(u.misconceptions || [])]));
       continue;
@@ -794,6 +852,8 @@ async function buildLectureModel(opts = {}) {
     u.importance = String(u.importance || '').toUpperCase() === 'ASIDE' ? 'ASIDE' : 'CORE';
     const srcTypes = new Set(u.blocks.map(id => blockMap[id].source));
     u.source = srcTypes.has('SPEECH') && srcTypes.has('MATERIAL') ? 'BOTH' : (srcTypes.has('SPEECH') ? 'SPOKEN' : 'MATERIAL');
+    // Code and terminal sessions are what the class ran or read (pasted from the class, or the code file shown): taught.
+    u.classArtifact = u.source === 'MATERIAL' && u.blocks.length > 0 && u.blocks.every(id => ['CODE', 'TERMINAL'].includes(blockMap[id] && blockMap[id].kind));
     const timedBlocks = u.blocks.map(id => blockMap[id]).filter(b => b.start !== null && b.start !== undefined);
     u.start = timedBlocks.length ? Math.min(...timedBlocks.map(b => b.start)) : null;
     u.time = fmtTime(u.start);
@@ -840,6 +900,14 @@ async function buildLectureModel(opts = {}) {
     o.time = b.source === 'SPEECH' ? fmtTime(b.start) : null;
   });
 
+  // 4b'. Lecture-wide calibration: intent, what Easy/Medium/Hard mean for this class, each point's role and the
+  // difficulty of every angle judged against the whole lecture (one call; window labels stand if it fails).
+  const tCalibrate = Date.now();
+  const calibration = await calibrateLecture({ units: finalUnits, blocks: allBlocks, title, inputDescription }, usage);
+  stamp('calibrate', tCalibrate);
+  if (calibration.teachable === false) finalUnits = [];
+  await attachUnitVectors({ units: finalUnits }).catch(() => false); // same idea, different words -> one point when planning
+
   // 4c. Segments with real timestamps
   const segmentsOut = buildSegments(rawSegments, speech, material, blockMap, finalUnits);
 
@@ -860,7 +928,11 @@ async function buildLectureModel(opts = {}) {
   };
   // The teaching review can finish in the background (opts.deferTeachingScore): the teacher sees the overview
   // as soon as it is ready and the score a few seconds later (GET /api/quiz/teaching-score/:id).
-  const teachingPromise = scoreTeaching(lectureForReview, {
+  // Teaching report v2 is computed from the finished, calibrated reading (controller ensureTeachingV2); the v1 rubric
+  // grader (failed validity, 22 Nov) runs only with TEACHING_SCORE_VERSION=v1.
+  const teachingPromise = process.env.TEACHING_SCORE_VERSION !== 'v1'
+    ? Promise.resolve({ available: false, pending: true, reason: 'The teaching review is being prepared.' })
+    : scoreTeaching(lectureForReview, {
     totalWords, usage, hasSpeech: speech.length > 0,
     rawArtifactOnly: speech.length === 0 && material.length > 0 && material.filter(b => b.kind).length / material.length >= 0.6
   }).catch(e => ({ available: false, reason: `The teaching review could not be completed: ${e.message}` }));
@@ -872,8 +944,8 @@ async function buildLectureModel(opts = {}) {
 
   const lecture = {
     title: meta.title || title || (topics[0] && topics[0].name) || 'Lecture',
-    level: teaching.level || meta.level || 'INTERMEDIATE',
-    intent: teaching.intent || meta.intent || '',
+    level: (calibration.status === 'ok' && calibration.level) || teaching.level || meta.level || 'INTERMEDIATE',
+    intent: (calibration.status === 'ok' && calibration.intent) || teaching.intent || meta.intent || '',
     summary: meta.summary || ''
   };
 
@@ -896,12 +968,14 @@ async function buildLectureModel(opts = {}) {
     observations,
     contradictions,
     capacity,
+    calibration,
     teaching,
     teachingStyle: null,
     incomplete: unreadParts.length ? { unreadParts, message: `Part of the input could not be read because the analysis service was busy (${unreadParts.join('; ')}). Retry to include it.` } : null,
-    blocks: allBlocks.map(b => ({ id: b.id, source: b.source, start: b.start, end: b.end, slide: b.slide || null, text: b.text })),
+    blocks: allBlocks.map(b => ({ id: b.id, source: b.source, start: b.start, end: b.end, slide: b.slide || null, kind: b.kind || null, label: b.label || null, text: b.text })),
     audit: {
       windows: windows.length,
+      linkage,
       llmCalls: usage.calls,
       providers: Array.from(usage.providers),
       droppedUnverifiedUnits: droppedUnits,
@@ -934,7 +1008,7 @@ async function buildLectureModel(opts = {}) {
  * grounded in those notes instead of free-form generation; no teaching score is produced.
  */
 async function buildTopicModel({ topic, forceRefresh = false }) {
-  const key = hashInput(['TOPIC_NOTES', String(topic || '').trim().toLowerCase()]);
+  const key = hashInput(['TOPIC_NOTES_V2', String(topic || '').trim().toLowerCase()]); // v2: non-topics refused
   if (!forceRefresh) {
     const hit = readCache(key);
     if (hit) return { ...hit, cached: true };
@@ -944,10 +1018,16 @@ async function buildTopicModel({ topic, forceRefresh = false }) {
     prompt: `Write teaching notes for one university class on: "${topic}".
 Cover the standard core of this topic at undergraduate level, in teaching order: key definitions, how the main mechanisms/algorithms work and why, one or two short worked examples (with concrete values, code or commands where the subject uses them), important comparisons, and common edge cases or mistakes.
 Use only well-established textbook facts. 1500-2200 words, plain paragraphs under short headings; code or commands on their own lines.
-Return {"title":"short title","notes":"the notes text, with headings on their own lines"}`,
+First decide whether "${topic}" names an academic subject or topic that a university class could teach (e.g. "Arrays in Python", "SQL joins", "photosynthesis"). Greetings, classroom instructions, chit-chat, requests or opinions are NOT topics.
+If it is not a topic, return {"isTopic": false, "reason": "one short sentence"} and nothing else.
+Otherwise return {"isTopic": true, "title":"short title","notes":"the notes text, with headings on their own lines"}`,
     maxTokens: 6000,
     operation: 'TOPIC_NOTES'
   });
+  // Not a subject (a greeting, an instruction, chit-chat): nothing to write notes about, so nothing to ask.
+  if (r.data && r.data.isTopic === false) {
+    return { ok: false, reason: 'NOT_A_TOPIC', message: `This does not name a subject to teach${r.data.reason ? ` (${String(r.data.reason).slice(0, 160)})` : ''}.` };
+  }
   const notes = String(r.data.notes || '').trim();
   if (notes.length < 300) throw new Error('Topic notes could not be written for this topic.');
   const model = await buildLectureModel({ text: notes, title: r.data.title || topic, forceRefresh });
@@ -1130,14 +1210,15 @@ function buildTopics(units, blockMap, timed) {
  *  - groups over-split / variant topic names from separate windows into clean macro-topics.
  * Returns the (possibly shorter) unit list; unit.topic is rewritten in place.
  */
-async function consolidateUnits(units, usage) {
+async function consolidateUnits(units, usage, deps = {}) {
+  const ask = deps.callJson || callJson;
   if (units.length < 4) return units;
   const names = [];
   for (const u of units) if (!names.includes(u.topic)) names.push(u.topic);
   const unitList = units.map(u => `${u.id} [${u.topic}] ${u.subtopic}: ${String(u.statement || '').slice(0, 140)}`).join('\n');
   const target = Math.max(2, Math.min(10, Math.round(Math.sqrt(units.length) + 1)));
   try {
-    const r = await callJson({
+    const r = await ask({
       systemPrompt: 'You organise the teaching points of one lecture. Return JSON only.',
       prompt: `Teaching points extracted from one lecture, in teaching order (id [topic] subtopic: statement):\n${unitList}\n\nTasks:\n1. duplicates: list groups of ids that teach the SAME point (for example the same command or rule explained once and demonstrated later, or the same definition given twice). Do not group points that are merely related.\n2. topics: group the topic names ${names.map(n => `"${n}"`).join(', ')} into about ${target} macro-topics a teacher would recognise (merge spelling variants, singular/plural and parts of the same algorithm or mechanism; keep genuinely different topics apart; keep teaching order). Every topic name must appear in exactly one group.\nReturn {"duplicates":[["U01","U09"]],"topics":[{"name":"short macro-topic name","members":["exact topic names"]}]}`,
       maxTokens: 4096,
@@ -1167,6 +1248,7 @@ async function consolidateUnits(units, usage) {
       if (members.length < 2) continue;
       const keep = members[0];
       for (const other of members.slice(1)) {
+        keep.mentions = (keep.mentions || 1) + (other.mentions || 1); // a revisit, not a new point
         keep.blocks = Array.from(new Set([...keep.blocks, ...other.blocks]));
         if (depthRank[other.depth] > depthRank[keep.depth]) keep.depth = other.depth;
         const types = new Set(keep.angles.map(a => a.type));
@@ -1187,20 +1269,215 @@ async function consolidateUnits(units, usage) {
   }
 }
 
+/** Seconds of speech a teaching point spans (sum of its cited speech blocks). 0 for material-only points. */
+function unitSeconds(blocks, u) {
+  const byId = new Map((blocks || []).map(b => [b.id, b]));
+  return (u.blocks || []).map(id => byId.get(id)).filter(b => b && b.source === 'SPEECH' && isFinite(b.start) && isFinite(b.end))
+    .reduce((s, b) => s + Math.max(0, b.end - b.start), 0);
+}
+
+/**
+ * Importance of a teaching point TO THIS LECTURE, used to decide what to keep when fewer questions are asked than
+ * the lecture supports, which reserves come first, and what is dropped last. Deterministic, from what the lecture
+ * reader measured:
+ *   role in the lecture's intent (core 3 / supporting 2 / peripheral 0.5; from the calibration step)
+ *   + depth (demonstrated 1.5 / explained 1 / mentioned 0)
+ *   + emphasis (the teacher stressed it: +1)
+ *   + revisits (taught again later in the lecture: +0.5 per return, up to +1)
+ *   + teaching time (+1 for two minutes or more, proportionally less).
+ */
+function unitImportance(u) {
+  const role = { CORE: 3, SUPPORTING: 2, PERIPHERAL: 0.5 }[u.role] ?? 2;
+  const depth = { DEMONSTRATED: 1.5, EXPLAINED: 1, MENTIONED: 0 }[u.depth] ?? 1;
+  const revisits = Math.min(1, 0.5 * (Math.max(1, u.mentions || 1) - 1));
+  const time = Math.min(1, (u.seconds || 0) / 120);
+  return Number((role + depth + (u.stressed ? 1 : 0) + revisits + time).toFixed(2));
+}
+
+// Version 2 (27 Nov 2026): angles are judged blind (version 1 showed the window labels and copied them back).
+const CALIBRATION_VERSION = 3; // 3: teachable excludes logistics, grading, motivational talk and banter
+const CALIBRATE_SYSTEM = 'You calibrate the quiz plan of ONE lecture, the way an experienced teacher would before writing a quiz for the class that attended it. Return JSON only.';
+
+function calibratePrompt(model) {
+  const units = model.units.filter(u => (u.angles || []).length > 0).map(u => {
+    const facts = [`kind=${u.kind}`, `depth=${u.depth}`, `source=${u.source}`, u.seconds ? `time=${Math.round(u.seconds)}s` : null,
+      (u.mentions || 1) > 1 ? `taught ${u.mentions} times` : null, u.stressed ? 'stressed' : null, u.teacherExample ? 'with example' : null].filter(Boolean).join(' ');
+    // The window's difficulty label is NOT shown: shown, it was copied back unchanged (measured: 156 of 156 angles).
+    const angles = u.angles.map((a, i) => `   a${i} ${a.type}: ${a.focus}`).join('\n');
+    return `${u.id} [${u.topic} > ${u.subtopic}] ${facts}\n   ${String(u.statement || '').slice(0, 220)}\n${angles}`;
+  }).join('\n');
+  return `LECTURE: ${model.title || ''}
+Input: ${model.inputDescription || ''}
+
+TEACHING POINTS (in teaching order) with the question angles proposed while reading parts of the lecture (no difficulty yet):
+${units}
+
+Look at the WHOLE lecture (its level, how deep each point went, what was worked through) and calibrate:
+1. intent: one sentence, what the teacher wanted students to be able to do after this class (e.g. "explain what recursion is and how it differs from loops, using real-world examples; no coding").
+2. level: INTRODUCTORY | INTERMEDIATE | ADVANCED (for this class, judged from what was taught).
+3. difficulty: what Easy, Medium and Hard mean FOR THIS LECTURE, one short sentence each, anchored to what students heard:
+   Easy = remember or explain an idea the teacher explained (one step);
+   Medium = apply, trace or compare what was taught on a given case;
+   Hard = several dependent reasoning steps on a new case, using only what was taught (an edge case, a what-if, a diagnosis, combining two taught ideas).
+   A question that is easy in general can be Hard for this class if the class only just met the idea, and the reverse.
+4. units: for every point, its role in the intent (CORE = what the lecture is about; SUPPORTING = helps understand a core point; PERIPHERAL = side detail), and for every angle the difficulty a question on it would have for THIS class (decide it yourself from the rubric in 3 and what this class was taught), and keep=false only if the angle does not fit what the teacher intended (e.g. a code-output angle in a class that taught the idea without any code).
+5. capacityNote: two sentences: why this lecture supports many or few Easy, Medium and Hard questions (its depth, examples, worked cases).
+6. teachable: false ONLY if the input teaches no subject matter at all (only greetings, attendance, seating, phones, course logistics, grading or exam announcements, motivational talk, jokes, banter or chit-chat, even if an everyday analogy is used along the way); true otherwise, even for a short or simple lesson.
+
+Return: {"teachable":true,"intent":"...","level":"...","difficulty":{"easy":"...","medium":"...","hard":"..."},"units":[{"id":"U01","role":"CORE","angles":[{"i":0,"difficulty":"easy","keep":true}]}],"capacityNote":"..."}`;
+}
+
+/**
+ * Lecture-wide calibration (one model call, after the whole lecture is read): the teacher's intent, what each
+ * difficulty means for this class, each point's role, and the difficulty of every question angle judged against the
+ * whole lecture rather than one window. Rules the model cannot override: a point that was only mentioned gets Easy
+ * angles only; every point keeps at least one angle; unknown ids or values are ignored. If the call fails, the
+ * window labels stand and calibration.status says so.
+ */
+async function calibrateLecture(model, usage = { calls: 0, providers: new Set() }, deps = {}) {
+  const ask = deps.callJson || callJson;
+  for (const u of model.units) u.seconds = unitSeconds(model.blocks, u);
+  let data = null;
+  try {
+    // A long lecture is calibrated in parts (each part sees the whole lecture's outline), so every part fits one
+    // request on any provider; the lecture-level answers (intent, level, meanings) come from the first part.
+    const withAngles = model.units.filter(u => (u.angles || []).length);
+    const parts = [];
+    const PART = 28;
+    for (let i = 0; i < withAngles.length; i += PART) parts.push(withAngles.slice(i, i + PART));
+    if (!parts.length) parts.push([]);
+    const outline = [...new Set(model.units.map(u => u.topic))].join('; ');
+    for (const [pi, part] of parts.entries()) {
+      const sub = { ...model, units: part };
+      const prompt = calibratePrompt(sub) + (parts.length > 1 ? `
+
+This is part ${pi + 1} of ${parts.length} of the lecture's points. The whole lecture covers: ${outline}.` : '');
+      const r = await ask({ systemPrompt: CALIBRATE_SYSTEM, prompt, maxTokens: parts.length > 1 ? 4000 : 9000, operation: 'LECTURE_MODEL_CALIBRATE' });
+      usage.calls++; if (usage.providers && usage.providers.add) usage.providers.add(`${r.provider}:${r.model}`);
+      const d = r.data || null;
+      if (!d || !Array.isArray(d.units)) throw new Error('no unit calibration returned');
+      if (!data) data = { ...d, units: [] };
+      if (d.teachable === true) data.teachable = true; // one part that teaches is enough
+      data.units.push(...d.units);
+    }
+  } catch (e) {
+    model.calibration = { status: 'unavailable', reason: String(e.message).slice(0, 160) };
+    for (const u of model.units) u.importanceScore = unitImportance(u);
+    return model.calibration;
+  }
+  const levels = ['easy', 'medium', 'hard'];
+  let relabelled = 0, dropped = 0;
+  const byId = new Map(model.units.map(u => [u.id, u]));
+  for (const cu of data.units) {
+    const u = byId.get(String(cu.id || '').trim());
+    if (!u) continue;
+    if (['CORE', 'SUPPORTING', 'PERIPHERAL'].includes(String(cu.role || '').toUpperCase())) u.role = String(cu.role).toUpperCase();
+    const keep = [];
+    let droppedHere = 0;
+    (u.angles || []).forEach((a, i) => {
+      const c = (Array.isArray(cu.angles) ? cu.angles : []).find(x => Number(x.i) === i);
+      if (c && c.keep === false) { droppedHere++; return; }
+      const d = c && levels.includes(String(c.difficulty).toLowerCase()) ? String(c.difficulty).toLowerCase() : a.difficulty;
+      if (d !== a.difficulty) { relabelled++; a.windowDifficulty = a.difficulty; a.difficulty = d; }
+      keep.push(a);
+    });
+    if (keep.length) { u.angles = keep; dropped += droppedHere; } // never leave a point without an angle
+  }
+  // Nothing taught (greetings, attendance, admin only): no teaching points, so no questions; the teacher is told why.
+  if (data.teachable === false) {
+    for (const u of model.units) { u.angles = []; u.importance = 'ASIDE'; }
+    model.calibration = { status: 'ok', version: CALIBRATION_VERSION, teachable: false, intent: '', level: null, difficulty: {}, capacityNote: 'This input does not teach any subject matter.', relabelledAngles: 0, droppedAngles: 0 };
+    return model.calibration;
+  }
+  // Guard: what was only mentioned cannot carry Medium or Hard questions.
+  for (const u of model.units) {
+    if (u.depth === 'MENTIONED') for (const a of (u.angles || [])) if (a.difficulty !== 'easy') { a.windowDifficulty = a.windowDifficulty || a.difficulty; a.difficulty = 'easy'; relabelled++; }
+    u.importanceScore = unitImportance(u);
+  }
+  const str = (x, n = 300) => (typeof x === 'string' ? x.trim().slice(0, n) : '');
+  model.calibration = {
+    status: 'ok',
+    version: CALIBRATION_VERSION,
+    teachable: true,
+    intent: str(data.intent),
+    level: ['INTRODUCTORY', 'INTERMEDIATE', 'ADVANCED'].includes(String(data.level || '').toUpperCase()) ? String(data.level).toUpperCase() : null,
+    difficulty: { easy: str(data.difficulty && data.difficulty.easy, 200), medium: str(data.difficulty && data.difficulty.medium, 200), hard: str(data.difficulty && data.difficulty.hard, 200) },
+    capacityNote: str(data.capacityNote, 400),
+    relabelledAngles: relabelled,
+    droppedAngles: dropped
+  };
+  return model.calibration;
+}
+
+const UNIT_SAME_POINT = parseFloat(process.env.UNIT_SAME_POINT_THRESHOLD) || 0.92;
+
+/**
+ * Meaning vectors for teaching points (statement + subtopic), so planning never puts two questions on the same idea
+ * worded differently. One embedding request; skipped (word comparison only) when unavailable or too many points.
+ */
+async function attachUnitVectors(model) {
+  const units = (model.units || []).filter(u => (u.angles || []).length);
+  if (!units.length || units.length > semantic.MAX_TEXTS_PER_CALL || units.every(u => Array.isArray(u.vec))) return false;
+  const v = await semantic.embedMany(units.map(u => `${u.subtopic}: ${u.statement}`), { label: 'teaching points' });
+  if (!v) return false;
+  units.forEach((u, i) => { if (v[i]) u.vec = Array.from(v[i], x => Number(x.toFixed(4))); });
+  return true;
+}
+
+/** Calibrates a saved lecture model read before calibration existed (once; the result is saved with it). */
+async function ensureCalibrated(model, deps = {}) {
+  if (!model || !model.ok) return model;
+  const needVectors = !deps.noVectors && (model.units || []).some(u => (u.angles || []).length && !Array.isArray(u.vec));
+  if (model.calibration && model.calibration.status === 'ok' && model.calibration.version === CALIBRATION_VERSION) {
+    if (needVectors && await attachUnitVectors(model).catch(() => false)) { try { if (!model.incomplete && !deps.noSave) writeCache(model.id, model); } catch (_) {} }
+    return model;
+  }
+  if (needVectors) await attachUnitVectors(model).catch(() => false);
+  await calibrateLecture(model, undefined, deps);
+  model.capacity = computeCapacity(model.units);
+  if (model.calibration.status === 'ok') {
+    if (model.calibration.intent) model.intent = model.calibration.intent;
+    try { if (!model.incomplete && !deps.noSave) writeCache(model.id, model); } catch (_) { /* the cache is an optimisation */ }
+  }
+  return model;
+}
+
+/**
+ * Taught = what the class heard (speech, or speech + slides) or ran/read in class (code and terminal sessions).
+ * Points found only in uploaded slides/documents are a supplement when there is a lecture.
+ */
+function isTaught(u, blocks) {
+  if (u.source !== 'MATERIAL') return true;
+  if (typeof u.classArtifact === 'boolean') return u.classArtifact;
+  const byId = blocks ? new Map(blocks.map(b => [b.id, b])) : null;
+  // Readings saved before block kinds were stored: classify the block text itself.
+  const kindOf = (b) => b.kind || ({ code: 'CODE', terminal: 'TERMINAL' })[classifyTextBlock(b.text)] || null;
+  return Boolean(byId && (u.blocks || []).length && u.blocks.every(id => byId.get(id) && ['CODE', 'TERMINAL'].includes(kindOf(byId.get(id)))));
+}
+
 function computeCapacity(units) {
+  // Capacity = every question angle the lecture supports, per difficulty (an upper bound).
   const by = { easy: 0, medium: 0, hard: 0 };
   for (const u of units) for (const a of (u.angles || [])) by[a.difficulty]++;
   const total = by.easy + by.medium + by.hard;
+  // Recommended = what we are comfortable writing at high quality: one question per distinct teaching point per
+  // difficulty (two questions on one point are near-duplicates), counting only what the teacher taught when there is
+  // speech (points found only in uploaded material are a supplement, reported separately), and leaving out
+  // peripheral points for the Balanced mix.
+  const hasSpeech = units.some(u => u.source === 'SPOKEN' || u.source === 'BOTH');
+  const taught = hasSpeech ? units.filter(u => isTaught(u)) : units;
+  const points = (list, d) => list.filter(u => (u.angles || []).some(a => a.difficulty === d)).length;
+  const supplementary = hasSpeech ? units.filter(u => !isTaught(u)) : [];
   return {
     byDifficulty: by,
     total,
-    // Recommended leaves headroom for questions that fail validation, capped at the 30-question maximum.
     recommended: {
-      easy: Math.min(MAX_QUIZ_QUESTIONS, by.easy),
-      medium: Math.min(MAX_QUIZ_QUESTIONS, by.medium),
-      hard: Math.min(MAX_QUIZ_QUESTIONS, by.hard),
-      balanced: Math.min(MAX_QUIZ_QUESTIONS, total <= 4 ? total : Math.max(3, Math.round(total * 0.75)))
+      easy: Math.min(MAX_QUIZ_QUESTIONS, points(taught, 'easy')),
+      medium: Math.min(MAX_QUIZ_QUESTIONS, points(taught, 'medium')),
+      hard: Math.min(MAX_QUIZ_QUESTIONS, points(taught, 'hard')),
+      balanced: Math.min(MAX_QUIZ_QUESTIONS, taught.filter(u => (u.angles || []).length > 0 && u.role !== 'PERIPHERAL').length)
     },
+    supplementary: { easy: points(supplementary, 'easy'), medium: points(supplementary, 'medium'), hard: points(supplementary, 'hard') },
     unitCount: units.length
   };
 }
@@ -1442,8 +1719,13 @@ Your previous answer left most dimensions without a rating or without evidence i
 // ─────────────────────────────────────────────────────────────────────────────
 
 /** Same unit, or near-identical teaching point (one subtopic's key words contained in the other's, or very similar statements). */
+const SKILL_FAMILY = { recall: 'remember', concept: 'explain', mechanism: 'explain', comparison: 'explain', trace: 'work', output: 'work', calculation: 'work', debug: 'work', application: 'apply', scenario: 'apply', edge_case: 'apply' };
+const skillOf = (type) => SKILL_FAMILY[type] || type;
+
 function sameTeachingPoint(a, b) {
   if (a.id === b.id) return true;
+  // Same meaning in different words (vectors attached by attachUnitVectors): one point, one question.
+  if (a.vec && b.vec) { const c = semantic.cosine(a.vec, b.vec); if (c !== null && c >= UNIT_SAME_POINT) return true; }
   const toks = s => new Set(normWords(s).filter(w => w.length > 2 && !['the', 'and', 'with', 'using', 'for', 'from', 'checking', 'using'].includes(w)));
   const A = toks(a.subtopic), B = toks(b.subtopic);
   if (A.size && B.size) {
@@ -1547,11 +1829,24 @@ function planRequest(fullModel, requestedCount, difficulty = 'Balanced', options
     };
   }
 
-  // 1. Difficulty mix
+  // 0. Lecture first. When the teacher spoke, the points she taught (alone or with slides) are planned first; points
+  // found only in the uploaded material are a supplement, used only for what the lecture cannot fill at a difficulty.
+  // With material only (no speech), every uploaded source is equal.
+  const hasSpeech = model.units.some(u => u.source === 'SPOKEN' || u.source === 'BOTH');
+  const taughtUnits = hasSpeech ? model.units.filter(u => isTaught(u, model.blocks)) : model.units;
+  const extraUnits = hasSpeech ? model.units.filter(u => !isTaught(u, model.blocks)) : [];
+  const capTaught = computeCapacity(taughtUnits).byDifficulty;
+  for (const u of model.units) if (typeof u.importanceScore !== 'number') u.importanceScore = unitImportance(u);
+  const imp = (u) => u.importanceScore || 0;
+
+  // 1. Difficulty mix. Balanced follows the lecture's own calibrated capacity (an introductory lecture gives mostly
+  // Easy, a deep one more Hard), taken from what was taught when that is enough for the requested count.
   let byDiff;
   let filledFromOtherTiers = 0;
   if (diffKey === 'balanced') {
-    byDiff = allocate(n, { easy: cap.easy, medium: cap.medium, hard: cap.hard }, cap);
+    const taughtTotal = capTaught.easy + capTaught.medium + capTaught.hard;
+    const mixFrom = taughtTotal >= n ? capTaught : cap;
+    byDiff = allocate(n, { easy: mixFrom.easy, medium: mixFrom.medium, hard: mixFrom.hard }, cap);
   } else {
     byDiff = { easy: 0, medium: 0, hard: 0 };
     byDiff[diffKey] = Math.min(n, cap[diffKey] || 0);
@@ -1566,7 +1861,7 @@ function planRequest(fullModel, requestedCount, difficulty = 'Balanced', options
     }
   }
 
-  // 2. Per difficulty, spread across topics by capacity and teaching time
+  // 2. Per difficulty, spread across topics by capacity and teaching time, then pick the best points.
   const totalShare = model.topics.reduce((s, t) => s + (t.share || 0), 0) || 1;
   const selected = [];
   const reserves = [];
@@ -1578,30 +1873,31 @@ function planRequest(fullModel, requestedCount, difficulty = 'Balanced', options
   const modeOf = (u) => teachingStyle.unitMode(u, styleOverride);
   const nWanted = byDiff.easy + byDiff.medium + byDiff.hard;
   const modeTarget = styleGuided && nWanted > 0
-    ? teachingStyle.modeQuota(model, model.units.flatMap(u => u.angles.filter(a => byDiff[a.difficulty] > 0).map(a => ({ unit: u, angle: a }))), nWanted, styleOverride, allocate)
+    ? teachingStyle.modeQuota({ ...model, units: taughtUnits }, taughtUnits.flatMap(u => u.angles.filter(a => byDiff[a.difficulty] > 0).map(a => ({ unit: u, angle: a }))), nWanted, styleOverride, allocate)
     : null;
   const modeSoFar = {};
-  for (const d of ['easy', 'medium', 'hard']) {
-    const want = byDiff[d];
+
+  // Picks `want` angles of difficulty d from `units` (one pass of the selection; used for taught points, then for
+  // the material-only supplement). Returns how many were picked; leftovers become reserves.
+  const pickFrom = (units, d, want, supplementary) => {
+    if (want <= 0) { units.forEach(u => u.angles.filter(a => a.difficulty === d).forEach((a, ai) => reserves.push({ unit: u, angle: a, rank: ai, difficulty: d, supplementary }))); return 0; }
     const pools = {};
     for (const t of model.topics) {
-      pools[t.name] = model.units
+      pools[t.name] = units
         .filter(u => u.topic === t.name)
         .flatMap(u => u.angles.filter(a => a.difficulty === d).map((a, ai) => ({ unit: u, angle: a, rank: ai })));
-      // Different units first, then second angles of the same unit
-      pools[t.name].sort((a, b) => a.rank - b.rank || (a.unit.depth === 'MENTIONED') - (b.unit.depth === 'MENTIONED'));
+      // Different points first (first angle of each point), the more important points first, merely mentioned last.
+      pools[t.name].sort((a, b) => a.rank - b.rank || imp(b.unit) - imp(a.unit) || (a.unit.depth === 'MENTIONED') - (b.unit.depth === 'MENTIONED'));
     }
     const caps = Object.fromEntries(Object.entries(pools).map(([k, v]) => [k, v.length]));
-    const weights = Object.fromEntries(model.topics.map(t => {
-      const capShare = caps[t.name] / Math.max(1, Object.values(caps).reduce((s, x) => s + x, 0));
-      const timeShare = (t.share || 0) / totalShare;
-      return [t.name, 0.5 * capShare + 0.5 * timeShare + 1e-6];
-    }));
-    const alloc = want > 0 ? allocate(want, weights, caps) : {};
-    // This difficulty's share of each mode: what the mode still needs towards its quiz-wide target, within what
-    // this difficulty can supply.
+    const capSum = Math.max(1, Object.values(caps).reduce((s, x) => s + x, 0));
+    // A topic taught through code or a terminal session the class ran has no speaking time of its own (the session
+    // was pasted, not timed): it is weighted by what it supports instead of by a teaching time of zero.
+    const artifactTopic = (name) => units.filter(u => u.topic === name).every(u => u.source === 'MATERIAL' && isTaught(u, model.blocks)) && units.some(u => u.topic === name);
+    const weights = Object.fromEntries(model.topics.map(t => [t.name, (artifactTopic(t.name) ? caps[t.name] / capSum : 0.5 * caps[t.name] / capSum + 0.5 * (t.share || 0) / totalShare) + 1e-6]));
+    const alloc = allocate(want, weights, caps);
     let modeQuota = null;
-    if (modeTarget && want > 0) {
+    if (modeTarget && !supplementary) {
       const modeCaps = {};
       Object.entries(pools).filter(([t]) => (alloc[t] || 0) > 0).forEach(([, p]) => p.forEach(x => { const m = modeOf(x.unit); modeCaps[m] = (modeCaps[m] || 0) + 1; }));
       const need = Object.fromEntries(Object.keys(modeCaps).map(m => [m, Math.max(0, (modeTarget[m] || 0) - (modeSoFar[m] || 0)) + 1e-6]));
@@ -1613,32 +1909,32 @@ function planRequest(fullModel, requestedCount, difficulty = 'Balanced', options
     const typeCount = t => selected.filter(s => s.angle.type === t).length;
     const typeCountInMode = (m, t) => selected.filter(s => s.angle.type === t && modeOf(s.unit) === m).length;
     // Order of preference for each pick (topic quotas are fixed):
-    //   1. a teaching point not assessed yet (same unit, or the same idea taught twice, counts as one point);
+    //   1. a teaching point not assessed yet (the same idea taught twice counts as one point);
     //   2. a teaching mode still below its share of the quiz;
-    //   3. a question type that fits how the point was taught (code taught live → output/trace/debug; theory →
-    //      concept/comparison/mechanism; a fact the teacher stressed → a direct question at Easy);
-    //   4. among those, the type used least so far within that teaching mode (variety without leaving the style);
-    //   5. points the teacher stressed, then the lecture's own order.
-    // Without the style profile (ablation), only 1 and plain type variety across the quiz apply, as before.
+    //   3. a question type that fits how the point was taught (code taught live -> output/trace/debug; theory ->
+    //      concept/comparison/mechanism; a fact the teacher stressed -> a direct question at Easy);
+    //   4. the type used least so far within that teaching mode (variety without leaving the style);
+    //   5. the more important point (role in the lecture's intent, depth, emphasis, revisits, time spent).
+    // Without the style profile (ablation), only 1, plain type variety and importance apply.
     const pickBest = (allowRepeatPoint) => {
       let best = null, bestScore = Infinity;
       for (const [topic, remaining] of Object.entries(remainingBy)) {
         if (!(topicLeft[topic] > 0)) continue;
         remaining.forEach((p, i) => {
           if (!allowRepeatPoint && selected.some(s => sameTeachingPoint(s.unit, p.unit))) return;
+          // A second question on the same point must test a different skill (recall vs explain vs trace/compute vs
+          // apply); the same skill twice is a duplicate, so it is not planned at all.
+          if (allowRepeatPoint && selected.some(s => sameTeachingPoint(s.unit, p.unit) && skillOf(s.angle.type) === skillOf(p.angle.type))) return;
           const m = modeOf(p.unit);
           const modeFull = modeQuota && (modeUsed[m] || 0) >= (modeQuota[m] || 0) ? 1e6 : 0;
           let score;
           if (styleGuided) {
             const prefer = preferOf(p.unit);
-            // A point the teacher stressed ("remember this", "important for the exam") deserves a question, and at
-            // Easy the one that fits is a direct question on the stressed fact.
             const stressedRecall = Boolean(p.unit.stressed) && d === 'easy' && p.angle.type === 'recall';
             const fits = !prefer || prefer.includes(p.angle.type) || stressedRecall;
-            const stressBonus = stressedRecall ? 60 : (p.unit.stressed ? 20 : 0);
-            score = modeFull + (fits ? 0 : 1e4) + typeCountInMode(m, p.angle.type) * 100 + p.rank * 10 - stressBonus + i * 0.01;
+            score = modeFull + (fits ? 0 : 1e4) + typeCountInMode(m, p.angle.type) * 100 + p.rank * 10 - imp(p.unit) * 8 - (stressedRecall ? 40 : 0) + i * 0.01;
           } else {
-            score = typeCount(p.angle.type) * 100 + p.rank * 10 + i * 0.01;
+            score = typeCount(p.angle.type) * 100 + p.rank * 10 - imp(p.unit) * 8 + i * 0.01;
           }
           if (score < bestScore) { bestScore = score; best = { topic, i }; }
         });
@@ -1646,19 +1942,35 @@ function planRequest(fullModel, requestedCount, difficulty = 'Balanced', options
       return best;
     };
     let toPick = Object.values(alloc).reduce((s, x) => s + x, 0);
+    let picked = 0;
     while (toPick > 0) {
       const at = pickBest(false) || pickBest(true);
       if (!at) break;
       const [p] = remainingBy[at.topic].splice(at.i, 1);
-      selected.push({ ...p, difficulty: d });
+      selected.push({ ...p, difficulty: d, supplementary });
       const m = modeOf(p.unit);
       modeUsed[m] = (modeUsed[m] || 0) + 1;
-      topicLeft[at.topic]--; toPick--;
+      topicLeft[at.topic]--; toPick--; picked++;
       byTopic[at.topic] = (byTopic[at.topic] || 0) + 1;
     }
     Object.entries(modeUsed).forEach(([m, c]) => { modeSoFar[m] = (modeSoFar[m] || 0) + c; });
-    Object.values(remainingBy).forEach(rem => rem.forEach(p => reserves.push({ ...p, difficulty: d })));
+    Object.values(remainingBy).forEach(rem => rem.forEach(p => reserves.push({ ...p, difficulty: d, supplementary })));
+    return picked;
+  };
+
+  let fromMaterialOnly = 0;
+  // Order of filling: what the lecture is about (core and supporting points), then side details the calibration
+  // marked peripheral (setup clicks, tool trivia), then points found only in uploaded material.
+  const mainUnits = taughtUnits.filter(u => u.role !== 'PERIPHERAL');
+  const sideUnits = taughtUnits.filter(u => u.role === 'PERIPHERAL');
+  for (const d of ['easy', 'medium', 'hard']) {
+    const got = pickFrom(mainUnits, d, byDiff[d], false);
+    const side = sideUnits.length ? pickFrom(sideUnits, d, byDiff[d] - got, false) : 0;
+    const extra = extraUnits.length ? pickFrom(extraUnits, d, byDiff[d] - got - side, true) : 0;
+    fromMaterialOnly += extra;
   }
+  // Reserves: taught points before material-only ones, the more important first.
+  reserves.sort((a, b) => (a.supplementary ? 1 : 0) - (b.supplementary ? 1 : 0) || imp(b.unit) - imp(a.unit) || a.rank - b.rank);
   // Hard picks: each gets the way of being Hard that its content supports, varied across the quiz.
   hardForms.assignForms(selected, model, { isSamePoint: sameTeachingPoint });
   hardForms.assignForms(reserves, model, { used: selected.map(p => p.hardForm), isSamePoint: sameTeachingPoint });
@@ -1675,7 +1987,22 @@ function planRequest(fullModel, requestedCount, difficulty = 'Balanced', options
       reasons.push(`This input supports ${model.capacity.total} distinct questions in total${excluded.size ? ' for the topics you kept' : ''}; ${n} were requested.`);
     }
   }
+  // More asked than this input has distinct points: say so first, in the teacher's terms (points, not "angles").
+  const recKey = diffKey === 'balanced' ? 'balanced' : diffKey;
+  const recommendedN = model.capacity && model.capacity.recommended ? model.capacity.recommended[recKey] : null;
+  if (typeof recommendedN === 'number' && n > recommendedN && !options.replace) {
+    reasons.unshift(`This input teaches ${recommendedN} distinct point${recommendedN === 1 ? '' : 's'}${diffKey === 'balanced' ? '' : ` suited to ${diffKey} questions`}, so ${recommendedN} question${recommendedN === 1 ? ' is' : 's are'} recommended; questions beyond that look at the same points from another angle and are dropped if they repeat one.`);
+    const i = reasons.findIndex(r => /distinct questions in total/.test(r));
+    if (i >= 0) reasons.splice(i, 1);
+  }
   if (excluded.size) reasons.push(`Left out at your request: ${[...excluded].join(', ')}.`);
+  // Uploaded material on topics the lecture never touched: tell the teacher (it is not silently mixed in).
+  if (hasSpeech && extraUnits.length) {
+    const taughtTopics = new Set(taughtUnits.map(u => u.topic));
+    const untouched = [...new Set(extraUnits.map(u => u.topic))].filter(t => !taughtTopics.has(t));
+    if (untouched.length) reasons.push(`Not covered in the lecture: ${untouched.slice(0, 4).join(', ')}${untouched.length > 4 ? ` and ${untouched.length - 4} more` : ''} (from the uploaded material; used only when the lecture cannot fill the quiz).`);
+  }
+  if (fromMaterialOnly > 0) reasons.push(`The lecture itself supports ${deliverable - fromMaterialOnly} of these; ${fromMaterialOnly} come from points that appear only in the uploaded material.`);
   // Keep only reserves of the difficulties actually requested
   const wanted = new Set(Object.entries(byDiff).filter(([, v]) => v > 0).map(([k]) => k));
   return {
@@ -1696,6 +2023,7 @@ function planRequest(fullModel, requestedCount, difficulty = 'Balanced', options
     ],
     shortfall: Math.max(0, shortfall),
     filledFromOtherTiers,
+    fromMaterialOnly,
     excludedTopics: [...excluded],
     shortfallReasons: reasons
   };
@@ -1794,6 +2122,13 @@ ${unitEvidenceText(model, linked, 1200)}`;
       teachingStyleNote: styleGuided ? teachingStyle.noteFor(u, model.teachingStyle, styleOverride) : null,
       teachingMode: styleGuided ? teachingStyle.unitMode(u, styleOverride) : null,
       lectureUnitId: u.id,
+      // What the whole lecture set out to teach and what this difficulty means for this class (calibration step),
+      // so the writer pitches the question at the lecture, not at the subject in general.
+      lectureIntent: (model.calibration && model.calibration.status === 'ok' && model.calibration.intent) || model.intent || null,
+      difficultyMeaning: (model.calibration && model.calibration.difficulty && model.calibration.difficulty[p.difficulty]) || null,
+      unitRole: u.role || null,
+      importanceScore: typeof u.importanceScore === 'number' ? u.importanceScore : unitImportance(u),
+      supplementary: Boolean(p.supplementary),
       lectureTime: u.time,
       lectureSlides: u.slides,
       isReserve
@@ -1856,13 +2191,23 @@ function getById(id) {
   return null;
 }
 
+/** Persist an updated reading (e.g. its teaching report) under its id. */
+function saveModel(m) { if (m && m.id && /^[a-f0-9]{64}$/.test(m.id) && !m.incomplete) writeCache(m.id, m); }
+
 module.exports = {
+  saveModel,
   MODEL_VERSION,
   MAX_QUIZ_QUESTIONS,
   TEACHING_DIMENSIONS,
   buildLectureModel,
   buildTopicModel,
   planRequest,
+  calibrateLecture,
+  ensureCalibrated,
+  CALIBRATION_VERSION,
+  attachUnitVectors,
+  unitImportance,
+  computeCapacity,
   toTeachingUnits,
   toClientPayload,
   getById,
@@ -1870,5 +2215,5 @@ module.exports = {
   unitEvidenceText,
   teachingStyle,
   hardForms,
-  _internal: { spokenCodeHits, buildBlocks, buildWindows, quoteSupported, sanitiseAngles, computeCapacity, allocate, buildSegments, consolidateUnits, callJson, evalPrompt, EVAL_SYSTEM, checkGapsInContext, scoreTeaching, pointsIntoContext }
+  _internal: { spokenCodeHits, buildBlocks, buildWindows, prepareSemanticLinkage, buildTopics, unitSeconds, blocksFromText, quoteSupported, sanitiseAngles, computeCapacity, allocate, buildSegments, consolidateUnits, callJson, evalPrompt, EVAL_SYSTEM, checkGapsInContext, scoreTeaching, pointsIntoContext }
 };

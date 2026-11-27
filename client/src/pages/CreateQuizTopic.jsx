@@ -804,7 +804,7 @@ export default function CreateQuizTopic() {
 
         for (const file of files) {
             const ext = file.name.split('.').pop().toLowerCase();
-            const isAudio = ['mp3', 'wav', 'm4a', 'webm', 'ogg', 'aac', 'flac', 'opus'].includes(ext);
+            const isAudio = ['mp3', 'wav', 'm4a', 'webm', 'ogg', 'aac', 'flac', 'opus', 'mp4', 'mov', 'mkv'].includes(ext);
 
             // Automatically route audio files to the dedicated Whisper pipeline
             if (isAudio) {
@@ -898,7 +898,7 @@ export default function CreateQuizTopic() {
 
         for (const file of files) {
             const ext = file.name.split('.').pop().toLowerCase();
-            const isAudio = ['mp3', 'wav', 'm4a', 'webm', 'ogg', 'aac', 'flac', 'opus'].includes(ext);
+            const isAudio = ['mp3', 'wav', 'm4a', 'webm', 'ogg', 'aac', 'flac', 'opus', 'mp4', 'mov', 'mkv'].includes(ext);
             const isTxt = ext === 'txt';
 
             if (isTxt) {
@@ -2020,7 +2020,7 @@ export default function CreateQuizTopic() {
                             multiple
                             onChange={handleLectureFileUpload}
                             className="hidden"
-                            accept=".mp3,.wav,.m4a,.webm,.ogg,.aac,.flac,.opus,.txt"
+                            accept=".mp3,.wav,.m4a,.webm,.ogg,.aac,.flac,.opus,.mp4,.mov,.mkv,.txt"
                         />
 
                         {/* 3. SOURCE MATERIAL DOCKET LIST (Compact Empty State py-5) */}

@@ -1815,10 +1815,12 @@ ${target.distractorMisconceptions.map(m => `- ${m.concept}: ${m.description}`).j
 Target ID: ${t.targetId}
 Concept: ${t.concept}
 Required difficulty: ${TIER_DEMAND[tier] || TIER_DEMAND.Medium}
-Cognitive operation: ${op}
+${t.difficultyMeaning ? `${tier} for THIS lecture means: ${t.difficultyMeaning}
+` : ''}${t.lectureIntent ? `What the teacher intended students to learn in this lecture: ${t.lectureIntent} (pitch the question at this intent; e.g. no code if the idea was taught without code)
+` : ''}Cognitive operation: ${op}
 ${t.questionAngle && QUESTION_ANGLE_GUIDE[t.questionAngle] ? `Question type: ${QUESTION_ANGLE_GUIDE[t.questionAngle]}\n` : ''}${tier === 'Hard' ? `HARD RECIPE (mandatory): ${t.hardFormRecipe || HARD_RECIPE[t.questionAngle] || HARD_RECIPE.default} Write the data on separate lines (e.g. "P1: Allocation [0,1,0], Max [7,5,3]" or code lines) so the prose sentence stays under 35 words.\n` : ''}${tier === 'Easy' && ['output', 'debug'].includes(t.questionAngle) ? `EASY CODE (mandatory): put 1-3 lines of the code exactly as taught (reconstruct it from the teacher's words if it was read aloud) on separate lines in the stem; the answer must follow from ONE rule taught in class (what one statement prints or does, or one obvious mistake) - no loop tracing, no state over several steps.\n` : ''}${t.teachingStyleNote ? `${t.teachingStyleNote}
 ` : ''}Learning objective: ${t.instruction || t.operationalGuidance || 'Test conceptual and applied understanding.'}
-${misconceptions}Evidence (the ONLY source of truth for this question):
+${misconceptions}Evidence (the ONLY source of truth for this question; spoken parts are speech recognition, so write technical terms correctly, e.g. 'claim edge' where the transcript says 'climb edge', 'F1 score' for 'FX score'):
 ${(ctx || '').slice(0, Math.max(ctxCap, t.distractorStrategy === 'LECTURE_MISCONCEPTIONS' ? 2600 : 0)).trim()}
 `;
     }).join('\n');
@@ -1950,6 +1952,18 @@ Generate a JSON array of exactly ${validTargets.length} distinct, rigorous MCQs 
           try {
             responseText = await callHard();
           } catch (firstErr) {
+            // gpt-oss-120b's daily allowance is used on every key: the other reasoning model writes this Hard batch
+            // (logged), rather than waiting hours or dropping to the general fast model.
+            if (/DAILY_LIMIT/.test(firstErr.message || '')) {
+              console.warn('⚠️ [Agent 2 Batch] gpt-oss-120b daily allowance used on all keys; Hard batch written by qwen/qwen3.8-27b (reasoning).');
+              responseText = await llmRouter.complete({
+                prompt: userPrompt, systemPrompt: effectiveSystemPrompt, temperature: 0.2, model: 'qwen/qwen3.8-27b', groqModels: ['qwen/qwen3.8-27b'],
+                sessionId: evidencePackage?.sessionId, maxTokens: hardMaxTokens, operation: 'HARD_BATCH_GENERATION', noGeminiFallback: true,
+                rateLimitWaitMs: 60000, signal: evidencePackage?.abortSignal || options?.abortSignal
+              });
+              hardWriter = 'reasoning-fallback';
+              return;
+            }
             // Reasoning used up the whole token allowance and left no answer: retry once with medium reasoning.
             if (effort !== 'high' || !/empty content/i.test(firstErr.message || '')) throw firstErr;
             effort = 'medium';
@@ -2317,14 +2331,9 @@ Generate exactly ONE multiple-choice question in valid JSON format:
 {
   "targetId": "${target.targetId}",
   "questionText": "Direct, standalone problem-first question (${tier === 'Hard' ? '20-55 words with concrete parameters/scenario' : '12-25 words'})",
-  "options": [
-    "Plausible alternative concept / misconception",
-    "Distinct contrasting mechanism",
-    "Valid factual formulation",
-    "Boundary condition trap"
-  ],
-  "correctAnswerIndex": 2,
-  "correctAnswer": "Valid factual formulation",
+  "options": ["<option 1: a plausible misconception>", "<option 2>", "<option 3>", "<option 4>"],
+  "correctAnswerIndex": "<index 0-3 of the correct option>",
+  "correctAnswer": "<the exact text of the correct option, copied character for character>",
   "explanation": "Concise sentence explaining why the key is correct and why distractors are incorrect based on evidence."
 }
 
@@ -2866,6 +2875,12 @@ function resolveKeyToOption(options, key, keyIndex) {
   const prefixed = k.match(/^\(?([A-Da-d])[).:]\s+(.+)$/);
   if (prefixed) { const o = options['abcd'.indexOf(prefixed[1].toLowerCase())]; if (o && norm(o) === norm(prefixed[2])) return o; }
   if (Number.isInteger(keyIndex) && keyIndex >= 0 && keyIndex < options.length && norm(k) && norm(options[keyIndex]).startsWith(norm(k).slice(0, 12))) return options[keyIndex];
+  // The key text names no option at all (e.g. a template phrase copied by the model) but the model's own index is
+  // valid: take the index. The Final Quality Gate re-solves every question and rejects a wrong key independently.
+  const words = (x) => new Set(norm(x).split(' ').filter(w => w.length > 3));
+  const kw = words(k);
+  const overlaps = options.some(o => { const ow = words(o); for (const w of kw) if (ow.has(w)) return true; return false; });
+  if (Number.isInteger(Number(keyIndex)) && Number(keyIndex) >= 0 && Number(keyIndex) < options.length && !overlaps) return options[Number(keyIndex)];
   return null;
 }
 

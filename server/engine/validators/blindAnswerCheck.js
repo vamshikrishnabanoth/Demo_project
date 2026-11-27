@@ -52,15 +52,20 @@ function buildPrompt(list, { lm, passageChars, detectDuplicates }) {
 const SYSTEM = 'You are a careful university examiner taking a multiple-choice quiz. Return JSON only.';
 
 /** Lecture path: key-blind reasoning solve on Groq (gpt-oss-120b first), in small batches to stay under the per-minute token cap. */
-async function callReasoner(prompt) {
+async function callReasoner(prompt, opts = {}) {
   const router = require('../adapter/llmRouter');
   const { safeParseJson } = require('../utils/jsonParser');
-  const models = (process.env.BLIND_CHECK_MODELS || 'openai/gpt-oss-120b,qwen/qwen3.8-27b').split(',').map(s => s.trim()).filter(Boolean);
+  let models = (process.env.BLIND_CHECK_MODELS || 'openai/gpt-oss-120b,qwen/qwen3.8-27b').split(',').map(s => s.trim()).filter(Boolean);
+  // Hard questions (multi-step computations and procedures) are solved by the strongest reasoning model first:
+  // a smaller solver repeated the writer's mistake on a resource-ordering question that broke its own rule.
+  if (opts.hard || opts.strong) models = ['openai/gpt-oss-120b', ...models.filter(m => m !== 'openai/gpt-oss-120b')];
   const raw = await router.complete({
     prompt, systemPrompt: SYSTEM, temperature: 0, responseFormat: 'json',
-    maxTokens: Math.max(1500, parseInt(process.env.BLIND_CHECK_MAX_TOKENS, 10) || 3500),
+    // High reasoning on a Hard question needs room: with 3500 tokens the reasoning used them all and the answer was
+    // unreadable, so no Hard question could be confirmed (S04/D06 re-run, 27 Nov). Hard batches are one question each.
+    maxTokens: opts.hard ? Math.max(3500, parseInt(process.env.BLIND_CHECK_HARD_MAX_TOKENS, 10) || 6500) : Math.max(1500, parseInt(process.env.BLIND_CHECK_MAX_TOKENS, 10) || 3500),
     operation: 'BLIND_ANSWER_CHECK', model: models[0], groqModels: models, noGeminiFallback: true,
-    reasoningEffort: process.env.BLIND_CHECK_EFFORT || 'medium',
+    reasoningEffort: opts.hard ? 'high' : (process.env.BLIND_CHECK_EFFORT || 'medium'),
     rateLimitWaitMs: Math.max(0, parseInt(process.env.BLIND_CHECK_RATE_WAIT_MS, 10) || 60000)
   });
   const data = safeParseJson(raw, null);
@@ -126,12 +131,15 @@ async function blindAnswerCheck(questions, opts = {}) {
     // solver deferred to the lecture (a Docker key the teacher stated wrongly was then "agreed"), caught 5 of 10 real
     // defects vs 7 of 10 without it, and spent ~4x the input tokens. BLIND_CHECK_PASSAGE_CHARS > 0 turns it back on.
     const passageChars = opts.passageChars ?? (parseInt(process.env.BLIND_CHECK_PASSAGE_CHARS, 10) || 0);
+    const isHard = (q) => String(q.difficulty || q.metadata?.targetDifficulty || '').toLowerCase() === 'hard';
     const batches = [];
-    for (let i = 0; i < list.length; i += size) batches.push(list.slice(i, i + size));
+    const easier = list.filter(q => !isHard(q));
+    for (let i = 0; i < easier.length; i += size) batches.push(easier.slice(i, i + size));
+    list.filter(isHard).forEach(q => batches.push([q]));
     let flagged = 0; let model = null; let failures = 0; let lastErr = null;
     await Promise.all(batches.map(async (b) => {
       try {
-        const res = await callReasoner(buildPrompt(b, { lm, passageChars, detectDuplicates: false }));
+        const res = await callReasoner(buildPrompt(b, { lm, passageChars, detectDuplicates: false }), { hard: b.some(isHard), strong: Boolean(opts.strong) });
         model = res.model;
         flagged += applyAnswers(b, res.data, res.model, FIELD);
       } catch (e) {

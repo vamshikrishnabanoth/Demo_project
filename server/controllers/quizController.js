@@ -702,7 +702,7 @@ const parsePptOrPptx = async (filePath) => {
 const extractText = async (filePath) => {
     try {
         const ext = path.extname(filePath).toLowerCase();
-        if (['.mp3', '.wav', '.m4a', '.webm', '.ogg', '.aac', '.flac'].includes(ext)) {
+        if (['.mp3', '.wav', '.m4a', '.webm', '.ogg', '.aac', '.flac', '.mp4', '.mov', '.mkv', '.mpeg', '.mpga'].includes(ext)) {
             return (await transcribeAudio(filePath)) || '';
         }
         if (ext === '.pptx') {
@@ -789,7 +789,7 @@ const extractReadableTextFromScan = async (filePath, originalName) => {
 const extractTextWithRange = async (filePath, startPage = 1, endPage = 999) => {
     try {
         const ext = path.extname(filePath).toLowerCase();
-        if (['.mp3', '.wav', '.m4a', '.webm', '.ogg', '.aac', '.flac'].includes(ext)) {
+        if (['.mp3', '.wav', '.m4a', '.webm', '.ogg', '.aac', '.flac', '.mp4', '.mov', '.mkv', '.mpeg', '.mpga'].includes(ext)) {
             return (await transcribeAudio(filePath)) || '';
         }
         if (ext === '.pptx') {
@@ -929,7 +929,7 @@ const checkAiServiceOnline = async (url) => {
 };
 
 // LOCAL/CLOUD AI Generation - Architecture Baseline v1.0 (Three-Agent Assessment Pipeline)
-const pipelineOrchestrator = require('../engine/pipelineOrchestrator');
+const lecturePipeline = require('../engine/mcq/lecturePipeline');
 
 /**
  * Resolves controlled terminal error code and message from pipeline execution diagnostics.
@@ -1030,6 +1030,11 @@ function resolveGenerationErrorCode(err, pipelineResult) {
 }
 
 const generateQuestions = async (type, content, count = 5, difficulty = 'Medium', source_material_id = null, target_ratios = null, inputs = null, topic_weights = null, taskId = null, callbackUrl = null, isolated_narratives = null, questionStyle = 'MIXED', deficitPolicy = null, inputModality = null, capacityPolicy = 'ALLOW_SCOPE_SUPPLEMENTARY', lectureModelId = null) => {
+    // Time budget (C7): a quiz answers within QUIZ_TIME_BUDGET_MS of Generate (default 2 min) with what is proven by
+    // then; no check is skipped to meet it, the notice reports what was left. A replacement (count 1) inherits none.
+    const genStartedAt = Date.now();
+    const QUIZ_BUDGET_MS = Math.max(30000, parseInt(process.env.QUIZ_TIME_BUDGET_MS, 10) || 120000);
+    const timeLeft = () => QUIZ_BUDGET_MS - (Date.now() - genStartedAt);
     try {
         console.log(`🚀 [Baseline v1.0] Executing 3-Agent Pipeline: ${type || 'multi-input'} | Count: ${count} | Style: ${questionStyle}`);
 
@@ -1145,60 +1150,112 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
             topic: (inputs && inputs[0] && inputs[0].content && inputs[0].type === 'text') ? inputs[0].content.trim() : (content || '')
         };
 
-        // Reuse the lecture model built when the teacher added the material (same understanding as the preview).
-        // lectureModelId may be a plain id or { id, excludeTopics } (topics the teacher unticked).
+        // ── Step 2 UNDERSTAND: every input goes through the lecture model (one path). The preview normally built it
+        // already (lectureModelId); otherwise it is built here from the same inputs. lectureModelId may be a plain id
+        // or { id, excludeTopics, styleOverride, styleGuided, replace }.
         let lmUnitsForReview = null;
         const lmOptions = (lectureModelId && typeof lectureModelId === 'object') ? lectureModelId : { id: lectureModelId };
         lectureModelId = lmOptions.id || null;
-        const lmCandidate = lectureModelId ? lectureModel.getById(lectureModelId) : null;
-        if (lectureModelId && (!isTopicMode || (lmCandidate && lmCandidate.isTopicNotes))) {
-            const lm = lmCandidate;
-            // Topic-only input: generate from the reference notes (normal material path, not free-form synthesis).
-            if (lm && lm.isTopicNotes) {
-                sessionInputs.documentTexts = [lm.notesText];
-                sessionInputs.documentNames = [`Reference notes: ${lm.title}`];
-                sessionInputs.inputModality = 'UNIFIED';
-            }
-            if (lm && lm.ok && lm.units && lm.units.length > 0) {
-                // Teaching style (PDI v2): each teaching point prefers the question types that fit how it was taught
-                // (theory, code walkthrough, worked problems, examples, revision) and how closely the slides were
-                // followed; a teacher's correction replaces the detected style. STYLE_GUIDED_PLANNING=off disables it.
-                const styleGuided = lmOptions.styleGuided !== undefined ? Boolean(lmOptions.styleGuided) : process.env.STYLE_GUIDED_PLANNING !== 'off';
-                const styleOverride = lectureModel.teachingStyle.normaliseOverride(lmOptions.styleOverride);
-                if (styleOverride && !lmOptions.replace) recordStyleCorrection(lm, styleOverride);
-                // The original input-based index is still recorded (not used) as the baseline for evaluation.
-                let pdiBaseline = null;
-                try { pdiBaseline = require('../engine/pdiRouter').route(sessionInputs); } catch (_) { /* baseline only */ }
-                const lmPlan = lectureModel.planRequest(lm, parseInt(count, 10) || 0, difficulty || 'Balanced', {
-                    excludeTopics: Array.isArray(lmOptions.excludeTopics) ? lmOptions.excludeTopics : [],
-                    fillOtherTiers: (deficitPolicy || 'FILL_WITH_MEDIUM') === 'FILL_WITH_MEDIUM',
-                    replace: lmOptions.replace || null,
-                    styleGuided,
-                    styleOverride
-                });
-                const lmUnits = lectureModel.toTeachingUnits(lm, lmPlan, { styleGuided, styleOverride });
-                if (styleGuided && lm.teachingStyle) console.log(`[TeachingStyle] ${lectureModel.teachingStyle.describeProfile(lm.teachingStyle)}${styleOverride ? ` (teacher corrected: ${JSON.stringify(styleOverride)})` : ''}`);
-                if (lmUnits.primary.length > 0) {
-                    sessionInputs.teachingUnits = lmUnits.all;
-                    lmUnitsForReview = lmUnits;
-                    sessionInputs.lectureModelPlan = {
-                        lectureModelId,
-                        requested: lmPlan.requested,
-                        deliverable: lmPlan.deliverable,
-                        byDifficulty: lmPlan.byDifficulty,
-                        byTopic: lmPlan.byTopic,
-                        capacity: lm.capacity.byDifficulty,
-                        capacityTotal: lm.capacity.total,
-                        shortfall: lmPlan.shortfall,
-                        shortfallReasons: lmPlan.shortfallReasons,
-                        teachingStyle: styleGuided ? { profile: lm.teachingStyle || null, override: styleOverride } : null,
-                        pdiBaseline: pdiBaseline ? { representation: pdiBaseline.selected_representation, index: pdiBaseline.pedagogical_delivery_index } : null
-                    };
-                    console.log(`[LectureModel] Reusing lecture model ${lectureModelId.slice(0, 10)}: ${lmUnits.primary.length} targets + ${lmUnits.reserve.length} reserves (${JSON.stringify(lmPlan.byDifficulty)}).`);
+        let lm = lectureModelId ? lectureModel.getById(lectureModelId) : null;
+        if (!lm || !lm.ok) {
+            if (taskId) updateTaskStage(taskId, 0, 'Reading the lecture');
+            try {
+                if (isTopicMode) {
+                    const topicName = String(sessionInputs.topic || docTexts[0] || content || '').trim();
+                    lm = await lectureModel.buildTopicModel({ topic: topicName });
+                } else {
+                    const documents = docTexts.map((t, i) => ({ name: docNames[i] || `Material ${i + 1}`, text: t }));
+                    if (codeSnippets && codeSnippets.trim()) documents.push({ name: 'Code', text: codeSnippets.trim() });
+                    const timed = transcriptSegments.some(s => s && s.start !== null && s.start !== undefined);
+                    lm = await lectureModel.buildLectureModel({
+                        text: voiceText,
+                        segments: timed ? transcriptSegments : [],
+                        documents,
+                        title: (Array.isArray(inputs) && inputs[0] && (inputs[0].source_name || inputs[0].name)) || '',
+                        modality: voiceText && documents.length ? 'HYBRID' : (voiceText ? 'VOICE_ONLY' : 'DOCUMENT_ONLY'),
+                        deferTeachingScore: true
+                    });
                 }
-            } else {
-                console.warn(`[LectureModel] Lecture model ${String(lectureModelId).slice(0, 10)} not found; falling back to in-pipeline extraction.`);
+            } catch (lmErr) {
+                lm = { ok: false, message: lmErr.message };
             }
+            lectureModelId = lm && lm.ok ? lm.id : null;
+        }
+        // A short text that does not name a subject (a greeting, an instruction): refused with the reason.
+        if (lm && lm.ok === false && lm.reason === 'NOT_A_TOPIC') {
+            const msg = `${lm.message} Type a topic (for example "Arrays in Python"), paste your notes or code, or add the lecture recording.`;
+            const err = new Error(msg);
+            err.code = 'NON_ACADEMIC_CONTENT';
+            err.errorCode = 'NON_ACADEMIC_CONTENT';
+            if (taskId) failTask(taskId, msg, 'NON_ACADEMIC_CONTENT');
+            throw err;
+        }
+        // Read, but nothing is taught (only greetings, attendance, admin or jokes): no questions, and the teacher is told.
+        if (lm && lm.ok && Array.isArray(lm.units) && (lm.units.length === 0 || lm.units.every(u => !(u.angles || []).length))) {
+            const msg = 'No teachable academic content was found in this input (it looks like greetings, admin talk or conversation), so no questions were generated.';
+            const err = new Error(msg);
+            err.code = 'NON_ACADEMIC_CONTENT';
+            err.errorCode = 'NON_ACADEMIC_CONTENT';
+            if (taskId) failTask(taskId, msg, 'NON_ACADEMIC_CONTENT');
+            throw err;
+        }
+        // Fallback for a lecture that cannot be read: tell the teacher (no other reader is substituted).
+        if (!lm || !lm.ok || !Array.isArray(lm.units) || lm.units.length === 0) {
+            const msg = `This input could not be read into teaching points right now${lm && lm.message ? ` (${String(lm.message).slice(0, 120)})` : ''}. Please try again in a minute.`;
+            const err = new Error(msg);
+            err.code = 'LECTURE_NOT_READ';
+            err.errorCode = 'LECTURE_NOT_READ';
+            if (taskId) failTask(taskId, msg, 'LECTURE_NOT_READ');
+            throw err;
+        }
+        // Lecture-wide calibration for a reading saved before calibration existed (runs once, then saved with it).
+        await lectureModel.ensureCalibrated(lm);
+        // Topic-only input: questions come from the reference notes, written like any material.
+        if (lm.isTopicNotes) {
+            sessionInputs.documentTexts = [lm.notesText];
+            sessionInputs.documentNames = [`Reference notes: ${lm.title}`];
+            sessionInputs.inputModality = 'UNIFIED';
+        }
+
+        // ── Step 3 PLAN: the quiz blueprint (lecture first, calibrated difficulty mix, importance, teaching style).
+        // Teaching style (PDI v2): each point prefers the question types that fit how it was taught; a teacher's
+        // correction replaces the detected style. STYLE_GUIDED_PLANNING=off disables it (ablation only).
+        const styleGuided = lmOptions.styleGuided !== undefined ? Boolean(lmOptions.styleGuided) : process.env.STYLE_GUIDED_PLANNING !== 'off';
+        const styleOverride = lectureModel.teachingStyle.normaliseOverride(lmOptions.styleOverride);
+        if (styleOverride && !lmOptions.replace) recordStyleCorrection(lm, styleOverride);
+        const lmPlan = lectureModel.planRequest(lm, parseInt(count, 10) || 0, difficulty || 'Balanced', {
+            excludeTopics: Array.isArray(lmOptions.excludeTopics) ? lmOptions.excludeTopics : [],
+            fillOtherTiers: (deficitPolicy || 'FILL_WITH_MEDIUM') === 'FILL_WITH_MEDIUM',
+            replace: lmOptions.replace || null,
+            styleGuided,
+            styleOverride
+        });
+        const lmUnits = lectureModel.toTeachingUnits(lm, lmPlan, { styleGuided, styleOverride });
+        if (styleGuided && lm.teachingStyle) console.log(`[TeachingStyle] ${lectureModel.teachingStyle.describeProfile(lm.teachingStyle)}${styleOverride ? ` (teacher corrected: ${JSON.stringify(styleOverride)})` : ''}`);
+        sessionInputs.teachingUnits = lmUnits.all;
+        lmUnitsForReview = lmUnits;
+        sessionInputs.lectureModelPlan = {
+            lectureModelId,
+            requested: lmPlan.requested,
+            deliverable: lmPlan.deliverable,
+            byDifficulty: lmPlan.byDifficulty,
+            byTopic: lmPlan.byTopic,
+            capacity: lm.capacity.byDifficulty,
+            capacityTotal: lm.capacity.total,
+            recommended: lm.capacity.recommended,
+            fromMaterialOnly: lmPlan.fromMaterialOnly || 0,
+            shortfall: lmPlan.shortfall,
+            shortfallReasons: lmPlan.shortfallReasons,
+            calibration: lm.calibration || null,
+            teachingStyle: styleGuided ? { profile: lm.teachingStyle || null, override: styleOverride } : null
+        };
+        console.log(`[LectureModel] ${lectureModelId.slice(0, 10)}: ${lmUnits.primary.length} targets + ${lmUnits.reserve.length} reserves (${JSON.stringify(lmPlan.byDifficulty)}; calibration ${lm.calibration ? lm.calibration.status : 'none'})`);
+        if (lmUnits.primary.length === 0) {
+            const msg = (lmPlan.shortfallReasons || []).join(' ') || 'No question can be planned from this input.';
+            const err = new Error(msg);
+            err.code = 'NOTHING_TO_PLAN';
+            if (taskId) failTask(taskId, msg, 'NOTHING_TO_PLAN');
+            throw err;
         }
 
         // Guard against non-academic audio or topics before launching heavy pipeline
@@ -1235,7 +1292,7 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
             'INGESTION': { stage: 0, label: 'Ingesting & Analyzing Material' },
             'EVIDENCE_PACKAGE': { stage: 1, label: 'Packaging Evidence & Knowledge Graph' },
             'AGENT_1_PLANNING': { stage: 2, label: 'Assessment Planning & TC Analysis' },
-            'QUESTION_GENERATION': { stage: 3, label: 'Generating Questions via AI' },
+            'QUESTION_GENERATION': { stage: 3, label: 'Writing questions' },
             'DETERMINISTIC_PRECHECK': { stage: 3, label: 'Generating Questions via AI' },
             'DETERMINISTIC_DUPLICATE_CHECK': { stage: 3, label: 'Generating Questions via AI' },
             'AGENT_3_QUESTION_EVAL': { stage: 3, label: 'Generating Questions via AI' },
@@ -1286,7 +1343,10 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
                 sessionInputs.abortSignal = taskObj.abortController.signal;
             }
         }
-        const result = await pipelineOrchestrator.runPipeline(sessionInputs, progressCallback);
+        // ── Steps 4-5 WRITE and CHECK EACH (engine/mcq/lecturePipeline.js); steps 6-8 follow below.
+        if (lmOptions.replace && lmOptions.writeHint) sessionInputs.writeHint = String(lmOptions.writeHint).slice(0, 700);
+        if (!(lectureModelId && typeof lectureModelId === 'object' && lectureModelId.replace)) sessionInputs.writeDeadlineAt = genStartedAt + Math.round(0.55 * QUIZ_BUDGET_MS);
+        const result = await lecturePipeline.run(sessionInputs, lm, progressCallback);
         // When the request exceeded what the lecture supports, say so first (before any quality-check detail).
         const lmPlanInfo = sessionInputs.lectureModelPlan;
         if (result && lmPlanInfo && Array.isArray(lmPlanInfo.shortfallReasons) && lmPlanInfo.shortfallReasons.length) {
@@ -1332,9 +1392,10 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
             // ── Final Quality Gate (non-negotiable): every question must pass every criterion on its own.
             // Failed questions are rejected with their reasons; for lecture inputs one bounded replacement round
             // (validated again) refills the slots; the notice states exactly what was delivered and why.
-            if (process.env.DISABLE_QUALITY_GATE !== 'true' && !lmOptions.skipGate) {
+            // (skipGate: a single replacement is checked by its caller, which runs this same gate on it.)
+            if (!lmOptions.skipGate) {
                 const { finalQualityGate, describeRejections } = require('../engine/validators/finalQualityGate');
-                const lmForGate = lmCandidate && lmCandidate.ok ? lmCandidate : null;
+                const lmForGate = lm;
                 const GATE_TIMEOUT_MS = Math.max(30000, parseInt(process.env.QUALITY_GATE_TIMEOUT_MS, 10) || 150000);
                 const runGateOnly = (qs, context, depth) => Promise.race([
                     finalQualityGate(qs, { lectureModel: lmForGate, context, depth }),
@@ -1359,35 +1420,86 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
                             new Promise(resolve => setTimeout(() => resolve({ checked: false, flagged: 0, reason: 'timeout' }), BLIND_TIMEOUT_MS))
                         ])
                     ]);
+                    // A blind solve that could not run is tried once more after a pause: an unchecked question is never delivered.
+                    const unchecked = g.accepted.filter(q => !q.blindCheck || q.blindCheck.status === 'NOT_CHECKED');
+                    if (unchecked.length) {
+                        await new Promise(r => setTimeout(r, Math.max(0, parseInt(process.env.BLIND_CHECK_RETRY_MS, 10) || 30000)));
+                        await blindAnswerCheck(unchecked, { lectureModel: lmForGate }).catch(() => null);
+                    }
+                    // A verdict other than "agrees" from the smaller solver is decided by the strongest one: gpt-oss-20b called
+                    // good questions ambiguous, and the proof step then (rightly) refused them (S04 re-run: 5 of 6 such
+                    // questions were agreed by gpt-oss-120b). Only the strong solver's agreement counts for those.
+                    const doubt = g.accepted.filter(q => q.blindCheck && q.blindCheck.status !== 'AGREES' && q.blindCheck.model !== 'openai/gpt-oss-120b');
+                    if (doubt.length && process.env.BLIND_CHECK_ADJUDICATE !== 'off') {
+                        const before = doubt.map(q => q.blindCheck);
+                        await blindAnswerCheck(doubt, { lectureModel: lmForGate, strong: true }).catch(() => null);
+                        doubt.forEach((q, i) => { if (!q.blindCheck || q.blindCheck.status === 'NOT_CHECKED') q.blindCheck = before[i]; });
+                        console.log(`[BlindCheck] ${doubt.length} doubtful verdict(s) decided by the strongest solver: ${doubt.filter(q => q.blindCheck.status === 'AGREES').length} agree`);
+                    }
                     const split = blindRejections(g.accepted);
                     console.log(`[BlindCheck] ${b.checked ? `checked with ${b.model}` : `not run: ${b.reason}`}; ${split.rejected.length} gate-passed question(s) rejected`);
                     // Disputed keys that follow the lecture's own words → a lecture point for the teacher to double-check.
                     const { lectureDiscrepancies } = require('../engine/validators/blindAnswerCheck');
                     const disc = await lectureDiscrepancies(split.rejected.map(r => r.question), lmForGate).catch(() => []);
                     if (disc.length) lectureFlags.push(...disc);
-                    return { ...g, accepted: split.keep, rejected: [...g.rejected, ...split.rejected], blind: b };
+                    // Step 6c PROVE: delivered only with a proven key (second independent solve + computation for values)
+                    // and an exact lecture quote. Unproven questions are rejected and refilled. KEY_PROOF=off: ablation only.
+                    if (process.env.KEY_PROOF === 'off') return { ...g, accepted: split.keep, rejected: [...g.rejected, ...split.rejected], blind: b };
+                    const { proveQuestions } = require('../engine/validators/keyProof');
+                    const proof = await proveQuestions(split.keep, lmForGate);
+                    console.log(`[KeyProof] ${proof.proven.length} proven, ${proof.rejected.length} not proven${proof.model ? ` (prover ${proof.model})` : ''}${proof.rejected.length ? `: ${proof.rejected.map(r => r.reasons[0].slice(0, 90)).join(' | ')}` : ''}`);
+                    return { ...g, accepted: proof.proven, rejected: [...g.rejected, ...split.rejected, ...proof.rejected], blind: b };
                 };
                 if (taskId) updateTaskStage(taskId, 7, 'Final Quality Gate');
                 const generatedCount = result.questions.length;
-                const gate = await runGate(result.questions, Array.isArray(lmOptions.gateContext) ? lmOptions.gateContext : []);
-                const accepted = gate.accepted.slice();
+                // Hard requests: within the 2-minute budget the replacement rounds that would write deeper questions rarely
+                // run, so a correct, proven question that needs only one reasoning step keeps its slot under its true label
+                // (relabelled Medium and reported) instead of leaving the slot empty (S04/C01/D06: Hard 0 of 5).
+                const firstDepth = String(difficulty || '').toLowerCase() === 'hard' && process.env.HARD_FIRST_PASS_STRICT !== 'true' ? 'relabel' : undefined;
+                const gate = await runGate(result.questions, Array.isArray(lmOptions.gateContext) ? lmOptions.gateContext : [], firstDepth);
+                // Extra Hard candidates were written (lecturePipeline): keep the requested number, at most the planned
+                // number of Hard ones, in plan order; the rest are set aside (not rejected for quality).
+                const fitToPlan = (arr, n) => {
+                    if (arr.length <= n) return arr;
+                    const plan = (lmPlan && lmPlan.byDifficulty) || {};
+                    const kept = { easy: 0, medium: 0, hard: 0 };
+                    const keep = [];
+                    for (const q of arr) {
+                        const tier = String(q.difficulty || '').toLowerCase();
+                        if (kept[tier] !== undefined && kept[tier] < (plan[tier] || 0)) { keep.push(q); kept[tier]++; }
+                    }
+                    for (const q of arr) { if (keep.length >= n) break; if (!keep.includes(q)) keep.push(q); }
+                    return keep.slice(0, n);
+                };
+                const accepted = fitToPlan(gate.accepted.slice(), sessionInputs.count || generatedCount);
                 const allRejected = gate.rejected.slice();
                 let replacedOk = 0;
                 // One replacement round for lecture inputs (not inside a replacement itself): picks are reserved up
                 // front so parallel replacements never chase the same teaching point and question type.
+                let timedOut = false;
                 if (gate.rejected.length > 0 && lmForGate && Array.isArray(lmForGate.units) && !lmOptions.replace) {
                     // Shallow questions are rejected (not relabelled) on the first pass, so allow enough replacements for them.
                     const MAX_REPLACE = Math.max(0, parseInt(process.env.QUALITY_GATE_MAX_REPLACEMENTS, 10) || Math.max(5, Math.ceil(0.7 * (sessionInputs.count || generatedCount))));
                     // Up to two replacement rounds: a replacement that is itself caught by a check gets one more try, so
                     // the teacher still receives the number of questions asked for. Every round is validated in full.
+                    // Two rounds: spare candidates are written up front (lecturePipeline), so replacements are the exception; each
+                    // replacement is a full single-question run and was the largest cost of a quiz (~21 per deep lecture with 3 rounds).
                     const ROUNDS = Math.max(1, parseInt(process.env.QUALITY_GATE_REPLACEMENT_ROUNDS, 10) || 2);
                     const target = sessionInputs.count || generatedCount;
                     const tried = gate.rejected.map(r => r.question);
                     let pending = gate.rejected.slice(0, MAX_REPLACE);
-                    for (let round = 0; round < ROUNDS && pending.length && accepted.length < target; round++) {
+                    // Hard deadline for the replacement phase: a call stuck waiting on a provider limit must not hold
+                    // the quiz past the budget. Results that arrive later are ignored (the quiz is a snapshot).
+                    let closed = false;
+                    const replaceLoop = async () => {
+                    for (let round = 0; round < ROUNDS && pending.length && accepted.length < target && !closed; round++) {
+                        // A replacement round needs ~25 s (write, gate, blind solve, proof): skip it when the budget is spent.
+                        if (timeLeft() < 25000) { timedOut = true; console.log(`[TimeBudget] replacement round ${round + 1} skipped: ${Math.round(timeLeft() / 1000)} s left`); break; }
                         const everyone = [...accepted, ...tried];
                         const reserved = [];
-                        const jobs = pending.slice(0, Math.max(0, target - accepted.length)).map((r) => {
+                        // Replacements run a few at a time (free-tier per-minute limits); picks are still reserved up front.
+                        const slots = pending.slice(0, Math.max(0, target - accepted.length));
+                        const jobs = slots.map((r) => () => {
                             const others = everyone.filter(q => q !== r.question);
                             const plan = lectureModel.planRequest(lmForGate, 1, r.question.difficulty || 'Medium', {
                                 excludeTopics: Array.isArray(lmOptions.excludeTopics) ? lmOptions.excludeTopics : [],
@@ -1399,20 +1511,33 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
                             if (!pick) return Promise.resolve(null);
                             const extraUsed = reserved.slice();
                             reserved.push({ unitId: pick.unit.id, type: pick.angle.type });
-                            return replaceOneFromLecture(lmForGate, r.question, others, { excludedTopics: lmOptions.excludeTopics || [], extraUsed, styleOverride: lmOptions.styleOverride || null })
+                            // A question rejected as too shallow is replaced by one written with the gate's reason in hand.
+                            const writeHint = (r.criteria || []).includes('DEPTH') ? lecturePipeline.DEEPER_HINT(r.question.difficulty || 'Medium', (r.reasons || []).find(x => /^DEPTH/.test(String(x))) || '') : null;
+                            return replaceOneFromLecture(lmForGate, r.question, others, { excludedTopics: lmOptions.excludeTopics || [], extraUsed, styleOverride: lmOptions.styleOverride || null, writeHint })
                                 .then(x => x.question).catch(() => null);
                         });
-                        const fresh = (await Promise.all(jobs)).filter(Boolean);
-                        if (!fresh.length) break;
-                        const gateN = await runGate(fresh, accepted, 'relabel'); // replacements: a shallow one keeps its slot under its true label
+                        const written = await lecturePipeline.mapLimited(jobs, lecturePipeline.writeConcurrency(), job => job());
+                        const fresh = written.filter(Boolean);
+                        // A slot whose replacement could not be written stays open for the next round (C01/C02/D04,
+                        // 27 Nov: such slots were dropped and Balanced quizzes delivered 9 of 10).
+                        const unwritten = slots.filter((_, i) => !written[i]);
+                        if (!fresh.length && round === ROUNDS - 1) break;
+                        // Depth stays strict for every replacement round but the last; only the last keeps a shallow one
+                        // under its true label (fewer questions is worse than an honestly relabelled one).
+                        const gateN = fresh.length ? await runGate(fresh, accepted, round < ROUNDS - 1 ? undefined : 'relabel') : { accepted: [], rejected: [] };
                         replacedOk += gateN.accepted.length;
+                        if (closed) break;
                         accepted.push(...gateN.accepted);
                         allRejected.push(...gateN.rejected);
                         tried.push(...fresh);
-                        pending = gateN.rejected;
+                        pending = [...gateN.rejected, ...unwritten];
                     }
+                    };
+                    const graceMs = Math.max(5000, timeLeft() + 10000);
+                    const finished = await Promise.race([replaceLoop().then(() => true), new Promise(r => setTimeout(() => r(false), graceMs))]);
+                    if (!finished) { closed = true; timedOut = true; console.log(`[TimeBudget] replacement phase closed at the deadline; delivering ${accepted.length} proven question(s)`); }
                 }
-                result.questions = accepted;
+                result.questions = accepted.slice();
                 const relabeled = accepted.filter(q => q.qualityGate && q.qualityGate.relabeled);
                 if (relabeled.length) {
                     const hm = relabeled.filter(q => q.qualityGate.relabeled.from === 'Hard');
@@ -1450,7 +1575,7 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
                     const short = Math.max(0, (sessionInputs.count || generatedCount) - accepted.length);
                     const gateNote = `Quality gate: ${firstPassRejected} of ${generatedCount} generated question${generatedCount === 1 ? '' : 's'} rejected (${describeRejections(gate.rejected)})` +
                         (lmForGate && !lmOptions.replace ? `; ${replacedOk} replaced with validated questions` : '') +
-                        (short > 0 ? `. Delivering ${accepted.length} of ${sessionInputs.count || generatedCount} requested — nothing that failed a check is included.` : '.');
+                        (short > 0 ? `. Delivering ${accepted.length} of ${sessionInputs.count || generatedCount} requested — nothing that failed a check is included${timedOut ? '; the 2-minute limit was reached before more could be proven (generate again to add more)' : ''}.` : '.');
                     result.notice = result.notice ? `${result.notice} ${gateNote}` : gateNote;
                     if (short > 0) result.isPartial = true;
                 }
@@ -1496,27 +1621,8 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
                     result.notice = result.notice ? `${result.notice} ${mixNote}` : mixNote;
                 }
             }
-            // Independent answer check by a different model family; flags go to the teacher's review (bounded to 30 s).
-            // Superseded by the Final Quality Gate; used only if the gate is switched off by configuration.
-            if (process.env.DISABLE_BLIND_CHECK !== 'true' && process.env.DISABLE_QUALITY_GATE === 'true') {
-                try {
-                    const { blindAnswerCheck } = require('../engine/validators/blindAnswerCheck');
-                    const summary = await Promise.race([
-                        blindAnswerCheck(result.questions),
-                        new Promise(resolve => setTimeout(() => resolve({ checked: false, flagged: 0, reason: 'timeout' }), 30000))
-                    ]);
-                    result.independentCheck = summary;
-                    if (summary.flagged > 0) {
-                        const flagNote = `${summary.flagged} question${summary.flagged === 1 ? '' : 's'} flagged by an independent answer check — please review ${summary.flagged === 1 ? 'it' : 'them'} before publishing.`;
-                        result.notice = result.notice ? `${result.notice} ${flagNote}` : flagNote;
-                    }
-                    console.log(`[BlindCheck] ${summary.checked ? `checked with ${summary.model}, ${summary.flagged} flagged` : `not run: ${summary.reason}`}`);
-                } catch (bcErr) {
-                    console.warn('[BlindCheck] skipped:', bcErr.message);
-                }
-            }
             if (taskId) {
-                updateTaskStage(taskId, 7, 'Grounding Gate & Final Audit');
+                updateTaskStage(taskId, 7, 'Final checks done');
                 const tObj = getTask(taskId);
                 if (tObj) {
                     tObj.pipelineNotice = result.notice || null;
@@ -3526,11 +3632,11 @@ exports.generateQuizQuestions = async (req, res) => {
 
         const incomingAudio = allUploadedFiles.filter(f => {
             const ext = path.extname(f.originalname || '').toLowerCase();
-            return ['.mp3', '.wav', '.m4a', '.webm', '.ogg', '.aac', '.flac'].includes(ext);
+            return ['.mp3', '.wav', '.m4a', '.webm', '.ogg', '.aac', '.flac', '.mp4', '.mov', '.mkv', '.mpeg', '.mpga'].includes(ext);
         });
         const incomingDocs = allUploadedFiles.filter(f => {
             const ext = path.extname(f.originalname || '').toLowerCase();
-            return !['.mp3', '.wav', '.m4a', '.webm', '.ogg', '.aac', '.flac'].includes(ext);
+            return !['.mp3', '.wav', '.m4a', '.webm', '.ogg', '.aac', '.flac', '.mp4', '.mov', '.mkv', '.mpeg', '.mpga'].includes(ext);
         });
 
         let fileConfigs = [];
@@ -3739,7 +3845,7 @@ exports.generateQuizQuestions = async (req, res) => {
                         const config = fileConfigs.find(c => c.name === file.originalname) || { startPage: 1, endPage: 999 };
                         resolvedNames.add(file.originalname);
 
-                        const isAudio = ['.mp3', '.wav', '.m4a', '.webm', '.ogg', '.aac', '.flac'].includes(ext);
+                        const isAudio = ['.mp3', '.wav', '.m4a', '.webm', '.ogg', '.aac', '.flac', '.mp4', '.mov', '.mkv', '.mpeg', '.mpga'].includes(ext);
                         if (isAudio) {
                             console.log(`🎙️ Transcribing uploaded lecture audio: ${file.originalname}`);
                             updateTaskStage(taskId, 0, 'Ingesting & Analyzing Material');
@@ -4122,7 +4228,7 @@ exports.generateQuizQuestions = async (req, res) => {
             if (req.file && (!parsedInputs || parsedInputs.length === 0)) {
                 absolutePath = path.resolve(req.file.path);
                 const ext = path.extname(req.file.originalname).toLowerCase();
-                const AUDIO_EXTS = ['.mp3', '.wav', '.m4a', '.webm', '.ogg', '.aac', '.flac'];
+                const AUDIO_EXTS = ['.mp3', '.wav', '.m4a', '.webm', '.ogg', '.aac', '.flac', '.mp4', '.mov', '.mkv', '.mpeg', '.mpga'];
                 if (AUDIO_EXTS.includes(ext)) {
                     isVoiceSource = true;
                     const transcriptionResult = await transcribeAudioWithTimestamps(absolutePath);
@@ -5310,7 +5416,7 @@ exports.getFileMetadata = async (req, res) => {
                 extractedText = '';
                 totalCount = 1;
             }
-        } else if (['.mp3', '.wav', '.m4a', '.webm', '.ogg', '.aac', '.flac'].includes(ext)) {
+        } else if (['.mp3', '.wav', '.m4a', '.webm', '.ogg', '.aac', '.flac', '.mp4', '.mov', '.mkv', '.mpeg', '.mpga'].includes(ext)) {
             try {
                 extractedText = (await transcribeAudio(absolutePath)) || '';
                 totalCount = Math.max(1, Math.ceil((extractedText || '').split(/\s+/).length / 150));
@@ -5591,7 +5697,10 @@ function buildTopicOnlyAnalysis(topic, wordCount) {
 /** Maps the shared lecture model to the analyze-depth response (keeps legacy fields for older UI code). */
 function buildAnalysisFromLectureModel(model, wordCount) {
     const cap = model.capacity;
-    const teaching = model.teaching || { available: false };
+    // Teaching report v2 is prepared on request (GET /teaching-score/:id) after calibration; until then it is pending.
+    const teaching = process.env.TEACHING_SCORE_VERSION === 'v1' ? (model.teaching || { available: false })
+        : (model.teaching && model.teaching.version === 'teaching-v2' ? model.teaching : { available: false, pending: true, reason: 'The teaching review is being prepared.' });
+    if (process.env.TEACHING_SCORE_VERSION !== 'v1' && !(model.teaching && model.teaching.version === 'teaching-v2')) model.teaching = teaching;
     const chapters = model.segments.map((s, i) => ({
         id: `ch_${String(i + 1).padStart(2, '0')}`,
         title: s.title,
@@ -5706,7 +5815,7 @@ function lecturePairOf(lm, q) {
  * `gateContext`: when given, the new question is validated by the Final Quality Gate inside the run (with these
  * questions as duplicate context); when omitted the caller validates it.
  */
-async function replaceOneFromLecture(lm, question, others = [], { excludedTopics = [], extraUsed = [], gateContext = null, userId = null, styleOverride = null } = {}) {
+async function replaceOneFromLecture(lm, question, others = [], { excludedTopics = [], extraUsed = [], gateContext = null, userId = null, styleOverride = null, writeHint = null } = {}) {
     const src = question.lectureSource || {};
     const difficulty = ['Easy', 'Medium', 'Hard'].includes(question.difficulty) ? question.difficulty
         : (['Easy', 'Medium', 'Hard'].includes(src.measuredDifficulty) ? src.measuredDifficulty : 'Medium');
@@ -5715,11 +5824,19 @@ async function replaceOneFromLecture(lm, question, others = [], { excludedTopics
     const inputs = inputsFromLectureModel(lm);
     if (!inputs.length) return { question: null, difficulty, msg: 'The lecture text for this quiz is no longer available.' };
     const taskId = createTask({ userId, questionCount: 1, textLength: inputs.reduce((n, i) => n + i.content.length, 0) });
-    const generated = await generateQuestions(null, null, 1, difficulty, null, null, inputs, null, taskId, null, null, 'MIXED',
-        'FILL_WITH_MEDIUM', null, 'ALLOW_SCOPE_SUPPLEMENTARY',
-        { id: lm.id, excludeTopics: Array.isArray(excludedTopics) ? excludedTopics : [],
-          replace: { unitId: origin ? origin.unitId : null, subtopic: src.subtopic || null, type: src.plannedQuestionType || src.questionType || null, form: src.hardForm || null, difficulty, usedPairs },
-          skipGate: !gateContext, gateContext: gateContext || [], styleOverride });
+    let generated = null;
+    try {
+        generated = await generateQuestions(null, null, 1, difficulty, null, null, inputs, null, taskId, null, null, 'MIXED',
+            'FILL_WITH_MEDIUM', null, 'ALLOW_SCOPE_SUPPLEMENTARY',
+            { id: lm.id, excludeTopics: Array.isArray(excludedTopics) ? excludedTopics : [],
+              replace: { unitId: origin ? origin.unitId : null, subtopic: src.subtopic || null, type: src.plannedQuestionType || src.questionType || null, form: src.hardForm || null, difficulty, usedPairs },
+              skipGate: !gateContext, gateContext: gateContext || [], styleOverride, writeHint });
+    } finally {
+        // A replacement's task is always closed: left RUNNING, they filled the task queue (25) during a long quiz and
+        // the next request failed with SYSTEM_BUSY (D06, 27 Nov).
+        const t = getTask(taskId);
+        if (t && t.status === 'RUNNING') completeTask(taskId, { questions: Array.isArray(generated) ? generated : [] });
+    }
     const newQ = Array.isArray(generated) ? generated[0] || null : null;
     const task = getTask(taskId) || {};
     return { question: newQ, difficulty, msg: newQ ? null : (task.pipelineNotice || null) };
@@ -5758,11 +5875,35 @@ exports.replaceQuestion = async (req, res) => {
     }
 };
 
+/** Teaching report v2 (engine/intelligence/teachingScoreV2.js): computed once per calibrated reading, then cached. */
+const teachingInFlight = new Map();
+async function ensureTeachingV2(lm) {
+    if (lm.teaching && lm.teaching.version === 'teaching-v2' && !lm.teaching.pending) return lm.teaching;
+    if (!teachingInFlight.has(lm.id)) {
+        teachingInFlight.set(lm.id, (async () => {
+            try { await lectureModel.ensureCalibrated(lm); } catch (_) {}
+            const v2 = require('../engine/intelligence/teachingScoreV2');
+            const t = v2.toClientShape(await v2.teachingReport(lm));
+            lm.teaching = t;
+            try { lectureModel.saveModel && lectureModel.saveModel(lm); } catch (_) {}
+            return t;
+        })().finally(() => teachingInFlight.delete(lm.id)));
+    }
+    return teachingInFlight.get(lm.id);
+}
+
 exports.getTeachingScore = async (req, res) => {
     const lm = lectureModel.getById(String(req.params.id || ''));
     if (!lm) return res.status(404).json({ msg: 'Lecture analysis not found. Please re-add the material.' });
-    return res.json({ pending: Boolean(lm.teaching && lm.teaching.pending), teaching: lm.teaching || null, level: lm.level, intent: lm.intent });
+    if (process.env.TEACHING_SCORE_VERSION === 'v1') return res.json({ pending: Boolean(lm.teaching && lm.teaching.pending), teaching: lm.teaching || null, level: lm.level, intent: lm.intent });
+    try {
+        const teaching = await ensureTeachingV2(lm);
+        return res.json({ pending: false, teaching, level: lm.level, intent: lm.intent });
+    } catch (e) {
+        return res.json({ pending: false, teaching: { available: false, reason: `The teaching report could not be prepared: ${e.message}` }, level: lm.level, intent: lm.intent });
+    }
 };
+exports._ensureTeachingV2 = ensureTeachingV2;
 
 exports.analyzeDepth = async (req, res) => {
     try {
@@ -5787,7 +5928,9 @@ exports.analyzeDepth = async (req, res) => {
                 const cachedData = JSON.parse(fs.readFileSync(cachePath, 'utf8'));
                 // A cached analysis is only reusable while the lecture model it points to still exists.
                 const cachedModelId = cachedData?.lectureModel?.id;
-                if (!cachedModelId || cachedData?.lectureModel?.isTopicOnly || lectureModel.getById(cachedModelId)) {
+                const cachedModel = cachedModelId ? lectureModel.getById(cachedModelId) : null;
+                const calibrationCurrent = cachedModel && cachedModel.calibration && cachedModel.calibration.version === lectureModel.CALIBRATION_VERSION;
+                if (!cachedModelId || cachedData?.lectureModel?.isTopicOnly || calibrationCurrent) {
                     return res.json(cachedData);
                 }
             } catch (_) {}
@@ -5808,6 +5951,9 @@ exports.analyzeDepth = async (req, res) => {
             const topicName = sanitizeLectureTitle(normalizedText) || normalizedText;
             try {
                 const tm = await lectureModel.buildTopicModel({ topic: topicName, forceRefresh: Boolean(forceRefresh) });
+                if (tm && tm.ok === false && tm.reason === 'NOT_A_TOPIC') {
+                    return res.json({ success: true, isAcademic: false, reason: `${tm.message} Type a topic (for example "Arrays in Python"), paste your notes or code, or add the lecture recording.`, whatWasTaught: '', keyTopics: [], wordCount, recommendedQuestionCount: 0, recommendedByDifficulty: { easy: 0, medium: 0, hard: 0, balanced: 0 }, capacityByDifficulty: { easy: 0, medium: 0, hard: 0, balanced: 0 }, totalDefensibleCapacity: 0 });
+                }
                 if (tm && tm.ok && tm.units.length > 0) {
                     const payload = buildAnalysisFromLectureModel(tm, wordCount);
                     payload.isTopicMode = true;
@@ -5833,6 +5979,11 @@ exports.analyzeDepth = async (req, res) => {
                     forceRefresh: Boolean(forceRefresh),
                     deferTeachingScore: true
                 });
+                // A reading saved before the current calibration is re-calibrated once (difficulty, intent, roles).
+                if (model && model.ok && model.units.length >= 1) await lectureModel.ensureCalibrated(model);
+                if (model && model.ok && model.units.length >= 1 && model.units.every(u => !(u.angles || []).length)) {
+                    return res.json({ success: true, isAcademic: false, reason: 'No teachable academic content was found in this input (it looks like greetings, admin talk or conversation).', whatWasTaught: '', keyTopics: [], wordCount, recommendedQuestionCount: 0, recommendedByDifficulty: { easy: 0, medium: 0, hard: 0, balanced: 0 }, capacityByDifficulty: { easy: 0, medium: 0, hard: 0, balanced: 0 }, totalDefensibleCapacity: 0, lectureModel: lectureModel.toClientPayload(model) });
+                }
                 if (model && model.ok && model.units.length >= 1) {
                     const payload = buildAnalysisFromLectureModel(model, wordCount);
                     // An incomplete read (provider busy) is shown but not cached, so Retry re-reads it.
@@ -5854,361 +6005,20 @@ exports.analyzeDepth = async (req, res) => {
                     });
                 }
             } catch (lmErr) {
-                console.warn('[analyzeDepth] Lecture model failed, using legacy analysis:', lmErr.message);
+                console.warn('[analyzeDepth] Lecture model failed:', lmErr.message);
             }
         }
 
-        const analysis = depthAnalyzer.analyzeLecture(text || '', { sourceModality: modality, modality });
-        const pdiRouter = require('../engine/pdiRouter');
-        const isVoiceInput = modality === 'VOICE_ONLY' || modality === 'HYBRID' || (Array.isArray(segments) && segments.length > 0);
-        const pdiDecision = pdiRouter.route({
-            voiceTranscript: isVoiceInput ? text : '',
-            documentTexts: isVoiceInput ? [] : [text],
-            codeSnippets: ''
-        });
-
-        if (!analysis.isAcademic) {
-            return sendAndCache({
-                success: true,
-                isAcademic: false,
-                reason: analysis.reason,
-                lectureDepth: analysis.lectureDepth,
-                detectedFocus: [],
-                whatWasTaught: 'Non-academic content: No assessable curriculum detected.',
-                keyTopics: [],
-                wordCount,
-                recommendedQuestions: '0 Questions',
-                recommendedQuestionCount: 0,
-                recommendedByDifficulty: { easy: 0, medium: 0, hard: 0, balanced: 0 },
-                capacityByDifficulty: { easy: 0, medium: 0, hard: 0, balanced: 0 },
-                totalDefensibleCapacity: 0,
-                advisoryRationale: analysis.reason || 'Cannot recommend questions: Non-academic content.',
-                lecture_intelligence: null
-            });
-        }
-
-        const isTopicInput = modality === 'TOPIC' || modality === 'TOPIC_SYNTHESIS' ||
-            (!modality && !hasTimingData && (!segments || segments.length === 0) && wordCount < 15 && !text.includes('\n'));
-
-        if (isTopicInput && (text || '').trim().length >= 3) {
-            const cleanTopic = sanitizeLectureTitle(title || text.trim());
-            return sendAndCache({
-                success: true,
-                isAcademic: true,
-                isTopicMode: true,
-                topic: cleanTopic,
-                lectureDepth: {
-                    rating: 'Engineering Curriculum',
-                    score: 100,
-                    characteristics: {
-                        conceptExplanation: 'Strong',
-                        reasoning: 'Strong',
-                        examples: 'Present',
-                        procedures: 'Strong'
-                    },
-                    breakdown: {
-                        recommendedQuestionCount: 15,
-                        recommendedQuestionsRationale: 'Standard university-level engineering curriculum assessment scope'
-                    }
-                },
-                keyTopics: [cleanTopic, 'Algorithmic Mechanics', 'State Transitions & Complexity', 'Engineering Scenarios'],
-                whatWasTaught: `Comprehensive university engineering assessment covering ${cleanTopic}.`,
-                recommendedQuestions: '10 to 30 Questions',
-                recommendedQuestionCount: 10,
-                recommendedByDifficulty: { easy: 10, medium: 15, hard: 10, balanced: 15 },
-                capacityByDifficulty: { easy: 10, medium: 15, hard: 10, balanced: 15 },
-                totalDefensibleCapacity: 30,
-                advisoryRationale: 'Standard university-level engineering curriculum assessment scope',
-                wordCount: wordCount
-            });
-        }
-
-        let whatWasTaught = '';
-        let keyTopics = [];
-        let recommendedQuestions = wordCount > 3000 ? '5 to 25 Questions' : (wordCount > 1000 ? '5 to 15 Questions' : '3 to 10 Questions');
-
-        let lectureIntel = null;
-        if (analysis.isAcademic && (text || '').trim().length >= 15) {
-            try {
-                const lectureIntelligence = require('../engine/intelligence/lectureIntelligence');
-                const hasTiming = hasTimingData !== undefined ? !!hasTimingData : (Array.isArray(segments) && segments.some(s => s.start !== null && s.start !== undefined));
-                lectureIntel = await lectureIntelligence.analyze({
-                    evidenceText: text,
-                    segments: segments || [],
-                    modality: modality || (hasTiming ? 'VOICE_ONLY' : 'DOCUMENT_ONLY'),
-                    hasTimingData: hasTiming,
-                    fileName: title || null
-                });
-            } catch (intelErr) {
-                console.warn('[analyzeDepth] lectureIntelligence error, falling back:', intelErr.message);
-                try {
-                    const lectureIntelligence = require('../engine/intelligence/lectureIntelligence');
-                    lectureIntel = lectureIntelligence.buildPartialFallback({
-                        evidenceText: text,
-                        segments: segments || [],
-                        modality: modality || (hasTiming ? 'VOICE_ONLY' : 'DOCUMENT_ONLY'),
-                        hasTimingData: hasTiming,
-                        fileName: title || null,
-                        errorReason: `Analysis error: ${intelErr.message}`
-                    });
-                } catch (_) {}
-            }
-        }
-
-        if (analysis.isAcademic) {
-            // 1. Extract valid distinct key topics strictly from transcript concepts
-            const rawFocus = Array.isArray(analysis.detectedFocus) ? analysis.detectedFocus : [];
-            const meaningfulFocus = rawFocus.filter(t => t && typeof t === 'string' && t.trim() !== 'Instructional Content');
-
-            if (meaningfulFocus.length > 0) {
-                keyTopics = meaningfulFocus.slice(0, 4);
-            } else if (analysis.curricularSegments && analysis.curricularSegments.length > 0) {
-                // Secondary extraction from curricular segments if detectedFocus had only generic terms
-                const segmentTerms = [];
-                for (const seg of analysis.curricularSegments) {
-                    const terms = seg.classification?.matchedTerms || [];
-                    for (const term of terms) {
-                        if (term && term.length > 3 && !segmentTerms.includes(term)) {
-                            segmentTerms.push(term);
-                        }
-                    }
-                }
-                if (segmentTerms.length > 0) {
-                    keyTopics = segmentTerms.slice(0, 4);
-                }
-            }
-
-            // 2. Clean fallback title for display context only if no transcript concepts were extracted
-            const cleanTitle = sanitizeLectureTitle(title || '');
-
-            if (keyTopics.length === 0) {
-                if (cleanTitle) {
-                    keyTopics = [`${cleanTitle} Principles`, 'Core Operational Rules', 'Worked Examples'];
-                } else {
-                    keyTopics = ['Core Principles', 'Operational Rules', 'Worked Applications'];
-                }
-            }
-
-            // If lecture intelligence extracted concept map, prioritize it for key topics
-            if (lectureIntel?.conceptMap && lectureIntel.conceptMap.length > 0) {
-                keyTopics = lectureIntel.conceptMap.map(c => c.name);
-            }
-
-            // 3. Construct authoritative, professional 1-line overview from actual concepts
-            const characteristics = analysis.lectureDepth?.characteristics || {};
-            const procedureDesc = characteristics.procedures === 'Strong' ? 'step-by-step procedures' : 'conceptual foundations';
-            const exampleDesc = characteristics.examples === 'Present' ? 'practical examples' : 'operational mechanisms';
-
-            const isTopicPrompt = !hasTimingData && wordCount < 300;
-            if (lectureIntel?.summary) {
-                whatWasTaught = lectureIntel.summary;
-            } else if (isTopicPrompt) {
-                const topicSummary = meaningfulFocus.slice(0, 3).join(', ') || cleanTitle || 'the specified curriculum';
-                whatWasTaught = `A comprehensive assessment on ${cleanTitle} covering ${topicSummary} and ${exampleDesc}.`;
-            } else if (meaningfulFocus.length > 0) {
-                const topicSummary = meaningfulFocus.slice(0, 3).join(', ');
-                whatWasTaught = `A structured lecture exploring ${topicSummary} with ${procedureDesc} and ${exampleDesc}.`;
-            } else if (cleanTitle) {
-                whatWasTaught = `A structured lecture exploring ${cleanTitle} with ${procedureDesc} and ${exampleDesc}.`;
-            } else {
-                whatWasTaught = `A comprehensive lecture exploring core domain concepts with ${procedureDesc} and ${exampleDesc}.`;
-            }
-
-            if (lectureIntel?.evidenceCapacity?.recommendedQuestionCount) {
-                recommendedQuestions = `${lectureIntel.evidenceCapacity.recommendedQuestionCount} Questions (${lectureIntel.evidenceCapacity.advisoryRationale || 'Advisory Base'})`;
-            } else if (analysis.lectureDepth?.breakdown?.recommendedQuestionCount) {
-                const rec = analysis.lectureDepth.breakdown.recommendedQuestionCount;
-                recommendedQuestions = `${rec} Questions (${analysis.lectureDepth.breakdown.recommendedQuestionsRationale || 'Optimal Pedagogical Scope'})`;
-            }
-        }
-
-        const evCap = lectureIntel?.evidenceCapacity;
-        const recBreakdown = analysis.lectureDepth?.breakdown;
-        const fallbackRecCount = recBreakdown?.recommendedQuestionCount || 5;
-        const chars = analysis.lectureDepth?.characteristics || {};
-        const supportsHard = (chars.reasoning === 'Strong' || chars.procedures === 'Strong') || (chars.reasoning !== 'Light' && (chars.examples === 'Present' || (analysis.curricularSegments && analysis.curricularSegments.length > 0)));
-
-        let recommendedByDifficulty;
-        let validCap = null;
-        let capacityByDifficulty;
-        let totalDefensibleCapacity;
-        let advisoryRationale;
-        let recommendedQuestionCount;
-
-        if (!analysis.isAcademic) {
-            recommendedByDifficulty = { easy: 0, medium: 0, hard: 0, balanced: 0 };
-            capacityByDifficulty = { easy: 0, medium: 0, hard: 0, balanced: 0 };
-            totalDefensibleCapacity = 0;
-            advisoryRationale = analysis.reason || 'Cannot recommend questions: Non-academic content.';
-            recommendedQuestionCount = 0;
-            recommendedQuestions = '0 Questions';
-
-        } else {
-            // Step 1: Check if primary analysis yielded verified capacity
-            validCap = (evCap && evCap.distinctConceptCount > 0 && evCap.totalDefensibleCapacity > 0) ? evCap : null;
-
-            // Step 2: If primary analysis was unavailable, truncated, or produced 0 concepts, recover curriculum analysis
-            if (!validCap && analysis.isAcademic && (text || '').trim().length >= 15) {
-                try {
-                    const lectureIntelligence = require('../engine/intelligence/lectureIntelligence');
-                    const hasTiming = hasTimingData !== undefined ? !!hasTimingData : (Array.isArray(segments) && segments.some(s => s.start !== null && s.start !== undefined));
-                    const recovered = lectureIntelligence.buildPartialFallback({
-                        evidenceText: text,
-                        segments: segments || [],
-                        modality: modality || (hasTiming ? 'VOICE_ONLY' : 'DOCUMENT_ONLY'),
-                        hasTimingData: hasTiming,
-                        fileName: title || null,
-                        errorReason: 'Recovered curriculum capacity from verified segments'
-                    });
-                    if (recovered?.evidenceCapacity?.distinctConceptCount > 0) {
-                        validCap = recovered.evidenceCapacity;
-                        lectureIntel = recovered;
-                        if (recovered.conceptMap?.length > 0) {
-                            keyTopics = recovered.conceptMap.map(c => c.name);
-                        }
-                    }
-                } catch (recErr) {
-                    console.warn('[analyzeDepth] Failed to recover curriculum capacity:', recErr.message);
-                }
-            }
-
-            // Step 3: Apply verified evidence-backed capacity, or report genuinely insufficient analysis
-            if (validCap && validCap.recommendedByDifficulty && validCap.recommendedQuestionCount > 0) {
-                recommendedByDifficulty = { ...validCap.recommendedByDifficulty };
-                capacityByDifficulty = validCap.capacityByDifficulty ? { ...validCap.capacityByDifficulty } : {
-                    easy: validCap.recommendedByDifficulty.easy,
-                    medium: validCap.recommendedByDifficulty.medium,
-                    hard: validCap.recommendedByDifficulty.hard,
-                    balanced: validCap.totalDefensibleCapacity || validCap.recommendedQuestionCount
-                };
-                totalDefensibleCapacity = validCap.totalDefensibleCapacity || (recommendedByDifficulty.easy + recommendedByDifficulty.medium + recommendedByDifficulty.hard);
-                advisoryRationale = validCap.advisoryRationale || '';
-                recommendedQuestionCount = validCap.recommendedQuestionCount || Math.max(1, recommendedByDifficulty.balanced);
-                recommendedQuestions = `${recommendedQuestionCount} Questions (Evidence-Backed Capacity)`;
-            } else if (analysis.isAcademic) {
-                // Grounded defensible capacity derived dynamically from instructional characteristics
-                const baseCount = Math.max(3, recBreakdown?.recommendedQuestionCount || Math.min(25, Math.max(5, Math.round(wordCount / 120))));
-                const hasStrongReasoning = chars.reasoning === 'Strong';
-                const hasModerateReasoning = chars.reasoning === 'Moderate';
-                const hasExamples = chars.examples === 'Present';
-                const hasProcedures = chars.procedures === 'Strong';
-
-                // Easy: covers foundational definitions and key terms
-                const easyPart = Math.max(1, Math.round(baseCount * (wordCount > 3000 ? 0.8 : 0.75)));
-
-                // Medium: operational mechanisms and concrete examples
-                const medFactor = (hasExamples && hasProcedures) ? 0.75 : ((hasExamples || hasProcedures) ? 0.6 : 0.45);
-                const medPart = Math.max(1, Math.round(baseCount * medFactor));
-
-                // Hard: causal reasoning, invariants, and comparative tradeoffs
-                let hardPart = 0;
-                if (hasStrongReasoning) {
-                    hardPart = Math.max(2, Math.round(baseCount * 0.45));
-                } else if (hasModerateReasoning) {
-                    hardPart = Math.max(1, Math.round(baseCount * 0.3));
-                } else if (supportsHard) {
-                    hardPart = Math.max(1, Math.round(baseCount * 0.2));
-                } else {
-                    hardPart = 0;
-                }
-
-                const balancedPart = Math.max(baseCount, easyPart, medPart, hardPart);
-
-                recommendedByDifficulty = {
-                    easy: easyPart,
-                    medium: medPart,
-                    hard: hardPart,
-                    balanced: balancedPart
-                };
-                capacityByDifficulty = {
-                    easy: Math.max(3, Math.round(easyPart * 1.5)),
-                    medium: Math.max(3, Math.round(medPart * 1.5)),
-                    hard: hardPart > 0 ? Math.max(3, Math.round(hardPart * 1.5)) : 0,
-                    balanced: Math.max(5, Math.round(balancedPart * 1.5))
-                };
-                totalDefensibleCapacity = capacityByDifficulty.balanced;
-                recommendedQuestionCount = balancedPart;
-                recommendedQuestions = `${recommendedQuestionCount} Questions (Optimal Pedagogical Scope)`;
-                advisoryRationale = 'Grounded curricular capacity based on document instructional depth.';
-            } else {
-                // Genuinely non-academic content detected
-                recommendedByDifficulty = { easy: 0, medium: 0, hard: 0, balanced: 0 };
-                capacityByDifficulty = { easy: 0, medium: 0, hard: 0, balanced: 0 };
-                totalDefensibleCapacity = 0;
-                advisoryRationale = analysis.reason || 'Insufficient curricular substance to ground defensible assessment recommendations.';
-                recommendedQuestionCount = 0;
-                recommendedQuestions = '0 Questions';
-            }
-        }
-        if (isTopicInput && analysis.isAcademic) {
-            recommendedQuestionCount = Math.max(10, recommendedQuestionCount || fallbackRecCount);
-            totalDefensibleCapacity = Math.max(15, totalDefensibleCapacity || fallbackRecCount);
-            if (recommendedByDifficulty) {
-                recommendedByDifficulty.easy = Math.max(5, recommendedByDifficulty.easy || 5);
-                recommendedByDifficulty.medium = Math.max(5, recommendedByDifficulty.medium || 5);
-                recommendedByDifficulty.hard = Math.max(3, recommendedByDifficulty.hard || 3);
-                recommendedByDifficulty.balanced = Math.max(10, recommendedByDifficulty.balanced || 10);
-            }
-            if (capacityByDifficulty) {
-                capacityByDifficulty.easy = Math.max(10, capacityByDifficulty.easy || 10);
-                capacityByDifficulty.medium = Math.max(10, capacityByDifficulty.medium || 10);
-                capacityByDifficulty.hard = Math.max(10, capacityByDifficulty.hard || 10);
-                capacityByDifficulty.balanced = Math.max(15, capacityByDifficulty.balanced || 15);
-            }
-        }
-
-        const rEasy = recommendedByDifficulty?.easy || 0;
-        const rMed = recommendedByDifficulty?.medium || 0;
-        const rHard = recommendedByDifficulty?.hard || 0;
-        const cEasy = capacityByDifficulty?.easy || rEasy;
-        const cMed = capacityByDifficulty?.medium || rMed;
-        const cHard = capacityByDifficulty?.hard || rHard;
-        const conceptCount = (keyTopics && keyTopics.length > 0) ? keyTopics.length : (analysis.detectedFocus?.length || 0);
-        const isHighDepth = (rHard >= 5 && conceptCount >= 8) || (conceptCount >= 12 && rHard >= 4);
-        const isModerateDepth = !isHighDepth && (rMed >= 3 || rHard >= 1);
-
-        const yieldNarrative = validCap?.yieldNarrative || (isHighDepth
-            ? `Your lecture provided extensive instructional depth across ${conceptCount} concepts with clear mechanisms and comparative tradeoffs. This supports a wide pedagogical spread: ${rEasy} Easy questions (foundational definitions), ${rMed} Medium questions (operational mechanics), and ${rHard} Hard questions (architectural tradeoffs & synthesis).`
-            : (isModerateDepth
-                ? `Your lecture focused on ${conceptCount} core topics with direct explanations. Because advanced tradeoffs were covered selectively, question counts across Easy, Medium, and Hard (${rEasy} Easy, ${rMed} Medium, ${rHard} Hard) stay closely calibrated so questions strictly test what was taught without guessing.`
-                : `Your material introduces foundational definitions across ${conceptCount} topics. Questions are centered around foundational mastery (${rEasy} Easy, ${rMed} Medium) to maintain 100% fidelity to your direct words.`));
-
-        const variationNote = validCap?.variationNote || (isHighDepth
-            ? 'High pedagogical variation: Deep causal reasoning in your class supports distinct separation between foundational recall and advanced tradeoffs.'
-            : (isModerateDepth
-                ? 'Calibrated pedagogical variation: Question tiers stay closely aligned to keep all questions 100% faithful to your direct explanations.'
-                : 'Introductory pedagogical scope: Hard questions are evidence-limited to prevent speculating beyond your direct words.'));
-
-        const easyExplanation = validCap?.easyExplanation || `Derived from the ${cEasy} distinct definitions and foundational terms introduced in your lecture.`;
-        const mediumExplanation = validCap?.mediumExplanation || `Derived from the ${cMed} operational mechanisms, workflows, and practical examples explained in class.`;
-        const hardExplanation = validCap?.hardExplanation || (rHard > 0
-            ? `Derived from the ${cHard} comparative tradeoffs, causal dynamics, and architectural synthesis covered in your lecture.`
-            : 'Your lecture focused on core definitions without causal tradeoffs; Hard is evidence-limited to prevent AI guessing.');
-
-        return sendAndCache({
-            success: true,
-            isAcademic: analysis.isAcademic,
-            reason: analysis.reason,
-            lectureDepth: analysis.lectureDepth,
-            detectedFocus: analysis.detectedFocus,
-            whatWasTaught,
-            keyTopics,
-            wordCount,
-            pdi: pdiDecision.pedagogical_delivery_index,
-            pdiDecision,
-            representationMode: pdiDecision.selected_representation,
-            recommendedQuestions,
-            recommendedQuestionCount,
-            recommendedByDifficulty,
-            capacityByDifficulty,
-            totalDefensibleCapacity,
-            advisoryRationale,
-            yieldNarrative,
-            variationNote,
-            easyExplanation,
-            mediumExplanation,
-            hardExplanation,
-            lecture_intelligence: lectureIntel
+        // One reading of the lecture: when the lecture model cannot be built (provider busy) or the input is too short to
+        // read, the teacher is told so and can retry. No second, heuristic analysis is shown (it would not match what the
+        // question generator uses). The removed heuristic is kept in legacy/pre_single_pipeline/.
+        const tooShort = !(normalizedText.length >= 15 || documents.length > 0);
+        return res.status(tooShort ? 400 : 503).json({
+            success: false,
+            retryable: !tooShort,
+            error: tooShort
+                ? 'There is too little content to read. Add the lecture recording, a document or a longer text.'
+                : 'This input could not be read into teaching points right now. Please try again in a minute.'
         });
     } catch (err) {
         console.error('Error in analyzeDepth controller:', err.message);
@@ -6948,3 +6758,4 @@ exports._generateQuestions = generateQuestions;
 // Exposed for the input smoke tests (same extraction a teacher's upload goes through).
 exports._extractTextWithRange = extractTextWithRange;
 exports._extractReadableTextFromScan = extractReadableTextFromScan;
+exports._transcribeAudioWithTimestamps = transcribeAudioWithTimestamps; // test harness (experiments/input_matrix)
