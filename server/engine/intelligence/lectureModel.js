@@ -30,7 +30,7 @@ const { classifyTextBlock } = require('../../utils/inputKind');
 const teachingStyle = require('./teachingStyle');
 const hardForms = require('./hardForms');
 
-const MODEL_VERSION = 'lecture-model-v2.12';
+const MODEL_VERSION = 'lecture-model-v2.12-r1';
 // Largest quiz a teacher can request (one setting for server, planner and UI). Default 30: a daily-quiz size.
 const MAX_QUIZ_QUESTIONS = Math.max(1, parseInt(process.env.MAX_QUIZ_QUESTIONS, 10) || 30);
 const CACHE_DIR = path.join(__dirname, '..', '..', 'storage', 'lecture_model_cache');
